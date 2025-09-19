@@ -3,17 +3,27 @@ import { MobileHeader } from "@/components/layout/mobile-header";
 import { LoyaltyOverview } from "@/components/home/loyalty-overview";
 import { QuickActions } from "@/components/home/quick-actions";
 import { PromotionalBanner } from "@/components/home/promotional-banner";
+import { QRScanner } from "@/components/qr/qr-scanner";
 import { currentUserPoints, nextReward } from "@/data/loyalty-data";
 import { toast } from "@/hooks/use-toast";
 import pogosLogo from "@/assets/pogos-logo.jpg";
 
 export default function Dashboard() {
-  const [points] = useState(currentUserPoints);
+  const [points, setPoints] = useState(currentUserPoints);
+  const [isQRScannerOpen, setIsQRScannerOpen] = useState(false);
 
   const handleScanQR = () => {
+    setIsQRScannerOpen(true);
+  };
+
+  const handleQRScanSuccess = (data: string) => {
+    // Simulate adding points based on QR code data
+    const pointsToAdd = Math.floor(Math.random() * 20) + 10; // 10-30 points
+    setPoints(prev => prev + pointsToAdd);
+    
     toast({
-      title: "QR Scanner",
-      description: "Opening QR scanner to add points...",
+      title: "Points Added!",
+      description: `You earned ${pointsToAdd} points from your purchase!`,
     });
   };
 
@@ -107,6 +117,13 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* QR Scanner Modal */}
+      <QRScanner
+        isOpen={isQRScannerOpen}
+        onClose={() => setIsQRScannerOpen(false)}
+        onScanSuccess={handleQRScanSuccess}
+      />
     </div>
   );
 }
