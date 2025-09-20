@@ -162,7 +162,17 @@ export default function Dashboard() {
 
         {/* Recent Activity Preview */}
         <div className="bg-card rounded-lg p-4 shadow-soft">
-          <h3 className="font-semibold mb-3">Recent Activity</h3>
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="font-semibold">Recent Activity</h3>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => navigate('/transactions')}
+              className="text-primary"
+            >
+              View All
+            </Button>
+          </div>
           <div className="space-y-2">
             {transactions.length > 0 ? (
               transactions.slice(0, 3).map((transaction) => (
@@ -176,12 +186,12 @@ export default function Dashboard() {
                   <div className="text-right">
                     {transaction.transaction_type === 'purchase' ? (
                       <>
-                        <p className="text-sm font-medium text-success">+{transaction.points_earned} points</p>
+                        <p className="text-sm font-medium text-green-600">+{transaction.points_earned} points</p>
                         <p className="text-xs text-muted-foreground">${transaction.amount}</p>
                       </>
                     ) : (
                       <>
-                        <p className="text-sm font-medium text-secondary">-{transaction.points_redeemed} points</p>
+                        <p className="text-sm font-medium text-purple-600">-{transaction.points_redeemed} points</p>
                         <p className="text-xs text-muted-foreground">Redeemed</p>
                       </>
                     )}
