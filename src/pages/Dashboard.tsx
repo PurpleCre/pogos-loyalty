@@ -1,37 +1,83 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import { MobileHeader } from "@/components/layout/mobile-header";
 import { LoyaltyOverview } from "@/components/home/loyalty-overview";
 import { QuickActions } from "@/components/home/quick-actions";
 import { PromotionalBanner } from "@/components/home/promotional-banner";
 import { QRScanner } from "@/components/qr/qr-scanner";
-import { currentUserPoints, nextReward } from "@/data/loyalty-data";
+import { useAuth } from "@/hooks/useAuth";
+import { useRewards } from "@/hooks/useRewards";
 import { toast } from "@/hooks/use-toast";
 import pogosLogo from "@/assets/pogos-logo.jpg";
 
 export default function Dashboard() {
-  const [points, setPoints] = useState(currentUserPoints);
+  const { user, signOut, loading: authLoading } = useAuth();
+  const { userPoints, rewards, transactions, addPoints, loading: rewardsLoading } = useRewards();
   const [isQRScannerOpen, setIsQRScannerOpen] = useState(false);
+  const navigate = useNavigate();
+
+  // Redirect to auth if not authenticated
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate('/auth');
+    }
+  }, [user, authLoading, navigate]);
+
+  // Show loading screen while checking auth
+  if (authLoading || rewardsLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-warm flex items-center justify-center">
+        <div className="text-center">
+          <img 
+            src={pogosLogo} 
+            alt="Pogo's Restaurant" 
+            className="h-16 mx-auto mb-4 rounded-lg"
+          />
+          <p className="text-muted-foreground">Loading your rewards...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render anything if not authenticated
+  if (!user) {
+    return null;
+  }
+
+  // Get next reward info
+  const currentPoints = userPoints?.current_points || 0;
+  const nextReward = rewards.find(r => r.points_cost > currentPoints);
+  const nextRewardPoints = nextReward?.points_cost || 300;
+  const nextRewardName = nextReward?.name || "Free Burger";
 
   const handleScanQR = () => {
     setIsQRScannerOpen(true);
   };
 
-  const handleQRScanSuccess = (data: string) => {
+  const handleQRScanSuccess = async (data: string) => {
     // Simulate adding points based on QR code data
     const pointsToAdd = Math.floor(Math.random() * 20) + 10; // 10-30 points
-    setPoints(prev => prev + pointsToAdd);
+    const purchaseAmount = Math.floor(Math.random() * 20) + 10; // $10-30
     
-    toast({
-      title: "Points Added!",
-      description: `You earned ${pointsToAdd} points from your purchase!`,
-    });
+    const { error } = await addPoints(pointsToAdd, purchaseAmount, ["QR Purchase"]);
+    
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add points. Please try again.",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Points Added!",
+        description: `You earned ${pointsToAdd} points from your purchase!`,
+      });
+    }
   };
 
   const handleViewRewards = () => {
-    toast({
-      title: "Rewards",
-      description: "Viewing available rewards...",
-    });
+    navigate('/rewards');
   };
 
   const handleOrderNow = () => {
@@ -46,6 +92,19 @@ export default function Dashboard() {
       title: "Promotion",
       description: "Double points weekend is live!",
     });
+  };
+
+  const handleSignOut = async () => {
+    const { error } = await signOut();
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to sign out",
+        variant: "destructive",
+      });
+    } else {
+      navigate('/auth');
+    }
   };
 
   return (
@@ -68,11 +127,22 @@ export default function Dashboard() {
           <p className="text-muted-foreground">Ready to earn more points?</p>
         </div>
 
+        {/* User Info & Sign Out */}
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-xl font-semibold">Hello {user.email?.split('@')[0]}!</h2>
+            <p className="text-muted-foreground">Ready to earn more points?</p>
+          </div>
+          <Button variant="outline" size="sm" onClick={handleSignOut}>
+            Sign Out
+          </Button>
+        </div>
+
         {/* Loyalty Overview */}
         <LoyaltyOverview 
-          currentPoints={points}
-          nextRewardPoints={nextReward.pointsCost}
-          nextRewardName={nextReward.name}
+          currentPoints={currentPoints}
+          nextRewardPoints={nextRewardPoints}
+          nextRewardName={nextRewardName}
         />
 
         {/* Quick Actions */}
@@ -92,28 +162,47 @@ export default function Dashboard() {
 
         {/* Recent Activity Preview */}
         <div className="bg-card rounded-lg p-4 shadow-soft">
-          <h3 className="font-semibold mb-3">Recent Activity</h3>
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="font-semibold">Recent Activity</h3>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => navigate('/transactions')}
+              className="text-primary"
+            >
+              View All
+            </Button>
+          </div>
           <div className="space-y-2">
-            <div className="flex justify-between items-center py-2 border-b border-border last:border-0">
-              <div>
-                <p className="text-sm font-medium">Classic Burger + Fries</p>
-                <p className="text-xs text-muted-foreground">Jan 15, 2024</p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm font-medium text-success">+13 points</p>
-                <p className="text-xs text-muted-foreground">$12.99</p>
-              </div>
-            </div>
-            <div className="flex justify-between items-center py-2">
-              <div>
-                <p className="text-sm font-medium">Free Soft Drink</p>
-                <p className="text-xs text-muted-foreground">Jan 12, 2024</p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm font-medium text-secondary">-150 points</p>
-                <p className="text-xs text-muted-foreground">Redeemed</p>
-              </div>
-            </div>
+            {transactions.length > 0 ? (
+              transactions.slice(0, 3).map((transaction) => (
+                <div key={transaction.id} className="flex justify-between items-center py-2 border-b border-border last:border-0">
+                  <div>
+                    <p className="text-sm font-medium">{transaction.items.join(', ')}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(transaction.created_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    {transaction.transaction_type === 'purchase' ? (
+                      <>
+                        <p className="text-sm font-medium text-green-600">+{transaction.points_earned} points</p>
+                        <p className="text-xs text-muted-foreground">${transaction.amount}</p>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-sm font-medium text-purple-600">-{transaction.points_redeemed} points</p>
+                        <p className="text-xs text-muted-foreground">Redeemed</p>
+                      </>
+                    )}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-4">
+                No recent activity. Start earning points by making purchases!
+              </p>
+            )}
           </div>
         </div>
       </div>
