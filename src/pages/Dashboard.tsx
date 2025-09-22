@@ -8,12 +8,14 @@ import { PromotionalBanner } from "@/components/home/promotional-banner";
 import { QRScanner } from "@/components/qr/qr-scanner";
 import { useAuth } from "@/hooks/useAuth";
 import { useRewards } from "@/hooks/useRewards";
+import { useAdmin } from "@/hooks/useAdmin";
 import { toast } from "@/hooks/use-toast";
 import pogosLogo from "@/assets/pogos-logo.jpg";
 
 export default function Dashboard() {
   const { user, signOut, loading: authLoading } = useAuth();
   const { userPoints, rewards, transactions, addPoints, loading: rewardsLoading } = useRewards();
+  const { isAdmin } = useAdmin();
   const [isQRScannerOpen, setIsQRScannerOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -133,9 +135,16 @@ export default function Dashboard() {
             <h2 className="text-xl font-semibold">Hello {user.email?.split('@')[0]}!</h2>
             <p className="text-muted-foreground">Ready to earn more points?</p>
           </div>
-          <Button variant="outline" size="sm" onClick={handleSignOut}>
-            Sign Out
-          </Button>
+          <div className="flex space-x-2">
+            {isAdmin && (
+              <Button variant="outline" size="sm" onClick={() => navigate('/admin')}>
+                Admin Panel
+              </Button>
+            )}
+            <Button variant="outline" size="sm" onClick={handleSignOut}>
+              Sign Out
+            </Button>
+          </div>
         </div>
 
         {/* Loyalty Overview */}
