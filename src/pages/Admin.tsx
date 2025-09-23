@@ -5,6 +5,7 @@ import { MobileHeader } from "@/components/layout/mobile-header";
 import { AdminUsers } from "@/components/admin/admin-users";
 import { AdminRewards } from "@/components/admin/admin-rewards";
 import { AdminTransactions } from "@/components/admin/admin-transactions";
+import { AdminNotifications } from "@/components/admin/admin-notifications";
 import { AdminOverview } from "@/components/admin/admin-overview";
 import { useAdmin } from "@/hooks/useAdmin";
 import { useAuth } from "@/hooks/useAuth";
@@ -50,11 +51,12 @@ export default function Admin() {
         </div>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="rewards">Rewards</TabsTrigger>
             <TabsTrigger value="transactions">Transactions</TabsTrigger>
+            <TabsTrigger value="notifications">Notifications</TabsTrigger>
           </TabsList>
           
           <TabsContent value="overview" className="space-y-4">
@@ -71,6 +73,10 @@ export default function Admin() {
           
           <TabsContent value="transactions" className="space-y-4">
             <AdminTransactions />
+          </TabsContent>
+          
+          <TabsContent value="notifications" className="space-y-4">
+            <AdminNotifications />
           </TabsContent>
         </Tabs>
       </div>
