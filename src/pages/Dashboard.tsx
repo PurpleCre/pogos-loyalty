@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useRewards } from "@/hooks/useRewards";
 import { useAdmin } from "@/hooks/useAdmin";
 import { toast } from "@/hooks/use-toast";
+import { User } from "lucide-react";
 import pogosLogo from "@/assets/pogos-logo.jpg";
 
 export default function Dashboard() {
@@ -136,6 +137,10 @@ export default function Dashboard() {
             <p className="text-muted-foreground">Ready to earn more points?</p>
           </div>
           <div className="flex space-x-2">
+            <Button variant="outline" size="sm" onClick={() => navigate('/profile')}>
+              <User className="w-4 h-4 mr-1" />
+              Profile
+            </Button>
             {isAdmin && (
               <Button variant="outline" size="sm" onClick={() => navigate('/admin')}>
                 Admin Panel
