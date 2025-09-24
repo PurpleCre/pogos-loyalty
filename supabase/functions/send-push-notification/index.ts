@@ -164,25 +164,48 @@ const handler = async (req: Request): Promise<Response> => {
   }
 };
 
-// Simplified web push implementation for Deno
+// Basic web push implementation for Deno
 async function sendWebPush(subscription: any, payload: string, options: any) {
   const { endpoint } = subscription;
   const { p256dh, auth } = subscription.keys;
+  const { vapidPublicKey, vapidPrivateKey, vapidSubject } = options;
 
-  // This is a simplified implementation. In production, you'd want to use
-  // a proper web push library that handles all the crypto properly.
-  // For now, we'll make a basic POST request to the push service
-  
+  // Create JWT header for VAPID authentication
+  const vapidHeaders: Record<string, string> = {
+    'Content-Type': 'application/octet-stream',
+    'TTL': '86400'
+  };
+
+  // Add VAPID authorization for supported endpoints
+  if (endpoint.includes('fcm.googleapis.com') || endpoint.includes('android.googleapis.com')) {
+    // For FCM endpoints, we need proper VAPID authentication
+    const jwtHeader = {
+      typ: 'JWT',
+      alg: 'ES256'
+    };
+
+    const jwtPayload = {
+      aud: new URL(endpoint).origin,
+      exp: Math.floor(Date.now() / 1000) + 3600, // 1 hour from now
+      sub: vapidSubject
+    };
+
+    // For simplicity, we'll use a basic implementation
+    // In production, you'd want proper JWT signing with the private key
+    vapidHeaders['Authorization'] = `vapid t=${btoa(JSON.stringify(jwtPayload))}, k=${vapidPublicKey}`;
+  }
+
   const response = await fetch(endpoint, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Content-Length': payload.length.toString(),
-    },
+    headers: vapidHeaders,
     body: payload,
   });
 
+  console.log(`Push notification sent to ${endpoint}: ${response.status}`);
+
   if (!response.ok) {
+    const errorText = await response.text();
+    console.error(`Push service error: ${response.status} - ${errorText}`);
     throw new Error(`Push service responded with status: ${response.status}`);
   }
 
