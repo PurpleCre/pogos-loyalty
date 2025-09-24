@@ -42,6 +42,7 @@ export default function Admin() {
         showBackButton={true}
         showMenu={false}
         showNotifications={false}
+        onBackClick={() => navigate('/dashboard')}
       />
       
       <div className="p-4 space-y-6">

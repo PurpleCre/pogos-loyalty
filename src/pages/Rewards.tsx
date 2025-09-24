@@ -104,6 +104,7 @@ export default function Rewards() {
         showMenu={false}
         showNotifications={false}
         title="Rewards"
+        onBackClick={() => navigate('/dashboard')}
       />
       
       <div className="p-4 space-y-6">
