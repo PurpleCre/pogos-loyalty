@@ -56,6 +56,7 @@ export default function TransactionHistory() {
         showMenu={false}
         showNotifications={false}
         title="Transaction History"
+        onBackClick={() => navigate('/dashboard')}
       />
       
       <div className="p-4 space-y-6">

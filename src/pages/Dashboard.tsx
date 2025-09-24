@@ -110,12 +110,26 @@ export default function Dashboard() {
     }
   };
 
+  const handleMenuClick = () => {
+    // For now, show a simple menu with navigation options
+    toast({
+      title: "Menu",
+      description: "Navigate using the buttons in the user section below",
+    });
+  };
+
+  const handleNotificationClick = () => {
+    navigate('/profile');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-warm">
       <MobileHeader 
         showBackButton={false}
         showMenu={true}
         showNotifications={true}
+        onMenuClick={handleMenuClick}
+        onNotificationClick={handleNotificationClick}
       />
       
       <div className="p-4 space-y-6">
