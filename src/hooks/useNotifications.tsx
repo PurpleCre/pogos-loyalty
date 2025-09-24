@@ -20,8 +20,8 @@ export const useNotifications = () => {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // VAPID public key - in production, this should be in your environment
-  const VAPID_PUBLIC_KEY = 'BEl62iUYgUivxIkv69yViEuiBIa40HI0DLtR2P4uw5xc1AKxNqHSuAhXZBKi0P6r4iQr3PpbOeJWK8dEjFg7LCk';
+  // VAPID public key
+  const VAPID_PUBLIC_KEY = 'BIl6FSX1QiDngUmFf9OSU4PjOOoF1UA2PnT_hpOzbplmhWs7piHMQprynKrHqC1iwYdVF22eNre2iPxzSx7CS84';
 
   useEffect(() => {
     checkNotificationPermission();
