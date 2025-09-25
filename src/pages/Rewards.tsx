@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { PointsDisplay } from '@/components/ui/points-display';
 import { MobileHeader } from '@/components/layout/mobile-header';
+import { AchievementShare } from '@/components/social/achievement-share';
 import { useAuth } from '@/hooks/useAuth';
 import { useRewards } from '@/hooks/useRewards';
 import { toast } from '@/hooks/use-toast';
@@ -64,7 +65,7 @@ export default function Rewards() {
     } else {
       toast({
         title: "Reward Redeemed!",
-        description: `You've successfully redeemed ${rewardName}!`,
+        description: `You've successfully redeemed ${rewardName}! Share your achievement!`,
       });
     }
     
@@ -149,15 +150,26 @@ export default function Rewards() {
                         <Star className="h-4 w-4 text-primary" />
                         <span className="font-semibold">{reward.points_cost} points</span>
                       </div>
-                      <Button
-                        onClick={() => handleRedeem(reward.id, reward.points_cost, reward.name)}
-                        disabled={currentPoints < reward.points_cost || redeeming === reward.id}
-                        variant={currentPoints >= reward.points_cost ? "default" : "outline"}
-                        size="sm"
-                      >
-                        {redeeming === reward.id ? 'Redeeming...' : 
-                         currentPoints >= reward.points_cost ? 'Redeem' : 'Not enough points'}
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={() => handleRedeem(reward.id, reward.points_cost, reward.name)}
+                          disabled={currentPoints < reward.points_cost || redeeming === reward.id}
+                          variant={currentPoints >= reward.points_cost ? "default" : "outline"}
+                          size="sm"
+                        >
+                          {redeeming === reward.id ? 'Redeeming...' : 
+                           currentPoints >= reward.points_cost ? 'Redeem' : 'Not enough points'}
+                        </Button>
+                        <AchievementShare 
+                          type="reward" 
+                          value={reward.name}
+                          trigger={
+                            <Button variant="outline" size="sm">
+                              Share
+                            </Button>
+                          }
+                        />
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
