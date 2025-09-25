@@ -31,7 +31,20 @@ export function QRScanner({ isOpen, onClose, onScanSuccess }: QRScannerProps) {
         {
           highlightScanRegion: true,
           highlightCodeOutline: true,
-          preferredCamera: "back",
+          preferredCamera: "environment",
+          maxScansPerSecond: 5,
+          calculateScanRegion: (video) => {
+            const smallestDimension = Math.min(video.videoWidth, video.videoHeight);
+            const scanRegionSize = Math.round(0.7 * smallestDimension);
+            const x = Math.round((video.videoWidth - scanRegionSize) / 2);
+            const y = Math.round((video.videoHeight - scanRegionSize) / 2);
+            return {
+              x,
+              y,
+              width: scanRegionSize,
+              height: scanRegionSize,
+            };
+          },
         }
       );
 
@@ -66,7 +79,7 @@ export function QRScanner({ isOpen, onClose, onScanSuccess }: QRScannerProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-sm mx-auto">
+      <DialogContent className="max-w-sm mx-auto sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
             Scan Receipt QR Code
@@ -90,6 +103,8 @@ export function QRScanner({ isOpen, onClose, onScanSuccess }: QRScannerProps) {
                 style={{ aspectRatio: "1/1" }}
                 playsInline
                 muted
+                autoPlay
+                webkit-playsinline="true"
               />
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="w-48 h-48 border-2 border-primary rounded-lg shadow-lg">
