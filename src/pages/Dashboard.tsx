@@ -5,6 +5,8 @@ import { MobileHeader } from "@/components/layout/mobile-header";
 import { LoyaltyOverview } from "@/components/home/loyalty-overview";
 import { QuickActions } from "@/components/home/quick-actions";
 import { PromotionalBanner } from "@/components/home/promotional-banner";
+import { AchievementShare } from "@/components/social/achievement-share";
+import { Card, CardContent } from "@/components/ui/card";
 import { QRScanner } from "@/components/qr/qr-scanner";
 import { useAuth } from "@/hooks/useAuth";
 import { useRewards } from "@/hooks/useRewards";
@@ -187,6 +189,24 @@ export default function Dashboard() {
           badgeText="This Weekend"
           onClick={handlePromotionClick}
         />
+
+        {/* Social Sharing */}
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-semibold mb-2">Share Your Progress</h3>
+                <p className="text-sm text-muted-foreground">
+                  Show off your {currentPoints} points to friends!
+                </p>
+              </div>
+              <AchievementShare 
+                type="points" 
+                value={currentPoints}
+              />
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Recent Activity Preview */}
         <div className="bg-card rounded-lg p-4 shadow-soft">
