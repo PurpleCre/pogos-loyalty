@@ -18,8 +18,13 @@ export function QRScanner({ isOpen, onClose, onScanSuccess }: QRScannerProps) {
 
   useEffect(() => {
     if (isOpen && videoRef.current) {
+      const video = videoRef.current;
+      
+      // Reset hasCamera state when opening
+      setHasCamera(true);
+      
       const scanner = new QrScanner(
-        videoRef.current,
+        video,
         (result) => {
           onScanSuccess(result.data);
           onClose();
@@ -33,24 +38,32 @@ export function QRScanner({ isOpen, onClose, onScanSuccess }: QRScannerProps) {
           highlightCodeOutline: true,
           preferredCamera: "environment",
           maxScansPerSecond: 5,
-          calculateScanRegion: (video) => {
-            const smallestDimension = Math.min(video.videoWidth, video.videoHeight);
-            const scanRegionSize = Math.round(0.7 * smallestDimension);
-            const x = Math.round((video.videoWidth - scanRegionSize) / 2);
-            const y = Math.round((video.videoHeight - scanRegionSize) / 2);
-            return {
-              x,
-              y,
-              width: scanRegionSize,
-              height: scanRegionSize,
-            };
-          },
+          returnDetailedScanResult: true,
         }
       );
 
+      // Add event listeners to ensure video starts playing
+      const handleLoadedData = () => {
+        console.log("Video loaded, starting scanner");
+        video.play().catch(console.error);
+      };
+
+      const handleCanPlay = () => {
+        console.log("Video can play");
+        video.play().catch(console.error);
+      };
+
+      video.addEventListener('loadeddata', handleLoadedData);
+      video.addEventListener('canplay', handleCanPlay);
+
       scanner
         .start()
-        .then(() => setQrScanner(scanner))
+        .then(() => {
+          console.log("QR Scanner started successfully");
+          setQrScanner(scanner);
+          // Ensure video is playing
+          video.play().catch(console.error);
+        })
         .catch((error) => {
           console.error("Failed to start QR scanner:", error);
           setHasCamera(false);
@@ -62,6 +75,8 @@ export function QRScanner({ isOpen, onClose, onScanSuccess }: QRScannerProps) {
         });
 
       return () => {
+        video.removeEventListener('loadeddata', handleLoadedData);
+        video.removeEventListener('canplay', handleCanPlay);
         scanner.stop();
         scanner.destroy();
       };
