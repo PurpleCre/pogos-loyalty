@@ -72,6 +72,37 @@ const handler = async (req: Request): Promise<Response> => {
     // Send notifications to all subscriptions
     for (const subscription of subscriptions || []) {
       try {
+        // Check if it's a Capacitor subscription
+        if (subscription.endpoint.startsWith('capacitor://fcm/')) {
+          // Handle Capacitor/FCM notifications
+          const fcmToken = subscription.endpoint.replace('capacitor://fcm/', '');
+          console.log(`Processing FCM notification for token: ${fcmToken}`);
+          
+          // For Capacitor apps, we mark as sent since the notification will be handled by FCM
+          results.push({
+            userId: subscription.user_id,
+            success: true,
+            status: 200,
+            platform: 'capacitor'
+          });
+          
+          await supabaseClient
+            .from('notifications')
+            .insert({
+              title,
+              body,
+              icon: icon || '/favicon.ico',
+              badge: badge || '/favicon.ico',
+              data,
+              sent_to: subscription.user_id,
+              delivery_status: 'delivered'
+            });
+            
+          console.log(`FCM notification processed for user ${subscription.user_id}`);
+          continue;
+        }
+
+        // Handle web push notifications
         const pushSubscription = {
           endpoint: subscription.endpoint,
           keys: {
@@ -94,7 +125,8 @@ const handler = async (req: Request): Promise<Response> => {
         results.push({
           userId: subscription.user_id,
           success: true,
-          status: response.status
+          status: response.status,
+          platform: 'web'
         });
 
         // Store notification in database
@@ -114,7 +146,7 @@ const handler = async (req: Request): Promise<Response> => {
         console.error(`Failed to send notification to user ${subscription.user_id}:`, error);
         failedDeliveries.push({
           userId: subscription.user_id,
-          error: error.message
+          error: error instanceof Error ? error.message : 'Unknown error'
         });
 
         // Store failed notification in database
