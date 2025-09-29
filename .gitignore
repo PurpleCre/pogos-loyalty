@@ -28,6 +28,7 @@ dist-ssr
 
 # dotenv environment variables file
 .env
+*.env
 .env.*.local
 .env.local
 .env.*.local
