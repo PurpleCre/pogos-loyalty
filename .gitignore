@@ -25,3 +25,13 @@ dist-ssr
 
 # android key
 *.jks
+
+# dotenv environment variables file
+.env
+.env.*.local
+.env.local
+.env.*.local
+.env.test.local
+.env.production.local
+.env.staging.local
+.env.production.local

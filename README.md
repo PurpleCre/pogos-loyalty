@@ -6,7 +6,7 @@ The app is designed to show useres promotions and to mainly track their purchase
 
 The app is meant to reward loyal customers which free meals at certain milestones, while also collecting data to enhance the service offered by the restaurant.
 
-[Software Demo Video](http://youtube.link.goes.here)
+[Restaurant Loyalty App Demo](https://youtu.be/VhCDScEzQW0)
 
 # Development Environment
 
@@ -16,7 +16,6 @@ I used React with capacitor, then kotlin and java for the entire project.
 
 # Useful Websites
 
-{Make a list of websites that you found helpful in this project}
 * [capacitorjs.com](https://capacitorjs.com/solution/react)
 * [developer.android.com](https://developer.android.com/develop)
 
@@ -26,4 +25,4 @@ I used React with capacitor, then kotlin and java for the entire project.
 
 # Release
 
-[pogosloyalty.apk]()
+[pogosloyalty.apk](https://github.com/PurpleCre/pogos-loyalty-buzz/blob/main/android/app/release/baselineProfiles/0/app-release.dm)
