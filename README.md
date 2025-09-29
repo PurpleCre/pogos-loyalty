@@ -1,73 +1,29 @@
-# Welcome to your Lovable project
+# Overview
 
-## Project info
+Loyalty app for a restaraunt written in React with Capacitor conversion and Android Studio.
 
-**URL**: https://lovable.dev/projects/c1470fda-d52b-4d69-beb6-cb538aa47b85
+The app is designed to show useres promotions and to mainly track their purchases while also rewarding them at key moments. The app uses google qr scanner to scan receipts and award points for each purchase. To use the app, open it, create an account or login, tap scan qr and scan the code (Which you wont have for now). You can also browse the other functions.
 
-## How can I edit this code?
+The app is meant to reward loyal customers which free meals at certain milestones, while also collecting data to enhance the service offered by the restaurant.
 
-There are several ways of editing your application.
+[Software Demo Video](http://youtube.link.goes.here)
 
-**Use Lovable**
+# Development Environment
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/c1470fda-d52b-4d69-beb6-cb538aa47b85) and start prompting.
+I used React to build a mobile first webapp, then I converted it to an android app using capicator through vscode, finally I made improvements and intergrations in android studio before shipping a release version of the app.
 
-Changes made via Lovable will be committed automatically to this repo.
+I used React with capacitor, then kotlin and java for the entire project.
 
-**Use your preferred IDE**
+# Useful Websites
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+{Make a list of websites that you found helpful in this project}
+* [capacitorjs.com](https://capacitorjs.com/solution/react)
+* [developer.android.com](https://developer.android.com/develop)
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+# Future Work
 
-Follow these steps:
+* Referral system
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Release
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/c1470fda-d52b-4d69-beb6-cb538aa47b85) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+[pogosloyalty.apk]()
