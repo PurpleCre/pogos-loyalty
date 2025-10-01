@@ -1,5 +1,6 @@
 import { ArrowLeft, Menu, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { cn } from "@/lib/utils";
 
 interface MobileHeaderProps {
@@ -54,17 +55,20 @@ export function MobileHeader({
         )}
       </div>
       
-      {showNotifications && (
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onNotificationClick}
-          className="h-8 w-8 relative"
-        >
-          <Bell className="h-4 w-4" />
-          <div className="absolute -top-1 -right-1 h-3 w-3 bg-secondary rounded-full border-2 border-background" />
-        </Button>
-      )}
+      <div className="flex items-center gap-2">
+        <ThemeToggle />
+        {showNotifications && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onNotificationClick}
+            className="h-8 w-8 relative"
+          >
+            <Bell className="h-4 w-4" />
+            <div className="absolute -top-1 -right-1 h-3 w-3 bg-secondary rounded-full border-2 border-background" />
+          </Button>
+        )}
+      </div>
     </header>
   );
 }

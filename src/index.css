@@ -8,51 +8,51 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Pogo's Brand Colors - Warm yellow and red fast-food theme */
-    --background: 48 100% 98%;
-    --foreground: 20 14% 15%;
+    /* Pogo's Brand Colors - Teal and turquoise theme */
+    --background: 180 40% 97%;
+    --foreground: 180 10% 10%;
 
-    --card: 48 50% 96%;
-    --card-foreground: 20 14% 15%;
+    --card: 180 35% 95%;
+    --card-foreground: 180 10% 10%;
 
-    --popover: 48 100% 98%;
-    --popover-foreground: 20 14% 15%;
+    --popover: 180 40% 97%;
+    --popover-foreground: 180 10% 10%;
 
-    /* Primary: Warm golden yellow */
-    --primary: 45 100% 55%;
-    --primary-foreground: 20 14% 15%;
-    --primary-glow: 45 100% 65%;
+    /* Primary: Vibrant teal */
+    --primary: 174 72% 45%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 174 72% 55%;
 
-    /* Secondary: Deep red for accents */
-    --secondary: 356 75% 53%;
-    --secondary-foreground: 48 100% 98%;
+    /* Secondary: Coral accent */
+    --secondary: 16 90% 60%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 48 30% 92%;
-    --muted-foreground: 20 8% 45%;
+    --muted: 180 20% 90%;
+    --muted-foreground: 180 8% 40%;
 
-    --accent: 45 100% 88%;
-    --accent-foreground: 20 14% 15%;
+    --accent: 174 72% 92%;
+    --accent-foreground: 180 10% 10%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 48 100% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 48 20% 88%;
-    --input: 48 20% 92%;
-    --ring: 45 100% 55%;
+    --border: 180 20% 85%;
+    --input: 180 20% 90%;
+    --ring: 174 72% 45%;
 
-    /* Success green for points/rewards */
-    --success: 142 76% 36%;
-    --success-foreground: 48 100% 98%;
+    /* Success teal for points/rewards */
+    --success: 158 64% 42%;
+    --success-foreground: 0 0% 100%;
 
     /* Custom gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(45 100% 55%), hsl(45 100% 65%));
-    --gradient-secondary: linear-gradient(135deg, hsl(356 75% 53%), hsl(356 75% 63%));
-    --gradient-warm: linear-gradient(135deg, hsl(45 100% 95%), hsl(48 50% 96%));
+    --gradient-primary: linear-gradient(135deg, hsl(174 72% 45%), hsl(174 72% 55%));
+    --gradient-secondary: linear-gradient(135deg, hsl(16 90% 60%), hsl(16 90% 70%));
+    --gradient-warm: linear-gradient(135deg, hsl(180 40% 95%), hsl(180 35% 97%));
 
     /* Shadows with brand colors */
-    --shadow-primary: 0 10px 30px -10px hsl(45 100% 55% / 0.3);
-    --shadow-secondary: 0 10px 30px -10px hsl(356 75% 53% / 0.3);
-    --shadow-soft: 0 4px 20px hsl(20 14% 15% / 0.1);
+    --shadow-primary: 0 10px 30px -10px hsl(174 72% 45% / 0.3);
+    --shadow-secondary: 0 10px 30px -10px hsl(16 90% 60% / 0.3);
+    --shadow-soft: 0 4px 20px hsl(180 10% 10% / 0.1);
 
     --radius: 1rem;
 
@@ -74,38 +74,38 @@ All colors MUST be HSL.
   }
 
   .dark {
-    /* Dark mode with warmer tones */
-    --background: 20 14% 8%;
-    --foreground: 48 100% 98%;
+    /* Dark mode with teal accents */
+    --background: 180 15% 8%;
+    --foreground: 180 10% 98%;
 
-    --card: 20 14% 12%;
-    --card-foreground: 48 100% 98%;
+    --card: 180 15% 12%;
+    --card-foreground: 180 10% 98%;
 
-    --popover: 20 14% 8%;
-    --popover-foreground: 48 100% 98%;
+    --popover: 180 15% 8%;
+    --popover-foreground: 180 10% 98%;
 
-    --primary: 45 100% 55%;
-    --primary-foreground: 20 14% 8%;
-    --primary-glow: 45 100% 65%;
+    --primary: 174 72% 50%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 174 72% 60%;
 
-    --secondary: 356 75% 53%;
-    --secondary-foreground: 48 100% 98%;
+    --secondary: 16 90% 65%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 20 14% 18%;
-    --muted-foreground: 48 20% 65%;
+    --muted: 180 15% 18%;
+    --muted-foreground: 180 10% 65%;
 
-    --accent: 20 14% 18%;
-    --accent-foreground: 48 100% 98%;
+    --accent: 180 15% 18%;
+    --accent-foreground: 180 10% 98%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 48 100% 98%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 20 14% 18%;
-    --input: 20 14% 18%;
-    --ring: 45 100% 55%;
+    --border: 180 15% 18%;
+    --input: 180 15% 18%;
+    --ring: 174 72% 50%;
 
-    --success: 142 76% 36%;
-    --success-foreground: 48 100% 98%;
+    --success: 158 64% 42%;
+    --success-foreground: 0 0% 100%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
