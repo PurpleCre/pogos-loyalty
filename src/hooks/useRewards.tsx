@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
+import { useOffline } from './useOffline';
+import { toast } from 'sonner';
 
 export interface Reward {
   id: string;
@@ -30,6 +32,7 @@ export interface Transaction {
 
 export const useRewards = () => {
   const { user } = useAuth();
+  const { isOnline, saveOfflineData, getOfflineData, addPendingAction } = useOffline();
   const [rewards, setRewards] = useState<Reward[]>([]);
   const [userPoints, setUserPoints] = useState<UserPoints | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -45,6 +48,14 @@ export const useRewards = () => {
 
   const fetchRewards = async () => {
     try {
+      if (!isOnline) {
+        const cached = getOfflineData('rewards');
+        if (cached) {
+          setRewards(cached);
+          return;
+        }
+      }
+
       const { data, error } = await supabase
         .from('rewards')
         .select('*')
@@ -53,8 +64,14 @@ export const useRewards = () => {
 
       if (error) throw error;
       setRewards((data as Reward[]) || []);
+      saveOfflineData('rewards', data || []);
     } catch (error) {
       console.error('Error fetching rewards:', error);
+      const cached = getOfflineData('rewards');
+      if (cached) {
+        setRewards(cached);
+        toast.info('Showing cached rewards (offline)');
+      }
     }
   };
 
@@ -62,6 +79,15 @@ export const useRewards = () => {
     if (!user) return;
 
     try {
+      if (!isOnline) {
+        const cached = getOfflineData('userPoints');
+        if (cached) {
+          setUserPoints(cached);
+          setLoading(false);
+          return;
+        }
+      }
+
       const { data, error } = await supabase
         .from('user_points')
         .select('*')
@@ -70,8 +96,14 @@ export const useRewards = () => {
 
       if (error && error.code !== 'PGRST116') throw error;
       setUserPoints(data);
+      saveOfflineData('userPoints', data);
     } catch (error) {
       console.error('Error fetching user points:', error);
+      const cached = getOfflineData('userPoints');
+      if (cached) {
+        setUserPoints(cached);
+        toast.info('Showing cached points (offline)');
+      }
     } finally {
       setLoading(false);
     }
@@ -81,6 +113,14 @@ export const useRewards = () => {
     if (!user) return;
 
     try {
+      if (!isOnline) {
+        const cached = getOfflineData('transactions');
+        if (cached) {
+          setTransactions(cached);
+          return;
+        }
+      }
+
       const { data, error } = await supabase
         .from('transactions')
         .select('*')
@@ -90,14 +130,26 @@ export const useRewards = () => {
 
       if (error) throw error;
       setTransactions((data as Transaction[]) || []);
+      saveOfflineData('transactions', data || []);
     } catch (error) {
       console.error('Error fetching transactions:', error);
+      const cached = getOfflineData('transactions');
+      if (cached) {
+        setTransactions(cached);
+        toast.info('Showing cached transactions (offline)');
+      }
     }
   };
 
   const redeemReward = async (rewardId: string, pointsCost: number) => {
     if (!user || !userPoints || userPoints.current_points < pointsCost) {
       return { error: 'Insufficient points' };
+    }
+
+    if (!isOnline) {
+      addPendingAction({ type: 'redeem', rewardId, pointsCost, userId: user.id });
+      toast.info('Reward will be redeemed when back online');
+      return { error: null };
     }
 
     try {
@@ -147,6 +199,12 @@ export const useRewards = () => {
 
   const addPoints = async (points: number, amount: number, items: string[]) => {
     if (!user) return { error: 'User not authenticated' };
+
+    if (!isOnline) {
+      addPendingAction({ type: 'addPoints', points, amount, items, userId: user.id });
+      toast.info('Points will be added when back online');
+      return { error: null };
+    }
 
     try {
       // Create transaction
