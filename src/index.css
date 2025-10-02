@@ -9,39 +9,39 @@ All colors MUST be HSL.
 @layer base {
   :root {
     /* Pogo's Brand Colors - Teal and turquoise theme */
-    --background: 180 25% 98%;
-    --foreground: 180 15% 12%;
+    --background: 180 20% 99%;
+    --foreground: 180 20% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 180 15% 12%;
+    --card-foreground: 180 20% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 180 15% 12%;
+    --popover-foreground: 180 20% 10%;
 
     /* Primary: Vibrant teal */
-    --primary: 174 64% 42%;
+    --primary: 174 62% 45%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 174 64% 52%;
+    --primary-glow: 174 62% 55%;
 
     /* Secondary: Warm coral accent */
-    --secondary: 16 85% 58%;
+    --secondary: 16 90% 62%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 180 20% 94%;
-    --muted-foreground: 180 10% 45%;
+    --muted: 180 15% 96%;
+    --muted-foreground: 180 8% 40%;
 
-    --accent: 174 40% 94%;
-    --accent-foreground: 180 15% 12%;
+    --accent: 174 35% 96%;
+    --accent-foreground: 180 20% 10%;
 
-    --destructive: 0 72% 51%;
+    --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 180 15% 88%;
-    --input: 180 15% 92%;
-    --ring: 174 64% 42%;
+    --border: 180 12% 90%;
+    --input: 180 12% 94%;
+    --ring: 174 62% 45%;
 
     /* Success teal for points/rewards */
-    --success: 158 64% 42%;
+    --success: 158 62% 45%;
     --success-foreground: 0 0% 100%;
 
     /* Custom gradients */
@@ -75,37 +75,37 @@ All colors MUST be HSL.
 
   .dark {
     /* Dark mode with teal accents - optimized contrast */
-    --background: 180 15% 10%;
-    --foreground: 180 5% 95%;
+    --background: 180 12% 8%;
+    --foreground: 180 8% 96%;
 
-    --card: 180 12% 14%;
-    --card-foreground: 180 5% 95%;
+    --card: 180 10% 12%;
+    --card-foreground: 180 8% 96%;
 
-    --popover: 180 15% 12%;
-    --popover-foreground: 180 5% 95%;
+    --popover: 180 12% 10%;
+    --popover-foreground: 180 8% 96%;
 
-    --primary: 174 64% 52%;
-    --primary-foreground: 180 15% 10%;
-    --primary-glow: 174 64% 62%;
+    --primary: 174 62% 55%;
+    --primary-foreground: 180 12% 8%;
+    --primary-glow: 174 62% 65%;
 
-    --secondary: 16 85% 62%;
-    --secondary-foreground: 180 15% 10%;
+    --secondary: 16 88% 65%;
+    --secondary-foreground: 180 12% 8%;
 
-    --muted: 180 10% 20%;
-    --muted-foreground: 180 5% 70%;
+    --muted: 180 8% 18%;
+    --muted-foreground: 180 6% 65%;
 
-    --accent: 180 12% 20%;
-    --accent-foreground: 180 5% 95%;
+    --accent: 180 10% 16%;
+    --accent-foreground: 180 8% 96%;
 
-    --destructive: 0 72% 55%;
+    --destructive: 0 75% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 180 10% 22%;
-    --input: 180 10% 20%;
-    --ring: 174 64% 52%;
+    --border: 180 8% 20%;
+    --input: 180 8% 16%;
+    --ring: 174 62% 55%;
 
-    --success: 158 64% 48%;
-    --success-foreground: 180 15% 10%;
+    --success: 158 62% 52%;
+    --success-foreground: 180 12% 8%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
