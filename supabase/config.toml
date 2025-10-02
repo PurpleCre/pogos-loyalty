@@ -1,1 +1,7 @@
 project_id = "akxukhkkddfqodqmdtwx"
+
+[functions.send-push-notification]
+verify_jwt = true
+
+[functions.customer-support-chat]
+verify_jwt = false

@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { MobileHeader } from "@/components/layout/mobile-header";
 import { LoyaltyOverview } from "@/components/home/loyalty-overview";
-import { QuickActions } from "@/components/home/quick-actions";
 import { PromotionalBanner } from "@/components/home/promotional-banner";
 import { AchievementShare } from "@/components/social/achievement-share";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,7 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useRewards } from "@/hooks/useRewards";
 import { useAdmin } from "@/hooks/useAdmin";
 import { toast } from "@/hooks/use-toast";
-import { User } from "lucide-react";
+import { User, Trophy, Users, QrCode, Gift } from "lucide-react";
 import pogosLogo from "@/assets/pogos-logo.jpg";
 
 export default function Dashboard() {
@@ -22,14 +21,12 @@ export default function Dashboard() {
   const [isQRScannerOpen, setIsQRScannerOpen] = useState(false);
   const navigate = useNavigate();
 
-  // Redirect to auth if not authenticated
   useEffect(() => {
     if (!authLoading && !user) {
       navigate('/auth');
     }
   }, [user, authLoading, navigate]);
 
-  // Show loading screen while checking auth
   if (authLoading || rewardsLoading) {
     return (
       <div className="min-h-screen bg-gradient-warm flex items-center justify-center">
@@ -45,12 +42,10 @@ export default function Dashboard() {
     );
   }
 
-  // Don't render anything if not authenticated
   if (!user) {
     return null;
   }
 
-  // Get next reward info
   const currentPoints = userPoints?.current_points || 0;
   const nextReward = rewards.find(r => r.points_cost > currentPoints);
   const nextRewardPoints = nextReward?.points_cost || 300;
@@ -61,9 +56,8 @@ export default function Dashboard() {
   };
 
   const handleQRScanSuccess = async (data: string) => {
-    // Simulate adding points based on QR code data
-    const pointsToAdd = Math.floor(Math.random() * 20) + 10; // 10-30 points
-    const purchaseAmount = Math.floor(Math.random() * 20) + 10; // $10-30
+    const pointsToAdd = Math.floor(Math.random() * 20) + 10;
+    const purchaseAmount = Math.floor(Math.random() * 20) + 10;
     
     const { error } = await addPoints(pointsToAdd, purchaseAmount, ["QR Purchase"]);
     
@@ -83,13 +77,6 @@ export default function Dashboard() {
 
   const handleViewRewards = () => {
     navigate('/rewards');
-  };
-
-  const handleOrderNow = () => {
-    toast({
-      title: "Order",
-      description: "Redirecting to order menu...",
-    });
   };
 
   const handlePromotionClick = () => {
@@ -113,7 +100,6 @@ export default function Dashboard() {
   };
 
   const handleMenuClick = () => {
-    // For now, show a simple menu with navigation options
     toast({
       title: "Menu",
       description: "Navigate using the buttons in the user section below",
@@ -125,7 +111,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-warm">
+    <div className="min-h-screen bg-gradient-warm pb-20">
       <MobileHeader 
         showBackButton={false}
         showMenu={true}
@@ -135,7 +121,6 @@ export default function Dashboard() {
       />
       
       <div className="p-4 space-y-6">
-        {/* Welcome Header */}
         <div className="text-center py-4">
           <img 
             src={pogosLogo} 
@@ -146,7 +131,6 @@ export default function Dashboard() {
           <p className="text-muted-foreground">Ready to earn more points?</p>
         </div>
 
-        {/* User Info & Sign Out */}
         <div className="flex justify-between items-center">
           <div>
             <h2 className="text-xl font-semibold">Hello {user.email?.split('@')[0]}!</h2>
@@ -168,21 +152,62 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Loyalty Overview */}
         <LoyaltyOverview 
           currentPoints={currentPoints}
           nextRewardPoints={nextRewardPoints}
           nextRewardName={nextRewardName}
         />
 
-        {/* Quick Actions */}
-        <QuickActions 
-          onScanQR={handleScanQR}
-          onViewRewards={handleViewRewards}
-          onOrderNow={handleOrderNow}
-        />
+        <section>
+          <h2 className="text-xl font-bold mb-4">Quick Actions</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <Card 
+              className="p-4 cursor-pointer hover:shadow-lg transition-shadow"
+              onClick={handleScanQR}
+            >
+              <div className="flex flex-col items-center gap-2 text-center">
+                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                  <QrCode className="h-6 w-6 text-primary" />
+                </div>
+                <span className="font-medium">Scan QR</span>
+              </div>
+            </Card>
+            <Card 
+              className="p-4 cursor-pointer hover:shadow-lg transition-shadow"
+              onClick={handleViewRewards}
+            >
+              <div className="flex flex-col items-center gap-2 text-center">
+                <div className="h-12 w-12 rounded-full bg-secondary/10 flex items-center justify-center">
+                  <Gift className="h-6 w-6 text-secondary" />
+                </div>
+                <span className="font-medium">View Rewards</span>
+              </div>
+            </Card>
+            <Card 
+              className="p-4 cursor-pointer hover:shadow-lg transition-shadow"
+              onClick={() => navigate('/achievements')}
+            >
+              <div className="flex flex-col items-center gap-2 text-center">
+                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Trophy className="h-6 w-6 text-primary" />
+                </div>
+                <span className="font-medium">Achievements</span>
+              </div>
+            </Card>
+            <Card 
+              className="p-4 cursor-pointer hover:shadow-lg transition-shadow"
+              onClick={() => navigate('/referrals')}
+            >
+              <div className="flex flex-col items-center gap-2 text-center">
+                <div className="h-12 w-12 rounded-full bg-secondary/10 flex items-center justify-center">
+                  <Users className="h-6 w-6 text-secondary" />
+                </div>
+                <span className="font-medium">Refer Friends</span>
+              </div>
+            </Card>
+          </div>
+        </section>
 
-        {/* Promotional Banner */}
         <PromotionalBanner 
           title="Double Points Weekend!"
           description="Earn 2x points on all orders this weekend only"
@@ -190,25 +215,25 @@ export default function Dashboard() {
           onClick={handlePromotionClick}
         />
 
-        {/* Social Sharing */}
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-semibold mb-2">Share Your Progress</h3>
-                <p className="text-sm text-muted-foreground">
-                  Show off your {currentPoints} points to friends!
-                </p>
+        <section>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-semibold mb-2">Share Your Progress</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Show off your {currentPoints} points to friends!
+                  </p>
+                </div>
+                <AchievementShare 
+                  type="points" 
+                  value={currentPoints}
+                />
               </div>
-              <AchievementShare 
-                type="points" 
-                value={currentPoints}
-              />
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </section>
 
-        {/* Recent Activity Preview */}
         <div className="bg-card rounded-lg p-4 shadow-soft">
           <div className="flex justify-between items-center mb-3">
             <h3 className="font-semibold">Recent Activity</h3>
@@ -255,7 +280,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* QR Scanner Modal */}
       <QRScanner
         isOpen={isQRScannerOpen}
         onClose={() => setIsQRScannerOpen(false)}

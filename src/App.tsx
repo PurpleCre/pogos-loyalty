@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/hooks/useAuth";
 import { OfflineIndicator } from "@/components/ui/offline-indicator";
+import { SupportChatbot } from "@/components/support/support-chatbot";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Auth from "./pages/Auth";
@@ -14,6 +15,8 @@ import Admin from "./pages/Admin";
 import Profile from "./pages/Profile";
 import Rewards from "./pages/Rewards";
 import TransactionHistory from "./pages/TransactionHistory";
+import Achievements from "./pages/Achievements";
+import Referrals from "./pages/Referrals";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,6 +43,7 @@ const App = () => {
             <Toaster />
             <Sonner />
             <OfflineIndicator />
+            <SupportChatbot />
             <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
@@ -49,6 +53,8 @@ const App = () => {
               <Route path="/profile" element={<Profile />} />
               <Route path="/rewards" element={<Rewards />} />
               <Route path="/transactions" element={<TransactionHistory />} />
+              <Route path="/achievements" element={<Achievements />} />
+              <Route path="/referrals" element={<Referrals />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
