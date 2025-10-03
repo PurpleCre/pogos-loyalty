@@ -8,36 +8,36 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Pogo's Brand Colors - Teal and turquoise theme */
-    --background: 180 20% 99%;
-    --foreground: 180 20% 10%;
+    /* Pogo's Brand Colors - Teal-first refreshed palette */
+    --background: 200 20% 98%;
+    --foreground: 210 15% 12%;
 
     --card: 0 0% 100%;
-    --card-foreground: 180 20% 10%;
+    --card-foreground: 210 15% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 180 20% 10%;
+    --popover-foreground: 210 15% 12%;
 
-    /* Primary: Vibrant teal */
+    /* Primary: Vibrant teal (kept) */
     --primary: 174 62% 45%;
     --primary-foreground: 0 0% 100%;
     --primary-glow: 174 62% 55%;
 
-    /* Secondary: Warm coral accent */
-    --secondary: 16 90% 62%;
+    /* Secondary: Complimentary violet */
+    --secondary: 264 65% 58%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 180 15% 96%;
-    --muted-foreground: 180 8% 40%;
+    --muted: 210 16% 95%;
+    --muted-foreground: 210 8% 38%;
 
-    --accent: 174 35% 96%;
-    --accent-foreground: 180 20% 10%;
+    --accent: 210 20% 97%;
+    --accent-foreground: 210 15% 15%;
 
-    --destructive: 0 75% 55%;
+    --destructive: 0 72% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 180 12% 90%;
-    --input: 180 12% 94%;
+    --border: 210 14% 90%;
+    --input: 210 14% 93%;
     --ring: 174 62% 45%;
 
     /* Success teal for points/rewards */
@@ -46,66 +46,66 @@ All colors MUST be HSL.
 
     /* Custom gradients */
     --gradient-primary: linear-gradient(135deg, hsl(174 64% 42%), hsl(174 64% 52%));
-    --gradient-secondary: linear-gradient(135deg, hsl(16 85% 58%), hsl(16 85% 68%));
-    --gradient-warm: linear-gradient(135deg, hsl(180 30% 96%), hsl(0 0% 100%));
+    --gradient-secondary: linear-gradient(135deg, hsl(264 65% 55%), hsl(264 65% 65%));
+    --gradient-warm: linear-gradient(135deg, hsl(210 30% 96%), hsl(0 0% 100%));
 
     /* Shadows with brand colors */
     --shadow-primary: 0 10px 30px -10px hsl(174 64% 42% / 0.25);
-    --shadow-secondary: 0 10px 30px -10px hsl(16 85% 58% / 0.25);
-    --shadow-soft: 0 4px 20px hsl(180 15% 12% / 0.08);
+    --shadow-secondary: 0 10px 30px -10px hsl(264 65% 55% / 0.25);
+    --shadow-soft: 0 4px 20px hsl(210 15% 12% / 0.08);
 
     --radius: 1rem;
 
     --sidebar-background: 0 0% 98%;
-
+    
     --sidebar-foreground: 240 5.3% 26.1%;
-
+    
     --sidebar-primary: 240 5.9% 10%;
-
+    
     --sidebar-primary-foreground: 0 0% 98%;
-
+    
     --sidebar-accent: 240 4.8% 95.9%;
-
+    
     --sidebar-accent-foreground: 240 5.9% 10%;
-
+    
     --sidebar-border: 220 13% 91%;
-
+    
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    /* Dark mode with teal accents - optimized contrast */
-    --background: 180 12% 8%;
-    --foreground: 180 8% 96%;
+    /* Dark mode with teal accents - improved contrast */
+    --background: 210 15% 8%;
+    --foreground: 210 15% 96%;
 
-    --card: 180 10% 12%;
-    --card-foreground: 180 8% 96%;
+    --card: 210 12% 12%;
+    --card-foreground: 210 15% 96%;
 
-    --popover: 180 12% 10%;
-    --popover-foreground: 180 8% 96%;
+    --popover: 210 12% 10%;
+    --popover-foreground: 210 15% 96%;
 
     --primary: 174 62% 55%;
-    --primary-foreground: 180 12% 8%;
+    --primary-foreground: 210 15% 8%;
     --primary-glow: 174 62% 65%;
 
-    --secondary: 16 88% 65%;
-    --secondary-foreground: 180 12% 8%;
+    --secondary: 264 65% 64%;
+    --secondary-foreground: 210 15% 8%;
 
-    --muted: 180 8% 18%;
-    --muted-foreground: 180 6% 65%;
+    --muted: 210 10% 18%;
+    --muted-foreground: 210 10% 72%;
 
-    --accent: 180 10% 16%;
-    --accent-foreground: 180 8% 96%;
+    --accent: 210 10% 16%;
+    --accent-foreground: 210 15% 96%;
 
-    --destructive: 0 75% 60%;
+    --destructive: 0 70% 58%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 180 8% 20%;
-    --input: 180 8% 16%;
+    --border: 210 10% 22%;
+    --input: 210 10% 18%;
     --ring: 174 62% 55%;
 
     --success: 158 62% 52%;
-    --success-foreground: 180 12% 8%;
+    --success-foreground: 210 15% 8%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
