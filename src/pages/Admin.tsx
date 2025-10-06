@@ -52,12 +52,14 @@ export default function Admin() {
         </div>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="rewards">Rewards</TabsTrigger>
             <TabsTrigger value="transactions">Transactions</TabsTrigger>
-            <TabsTrigger value="notifications">Notifications</TabsTrigger>
+            <TabsTrigger value="notifications">Push</TabsTrigger>
+            <TabsTrigger value="announcements">Announce</TabsTrigger>
+            <TabsTrigger value="email">Email</TabsTrigger>
           </TabsList>
           
           <TabsContent value="overview" className="space-y-4">

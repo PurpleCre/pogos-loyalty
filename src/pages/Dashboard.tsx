@@ -5,6 +5,8 @@ import { MobileHeader } from "@/components/layout/mobile-header";
 import { LoyaltyOverview } from "@/components/home/loyalty-overview";
 import { PromotionalBanner } from "@/components/home/promotional-banner";
 import { AchievementShare } from "@/components/social/achievement-share";
+import { AnnouncementsBanner } from "@/components/home/announcements-banner";
+import { GiftPointsDialog } from "@/components/social/gift-points-dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { QRScanner } from "@/components/qr/qr-scanner";
 import { useAuth } from "@/hooks/useAuth";
@@ -152,11 +154,17 @@ export default function Dashboard() {
           </div>
         </div>
 
+        <AnnouncementsBanner />
+
         <LoyaltyOverview 
           currentPoints={currentPoints}
           nextRewardPoints={nextRewardPoints}
           nextRewardName={nextRewardName}
         />
+
+        <div className="flex justify-end">
+          <GiftPointsDialog />
+        </div>
 
         <section>
           <h2 className="text-xl font-bold mb-4">Quick Actions</h2>

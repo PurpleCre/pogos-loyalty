@@ -47,6 +47,39 @@ export type Database = {
         }
         Relationships: []
       }
+      announcements: {
+        Row: {
+          active: boolean
+          created_at: string
+          created_by: string
+          expires_at: string | null
+          id: string
+          message: string
+          title: string
+          type: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          created_by: string
+          expires_at?: string | null
+          id?: string
+          message: string
+          title: string
+          type?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          created_by?: string
+          expires_at?: string | null
+          id?: string
+          message?: string
+          title?: string
+          type?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           badge: string | null
@@ -89,6 +122,36 @@ export type Database = {
           sent_by?: string | null
           sent_to?: string | null
           title?: string
+        }
+        Relationships: []
+      }
+      point_gifts: {
+        Row: {
+          created_at: string
+          id: string
+          message: string | null
+          points: number
+          recipient_id: string
+          sender_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          points: number
+          recipient_id: string
+          sender_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          points?: number
+          recipient_id?: string
+          sender_id?: string
+          status?: string
         }
         Relationships: []
       }
