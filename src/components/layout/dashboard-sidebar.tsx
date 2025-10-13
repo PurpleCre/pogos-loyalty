@@ -1,5 +1,5 @@
-import { QrCode, Gift, Trophy, Users, User, LogOut, Shield } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { QrCode, Gift, Trophy, Users, User, LogOut, Shield, Home } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -15,20 +15,19 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { useAdmin } from "@/hooks/useAdmin";
 import { toast } from "@/hooks/use-toast";
+import pogosLogo from "@/assets/pogos-logo.jpg";
 
-const quickActions = [
-  { title: "Scan QR", url: "/dashboard?action=scan", icon: QrCode, action: "scan" },
-  { title: "View Rewards", url: "/rewards", icon: Gift },
+const navigation = [
+  { title: "Dashboard", url: "/dashboard", icon: Home },
+  { title: "Rewards", url: "/rewards", icon: Gift },
   { title: "Achievements", url: "/achievements", icon: Trophy },
-  { title: "Refer Friends", url: "/referrals", icon: Users },
-];
-
-const userActions = [
+  { title: "Referrals", url: "/referrals", icon: Users },
   { title: "Profile", url: "/profile", icon: User },
 ];
 
 export function DashboardSidebar() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { signOut } = useAuth();
   const { isAdmin } = useAdmin();
   const { open } = useSidebar();
@@ -46,31 +45,44 @@ export function DashboardSidebar() {
     }
   };
 
-  const handleNavigation = (item: typeof quickActions[0]) => {
-    if (item.action === "scan") {
-      // Dispatch custom event for QR scanner
-      window.dispatchEvent(new CustomEvent("open-qr-scanner"));
-    } else {
-      navigate(item.url);
-    }
+  const handleScanQR = () => {
+    window.dispatchEvent(new CustomEvent("open-qr-scanner"));
   };
+
+  const isActiveRoute = (url: string) => location.pathname === url;
 
   return (
     <Sidebar className="border-r border-border" collapsible="icon">
-      <div className="p-4 border-b">
+      <div className="p-4 border-b flex items-center gap-3">
         <SidebarTrigger />
+        {open && (
+          <div className="flex items-center gap-2">
+            <img 
+              src={pogosLogo} 
+              alt="Pogo's" 
+              className="h-8 w-8 rounded-lg"
+            />
+            <span className="font-bold text-lg">Pogo's</span>
+          </div>
+        )}
       </div>
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Quick Actions</SidebarGroupLabel>
+          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {quickActions.map((item) => {
+              {navigation.map((item) => {
                 const Icon = item.icon;
+                const isActive = isActiveRoute(item.url);
                 return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton onClick={() => handleNavigation(item)} tooltip={item.title}>
+                    <SidebarMenuButton 
+                      onClick={() => navigate(item.url)} 
+                      tooltip={item.title}
+                      isActive={isActive}
+                      className={isActive ? "bg-primary/10 text-primary" : ""}
+                    >
                       <Icon className="h-4 w-4" />
                       {open && <span>{item.title}</span>}
                     </SidebarMenuButton>
@@ -82,24 +94,24 @@ export function DashboardSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel>Account</SidebarGroupLabel>
+          <SidebarGroupLabel>Actions</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {userActions.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton onClick={() => navigate(item.url)} tooltip={item.title}>
-                      <Icon className="h-4 w-4" />
-                      {open && <span>{item.title}</span>}
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={handleScanQR} tooltip="Scan QR Code">
+                  <QrCode className="h-4 w-4" />
+                  {open && <span>Scan QR</span>}
+                </SidebarMenuButton>
+              </SidebarMenuItem>
               
               {isAdmin && (
                 <SidebarMenuItem>
-                  <SidebarMenuButton onClick={() => navigate('/admin')} tooltip="Admin Panel">
+                  <SidebarMenuButton 
+                    onClick={() => navigate('/admin')} 
+                    tooltip="Admin Panel"
+                    isActive={isActiveRoute('/admin')}
+                    className={isActiveRoute('/admin') ? "bg-primary/10 text-primary" : ""}
+                  >
                     <Shield className="h-4 w-4" />
                     {open && <span>Admin Panel</span>}
                   </SidebarMenuButton>

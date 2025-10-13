@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { MobileHeader } from "@/components/layout/mobile-header";
 import { LoyaltyOverview } from "@/components/home/loyalty-overview";
 import { PromotionalBanner } from "@/components/home/promotional-banner";
 import { AchievementShare } from "@/components/social/achievement-share";
@@ -15,8 +14,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { useRewards } from "@/hooks/useRewards";
 import { useAdmin } from "@/hooks/useAdmin";
 import { toast } from "@/hooks/use-toast";
-import { User, Trophy, Users, QrCode, Gift } from "lucide-react";
+import { User, Trophy, Users, QrCode, Gift, Bell } from "lucide-react";
 import pogosLogo from "@/assets/pogos-logo.jpg";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export default function Dashboard() {
   const { user, signOut, loading: authLoading } = useAuth();
@@ -125,106 +125,95 @@ export default function Dashboard() {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-gradient-warm">
+      <div className="min-h-screen flex w-full">
         <DashboardSidebar />
         <SidebarInset className="flex-1">
-          <MobileHeader
-        showBackButton={false}
-        showMenu={true}
-        showNotifications={true}
-        onMenuClick={handleMenuClick}
-        onNotificationClick={handleNotificationClick}
-      />
-      
-      <div className="p-4 space-y-6">
-        <div className="text-center py-4">
-          <img 
-            src={pogosLogo} 
-            alt="Pogo's Restaurant" 
-            className="h-12 mx-auto mb-3 rounded-lg"
-          />
-          <h1 className="text-2xl font-bold text-foreground">Welcome back!</h1>
-          <p className="text-muted-foreground">Ready to earn more points?</p>
-        </div>
-
-        <div className="flex justify-between items-center">
-          <div>
-            <h2 className="text-xl font-semibold">Hello {user.email?.split('@')[0]}!</h2>
-            <p className="text-muted-foreground">Ready to earn more points?</p>
+          <div className="sticky top-0 z-40 bg-background/80 backdrop-blur-lg border-b border-border">
+            <div className="flex items-center justify-between p-4">
+              <div className="flex items-center gap-3">
+                <img 
+                  src={pogosLogo} 
+                  alt="Pogo's Restaurant" 
+                  className="h-10 w-10 rounded-lg shadow-sm"
+                />
+                <div>
+                  <h1 className="text-lg font-bold">Welcome back!</h1>
+                  <p className="text-sm text-muted-foreground">Hello {user.email?.split('@')[0]}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <ThemeToggle />
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={handleNotificationClick}
+                  className="relative"
+                >
+                  <Bell className="h-4 w-4" />
+                  <span className="absolute -top-1 -right-1 h-2.5 w-2.5 bg-secondary rounded-full" />
+                </Button>
+              </div>
+            </div>
           </div>
-          <div className="flex space-x-2">
-            <Button variant="outline" size="sm" onClick={() => navigate('/profile')}>
-              <User className="w-4 h-4 mr-1" />
-              Profile
-            </Button>
-            {isAdmin && (
-              <Button variant="outline" size="sm" onClick={() => navigate('/admin')}>
-                Admin Panel
-              </Button>
-            )}
-            <Button variant="outline" size="sm" onClick={handleSignOut}>
-              Sign Out
-            </Button>
-          </div>
-        </div>
+          
+          <div className="p-6 space-y-8 max-w-7xl mx-auto">
+            <AnnouncementsBanner />
 
-        <AnnouncementsBanner />
+            <LoyaltyOverview 
+              currentPoints={currentPoints}
+              nextRewardPoints={nextRewardPoints}
+              nextRewardName={nextRewardName}
+            />
 
-        <LoyaltyOverview 
-          currentPoints={currentPoints}
-          nextRewardPoints={nextRewardPoints}
-          nextRewardName={nextRewardName}
-        />
-
-        <div className="flex justify-end">
-          <GiftPointsDialog />
-        </div>
+            <div className="flex justify-end">
+              <GiftPointsDialog />
+            </div>
 
         <section>
-          <h2 className="text-xl font-bold mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-2 gap-4">
+          <h2 className="text-2xl font-bold mb-6">Quick Actions</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card 
-              className="p-4 cursor-pointer hover:shadow-lg transition-shadow"
+              className="group p-6 cursor-pointer hover:shadow-primary hover:border-primary/50 transition-all duration-300"
               onClick={handleScanQR}
             >
-              <div className="flex flex-col items-center gap-2 text-center">
-                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <QrCode className="h-6 w-6 text-primary" />
+              <div className="flex flex-col items-center gap-3 text-center">
+                <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center group-hover:scale-110 transition-transform shadow-primary">
+                  <QrCode className="h-7 w-7 text-primary-foreground" />
                 </div>
-                <span className="font-medium">Scan QR</span>
+                <span className="font-semibold">Scan QR</span>
               </div>
             </Card>
             <Card 
-              className="p-4 cursor-pointer hover:shadow-lg transition-shadow"
+              className="group p-6 cursor-pointer hover:shadow-secondary hover:border-secondary/50 transition-all duration-300"
               onClick={handleViewRewards}
             >
-              <div className="flex flex-col items-center gap-2 text-center">
-                <div className="h-12 w-12 rounded-full bg-secondary/10 flex items-center justify-center">
-                  <Gift className="h-6 w-6 text-secondary" />
+              <div className="flex flex-col items-center gap-3 text-center">
+                <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-secondary to-purple-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-secondary">
+                  <Gift className="h-7 w-7 text-secondary-foreground" />
                 </div>
-                <span className="font-medium">View Rewards</span>
+                <span className="font-semibold">View Rewards</span>
               </div>
             </Card>
             <Card 
-              className="p-4 cursor-pointer hover:shadow-lg transition-shadow"
+              className="group p-6 cursor-pointer hover:shadow-primary hover:border-primary/50 transition-all duration-300"
               onClick={() => navigate('/achievements')}
             >
-              <div className="flex flex-col items-center gap-2 text-center">
-                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Trophy className="h-6 w-6 text-primary" />
+              <div className="flex flex-col items-center gap-3 text-center">
+                <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-amber-500 to-yellow-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Trophy className="h-7 w-7 text-white" />
                 </div>
-                <span className="font-medium">Achievements</span>
+                <span className="font-semibold">Achievements</span>
               </div>
             </Card>
             <Card 
-              className="p-4 cursor-pointer hover:shadow-lg transition-shadow"
+              className="group p-6 cursor-pointer hover:shadow-secondary hover:border-secondary/50 transition-all duration-300"
               onClick={() => navigate('/referrals')}
             >
-              <div className="flex flex-col items-center gap-2 text-center">
-                <div className="h-12 w-12 rounded-full bg-secondary/10 flex items-center justify-center">
-                  <Users className="h-6 w-6 text-secondary" />
+              <div className="flex flex-col items-center gap-3 text-center">
+                <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Users className="h-7 w-7 text-white" />
                 </div>
-                <span className="font-medium">Refer Friends</span>
+                <span className="font-semibold">Refer Friends</span>
               </div>
             </Card>
           </div>
@@ -256,22 +245,22 @@ export default function Dashboard() {
           </Card>
         </section>
 
-        <div className="bg-card rounded-lg p-4 shadow-soft">
-          <div className="flex justify-between items-center mb-3">
-            <h3 className="font-semibold">Recent Activity</h3>
+        <section>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold">Recent Activity</h2>
             <Button 
-              variant="ghost" 
+              variant="outline"
               size="sm" 
               onClick={() => navigate('/transactions')}
-              className="text-primary"
             >
               View All
             </Button>
           </div>
-          <div className="space-y-2">
-            {transactions.length > 0 ? (
-              transactions.slice(0, 3).map((transaction) => (
-                <div key={transaction.id} className="flex justify-between items-center py-2 border-b border-border last:border-0">
+          <Card className="p-6">
+            <div className="space-y-4">
+              {transactions.length > 0 ? (
+                transactions.slice(0, 5).map((transaction) => (
+                  <div key={transaction.id} className="flex justify-between items-center py-3 border-b border-border last:border-0">
                   <div>
                     <p className="text-sm font-medium">{transaction.items.join(', ')}</p>
                     <p className="text-xs text-muted-foreground">
@@ -290,16 +279,17 @@ export default function Dashboard() {
                         <p className="text-xs text-muted-foreground">Redeemed</p>
                       </>
                     )}
+                    </div>
                   </div>
-                </div>
-              ))
-            ) : (
-              <p className="text-sm text-muted-foreground text-center py-4">
-                No recent activity. Start earning points by making purchases!
-              </p>
-            )}
-          </div>
-        </div>
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-8">
+                  No recent activity. Start earning points by making purchases!
+                </p>
+              )}
+            </div>
+          </Card>
+        </section>
       </div>
 
           <QRScanner
