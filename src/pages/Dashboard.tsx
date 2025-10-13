@@ -9,6 +9,8 @@ import { AnnouncementsBanner } from "@/components/home/announcements-banner";
 import { GiftPointsDialog } from "@/components/social/gift-points-dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { QRScanner } from "@/components/qr/qr-scanner";
+import { DashboardSidebar } from "@/components/layout/dashboard-sidebar";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
 import { useRewards } from "@/hooks/useRewards";
 import { useAdmin } from "@/hooks/useAdmin";
@@ -28,6 +30,15 @@ export default function Dashboard() {
       navigate('/auth');
     }
   }, [user, authLoading, navigate]);
+
+  useEffect(() => {
+    const handleOpenQRScanner = () => {
+      setIsQRScannerOpen(true);
+    };
+    
+    window.addEventListener("open-qr-scanner", handleOpenQRScanner);
+    return () => window.removeEventListener("open-qr-scanner", handleOpenQRScanner);
+  }, []);
 
   if (authLoading || rewardsLoading) {
     return (
@@ -113,8 +124,11 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-warm pb-20">
-      <MobileHeader 
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-gradient-warm">
+        <DashboardSidebar />
+        <SidebarInset className="flex-1">
+          <MobileHeader
         showBackButton={false}
         showMenu={true}
         showNotifications={true}
@@ -288,11 +302,13 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <QRScanner
-        isOpen={isQRScannerOpen}
-        onClose={() => setIsQRScannerOpen(false)}
-        onScanSuccess={handleQRScanSuccess}
-      />
-    </div>
+          <QRScanner
+            isOpen={isQRScannerOpen}
+            onClose={() => setIsQRScannerOpen(false)}
+            onScanSuccess={handleQRScanSuccess}
+          />
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   );
 }
