@@ -76,15 +76,20 @@ export function QRScanner({ isOpen, onClose, onScanSuccess }: QRScannerProps) {
               title: "QR Code Scanned!",
               description: code,
             });
-            onClose();
           }
-        } catch (err) {
+        } catch (err: any) {
           console.error("Native scan error:", err);
-          toast({
-            title: "Scan Failed",
-            description: "Unable to scan QR code.",
-            variant: "destructive",
-          });
+          // Don't show error toast if user cancelled
+          if (err?.message !== "scan canceled" && !err?.message?.includes("cancel")) {
+            toast({
+              title: "Scan Failed",
+              description: "Unable to scan QR code.",
+              variant: "destructive",
+            });
+          }
+        } finally {
+          // Always close dialog after scan attempt
+          onClose();
         }
       } else {
         // ✅ Web fallback with qr-scanner
