@@ -9,7 +9,7 @@ import { GiftPointsDialog } from "@/components/social/gift-points-dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { QRScanner } from "@/components/qr/qr-scanner";
 import { DashboardSidebar } from "@/components/layout/dashboard-sidebar";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
 import { useRewards } from "@/hooks/useRewards";
 import { useAdmin } from "@/hooks/useAdmin";
@@ -17,12 +17,14 @@ import { toast } from "@/hooks/use-toast";
 import { User, Trophy, Users, QrCode, Gift, Bell } from "lucide-react";
 import pogosLogo from "@/assets/pogos-logo.jpg";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Dashboard() {
   const { user, signOut, loading: authLoading } = useAuth();
   const { userPoints, rewards, transactions, addPoints, loading: rewardsLoading } = useRewards();
   const { isAdmin } = useAdmin();
   const [isQRScannerOpen, setIsQRScannerOpen] = useState(false);
+  const [fullName, setFullName] = useState<string>("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,6 +32,24 @@ export default function Dashboard() {
       navigate('/auth');
     }
   }, [user, authLoading, navigate]);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (user) {
+        const { data } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', user.id)
+          .single();
+        
+        if (data?.full_name) {
+          setFullName(data.full_name);
+        }
+      }
+    };
+    
+    fetchProfile();
+  }, [user]);
 
   useEffect(() => {
     const handleOpenQRScanner = () => {
@@ -131,6 +151,7 @@ export default function Dashboard() {
           <div className="sticky top-0 z-40 bg-background/80 backdrop-blur-lg border-b border-border">
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center gap-3">
+                <SidebarTrigger />
                 <img 
                   src={pogosLogo} 
                   alt="Pogo's Restaurant" 
@@ -138,7 +159,9 @@ export default function Dashboard() {
                 />
                 <div>
                   <h1 className="text-lg font-bold">Welcome back!</h1>
-                  <p className="text-sm text-muted-foreground">Hello {user.email?.split('@')[0]}</p>
+                  <p className="text-sm text-muted-foreground">
+                    Hello {fullName || user.email?.split('@')[0]}
+                  </p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
