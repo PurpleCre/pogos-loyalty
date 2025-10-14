@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "YOUR_PROJECT_NUMBER",
+    "project_number": "574604514029",
     "project_id": "pogos-loyalty",
-    "storage_bucket": "pogos-loyalty.appspot.com"
+    "storage_bucket": "pogos-loyalty.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "YOUR_ANDROID_APP_ID",
+        "mobilesdk_app_id": "1:574604514029:android:0a710938a383c54bccf2e4",
         "android_client_info": {
           "package_name": "com.pogosgpc.app"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "YOUR_API_KEY"
+          "current_key": "AIzaSyAQrVXrykujNoJIhVOiH3bZkZw0c37_kBg"
         }
       ],
       "services": {
