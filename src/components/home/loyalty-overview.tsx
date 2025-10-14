@@ -27,7 +27,7 @@ export function LoyaltyOverview({
             className="text-primary-foreground"
           />
         </div>
-        <div className="h-16 w-16 bg-white/20 rounded-full flex items-center justify-center">
+        <div className="h-16 w-16 bg-primary-foreground/20 rounded-full flex items-center justify-center backdrop-blur-sm">
           <Gift className="h-8 w-8" />
         </div>
       </div>

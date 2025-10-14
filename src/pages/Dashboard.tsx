@@ -177,7 +177,7 @@ export default function Dashboard() {
               onClick={handleScanQR}
             >
               <div className="flex flex-col items-center gap-3 text-center">
-                <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center group-hover:scale-110 transition-transform shadow-primary">
+                <div className="h-14 w-14 rounded-2xl bg-gradient-primary flex items-center justify-center group-hover:scale-110 transition-transform shadow-primary">
                   <QrCode className="h-7 w-7 text-primary-foreground" />
                 </div>
                 <span className="font-semibold">Scan QR</span>
@@ -188,30 +188,30 @@ export default function Dashboard() {
               onClick={handleViewRewards}
             >
               <div className="flex flex-col items-center gap-3 text-center">
-                <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-secondary to-purple-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-secondary">
+                <div className="h-14 w-14 rounded-2xl bg-gradient-secondary flex items-center justify-center group-hover:scale-110 transition-transform shadow-secondary">
                   <Gift className="h-7 w-7 text-secondary-foreground" />
                 </div>
                 <span className="font-semibold">View Rewards</span>
               </div>
             </Card>
             <Card 
-              className="group p-6 cursor-pointer hover:shadow-primary hover:border-primary/50 transition-all duration-300"
+              className="group p-6 cursor-pointer hover:shadow-soft hover:border-success/50 transition-all duration-300"
               onClick={() => navigate('/achievements')}
             >
               <div className="flex flex-col items-center gap-3 text-center">
-                <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-amber-500 to-yellow-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Trophy className="h-7 w-7 text-white" />
+                <div className="h-14 w-14 rounded-2xl bg-success flex items-center justify-center group-hover:scale-110 transition-transform shadow-soft">
+                  <Trophy className="h-7 w-7 text-success-foreground" />
                 </div>
                 <span className="font-semibold">Achievements</span>
               </div>
             </Card>
             <Card 
-              className="group p-6 cursor-pointer hover:shadow-secondary hover:border-secondary/50 transition-all duration-300"
+              className="group p-6 cursor-pointer hover:shadow-primary hover:border-primary/50 transition-all duration-300"
               onClick={() => navigate('/referrals')}
             >
               <div className="flex flex-col items-center gap-3 text-center">
-                <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Users className="h-7 w-7 text-white" />
+                <div className="h-14 w-14 rounded-2xl bg-primary flex items-center justify-center group-hover:scale-110 transition-transform shadow-primary">
+                  <Users className="h-7 w-7 text-primary-foreground" />
                 </div>
                 <span className="font-semibold">Refer Friends</span>
               </div>
@@ -270,12 +270,12 @@ export default function Dashboard() {
                   <div className="text-right">
                     {transaction.transaction_type === 'purchase' ? (
                       <>
-                        <p className="text-sm font-medium text-green-600">+{transaction.points_earned} points</p>
+                        <p className="text-sm font-medium text-success">+{transaction.points_earned} points</p>
                         <p className="text-xs text-muted-foreground">${transaction.amount}</p>
                       </>
                     ) : (
                       <>
-                        <p className="text-sm font-medium text-purple-600">-{transaction.points_redeemed} points</p>
+                        <p className="text-sm font-medium text-secondary">-{transaction.points_redeemed} points</p>
                         <p className="text-xs text-muted-foreground">Redeemed</p>
                       </>
                     )}
