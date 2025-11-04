@@ -26,7 +26,8 @@ export function MobileHeader({
 }: MobileHeaderProps) {
   return (
     <header className={cn(
-      "flex items-center justify-between p-4 bg-background/95 backdrop-blur-sm border-b border-border sticky top-0 z-50",
+      "flex items-center justify-between p-4 bg-background/95 backdrop-blur-md border-b border-border sticky top-0 z-50 shadow-soft animate-in slide-in-from-top duration-300",
+      "safe-area-inset-top",
       className
     )}>
       <div className="flex items-center gap-3">
@@ -35,9 +36,9 @@ export function MobileHeader({
             variant="ghost"
             size="icon"
             onClick={onBackClick}
-            className="h-8 w-8"
+            className="h-10 w-10"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-5 w-5" />
           </Button>
         )}
         {showMenu && !showBackButton && (
@@ -45,13 +46,13 @@ export function MobileHeader({
             variant="ghost"
             size="icon"
             onClick={onMenuClick}
-            className="h-8 w-8"
+            className="h-10 w-10"
           >
-            <Menu className="h-4 w-4" />
+            <Menu className="h-5 w-5" />
           </Button>
         )}
         {title && (
-          <h1 className="text-lg font-bold text-foreground">{title}</h1>
+          <h1 className="text-lg font-bold text-foreground truncate">{title}</h1>
         )}
       </div>
       
@@ -62,10 +63,10 @@ export function MobileHeader({
             variant="ghost"
             size="icon"
             onClick={onNotificationClick}
-            className="h-8 w-8 relative"
+            className="h-10 w-10 relative"
           >
-            <Bell className="h-4 w-4" />
-            <div className="absolute -top-1 -right-1 h-3 w-3 bg-secondary rounded-full border-2 border-background" />
+            <Bell className="h-5 w-5" />
+            <div className="absolute top-1 right-1 h-2.5 w-2.5 bg-secondary rounded-full border-2 border-background animate-pulse" />
           </Button>
         )}
       </div>

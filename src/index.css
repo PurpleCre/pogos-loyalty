@@ -50,9 +50,10 @@ All colors MUST be HSL.
     --gradient-warm: linear-gradient(135deg, hsl(210 30% 96%), hsl(0 0% 100%));
 
     /* Shadows with brand colors */
-    --shadow-primary: 0 10px 30px -10px hsl(174 64% 42% / 0.25);
-    --shadow-secondary: 0 10px 30px -10px hsl(264 65% 55% / 0.25);
+    --shadow-primary: 0 10px 30px -10px hsl(174 64% 42% / 0.3);
+    --shadow-secondary: 0 10px 30px -10px hsl(264 65% 55% / 0.3);
     --shadow-soft: 0 4px 20px hsl(210 15% 12% / 0.08);
+    --shadow-glow: 0 0 40px hsl(174 64% 42% / 0.2);
 
     --radius: 1rem;
 
@@ -124,5 +125,34 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+
+  /* Safe area insets for mobile notches */
+  .safe-area-inset-top {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+
+  .safe-area-inset-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Better touch targets for mobile */
+  button, a, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+@layer utilities {
+  /* Pull to refresh visual feedback */
+  .pull-to-refresh {
+    overscroll-behavior-y: contain;
   }
 }

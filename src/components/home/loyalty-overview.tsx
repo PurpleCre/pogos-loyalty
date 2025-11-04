@@ -17,7 +17,7 @@ export function LoyaltyOverview({
   const progress = (currentPoints / nextRewardPoints) * 100;
 
   return (
-    <LoyaltyCard variant="primary" className="p-6 text-primary-foreground">
+    <LoyaltyCard variant="primary" className="p-6 text-primary-foreground animate-in fade-in slide-in-from-left duration-500">
       <div className="flex items-center justify-between mb-4">
         <div>
           <h2 className="text-lg font-bold mb-1">Your Points</h2>
@@ -27,7 +27,7 @@ export function LoyaltyOverview({
             className="text-primary-foreground"
           />
         </div>
-        <div className="h-16 w-16 bg-primary-foreground/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+        <div className="h-16 w-16 bg-primary-foreground/20 rounded-full flex items-center justify-center backdrop-blur-sm shadow-glow animate-pulse">
           <Gift className="h-8 w-8" />
         </div>
       </div>
@@ -37,7 +37,7 @@ export function LoyaltyOverview({
           <span>{currentPoints} points</span>
           <span>{nextRewardPoints} points</span>
         </div>
-        <Progress value={progress} className="h-2" />
+        <Progress value={progress} className="h-2.5" />
         <p className="text-sm opacity-90">
           {nextRewardPoints - currentPoints} more points until {nextRewardName}
         </p>

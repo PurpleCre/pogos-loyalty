@@ -11,11 +11,11 @@ export function LoyaltyCard({ className, children, variant = "default", ...props
   return (
     <Card
       className={cn(
-        "relative overflow-hidden border-0 shadow-soft",
+        "relative overflow-hidden border-0 shadow-soft hover:shadow-lg transition-all duration-300 animate-in fade-in",
         {
           "bg-card": variant === "default",
-          "bg-gradient-primary shadow-primary": variant === "primary",
-          "bg-gradient-secondary shadow-secondary": variant === "secondary",
+          "bg-gradient-primary shadow-primary text-primary-foreground": variant === "primary",
+          "bg-gradient-secondary shadow-secondary text-secondary-foreground": variant === "secondary",
         },
         className
       )}

@@ -73,12 +73,12 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen bg-gradient-warm flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md animate-in fade-in slide-in-from-bottom duration-500">
         <CardHeader className="space-y-1 text-center">
           <img 
             src={pogosLogo} 
             alt="Pogo's Restaurant" 
-            className="h-16 mx-auto mb-4 rounded-lg"
+            className="h-16 mx-auto mb-4 rounded-lg shadow-lg hover:scale-105 transition-transform duration-300"
           />
           <CardTitle className="text-2xl">
             {isLogin ? 'Welcome back' : 'Create account'}
@@ -93,7 +93,7 @@ export default function Auth() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
-              <div className="space-y-2">
+              <div className="space-y-2 animate-in slide-in-from-top duration-300">
                 <Label htmlFor="fullName">Full Name</Label>
                 <Input
                   id="fullName"
@@ -102,6 +102,7 @@ export default function Auth() {
                   onChange={(e) => setFullName(e.target.value)}
                   required={!isLogin}
                   placeholder="Enter your full name"
+                  className="transition-all duration-200 focus:shadow-primary"
                 />
               </div>
             )}
@@ -114,6 +115,7 @@ export default function Auth() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="Enter your email"
+                className="transition-all duration-200 focus:shadow-primary"
               />
             </div>
             <div className="space-y-2">
@@ -126,22 +128,40 @@ export default function Auth() {
                 required
                 placeholder="Enter your password"
                 minLength={6}
+                className="transition-all duration-200 focus:shadow-primary"
               />
+              {!isLogin && (
+                <p className="text-xs text-muted-foreground">
+                  Password must be at least 6 characters long
+                </p>
+              )}
             </div>
             <Button 
               type="submit" 
               className="w-full" 
               disabled={loading}
             >
-              {loading ? 'Loading...' : (isLogin ? 'Sign In' : 'Sign Up')}
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <div className="h-4 w-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
+                  {isLogin ? 'Signing in...' : 'Creating account...'}
+                </span>
+              ) : (
+                isLogin ? 'Sign In' : 'Sign Up'
+              )}
             </Button>
           </form>
           
           <div className="mt-4 text-center">
             <button
               type="button"
-              className="text-sm text-muted-foreground hover:text-primary"
-              onClick={() => setIsLogin(!isLogin)}
+              className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200"
+              onClick={() => {
+                setIsLogin(!isLogin);
+                setFullName('');
+                setEmail('');
+                setPassword('');
+              }}
             >
               {isLogin 
                 ? "Don't have an account? Sign up" 

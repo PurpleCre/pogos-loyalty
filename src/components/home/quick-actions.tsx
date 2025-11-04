@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { QrCode, Gift, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { haptics } from "@/utils/haptics";
 
 interface QuickActionsProps {
   onScanQR: () => void;
@@ -37,9 +38,18 @@ export function QuickActions({
   className 
 }: QuickActionsProps) {
   const handlers = {
-    scan: onScanQR,
-    rewards: onViewRewards,
-    order: onOrderNow,
+    scan: async () => {
+      await haptics.medium();
+      onScanQR();
+    },
+    rewards: async () => {
+      await haptics.light();
+      onViewRewards();
+    },
+    order: async () => {
+      await haptics.light();
+      onOrderNow();
+    },
   };
 
   return (
@@ -51,10 +61,10 @@ export function QuickActions({
             key={action.id}
             variant={action.variant}
             onClick={handlers[action.id as keyof typeof handlers]}
-            className="flex flex-col gap-2 h-20 shadow-soft"
+            className="flex flex-col gap-2 h-24 shadow-soft hover:scale-105 transition-all duration-200 hover:shadow-primary"
           >
-            <Icon className="h-5 w-5" />
-            <span className="text-sm">{action.label}</span>
+            <Icon className="h-6 w-6" />
+            <span className="text-xs font-medium">{action.label}</span>
           </Button>
         );
       })}

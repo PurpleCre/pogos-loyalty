@@ -72,6 +72,7 @@ export default {
         'primary': 'var(--shadow-primary)',
         'secondary': 'var(--shadow-secondary)',
         'soft': 'var(--shadow-soft)',
+        'glow': 'var(--shadow-glow)',
       },
       borderRadius: {
         lg: "var(--radius)",
