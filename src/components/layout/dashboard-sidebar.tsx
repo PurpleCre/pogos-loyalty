@@ -53,11 +53,11 @@ export function DashboardSidebar() {
   const isActiveRoute = (url: string) => location.pathname === url;
 
   return (
-    <Sidebar className="border-r border-border animate-in slide-in-from-left duration-300" collapsible="icon">
+    <Sidebar className="border-r border-border" collapsible="icon">
       <div className="p-4 border-b flex items-center gap-3">
-        <SidebarTrigger />
+        <SidebarTrigger className="flex-shrink-0" />
         {open && (
-          <div className="flex items-center gap-2 animate-in fade-in slide-in-from-left duration-200">
+          <div className="flex items-center gap-2">
             <img 
               src={pogosLogo} 
               alt="Pogo's" 
@@ -83,11 +83,11 @@ export function DashboardSidebar() {
                       tooltip={item.title}
                       isActive={isActive}
                       className={cn(
-                        "transition-all duration-200 hover:scale-105",
+                        "transition-all",
                         isActive && "bg-primary/10 text-primary shadow-soft"
                       )}
                     >
-                      <Icon className="h-5 w-5" />
+                      <Icon className="h-5 w-5 flex-shrink-0" />
                       {open && <span>{item.title}</span>}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -105,9 +105,9 @@ export function DashboardSidebar() {
                 <SidebarMenuButton 
                   onClick={handleScanQR} 
                   tooltip="Scan QR Code"
-                  className="transition-all duration-200 hover:scale-105 hover:text-primary"
+                  className="transition-all hover:text-primary"
                 >
-                  <QrCode className="h-5 w-5" />
+                  <QrCode className="h-5 w-5 flex-shrink-0" />
                   {open && <span>Scan QR</span>}
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -119,11 +119,11 @@ export function DashboardSidebar() {
                     tooltip="Admin Panel"
                     isActive={isActiveRoute('/admin')}
                     className={cn(
-                      "transition-all duration-200 hover:scale-105",
+                      "transition-all",
                       isActiveRoute('/admin') && "bg-primary/10 text-primary shadow-soft"
                     )}
                   >
-                    <Shield className="h-5 w-5" />
+                    <Shield className="h-5 w-5 flex-shrink-0" />
                     {open && <span>Admin Panel</span>}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -133,9 +133,9 @@ export function DashboardSidebar() {
                 <SidebarMenuButton 
                   onClick={handleSignOut} 
                   tooltip="Sign Out"
-                  className="transition-all duration-200 hover:scale-105 hover:text-destructive"
+                  className="transition-all hover:text-destructive"
                 >
-                  <LogOut className="h-5 w-5" />
+                  <LogOut className="h-5 w-5 flex-shrink-0" />
                   {open && <span>Sign Out</span>}
                 </SidebarMenuButton>
               </SidebarMenuItem>
