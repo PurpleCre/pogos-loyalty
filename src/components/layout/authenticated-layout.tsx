@@ -4,6 +4,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/layout/dashboard-sidebar";
 import { useAuth } from "@/hooks/useAuth";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { useBackButton } from "@/hooks/useBackButton";
 
 interface AuthenticatedLayoutProps {
   children: ReactNode;
@@ -12,6 +13,7 @@ interface AuthenticatedLayoutProps {
 export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  useBackButton();
 
   useEffect(() => {
     if (!loading && !user) {
