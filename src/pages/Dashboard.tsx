@@ -8,30 +8,21 @@ import { AnnouncementsBanner } from "@/components/home/announcements-banner";
 import { GiftPointsDialog } from "@/components/social/gift-points-dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { QRScanner } from "@/components/qr/qr-scanner";
-import { DashboardSidebar } from "@/components/layout/dashboard-sidebar";
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { AuthenticatedLayout } from "@/components/layout/authenticated-layout";
 import { useAuth } from "@/hooks/useAuth";
 import { useRewards } from "@/hooks/useRewards";
-import { useAdmin } from "@/hooks/useAdmin";
 import { toast } from "@/hooks/use-toast";
-import { User, Trophy, Users, QrCode, Gift, Bell } from "lucide-react";
+import { Trophy, Users, QrCode, Gift, Bell } from "lucide-react";
 import pogosLogo from "@/assets/pogos-logo.jpg";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { supabase } from "@/integrations/supabase/client";
 
 export default function Dashboard() {
-  const { user, signOut, loading: authLoading } = useAuth();
+  const { user } = useAuth();
   const { userPoints, rewards, transactions, addPoints, loading: rewardsLoading } = useRewards();
-  const { isAdmin } = useAdmin();
   const [isQRScannerOpen, setIsQRScannerOpen] = useState(false);
   const [fullName, setFullName] = useState<string>("");
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!authLoading && !user) {
-      navigate('/auth');
-    }
-  }, [user, authLoading, navigate]);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -59,25 +50,6 @@ export default function Dashboard() {
     window.addEventListener("open-qr-scanner", handleOpenQRScanner);
     return () => window.removeEventListener("open-qr-scanner", handleOpenQRScanner);
   }, []);
-
-  if (authLoading || rewardsLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-warm flex items-center justify-center">
-        <div className="text-center">
-          <img 
-            src={pogosLogo} 
-            alt="Pogo's Restaurant" 
-            className="h-16 mx-auto mb-4 rounded-lg"
-          />
-          <p className="text-muted-foreground">Loading your rewards...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return null;
-  }
 
   const currentPoints = userPoints?.current_points || 0;
   const nextReward = rewards.find(r => r.points_cost > currentPoints);
@@ -119,209 +91,185 @@ export default function Dashboard() {
     });
   };
 
-  const handleSignOut = async () => {
-    const { error } = await signOut();
-    if (error) {
-      toast({
-        title: "Error",
-        description: "Failed to sign out",
-        variant: "destructive",
-      });
-    } else {
-      navigate('/auth');
-    }
-  };
-
-  const handleMenuClick = () => {
-    toast({
-      title: "Menu",
-      description: "Navigate using the buttons in the user section below",
-    });
-  };
-
   const handleNotificationClick = () => {
     navigate('/profile');
   };
 
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <DashboardSidebar />
-        <SidebarInset className="flex-1">
-          <div className="sticky top-0 z-40 bg-background/80 backdrop-blur-lg border-b border-border">
-            <div className="flex items-center justify-between p-4">
-              <div className="flex items-center gap-3">
-                <SidebarTrigger />
-                <img 
-                  src={pogosLogo} 
-                  alt="Pogo's Restaurant" 
-                  className="h-10 w-10 rounded-lg shadow-sm"
-                />
-                <div>
-                  <h1 className="text-lg font-bold">Welcome back!</h1>
-                  <p className="text-sm text-muted-foreground">
-                    Hello {fullName || user.email?.split('@')[0]}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <ThemeToggle />
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  onClick={handleNotificationClick}
-                  className="relative"
-                >
-                  <Bell className="h-4 w-4" />
-                  <span className="absolute -top-1 -right-1 h-2.5 w-2.5 bg-secondary rounded-full" />
-                </Button>
+    <AuthenticatedLayout>
+      <div className="min-h-screen bg-background">
+        <div className="sticky top-0 z-40 bg-background/80 backdrop-blur-lg border-b border-border shadow-soft animate-in slide-in-from-top duration-300">
+          <div className="flex items-center justify-between p-4 max-w-7xl mx-auto">
+            <div className="flex items-center gap-3">
+              <img 
+                src={pogosLogo} 
+                alt="Pogo's Restaurant" 
+                className="h-10 w-10 rounded-lg shadow-sm hover:scale-105 transition-transform duration-200"
+              />
+              <div>
+                <h1 className="text-lg font-bold">Welcome back!</h1>
+                <p className="text-sm text-muted-foreground">
+                  Hello {fullName || user?.email?.split('@')[0]}
+                </p>
               </div>
             </div>
-          </div>
-          
-          <div className="p-6 space-y-8 max-w-7xl mx-auto">
-            <AnnouncementsBanner />
-
-            <LoyaltyOverview 
-              currentPoints={currentPoints}
-              nextRewardPoints={nextRewardPoints}
-              nextRewardName={nextRewardName}
-            />
-
-            <div className="flex justify-end">
-              <GiftPointsDialog />
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={handleNotificationClick}
+                className="relative hover:scale-105 transition-transform duration-200"
+              >
+                <Bell className="h-4 w-4" />
+                <span className="absolute -top-1 -right-1 h-2.5 w-2.5 bg-secondary rounded-full animate-pulse" />
+              </Button>
             </div>
-
-        <section>
-          <h2 className="text-2xl font-bold mb-6">Quick Actions</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card 
-              className="group p-6 cursor-pointer hover:shadow-primary hover:border-primary/50 transition-all duration-300"
-              onClick={handleScanQR}
-            >
-              <div className="flex flex-col items-center gap-3 text-center">
-                <div className="h-14 w-14 rounded-2xl bg-gradient-primary flex items-center justify-center group-hover:scale-110 transition-transform shadow-primary">
-                  <QrCode className="h-7 w-7 text-primary-foreground" />
-                </div>
-                <span className="font-semibold">Scan QR</span>
-              </div>
-            </Card>
-            <Card 
-              className="group p-6 cursor-pointer hover:shadow-secondary hover:border-secondary/50 transition-all duration-300"
-              onClick={handleViewRewards}
-            >
-              <div className="flex flex-col items-center gap-3 text-center">
-                <div className="h-14 w-14 rounded-2xl bg-gradient-secondary flex items-center justify-center group-hover:scale-110 transition-transform shadow-secondary">
-                  <Gift className="h-7 w-7 text-secondary-foreground" />
-                </div>
-                <span className="font-semibold">View Rewards</span>
-              </div>
-            </Card>
-            <Card 
-              className="group p-6 cursor-pointer hover:shadow-soft hover:border-success/50 transition-all duration-300"
-              onClick={() => navigate('/achievements')}
-            >
-              <div className="flex flex-col items-center gap-3 text-center">
-                <div className="h-14 w-14 rounded-2xl bg-success flex items-center justify-center group-hover:scale-110 transition-transform shadow-soft">
-                  <Trophy className="h-7 w-7 text-success-foreground" />
-                </div>
-                <span className="font-semibold">Achievements</span>
-              </div>
-            </Card>
-            <Card 
-              className="group p-6 cursor-pointer hover:shadow-primary hover:border-primary/50 transition-all duration-300"
-              onClick={() => navigate('/referrals')}
-            >
-              <div className="flex flex-col items-center gap-3 text-center">
-                <div className="h-14 w-14 rounded-2xl bg-primary flex items-center justify-center group-hover:scale-110 transition-transform shadow-primary">
-                  <Users className="h-7 w-7 text-primary-foreground" />
-                </div>
-                <span className="font-semibold">Refer Friends</span>
-              </div>
-            </Card>
           </div>
-        </section>
+        </div>
+        
+        <div className="p-6 space-y-8 max-w-7xl mx-auto">
+          <AnnouncementsBanner />
 
-        <PromotionalBanner 
-          title="Double Points Weekend!"
-          description="Earn 2x points on all orders this weekend only"
-          badgeText="This Weekend"
-          onClick={handlePromotionClick}
-        />
+          <LoyaltyOverview 
+            currentPoints={currentPoints}
+            nextRewardPoints={nextRewardPoints}
+            nextRewardName={nextRewardName}
+          />
 
-        <section>
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold mb-2">Share Your Progress</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Show off your {currentPoints} points to friends!
-                  </p>
-                </div>
-                <AchievementShare 
-                  type="points" 
-                  value={currentPoints}
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </section>
-
-        <section>
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold">Recent Activity</h2>
-            <Button 
-              variant="outline"
-              size="sm" 
-              onClick={() => navigate('/transactions')}
-            >
-              View All
-            </Button>
+          <div className="flex justify-end">
+            <GiftPointsDialog />
           </div>
-          <Card className="p-6">
-            <div className="space-y-4">
-              {transactions.length > 0 ? (
-                transactions.slice(0, 5).map((transaction) => (
-                  <div key={transaction.id} className="flex justify-between items-center py-3 border-b border-border last:border-0">
+
+          <section>
+            <h2 className="text-2xl font-bold mb-6">Quick Actions</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <Card 
+                className="group p-6 cursor-pointer hover:shadow-primary hover:border-primary/50 transition-all duration-300"
+                onClick={handleScanQR}
+              >
+                <div className="flex flex-col items-center gap-3 text-center">
+                  <div className="h-14 w-14 rounded-2xl bg-gradient-primary flex items-center justify-center group-hover:scale-110 transition-transform shadow-primary">
+                    <QrCode className="h-7 w-7 text-primary-foreground" />
+                  </div>
+                  <span className="font-semibold">Scan QR</span>
+                </div>
+              </Card>
+              <Card 
+                className="group p-6 cursor-pointer hover:shadow-secondary hover:border-secondary/50 transition-all duration-300"
+                onClick={handleViewRewards}
+              >
+                <div className="flex flex-col items-center gap-3 text-center">
+                  <div className="h-14 w-14 rounded-2xl bg-gradient-secondary flex items-center justify-center group-hover:scale-110 transition-transform shadow-secondary">
+                    <Gift className="h-7 w-7 text-secondary-foreground" />
+                  </div>
+                  <span className="font-semibold">View Rewards</span>
+                </div>
+              </Card>
+              <Card 
+                className="group p-6 cursor-pointer hover:shadow-soft hover:border-success/50 transition-all duration-300"
+                onClick={() => navigate('/achievements')}
+              >
+                <div className="flex flex-col items-center gap-3 text-center">
+                  <div className="h-14 w-14 rounded-2xl bg-success flex items-center justify-center group-hover:scale-110 transition-transform shadow-soft">
+                    <Trophy className="h-7 w-7 text-success-foreground" />
+                  </div>
+                  <span className="font-semibold">Achievements</span>
+                </div>
+              </Card>
+              <Card 
+                className="group p-6 cursor-pointer hover:shadow-primary hover:border-primary/50 transition-all duration-300"
+                onClick={() => navigate('/referrals')}
+              >
+                <div className="flex flex-col items-center gap-3 text-center">
+                  <div className="h-14 w-14 rounded-2xl bg-primary flex items-center justify-center group-hover:scale-110 transition-transform shadow-primary">
+                    <Users className="h-7 w-7 text-primary-foreground" />
+                  </div>
+                  <span className="font-semibold">Refer Friends</span>
+                </div>
+              </Card>
+            </div>
+          </section>
+
+          <PromotionalBanner 
+            title="Double Points Weekend!"
+            description="Earn 2x points on all orders this weekend only"
+            badgeText="This Weekend"
+            onClick={handlePromotionClick}
+          />
+
+          <section>
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium">{transaction.items.join(', ')}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {new Date(transaction.created_at).toLocaleDateString()}
+                    <h3 className="font-semibold mb-2">Share Your Progress</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Show off your {currentPoints} points to friends!
                     </p>
                   </div>
-                  <div className="text-right">
-                    {transaction.transaction_type === 'purchase' ? (
-                      <>
-                        <p className="text-sm font-medium text-success">+{transaction.points_earned} points</p>
-                        <p className="text-xs text-muted-foreground">${transaction.amount}</p>
-                      </>
-                    ) : (
-                      <>
-                        <p className="text-sm font-medium text-secondary">-{transaction.points_redeemed} points</p>
-                        <p className="text-xs text-muted-foreground">Redeemed</p>
-                      </>
-                    )}
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className="text-sm text-muted-foreground text-center py-8">
-                  No recent activity. Start earning points by making purchases!
-                </p>
-              )}
-            </div>
-          </Card>
-        </section>
-      </div>
+                  <AchievementShare 
+                    type="points" 
+                    value={currentPoints}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </section>
 
-          <QRScanner
-            isOpen={isQRScannerOpen}
-            onClose={() => setIsQRScannerOpen(false)}
-            onScanSuccess={handleQRScanSuccess}
-          />
-        </SidebarInset>
+          <section>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold">Recent Activity</h2>
+              <Button 
+                variant="outline"
+                size="sm" 
+                onClick={() => navigate('/transactions')}
+              >
+                View All
+              </Button>
+            </div>
+            <Card className="p-6">
+              <div className="space-y-4">
+                {transactions.length > 0 ? (
+                  transactions.slice(0, 5).map((transaction) => (
+                    <div key={transaction.id} className="flex justify-between items-center py-3 border-b border-border last:border-0">
+                      <div>
+                        <p className="text-sm font-medium">{transaction.items.join(', ')}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(transaction.created_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        {transaction.transaction_type === 'purchase' ? (
+                          <>
+                            <p className="text-sm font-medium text-success">+{transaction.points_earned} points</p>
+                            <p className="text-xs text-muted-foreground">${transaction.amount}</p>
+                          </>
+                        ) : (
+                          <>
+                            <p className="text-sm font-medium text-secondary">-{transaction.points_redeemed} points</p>
+                            <p className="text-xs text-muted-foreground">Redeemed</p>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-muted-foreground text-center py-8">
+                    No recent activity. Start earning points by making purchases!
+                  </p>
+                )}
+              </div>
+            </Card>
+          </section>
+        </div>
+
+        <QRScanner
+          isOpen={isQRScannerOpen}
+          onClose={() => setIsQRScannerOpen(false)}
+          onScanSuccess={handleQRScanSuccess}
+        />
       </div>
-    </SidebarProvider>
+    </AuthenticatedLayout>
   );
 }
