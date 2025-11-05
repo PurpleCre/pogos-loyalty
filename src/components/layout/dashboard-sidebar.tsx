@@ -17,6 +17,7 @@ import { useAdmin } from "@/hooks/useAdmin";
 import { toast } from "@/hooks/use-toast";
 import pogosLogo from "@/assets/pogos-logo.jpg";
 import { cn } from "@/lib/utils";
+import { haptics } from "@/utils/haptics";
 
 const navigation = [
   { title: "Dashboard", url: "/dashboard", icon: Home },
@@ -34,6 +35,7 @@ export function DashboardSidebar() {
   const { open } = useSidebar();
 
   const handleSignOut = async () => {
+    await haptics.medium();
     const { error } = await signOut();
     if (error) {
       toast({
@@ -46,8 +48,14 @@ export function DashboardSidebar() {
     }
   };
 
-  const handleScanQR = () => {
+  const handleScanQR = async () => {
+    await haptics.medium();
     window.dispatchEvent(new CustomEvent("open-qr-scanner"));
+  };
+
+  const handleNavigation = async (url: string) => {
+    await haptics.light();
+    navigate(url);
   };
 
   const isActiveRoute = (url: string) => location.pathname === url;
@@ -79,7 +87,7 @@ export function DashboardSidebar() {
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton 
-                      onClick={() => navigate(item.url)} 
+                      onClick={() => handleNavigation(item.url)} 
                       tooltip={item.title}
                       isActive={isActive}
                       className={cn(
@@ -115,7 +123,7 @@ export function DashboardSidebar() {
               {isAdmin && (
                 <SidebarMenuItem>
                   <SidebarMenuButton 
-                    onClick={() => navigate('/admin')} 
+                    onClick={() => handleNavigation('/admin')} 
                     tooltip="Admin Panel"
                     isActive={isActiveRoute('/admin')}
                     className={cn(
