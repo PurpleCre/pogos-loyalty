@@ -1,15 +1,39 @@
 import { ReactNode, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, useSidebar } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/layout/dashboard-sidebar";
+import { MobileHeader } from "@/components/layout/mobile-header";
 import { useAuth } from "@/hooks/useAuth";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useBackButton } from "@/hooks/useBackButton";
 import { useSwipeBack } from "@/hooks/useSwipeBack";
 import { SwipeIndicator } from "@/components/ui/swipe-indicator";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface AuthenticatedLayoutProps {
   children: ReactNode;
+}
+
+function AuthenticatedContent({ children }: { children: ReactNode }) {
+  const { toggleSidebar } = useSidebar();
+  const isMobile = useIsMobile();
+
+  return (
+    <>
+      {isMobile && (
+        <MobileHeader
+          showMenu={true}
+          onMenuClick={toggleSidebar}
+        />
+      )}
+      <div className="flex min-h-screen w-full bg-background relative">
+        <DashboardSidebar />
+        <main className="flex-1 overflow-auto">
+          {children}
+        </main>
+      </div>
+    </>
+  );
 }
 
 export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
@@ -38,13 +62,10 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-background relative">
-        <SwipeIndicator progress={swipeProgress} />
-        <DashboardSidebar />
-        <main className="flex-1 overflow-auto">
-          {children}
-        </main>
-      </div>
+      <SwipeIndicator progress={swipeProgress} />
+      <AuthenticatedContent>
+        {children}
+      </AuthenticatedContent>
     </SidebarProvider>
   );
 }
