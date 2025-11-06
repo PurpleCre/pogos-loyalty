@@ -5,15 +5,20 @@ import { Badge } from '@/components/ui/badge';
 import { PointsDisplay } from '@/components/ui/points-display';
 import { AuthenticatedLayout } from '@/components/layout/authenticated-layout';
 import { AchievementShare } from '@/components/social/achievement-share';
+import { RewardPreviewDialog } from '@/components/rewards/reward-preview-dialog';
 import { useAuth } from '@/hooks/useAuth';
 import { useRewards } from '@/hooks/useRewards';
+import { useLongPress } from '@/hooks/useLongPress';
 import { toast } from '@/hooks/use-toast';
 import { Gift, Star } from 'lucide-react';
+import { Reward } from '@/hooks/useRewards';
 
 export default function Rewards() {
   const { user } = useAuth();
   const { rewards, userPoints, redeemReward, loading: rewardsLoading } = useRewards();
   const [redeeming, setRedeeming] = useState<string | null>(null);
+  const [previewReward, setPreviewReward] = useState<Reward | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   if (rewardsLoading) {
     return null; // Layout handles loading
@@ -101,8 +106,20 @@ export default function Rewards() {
             <h2 className="text-2xl font-bold">Available Rewards</h2>
             {rewards.length > 0 ? (
               <div className="grid gap-4 md:grid-cols-2">
-                {rewards.map((reward) => (
-                  <Card key={reward.id} className="relative overflow-hidden">
+                {rewards.map((reward) => {
+                  const longPressHandlers = useLongPress({
+                    onLongPress: () => {
+                      setPreviewReward(reward);
+                      setPreviewOpen(true);
+                    },
+                  });
+
+                  return (
+                  <Card 
+                    key={reward.id} 
+                    className="relative overflow-hidden cursor-pointer active:scale-[0.98] transition-transform"
+                    {...longPressHandlers}
+                  >
                     <CardHeader className="pb-3">
                       <div className="flex items-start justify-between">
                         <div className="flex items-center gap-3">
@@ -148,7 +165,8 @@ export default function Rewards() {
                       </div>
                     </CardContent>
                   </Card>
-                ))}
+                  );
+                })}
               </div>
             ) : (
               <Card>
@@ -165,6 +183,15 @@ export default function Rewards() {
           </div>
         </div>
       </div>
+
+      <RewardPreviewDialog
+        reward={previewReward}
+        open={previewOpen}
+        onOpenChange={setPreviewOpen}
+        currentPoints={currentPoints}
+        onRedeem={handleRedeem}
+        isRedeeming={redeeming === previewReward?.id}
+      />
     </AuthenticatedLayout>
   );
 }
