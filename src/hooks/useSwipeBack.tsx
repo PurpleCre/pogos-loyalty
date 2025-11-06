@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { haptics } from '@/utils/haptics';
 
@@ -11,6 +11,7 @@ export function useSwipeBack() {
   const touchStartX = useRef<number>(0);
   const touchStartY = useRef<number>(0);
   const isSwiping = useRef<boolean>(false);
+  const [swipeProgress, setSwipeProgress] = useState<number>(0);
 
   useEffect(() => {
     const handleTouchStart = (e: TouchEvent) => {
@@ -34,11 +35,20 @@ export function useSwipeBack() {
       // Cancel swipe if moving more vertically than horizontally
       if (deltaY > deltaX) {
         isSwiping.current = false;
+        setSwipeProgress(0);
+        return;
       }
+
+      // Update progress (0 to 1)
+      const progress = Math.min(Math.max(deltaX / SWIPE_THRESHOLD, 0), 1);
+      setSwipeProgress(progress);
     };
 
     const handleTouchEnd = async (e: TouchEvent) => {
-      if (!isSwiping.current) return;
+      if (!isSwiping.current) {
+        setSwipeProgress(0);
+        return;
+      }
 
       const touch = e.changedTouches[0];
       const deltaX = touch.clientX - touchStartX.current;
@@ -54,6 +64,7 @@ export function useSwipeBack() {
       }
 
       isSwiping.current = false;
+      setSwipeProgress(0);
     };
 
     document.addEventListener('touchstart', handleTouchStart, { passive: true });
@@ -66,4 +77,6 @@ export function useSwipeBack() {
       document.removeEventListener('touchend', handleTouchEnd);
     };
   }, [navigate, location.pathname]);
+
+  return { swipeProgress };
 }

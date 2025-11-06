@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useBackButton } from "@/hooks/useBackButton";
 import { useSwipeBack } from "@/hooks/useSwipeBack";
+import { SwipeIndicator } from "@/components/ui/swipe-indicator";
 
 interface AuthenticatedLayoutProps {
   children: ReactNode;
@@ -15,7 +16,7 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   useBackButton();
-  useSwipeBack();
+  const { swipeProgress } = useSwipeBack();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -37,7 +38,8 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-background">
+      <div className="flex min-h-screen w-full bg-background relative">
+        <SwipeIndicator progress={swipeProgress} />
         <DashboardSidebar />
         <main className="flex-1 overflow-auto">
           {children}
