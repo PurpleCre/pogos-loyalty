@@ -8,10 +8,10 @@ import { AchievementShare } from '@/components/social/achievement-share';
 import { RewardPreviewDialog } from '@/components/rewards/reward-preview-dialog';
 import { useAuth } from '@/hooks/useAuth';
 import { useRewards } from '@/hooks/useRewards';
-import { useLongPress } from '@/hooks/useLongPress';
 import { toast } from '@/hooks/use-toast';
-import { Gift, Star } from 'lucide-react';
+import { Gift } from 'lucide-react';
 import { Reward } from '@/hooks/useRewards';
+import { RewardCard } from '@/components/rewards/reward-card';
 
 export default function Rewards() {
   const { user } = useAuth();
@@ -59,31 +59,7 @@ export default function Rewards() {
     setRedeeming(null);
   };
 
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case 'food':
-        return '🍔';
-      case 'drink':
-        return '🥤';
-      case 'special':
-        return '🎉';
-      default:
-        return '🎁';
-    }
-  };
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'food':
-        return 'bg-orange-100 text-orange-800';
-      case 'drink':
-        return 'bg-blue-100 text-blue-800';
-      case 'special':
-        return 'bg-purple-100 text-purple-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
 
   return (
     <AuthenticatedLayout>
@@ -106,67 +82,19 @@ export default function Rewards() {
             <h2 className="text-2xl font-bold">Available Rewards</h2>
             {rewards.length > 0 ? (
               <div className="grid gap-4 md:grid-cols-2">
-                {rewards.map((reward) => {
-                  const longPressHandlers = useLongPress({
-                    onLongPress: () => {
+                {rewards.map((reward) => (
+                  <RewardCard
+                    key={reward.id}
+                    reward={reward}
+                    currentPoints={currentPoints}
+                    isRedeeming={redeeming === reward.id}
+                    onRedeem={handleRedeem}
+                    onPreview={(reward) => {
                       setPreviewReward(reward);
                       setPreviewOpen(true);
-                    },
-                  });
-
-                  return (
-                  <Card 
-                    key={reward.id} 
-                    className="relative overflow-hidden cursor-pointer active:scale-[0.98] transition-transform"
-                    {...longPressHandlers}
-                  >
-                    <CardHeader className="pb-3">
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="text-2xl">
-                            {getCategoryIcon(reward.category)}
-                          </div>
-                          <div>
-                            <CardTitle className="text-lg">{reward.name}</CardTitle>
-                            <CardDescription>{reward.description}</CardDescription>
-                          </div>
-                        </div>
-                        <Badge className={getCategoryColor(reward.category)}>
-                          {reward.category}
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Star className="h-4 w-4 text-primary" />
-                          <span className="font-semibold">{reward.points_cost} points</span>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button
-                            onClick={() => handleRedeem(reward.id, reward.points_cost, reward.name)}
-                            disabled={currentPoints < reward.points_cost || redeeming === reward.id}
-                            variant={currentPoints >= reward.points_cost ? "default" : "outline"}
-                            size="sm"
-                          >
-                            {redeeming === reward.id ? 'Redeeming...' : 
-                             currentPoints >= reward.points_cost ? 'Redeem' : 'Not enough points'}
-                          </Button>
-                          <AchievementShare 
-                            type="reward" 
-                            value={reward.name}
-                            trigger={
-                              <Button variant="outline" size="sm">
-                                Share
-                              </Button>
-                            }
-                          />
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                  );
-                })}
+                    }}
+                  />
+                ))}
               </div>
             ) : (
               <Card>
