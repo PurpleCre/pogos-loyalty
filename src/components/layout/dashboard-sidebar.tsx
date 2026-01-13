@@ -18,6 +18,7 @@ import { toast } from "@/hooks/use-toast";
 import pogosLogo from "@/assets/pogos-logo.jpg";
 import { cn } from "@/lib/utils";
 import { haptics } from "@/utils/haptics";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const navigation = [
   { title: "Dashboard", url: "/dashboard", icon: Home },
@@ -33,6 +34,7 @@ export function DashboardSidebar() {
   const { signOut } = useAuth();
   const { isAdmin } = useAdmin();
   const { open } = useSidebar();
+  const isMobile = useIsMobile();
 
   const handleSignOut = async () => {
     await haptics.medium();
@@ -63,8 +65,8 @@ export function DashboardSidebar() {
   return (
     <Sidebar className="border-r border-border" collapsible="icon">
       <div className="p-4 border-b flex items-center gap-3">
-        <SidebarTrigger className="flex-shrink-0" />
-        {open && (
+        {!isMobile && <SidebarTrigger className="flex-shrink-0" />}
+        {(open || isMobile) && (
           <div className="flex items-center gap-2">
             <img 
               src={pogosLogo} 
