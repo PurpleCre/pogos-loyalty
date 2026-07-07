@@ -1,7 +1,7 @@
 import { Tabs, Redirect } from 'expo-router';
 import { useAuth, AuthProvider } from '@/hooks/useAuth';
 import { View, ActivityIndicator } from 'react-native';
-import { Home, Gift, User, History } from 'lucide-react-native';
+import { Home, Gift, User, History, ShoppingBag } from 'lucide-react-native';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 
 function ProtectedLayout() {
@@ -43,6 +43,13 @@ function ProtectedLayout() {
         options={{
           title: 'Home',
           tabBarIcon: ({ color }) => <Home size={22} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="menu"
+        options={{
+          title: 'Order',
+          tabBarIcon: ({ color }) => <ShoppingBag size={22} color={color} />,
         }}
       />
       <Tabs.Screen

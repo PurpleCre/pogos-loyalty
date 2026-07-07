@@ -1,17 +1,20 @@
 import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { useAuth } from '@/hooks/useAuth';
 import { useRewards } from '@/hooks/useRewards';
+import { useOrders } from '@/hooks/useOrders';
 import { Button } from '@/components/ui/button';
 import { router } from 'expo-router';
 import { 
   Scan, Gift, Trophy, Users, Star, TrendingUp, 
-  ChevronRight, Sparkles, ArrowUpRight, ArrowDownRight 
+  ChevronRight, Sparkles, ArrowUpRight, ArrowDownRight,
+  ShoppingBag, Clock, CheckCircle2
 } from 'lucide-react-native';
 import { useState, useCallback } from 'react';
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const { userPoints, transactions, loading, refetch } = useRewards();
+  const { userPoints, transactions, loading, refetch: refetchRewards } = useRewards();
+  const { activeOrders, refetch: refetchOrders } = useOrders();
   const [refreshing, setRefreshing] = useState(false);
 
   const firstName = user?.user_metadata?.full_name?.split(' ')[0] || 'there';
@@ -24,9 +27,10 @@ export default function Dashboard() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    refetch();
+    refetchRewards();
+    refetchOrders();
     setTimeout(() => setRefreshing(false), 1000);
-  }, [refetch]);
+  }, [refetchRewards, refetchOrders]);
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -94,9 +98,46 @@ export default function Dashboard() {
         </View>
       </View>
 
+      {/* Active Orders */}
+      {activeOrders.length > 0 && (
+        <View className="px-5 -mt-1 mb-6">
+          <Text className="text-lg font-bold text-slate-800 mb-3">Active Order</Text>
+          {activeOrders.map(order => (
+            <View key={order.id} className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm mb-3">
+              <View className="flex-row justify-between items-center mb-3">
+                <View className="flex-row items-center">
+                  <View className={`w-10 h-10 rounded-full items-center justify-center mr-3 ${
+                    order.status === 'ready' ? 'bg-green-100' : 
+                    order.status === 'preparing' ? 'bg-amber-100' : 'bg-indigo-100'
+                  }`}>
+                    {order.status === 'ready' ? <CheckCircle2 size={20} color="#16a34a" /> :
+                     order.status === 'preparing' ? <Clock size={20} color="#d97706" /> :
+                     <ShoppingBag size={20} color="#4f46e5" />}
+                  </View>
+                  <View>
+                    <Text className="font-bold text-gray-900 capitalize">Order {order.status}</Text>
+                    <Text className="text-xs text-gray-500">Order #{order.id.slice(0, 6)}</Text>
+                  </View>
+                </View>
+                <Text className="font-bold text-indigo-600">${order.total_amount.toFixed(2)}</Text>
+              </View>
+              
+              <View className="bg-slate-50 p-3 rounded-xl">
+                <Text className="text-sm font-semibold text-gray-700 mb-1">Items:</Text>
+                {order.order_items?.map(item => (
+                  <Text key={item.id} className="text-xs text-gray-600">
+                    {item.quantity}x {item.menu_item?.name}
+                  </Text>
+                ))}
+              </View>
+            </View>
+          ))}
+        </View>
+      )}
+
       {/* Quick Actions */}
       <View className="px-5 -mt-1">
-        <Text className="text-lg font-bold text-slate-800 mb-4 mt-6">Quick Actions</Text>
+        <Text className="text-lg font-bold text-slate-800 mb-4 mt-2">Quick Actions</Text>
         <View className="flex-row flex-wrap justify-between">
           <TouchableOpacity 
             onPress={() => router.push('/scan')}

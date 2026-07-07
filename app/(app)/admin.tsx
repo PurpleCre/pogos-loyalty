@@ -4,6 +4,8 @@ import { Shield, Users, Gift, Receipt } from 'lucide-react-native';
 import { useState, useEffect } from 'react';
 import { router } from 'expo-router';
 import { AdminRewards } from '@/components/admin/AdminRewards';
+import { AdminOrders } from '@/components/admin/AdminOrders';
+import { AdminMenu } from '@/components/admin/AdminMenu';
 import { useIsFocused } from '@react-navigation/native';
 
 export default function AdminScreen() {
@@ -13,7 +15,7 @@ export default function AdminScreen() {
     fetchUsers, fetchRewards, fetchTransactions,
     createReward, updateReward, deleteReward
   } = useAdmin();
-  const [activeTab, setActiveTab] = useState<'users' | 'rewards' | 'transactions'>('users');
+  const [activeTab, setActiveTab] = useState<'users' | 'rewards' | 'transactions' | 'orders' | 'menu'>('orders');
 
   useEffect(() => {
     if (isAdmin && !loading) {
@@ -52,25 +54,39 @@ export default function AdminScreen() {
           </View>
         </View>
 
-        <View className="flex-row bg-gray-200 p-1 rounded-xl">
-          <TouchableOpacity 
-            onPress={() => setActiveTab('users')}
-            className={`flex-1 py-2 rounded-lg items-center ${activeTab === 'users' ? 'bg-white' : ''}`}
-          >
-            <Text className={`font-semibold ${activeTab === 'users' ? 'text-gray-900' : 'text-gray-500'}`}>Users</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            onPress={() => setActiveTab('rewards')}
-            className={`flex-1 py-2 rounded-lg items-center ${activeTab === 'rewards' ? 'bg-white' : ''}`}
-          >
-            <Text className={`font-semibold ${activeTab === 'rewards' ? 'text-gray-900' : 'text-gray-500'}`}>Rewards</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            onPress={() => setActiveTab('transactions')}
-            className={`flex-1 py-2 rounded-lg items-center ${activeTab === 'transactions' ? 'bg-white' : ''}`}
-          >
-            <Text className={`font-semibold ${activeTab === 'transactions' ? 'text-gray-900' : 'text-gray-500'}`}>Transact</Text>
-          </TouchableOpacity>
+        <View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row bg-gray-200 p-1 rounded-xl">
+            <TouchableOpacity 
+              onPress={() => setActiveTab('orders')}
+              className={`px-4 py-2 rounded-lg items-center ${activeTab === 'orders' ? 'bg-white' : ''}`}
+            >
+              <Text className={`font-semibold ${activeTab === 'orders' ? 'text-gray-900' : 'text-gray-500'}`}>Live Orders</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              onPress={() => setActiveTab('menu')}
+              className={`px-4 py-2 rounded-lg items-center ${activeTab === 'menu' ? 'bg-white' : ''}`}
+            >
+              <Text className={`font-semibold ${activeTab === 'menu' ? 'text-gray-900' : 'text-gray-500'}`}>Menu</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              onPress={() => setActiveTab('users')}
+              className={`px-4 py-2 rounded-lg items-center ${activeTab === 'users' ? 'bg-white' : ''}`}
+            >
+              <Text className={`font-semibold ${activeTab === 'users' ? 'text-gray-900' : 'text-gray-500'}`}>Users</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              onPress={() => setActiveTab('rewards')}
+              className={`px-4 py-2 rounded-lg items-center ${activeTab === 'rewards' ? 'bg-white' : ''}`}
+            >
+              <Text className={`font-semibold ${activeTab === 'rewards' ? 'text-gray-900' : 'text-gray-500'}`}>Rewards</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              onPress={() => setActiveTab('transactions')}
+              className={`px-4 py-2 rounded-lg items-center ${activeTab === 'transactions' ? 'bg-white' : ''}`}
+            >
+              <Text className={`font-semibold ${activeTab === 'transactions' ? 'text-gray-900' : 'text-gray-500'}`}>Transact</Text>
+            </TouchableOpacity>
+          </ScrollView>
         </View>
       </View>
 
@@ -121,6 +137,10 @@ export default function AdminScreen() {
             {transactions.length === 0 && <Text className="text-center text-gray-500 py-8">No transactions found</Text>}
           </View>
         )}
+
+        {activeTab === 'orders' && <AdminOrders />}
+        
+        {activeTab === 'menu' && <AdminMenu />}
       </ScrollView>
     </View>
   );
