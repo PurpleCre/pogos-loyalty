@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, Alert, Image } from 'react-native';
+import { View, Text, Alert, Image, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { useAuth } from '@/hooks/useAuth';
 import { Input } from '@/components/ui/input';
@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const { signIn, signUp, loading } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -18,66 +19,137 @@ export default function Login() {
       return;
     }
 
+    if (isSignUp && !fullName) {
+      Alert.alert('Error', 'Please enter your full name');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       if (isSignUp) {
-        const { error } = await signUp(email, password);
+        const { error } = await signUp(email, password, fullName);
         if (error) throw error;
-        Alert.alert('Success', 'Check your email for the confirmation link!');
+        Alert.alert('Account created!', 'Please check your email to verify your account.');
+        setIsSignUp(false);
       } else {
         const { error } = await signIn(email, password);
         if (error) throw error;
         router.replace('/(app)/dashboard');
       }
     } catch (error: any) {
-      Alert.alert('Error', error.message);
+      Alert.alert(
+        isSignUp ? 'Error signing up' : 'Error signing in', 
+        error.message
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const toggleMode = () => {
+    setIsSignUp(!isSignUp);
+    setFullName('');
+    setEmail('');
+    setPassword('');
+  };
+
   return (
-    <View className="flex-1 bg-white px-8 justify-center">
-      <Stack.Screen options={{ headerShown: false }} />
-      
-      <View className="mb-8 items-center">
-        <Text className="text-3xl font-bold text-slate-900 mb-2">Welcome Back</Text>
-        <Text className="text-slate-500 text-center">
-          {isSignUp ? "Create an account to start earning" : "Sign in to access your rewards"}
-        </Text>
-      </View>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      className="flex-1"
+    >
+      <ScrollView 
+        className="flex-1 bg-amber-50"
+        contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 24 }}
+        keyboardShouldPersistTaps="handled"
+      >
+        <Stack.Screen options={{ headerShown: false }} />
 
-      <View className="space-y-4">
-        <Input
-          placeholder="Email address"
-          autoCapitalize="none"
-          keyboardType="email-address"
-          value={email}
-          onChangeText={setEmail}
-        />
-        <Input
-          placeholder="Password"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
-        
-        <Button 
-          onPress={handleSubmit} 
-          isLoading={isSubmitting || loading}
-          className="mt-4"
-        >
-          {isSignUp ? "Create Account" : "Sign In"}
-        </Button>
+        {/* Card Container */}
+        <View className="bg-white rounded-3xl shadow-lg overflow-hidden">
+          {/* Header */}
+          <View className="items-center pt-8 pb-4 px-6">
+            {/* Logo */}
+            <View className="w-16 h-16 bg-amber-100 rounded-2xl items-center justify-center mb-4 shadow-sm">
+              <Text className="text-3xl">🔥</Text>
+            </View>
+            <Text className="text-2xl font-bold text-slate-900 mb-1">
+              {isSignUp ? 'Create account' : 'Welcome back'}
+            </Text>
+            <Text className="text-slate-500 text-center text-sm">
+              {isSignUp 
+                ? 'Sign up for a new account to start earning rewards' 
+                : 'Sign in to your account to continue earning points'
+              }
+            </Text>
+          </View>
 
-        <Button 
-          variant="ghost" 
-          onPress={() => setIsSignUp(!isSignUp)}
-          className="mt-2"
-        >
-          {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
-        </Button>
-      </View>
-    </View>
+          {/* Form */}
+          <View className="px-6 pb-6 pt-2">
+            {isSignUp && (
+              <View className="mb-4">
+                <Text className="text-sm font-medium text-slate-700 mb-1.5">Full Name</Text>
+                <Input
+                  placeholder="Enter your full name"
+                  autoCapitalize="words"
+                  value={fullName}
+                  onChangeText={setFullName}
+                />
+              </View>
+            )}
+
+            <View className="mb-4">
+              <Text className="text-sm font-medium text-slate-700 mb-1.5">Email</Text>
+              <Input
+                placeholder="Enter your email"
+                autoCapitalize="none"
+                keyboardType="email-address"
+                value={email}
+                onChangeText={setEmail}
+              />
+            </View>
+
+            <View className="mb-2">
+              <Text className="text-sm font-medium text-slate-700 mb-1.5">Password</Text>
+              <Input
+                placeholder="Enter your password"
+                secureTextEntry
+                value={password}
+                onChangeText={setPassword}
+              />
+              {isSignUp && (
+                <Text className="text-xs text-slate-400 mt-1.5">
+                  Password must be at least 6 characters long
+                </Text>
+              )}
+            </View>
+
+            <Button 
+              onPress={handleSubmit} 
+              isLoading={isSubmitting || loading}
+              className="mt-4 bg-amber-500 rounded-xl h-12"
+              textClassName="text-white"
+            >
+              {isSignUp ? 'Sign Up' : 'Sign In'}
+            </Button>
+
+            <TouchableOpacity 
+              onPress={toggleMode}
+              className="mt-4 items-center py-2"
+            >
+              <Text className="text-sm text-slate-500">
+                {isSignUp 
+                  ? 'Already have an account? ' 
+                  : "Don't have an account? "
+                }
+                <Text className="text-indigo-600 font-semibold">
+                  {isSignUp ? 'Sign In' : 'Sign Up'}
+                </Text>
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
