@@ -75,7 +75,9 @@ export const useRewards = () => {
                 .eq('user_id', user.id)
                 .single();
 
-            if (error && error.code !== 'PGRST116') throw error;
+            if (error && error.code !== 'PGRST116') {
+                console.error('Supabase error fetching points:', error);
+            }
 
             if (data) {
                 setUserPoints({
@@ -83,9 +85,15 @@ export const useRewards = () => {
                     total_earned: data.total_earned ?? 0,
                     total_redeemed: data.total_redeemed ?? 0
                 });
+            } else {
+                setUserPoints({
+                    current_points: 0,
+                    total_earned: 0,
+                    total_redeemed: 0
+                });
             }
-        } catch (err) {
-            console.error('Error fetching user points:', err);
+        } catch (err: any) {
+            console.error('Exception fetching user points:', err?.message || err);
         } finally {
             setLoading(false);
         }

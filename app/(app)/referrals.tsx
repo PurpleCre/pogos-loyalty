@@ -2,10 +2,16 @@ import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, RefreshCon
 import { useReferrals } from '@/hooks/useReferrals';
 import { Share2, Copy, Users, TrendingUp, Gift } from 'lucide-react-native';
 import { useState, useCallback } from 'react';
+import { useIsFocused } from '@react-navigation/native';
 
 export default function ReferralsScreen() {
+  const isFocused = useIsFocused();
   const { referralCode, referrals, isLoading, generateCode, isGenerating, copyCode } = useReferrals();
   const [refreshing, setRefreshing] = useState(false);
+
+  if (!isFocused) {
+    return <View />;
+  }
 
   const totalReferrals = referrals?.length || 0;
   const totalPointsEarned = referrals?.reduce((sum: number, r: any) => sum + (r.points_awarded || 0), 0) || 0;

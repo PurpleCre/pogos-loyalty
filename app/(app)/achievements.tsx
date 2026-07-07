@@ -1,9 +1,15 @@
 import { View, Text, ScrollView, ActivityIndicator } from 'react-native';
 import { useAchievements } from '@/hooks/useAchievements';
 import { Trophy, Lock, CheckCircle2 } from 'lucide-react-native';
+import { useIsFocused } from '@react-navigation/native';
 
 export default function AchievementsScreen() {
+  const isFocused = useIsFocused();
   const { achievements, userAchievements, isLoading, getAchievementStatus } = useAchievements();
+
+  if (!isFocused) {
+    return <View />;
+  }
 
   if (isLoading) {
     return (
