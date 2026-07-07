@@ -84,7 +84,8 @@ export const useRewards = () => {
                     total_redeemed: data.total_redeemed ?? 0
                 });
             }
-            console.error('Error fetching user points:', error);
+        } catch (err) {
+            console.error('Error fetching user points:', err);
         } finally {
             setLoading(false);
         }
