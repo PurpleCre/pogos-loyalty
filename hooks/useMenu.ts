@@ -5,6 +5,7 @@ export interface MenuCategory {
   id: string;
   name: string;
   sort_order: number;
+  is_active?: boolean;
 }
 
 export interface MenuItem {
@@ -31,12 +32,13 @@ export function useMenu(isAdmin = false) {
         itemsQuery = itemsQuery.eq('is_available', true);
       }
 
+      let categoriesQuery = supabase.from('menu_categories').select('*').order('sort_order', { ascending: true });
+      if (!isAdmin) {
+        categoriesQuery = categoriesQuery.eq('is_active', true);
+      }
+
       const [categoriesRes, itemsRes] = await Promise.all([
-        supabase
-          .from('menu_categories')
-          .select('*')
-          .eq('is_active', true)
-          .order('sort_order', { ascending: true }),
+        categoriesQuery,
         itemsQuery
       ]);
 
@@ -107,6 +109,63 @@ export function useMenu(isAdmin = false) {
     }
   };
 
+  const addCategory = async (category: Omit<MenuCategory, 'id'>) => {
+    try {
+      const { data, error } = await supabase
+        .from('menu_categories')
+        .insert(category)
+        .select()
+        .single();
+        
+      if (error) throw error;
+      if (data) {
+        setCategories(prev => [...prev, data].sort((a, b) => a.sort_order - b.sort_order));
+      }
+      return { success: true, data };
+    } catch (error: any) {
+      console.error('Error adding category:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
+  const updateCategory = async (id: string, updates: Partial<MenuCategory>) => {
+    try {
+      const { data, error } = await supabase
+        .from('menu_categories')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single();
+        
+      if (error) throw error;
+      if (data) {
+        setCategories(prev => prev.map(cat => cat.id === id ? data : cat).sort((a, b) => a.sort_order - b.sort_order));
+      }
+      return { success: true, data };
+    } catch (error: any) {
+      console.error('Error updating category:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
+  const deleteCategory = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('menu_categories')
+        .delete()
+        .eq('id', id);
+        
+      if (error) throw error;
+      setCategories(prev => prev.filter(cat => cat.id !== id));
+      // Also optimistic remove items in this category
+      setItems(prev => prev.filter(item => item.category_id !== id));
+      return { success: true };
+    } catch (error: any) {
+      console.error('Error deleting category:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
   useEffect(() => {
     fetchMenu();
   }, [isAdmin]);
@@ -118,6 +177,9 @@ export function useMenu(isAdmin = false) {
     refetch: fetchMenu,
     addMenuItem,
     updateMenuItem,
-    deleteMenuItem
+    deleteMenuItem,
+    addCategory,
+    updateCategory,
+    deleteCategory
   };
 }

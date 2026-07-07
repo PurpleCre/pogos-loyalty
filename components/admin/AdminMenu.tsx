@@ -1,22 +1,42 @@
 import { View, Text, TouchableOpacity, Image, Modal, TextInput, ScrollView, Switch, Alert, ActivityIndicator } from 'react-native';
 import { useState } from 'react';
-import { useMenu, MenuItem } from '@/hooks/useMenu';
+import { useMenu, MenuItem, MenuCategory } from '@/hooks/useMenu';
 import { Plus, Edit2, Trash2, X } from 'lucide-react-native';
 
 export function AdminMenu() {
-  const { categories, items, addMenuItem, updateMenuItem, deleteMenuItem } = useMenu(true);
+  const { 
+    categories, 
+    items, 
+    addMenuItem, 
+    updateMenuItem, 
+    deleteMenuItem,
+    addCategory,
+    updateCategory,
+    deleteCategory
+  } = useMenu(true);
   
+  // Item Modal State
   const [modalVisible, setModalVisible] = useState(false);
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Form state
+  // Category Modal State
+  const [catModalVisible, setCatModalVisible] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<MenuCategory | null>(null);
+  const [isCatSubmitting, setIsCatSubmitting] = useState(false);
+
+  // Item Form state
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [isAvailable, setIsAvailable] = useState(true);
+
+  // Category Form state
+  const [catName, setCatName] = useState('');
+  const [catSortOrder, setCatSortOrder] = useState('0');
+  const [catIsActive, setCatIsActive] = useState(true);
 
   const resetForm = () => {
     setName('');
@@ -26,6 +46,13 @@ export function AdminMenu() {
     setImageUrl('');
     setIsAvailable(true);
     setEditingItem(null);
+  };
+
+  const resetCatForm = () => {
+    setCatName('');
+    setCatSortOrder('0');
+    setCatIsActive(true);
+    setEditingCategory(null);
   };
 
   const openAddModal = () => {
@@ -44,9 +71,22 @@ export function AdminMenu() {
     setModalVisible(true);
   };
 
+  const openAddCatModal = () => {
+    resetCatForm();
+    setCatModalVisible(true);
+  };
+
+  const openEditCatModal = (category: MenuCategory) => {
+    setEditingCategory(category);
+    setCatName(category.name);
+    setCatSortOrder(category.sort_order?.toString() || '0');
+    setCatIsActive(category.is_active ?? true);
+    setCatModalVisible(true);
+  };
+
   const handleSave = async () => {
     if (!name || !price || !categoryId) {
-      Alert.alert('Error', 'Please fill in name, price, and category');
+      Alert.alert('Error', 'Please fill in name, price, and select a category');
       return;
     }
 
@@ -79,6 +119,38 @@ export function AdminMenu() {
     }
   };
 
+  const handleSaveCategory = async () => {
+    if (!catName) {
+      Alert.alert('Error', 'Please provide a category name');
+      return;
+    }
+
+    setIsCatSubmitting(true);
+    const order = parseInt(catSortOrder, 10);
+
+    const catData = {
+      name: catName,
+      sort_order: isNaN(order) ? 0 : order,
+      is_active: catIsActive,
+    };
+
+    let result;
+    if (editingCategory) {
+      result = await updateCategory(editingCategory.id, catData);
+    } else {
+      result = await addCategory(catData);
+    }
+
+    setIsCatSubmitting(false);
+
+    if (result.success) {
+      setCatModalVisible(false);
+      resetCatForm();
+    } else {
+      Alert.alert('Error', result.error || 'Failed to save category');
+    }
+  };
+
   const handleDelete = (item: MenuItem) => {
     Alert.alert(
       'Delete Item',
@@ -99,19 +171,88 @@ export function AdminMenu() {
     );
   };
 
+  const handleDeleteCategory = (category: MenuCategory) => {
+    Alert.alert(
+      'Delete Category',
+      `Are you sure you want to delete "${category.name}"?\n\nWARNING: This will also permanently delete ALL items within this category!`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { 
+          text: 'Delete All', 
+          style: 'destructive',
+          onPress: async () => {
+            const result = await deleteCategory(category.id);
+            if (!result.success) {
+              Alert.alert('Error', result.error || 'Failed to delete category');
+            }
+          }
+        }
+      ]
+    );
+  };
+
   return (
     <View className="gap-4 pb-8">
-      <TouchableOpacity 
-        onPress={openAddModal}
-        className="flex-row items-center justify-center bg-indigo-600 rounded-xl py-3.5 mb-2"
-      >
-        <Plus size={20} color="white" className="mr-2" />
-        <Text className="text-white font-bold">Add Menu Item</Text>
-      </TouchableOpacity>
+      <View className="flex-row gap-2 mb-2">
+        <TouchableOpacity 
+          onPress={openAddModal}
+          className="flex-1 flex-row items-center justify-center bg-indigo-600 rounded-xl py-3.5"
+        >
+          <Plus size={18} color="white" className="mr-2" />
+          <Text className="text-white font-bold">Add Item</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          onPress={openAddCatModal}
+          className="flex-1 flex-row items-center justify-center bg-indigo-100 rounded-xl py-3.5 border border-indigo-200"
+        >
+          <Plus size={18} color="#4f46e5" className="mr-2" />
+          <Text className="text-indigo-600 font-bold">Add Category</Text>
+        </TouchableOpacity>
+      </View>
+
+      {categories.length === 0 && (
+        <View className="bg-indigo-50 p-6 rounded-2xl items-center border border-indigo-100 mt-4">
+          <Text className="text-lg font-bold text-indigo-900 mb-2">No Categories Yet</Text>
+          <Text className="text-indigo-600 text-center mb-4">
+            You need to create at least one category before you can add menu items.
+          </Text>
+          <TouchableOpacity 
+            onPress={openAddCatModal}
+            className="bg-indigo-600 px-6 py-3 rounded-xl"
+          >
+            <Text className="text-white font-bold">Create Category</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {categories.map(category => (
         <View key={category.id} className="mb-4">
-          <Text className="text-lg font-bold text-gray-900 mb-3">{category.name}</Text>
+          <View className="flex-row justify-between items-center mb-3">
+            <View className="flex-row items-center">
+              <Text className="text-lg font-bold text-gray-900">{category.name}</Text>
+              {category.is_active === false && (
+                <View className="bg-gray-200 px-2 py-0.5 rounded ml-2">
+                  <Text className="text-[10px] font-bold text-gray-600 uppercase">Hidden</Text>
+                </View>
+              )}
+            </View>
+            
+            <View className="flex-row gap-2">
+              <TouchableOpacity 
+                onPress={() => openEditCatModal(category)}
+                className="w-8 h-8 bg-gray-100 rounded-full items-center justify-center"
+              >
+                <Edit2 size={14} color="#6b7280" />
+              </TouchableOpacity>
+              <TouchableOpacity 
+                onPress={() => handleDeleteCategory(category)}
+                className="w-8 h-8 bg-red-50 rounded-full items-center justify-center"
+              >
+                <Trash2 size={14} color="#ef4444" />
+              </TouchableOpacity>
+            </View>
+          </View>
           
           <View className="gap-2">
             {items.filter(i => i.category_id === category.id).map(item => (
@@ -214,23 +355,27 @@ export function AdminMenu() {
 
                 <View>
                   <Text className="text-sm font-bold text-gray-700 mb-1">Category *</Text>
-                  <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
-                    {categories.map(cat => (
-                      <TouchableOpacity
-                        key={cat.id}
-                        onPress={() => setCategoryId(cat.id)}
-                        className={`mr-2 px-4 py-2 rounded-full border ${
-                          categoryId === cat.id 
-                            ? 'bg-indigo-600 border-indigo-600' 
-                            : 'bg-white border-gray-300'
-                        }`}
-                      >
-                        <Text className={`font-bold ${categoryId === cat.id ? 'text-white' : 'text-gray-700'}`}>
-                          {cat.name}
-                        </Text>
-                      </TouchableOpacity>
-                    ))}
-                  </ScrollView>
+                  {categories.length === 0 ? (
+                    <Text className="text-red-500 italic">Please create a category first.</Text>
+                  ) : (
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
+                      {categories.map(cat => (
+                        <TouchableOpacity
+                          key={cat.id}
+                          onPress={() => setCategoryId(cat.id)}
+                          className={`mr-2 px-4 py-2 rounded-full border ${
+                            categoryId === cat.id 
+                              ? 'bg-indigo-600 border-indigo-600' 
+                              : 'bg-white border-gray-300'
+                          }`}
+                        >
+                          <Text className={`font-bold ${categoryId === cat.id ? 'text-white' : 'text-gray-700'}`}>
+                            {cat.name}
+                          </Text>
+                        </TouchableOpacity>
+                      ))}
+                    </ScrollView>
+                  )}
                 </View>
 
                 <View>
@@ -259,8 +404,8 @@ export function AdminMenu() {
 
                 <TouchableOpacity 
                   onPress={handleSave}
-                  disabled={isSubmitting}
-                  className={`bg-indigo-600 py-4 rounded-xl items-center mt-4 mb-20 ${isSubmitting ? 'opacity-70' : ''}`}
+                  disabled={isSubmitting || categories.length === 0}
+                  className={`bg-indigo-600 py-4 rounded-xl items-center mt-4 mb-20 ${(isSubmitting || categories.length === 0) ? 'opacity-70' : ''}`}
                 >
                   {isSubmitting ? (
                     <ActivityIndicator color="white" />
@@ -272,6 +417,78 @@ export function AdminMenu() {
                 </TouchableOpacity>
               </View>
             </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Category Form Modal */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={catModalVisible}
+        onRequestClose={() => setCatModalVisible(false)}
+      >
+        <View className="flex-1 justify-center bg-black/50 p-4">
+          <View className="bg-white rounded-3xl overflow-hidden">
+            <View className="flex-row justify-between items-center p-4 border-b border-gray-100">
+              <Text className="text-xl font-bold text-gray-900">
+                {editingCategory ? 'Edit Category' : 'Add Category'}
+              </Text>
+              <TouchableOpacity onPress={() => setCatModalVisible(false)} className="p-2">
+                <X size={24} color="#6b7280" />
+              </TouchableOpacity>
+            </View>
+
+            <View className="p-4 gap-4">
+              <View>
+                <Text className="text-sm font-bold text-gray-700 mb-1">Category Name *</Text>
+                <TextInput
+                  value={catName}
+                  onChangeText={setCatName}
+                  className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900"
+                  placeholder="E.g., Burgers, Drinks, Sides"
+                />
+              </View>
+
+              <View>
+                <Text className="text-sm font-bold text-gray-700 mb-1">Sort Order</Text>
+                <TextInput
+                  value={catSortOrder}
+                  onChangeText={setCatSortOrder}
+                  className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900"
+                  placeholder="0"
+                  keyboardType="number-pad"
+                />
+                <Text className="text-xs text-gray-500 mt-1">Lower numbers appear first (0, 1, 2...)</Text>
+              </View>
+
+              <View className="flex-row justify-between items-center bg-gray-50 p-4 rounded-xl border border-gray-200">
+                <View>
+                  <Text className="font-bold text-gray-900">Active</Text>
+                  <Text className="text-xs text-gray-500">Show category to customers</Text>
+                </View>
+                <Switch
+                  value={catIsActive}
+                  onValueChange={setCatIsActive}
+                  trackColor={{ false: '#d1d5db', true: '#818cf8' }}
+                  thumbColor={catIsActive ? '#4f46e5' : '#f3f4f6'}
+                />
+              </View>
+
+              <TouchableOpacity 
+                onPress={handleSaveCategory}
+                disabled={isCatSubmitting}
+                className={`bg-indigo-600 py-4 rounded-xl items-center mt-2 ${isCatSubmitting ? 'opacity-70' : ''}`}
+              >
+                {isCatSubmitting ? (
+                  <ActivityIndicator color="white" />
+                ) : (
+                  <Text className="text-white font-bold text-lg">
+                    {editingCategory ? 'Save Category' : 'Create Category'}
+                  </Text>
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
