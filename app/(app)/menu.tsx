@@ -4,10 +4,25 @@ import { useMenu } from '@/hooks/useMenu';
 import { useCart } from '@/contexts/CartContext';
 import { ShoppingBag, Plus, Minus } from 'lucide-react-native';
 import { router, useFocusEffect } from 'expo-router';
+import { useAuth } from '@/hooks/useAuth';
+import { useRewards } from '@/hooks/useRewards';
+import { Star } from 'lucide-react-native';
 
 export default function MenuScreen() {
   const { categories, items, isLoading, refetch } = useMenu();
   const { items: cartItems, addToCart, removeFromCart, updateQuantity, itemCount, cartTotal } = useCart();
+  const { user } = useAuth();
+  const { userPoints } = useRewards();
+
+  const firstName = user?.user_metadata?.full_name?.split(' ')[0] || 'there';
+  const currentPoints = userPoints?.current_points ?? 0;
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    return 'Good evening';
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -54,9 +69,18 @@ export default function MenuScreen() {
 
   return (
     <View className="flex-1 bg-gray-50">
-      <View className="px-4 pt-12 pb-4 bg-white border-b border-gray-100">
-        <Text className="text-3xl font-bold text-gray-900">Pogos Menu</Text>
-        <Text className="text-gray-500 mt-1">Tap the plus icon to add to your order</Text>
+      <View className="px-4 pt-14 pb-4 bg-white border-b border-gray-100 flex-row justify-between items-center">
+        <View>
+          <Text className="text-gray-500 text-sm mb-0.5">{getGreeting()},</Text>
+          <Text className="text-2xl font-bold text-gray-900">{firstName} 👋</Text>
+        </View>
+        <TouchableOpacity 
+          onPress={() => router.push('/(app)/dashboard')}
+          className="bg-indigo-50 flex-row items-center px-3 py-1.5 rounded-full"
+        >
+          <Star size={14} color="#6366f1" className="mr-1.5" />
+          <Text className="text-indigo-600 font-bold">{currentPoints} pts</Text>
+        </TouchableOpacity>
       </View>
 
       <ScrollView className="flex-1 px-4 pt-4">

@@ -17,7 +17,6 @@ export default function Dashboard() {
   const { activeOrders, refetch: refetchOrders } = useOrders();
   const [refreshing, setRefreshing] = useState(false);
 
-  const firstName = user?.user_metadata?.full_name?.split(' ')[0] || 'there';
   const currentPoints = userPoints?.current_points ?? 0;
   const totalEarned = userPoints?.total_earned ?? 0;
 
@@ -32,13 +31,6 @@ export default function Dashboard() {
     setTimeout(() => setRefreshing(false), 1000);
   }, [refetchRewards, refetchOrders]);
 
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return 'Good morning';
-    if (hour < 17) return 'Good afternoon';
-    return 'Good evening';
-  };
-
   return (
     <ScrollView 
       className="flex-1 bg-slate-50"
@@ -49,19 +41,11 @@ export default function Dashboard() {
     >
       {/* Header */}
       <View className="bg-indigo-600 pt-14 pb-8 px-6 rounded-b-3xl">
-        <View className="flex-row items-center justify-between mb-6">
+        <View className="flex-row items-center justify-between mb-6 mt-4">
           <View>
-            <Text className="text-indigo-200 text-base">{getGreeting()},</Text>
-            <Text className="text-white text-2xl font-bold">{firstName} 👋</Text>
+            <Text className="text-white text-3xl font-bold">Loyalty Hub</Text>
+            <Text className="text-indigo-200 mt-1">Earn points, unlock rewards.</Text>
           </View>
-          <TouchableOpacity 
-            onPress={() => router.push('/(app)/profile')}
-            className="w-11 h-11 bg-white/20 rounded-full items-center justify-center"
-          >
-            <Text className="text-white text-lg font-bold">
-              {firstName.charAt(0).toUpperCase()}
-            </Text>
-          </TouchableOpacity>
         </View>
 
         {/* Points Card */}

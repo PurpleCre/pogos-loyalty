@@ -39,24 +39,24 @@ function ProtectedLayout() {
       },
     }}>
       <Tabs.Screen
-        name="dashboard"
+        name="menu"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <Home size={22} color={color} />,
+          title: 'Store',
+          tabBarIcon: ({ color }) => <ShoppingBag size={22} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="menu"
+        name="dashboard"
         options={{
-          title: 'Order',
-          tabBarIcon: ({ color }) => <ShoppingBag size={22} color={color} />,
+          title: 'Loyalty',
+          tabBarIcon: ({ color }) => <Gift size={22} color={color} />,
         }}
       />
       <Tabs.Screen
         name="rewards"
         options={{
+          href: null,
           title: 'Rewards',
-          tabBarIcon: ({ color }) => <Gift size={22} color={color} />,
         }}
       />
       <Tabs.Screen
