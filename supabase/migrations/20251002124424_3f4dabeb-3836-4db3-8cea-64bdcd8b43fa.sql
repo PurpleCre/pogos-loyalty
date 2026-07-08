@@ -173,20 +173,20 @@ RETURNS TEXT
 LANGUAGE plpgsql
 AS $$
 DECLARE
-  code TEXT;
+  new_code TEXT;
   exists_check BOOLEAN;
 BEGIN
   LOOP
     -- Generate 8 character alphanumeric code
-    code := upper(substr(md5(random()::text), 1, 8));
+    new_code := upper(substr(md5(random()::text), 1, 8));
     
     -- Check if code exists
-    SELECT EXISTS(SELECT 1 FROM public.referral_codes WHERE referral_codes.code = code) INTO exists_check;
+    SELECT EXISTS(SELECT 1 FROM public.referral_codes WHERE referral_codes.code = new_code) INTO exists_check;
     
     EXIT WHEN NOT exists_check;
   END LOOP;
   
-  RETURN code;
+  RETURN new_code;
 END;
 $$;
 

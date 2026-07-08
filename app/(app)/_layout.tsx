@@ -4,7 +4,7 @@ import { View, ActivityIndicator } from 'react-native';
 import { Home, Gift, User, History, ShoppingBag } from 'lucide-react-native';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 
-function ProtectedLayout() {
+export default function ProtectedLayout() {
   const { session, loading } = useAuth();
   usePushNotifications();
 
@@ -99,10 +99,4 @@ function ProtectedLayout() {
   );
 }
 
-export default function AppLayout() {
-  return (
-    <AuthProvider>
-      <ProtectedLayout />
-    </AuthProvider>
-  );
-}
+
