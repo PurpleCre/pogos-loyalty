@@ -1,14 +1,21 @@
+import { useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { useMenu } from '@/hooks/useMenu';
 import { useCart } from '@/contexts/CartContext';
 import { ShoppingBag, Plus, Minus } from 'lucide-react-native';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 
 export default function MenuScreen() {
-  const { categories, items, isLoading } = useMenu();
+  const { categories, items, isLoading, refetch } = useMenu();
   const { items: cartItems, addToCart, removeFromCart, updateQuantity, itemCount, cartTotal } = useCart();
 
-  if (isLoading) {
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [])
+  );
+
+  if (isLoading && categories.length === 0 && items.length === 0) {
     return (
       <View className="flex-1 items-center justify-center bg-gray-50">
         <ActivityIndicator size="large" color="#4f46e5" />
