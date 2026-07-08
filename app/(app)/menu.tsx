@@ -6,13 +6,15 @@ import { ShoppingBag, Plus, Minus } from 'lucide-react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { useAuth } from '@/hooks/useAuth';
 import { useRewards } from '@/hooks/useRewards';
-import { Star } from 'lucide-react-native';
+import { useOrders } from '@/hooks/useOrders';
+import { Star, CheckCircle2, Clock } from 'lucide-react-native';
 
 export default function MenuScreen() {
   const { categories, items, isLoading, refetch } = useMenu();
   const { items: cartItems, addToCart, removeFromCart, updateQuantity, itemCount, cartTotal } = useCart();
   const { user } = useAuth();
   const { userPoints } = useRewards();
+  const { activeOrders, refetch: refetchOrders } = useOrders();
 
   const firstName = user?.user_metadata?.full_name?.split(' ')[0] || 'there';
   const currentPoints = userPoints?.current_points ?? 0;
@@ -27,6 +29,7 @@ export default function MenuScreen() {
   useFocusEffect(
     useCallback(() => {
       refetch();
+      refetchOrders();
     }, [])
   );
 
@@ -84,6 +87,43 @@ export default function MenuScreen() {
       </View>
 
       <ScrollView className="flex-1 px-4 pt-4">
+        {/* Active Orders */}
+        {activeOrders.length > 0 && (
+          <View className="mb-6">
+            <Text className="text-xl font-bold text-gray-900 mb-4">Active Order</Text>
+            {activeOrders.map(order => (
+              <View key={order.id} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm mb-3">
+                <View className="flex-row justify-between items-center mb-3">
+                  <View className="flex-row items-center">
+                    <View className={`w-10 h-10 rounded-full items-center justify-center mr-3 ${
+                      order.status === 'ready' ? 'bg-green-100' : 
+                      order.status === 'preparing' ? 'bg-amber-100' : 'bg-indigo-100'
+                    }`}>
+                      {order.status === 'ready' ? <CheckCircle2 size={20} color="#16a34a" /> :
+                       order.status === 'preparing' ? <Clock size={20} color="#d97706" /> :
+                       <ShoppingBag size={20} color="#4f46e5" />}
+                    </View>
+                    <View>
+                      <Text className="font-bold text-gray-900 capitalize">Order {order.status}</Text>
+                      <Text className="text-xs text-gray-500">Order #{order.id.slice(0, 6)}</Text>
+                    </View>
+                  </View>
+                  <Text className="font-bold text-indigo-600">${order.total_amount.toFixed(2)}</Text>
+                </View>
+                
+                <View className="bg-gray-50 p-3 rounded-xl">
+                  <Text className="text-sm font-semibold text-gray-700 mb-1">Items:</Text>
+                  {order.order_items?.map((item: any) => (
+                    <Text key={item.id} className="text-xs text-gray-600">
+                      {item.quantity}x {item.menu_item?.name}
+                    </Text>
+                  ))}
+                </View>
+              </View>
+            ))}
+          </View>
+        )}
+
         {categories.map(category => {
           const categoryItems = items.filter(i => i.category_id === category.id);
           if (categoryItems.length === 0) return null;

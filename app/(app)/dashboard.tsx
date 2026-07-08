@@ -14,7 +14,6 @@ import { useState, useCallback } from 'react';
 export default function Dashboard() {
   const { user } = useAuth();
   const { userPoints, transactions, loading, refetch: refetchRewards } = useRewards();
-  const { activeOrders, refetch: refetchOrders } = useOrders();
   const [refreshing, setRefreshing] = useState(false);
 
   const currentPoints = userPoints?.current_points ?? 0;
@@ -27,9 +26,8 @@ export default function Dashboard() {
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     refetchRewards();
-    refetchOrders();
     setTimeout(() => setRefreshing(false), 1000);
-  }, [refetchRewards, refetchOrders]);
+  }, [refetchRewards]);
 
   return (
     <ScrollView 
@@ -82,42 +80,7 @@ export default function Dashboard() {
         </View>
       </View>
 
-      {/* Active Orders */}
-      {activeOrders.length > 0 && (
-        <View className="px-5 -mt-1 mb-6">
-          <Text className="text-lg font-bold text-slate-800 mb-3">Active Order</Text>
-          {activeOrders.map(order => (
-            <View key={order.id} className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm mb-3">
-              <View className="flex-row justify-between items-center mb-3">
-                <View className="flex-row items-center">
-                  <View className={`w-10 h-10 rounded-full items-center justify-center mr-3 ${
-                    order.status === 'ready' ? 'bg-green-100' : 
-                    order.status === 'preparing' ? 'bg-amber-100' : 'bg-indigo-100'
-                  }`}>
-                    {order.status === 'ready' ? <CheckCircle2 size={20} color="#16a34a" /> :
-                     order.status === 'preparing' ? <Clock size={20} color="#d97706" /> :
-                     <ShoppingBag size={20} color="#4f46e5" />}
-                  </View>
-                  <View>
-                    <Text className="font-bold text-gray-900 capitalize">Order {order.status}</Text>
-                    <Text className="text-xs text-gray-500">Order #{order.id.slice(0, 6)}</Text>
-                  </View>
-                </View>
-                <Text className="font-bold text-indigo-600">${order.total_amount.toFixed(2)}</Text>
-              </View>
-              
-              <View className="bg-slate-50 p-3 rounded-xl">
-                <Text className="text-sm font-semibold text-gray-700 mb-1">Items:</Text>
-                {order.order_items?.map(item => (
-                  <Text key={item.id} className="text-xs text-gray-600">
-                    {item.quantity}x {item.menu_item?.name}
-                  </Text>
-                ))}
-              </View>
-            </View>
-          ))}
-        </View>
-      )}
+
 
       {/* Quick Actions */}
       <View className="px-5 -mt-1">
