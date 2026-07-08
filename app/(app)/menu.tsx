@@ -3,11 +3,12 @@ import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator } fr
 import { useMenu } from '@/hooks/useMenu';
 import { useCart } from '@/contexts/CartContext';
 import { ShoppingBag, Plus, Minus } from 'lucide-react-native';
-import { router, useFocusEffect } from 'expo-router';
+import { router, useFocusEffect, useNavigation } from 'expo-router';
+import { DrawerActions } from '@react-navigation/native';
 import { useAuth } from '@/hooks/useAuth';
 import { useRewards } from '@/hooks/useRewards';
 import { useOrders } from '@/hooks/useOrders';
-import { Star, CheckCircle2, Clock } from 'lucide-react-native';
+import { Star, CheckCircle2, Clock, Menu } from 'lucide-react-native';
 
 export default function MenuScreen() {
   const { categories, items, isLoading, refetch } = useMenu();
@@ -15,6 +16,7 @@ export default function MenuScreen() {
   const { user } = useAuth();
   const { userPoints } = useRewards();
   const { activeOrders, refetch: refetchOrders } = useOrders();
+  const navigation = useNavigation();
 
   const firstName = user?.user_metadata?.full_name?.split(' ')[0] || 'there';
   const currentPoints = userPoints?.current_points ?? 0;
@@ -73,9 +75,17 @@ export default function MenuScreen() {
   return (
     <View className="flex-1 bg-gray-50">
       <View className="px-4 pt-14 pb-4 bg-white border-b border-gray-100 flex-row justify-between items-center">
-        <View>
-          <Text className="text-gray-500 text-sm mb-0.5">{getGreeting()},</Text>
-          <Text className="text-2xl font-bold text-gray-900">{firstName} 👋</Text>
+        <View className="flex-row items-center">
+          <TouchableOpacity 
+            onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+            className="mr-3 bg-gray-100 p-2 rounded-full"
+          >
+            <Menu size={20} color="#1f2937" />
+          </TouchableOpacity>
+          <View>
+            <Text className="text-gray-500 text-sm mb-0.5">{getGreeting()},</Text>
+            <Text className="text-xl font-bold text-gray-900">{firstName} 👋</Text>
+          </View>
         </View>
         <TouchableOpacity 
           onPress={() => router.push('/(app)/dashboard')}

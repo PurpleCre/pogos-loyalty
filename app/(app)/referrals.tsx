@@ -9,17 +9,17 @@ export default function ReferralsScreen() {
   const { referralCode, referrals, isLoading, generateCode, isGenerating, copyCode } = useReferrals();
   const [refreshing, setRefreshing] = useState(false);
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => setRefreshing(false), 1000);
+  }, []);
+
   if (!isFocused) {
     return <View />;
   }
 
   const totalReferrals = referrals?.length || 0;
   const totalPointsEarned = referrals?.reduce((sum: number, r: any) => sum + (r.points_awarded || 0), 0) || 0;
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => setRefreshing(false), 1000);
-  }, []);
 
   if (isLoading) {
     return (

@@ -14,7 +14,14 @@ export default function CartScreen() {
   const handlePlaceOrder = async () => {
     if (items.length === 0) return;
     if (!session?.user?.id) {
-      Alert.alert('Error', 'You must be logged in to place an order');
+      Alert.alert(
+        'Sign in required', 
+        'You must be logged in to place an order.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Log In', onPress: () => router.push('/(auth)/login') }
+        ]
+      );
       return;
     }
 

@@ -1,4 +1,4 @@
-import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, RefreshControl } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, Pressable, RefreshControl } from 'react-native';
 import { useRewards } from '@/hooks/useRewards';
 import { useState, useCallback } from 'react';
 import { 
@@ -82,22 +82,27 @@ export default function Transactions() {
             {/* Filter Tabs */}
             <View className="flex-row bg-white p-1 rounded-xl border border-slate-100 mb-5">
               {filters.map((tab) => (
-                <TouchableOpacity
+                <Pressable
                   key={tab.key}
                   onPress={() => setFilter(tab.key)}
-                  className={`flex-1 py-2.5 rounded-lg items-center ${
-                    filter === tab.key
-                      ? 'bg-indigo-600 shadow-sm'
-                      : ''
-                  }`}
-                  activeOpacity={0.7}
+                  style={{
+                    flex: 1,
+                    paddingVertical: 10,
+                    borderRadius: 8,
+                    alignItems: 'center',
+                    backgroundColor: filter === tab.key ? '#4f46e5' : 'transparent',
+                    shadowColor: filter === tab.key ? '#000' : 'transparent',
+                    shadowOffset: { width: 0, height: 1 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 1,
+                  }}
                 >
                   <Text className={`text-sm font-semibold ${
                     filter === tab.key ? 'text-white' : 'text-slate-400'
                   }`}>
                     {tab.label}
                   </Text>
-                </TouchableOpacity>
+                </Pressable>
               ))}
             </View>
 

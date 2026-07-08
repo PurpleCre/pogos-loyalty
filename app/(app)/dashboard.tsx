@@ -3,11 +3,12 @@ import { useAuth } from '@/hooks/useAuth';
 import { useRewards } from '@/hooks/useRewards';
 import { useOrders } from '@/hooks/useOrders';
 import { Button } from '@/components/ui/button';
-import { router } from 'expo-router';
+import { router, useNavigation } from 'expo-router';
+import { DrawerActions } from '@react-navigation/native';
 import { 
   Scan, Gift, Trophy, Users, Star, TrendingUp, 
   ChevronRight, Sparkles, ArrowUpRight, ArrowDownRight,
-  ShoppingBag, Clock, CheckCircle2
+  ShoppingBag, Clock, CheckCircle2, Menu
 } from 'lucide-react-native';
 import { useState, useCallback } from 'react';
 
@@ -15,6 +16,14 @@ export default function Dashboard() {
   const { user } = useAuth();
   const { userPoints, transactions, loading, refetch: refetchRewards } = useRewards();
   const [refreshing, setRefreshing] = useState(false);
+
+  const navigation = useNavigation();
+
+  // If not authenticated, redirect to login
+  if (!user && !loading) {
+    router.replace('/(auth)/login');
+    return null;
+  }
 
   const currentPoints = userPoints?.current_points ?? 0;
   const totalEarned = userPoints?.total_earned ?? 0;
@@ -40,9 +49,17 @@ export default function Dashboard() {
       {/* Header */}
       <View className="bg-indigo-600 pt-14 pb-8 px-6 rounded-b-3xl">
         <View className="flex-row items-center justify-between mb-6 mt-4">
-          <View>
-            <Text className="text-white text-3xl font-bold">Loyalty Hub</Text>
-            <Text className="text-indigo-200 mt-1">Earn points, unlock rewards.</Text>
+          <View className="flex-row items-center">
+            <TouchableOpacity 
+              onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+              className="mr-3 bg-indigo-500/30 p-2 rounded-full"
+            >
+              <Menu size={24} color="#ffffff" />
+            </TouchableOpacity>
+            <View>
+              <Text className="text-white text-3xl font-bold">Loyalty Hub</Text>
+              <Text className="text-indigo-200 mt-1">Earn points, unlock rewards.</Text>
+            </View>
           </View>
         </View>
 
@@ -99,7 +116,7 @@ export default function Dashboard() {
           </TouchableOpacity>
 
           <TouchableOpacity 
-            onPress={() => router.push('/(app)/rewards')}
+            onPress={() => router.navigate('/(app)/rewards')}
             className="w-[48%] bg-white rounded-2xl p-5 mb-3 border border-slate-100 shadow-sm"
             activeOpacity={0.7}
           >
@@ -111,7 +128,7 @@ export default function Dashboard() {
           </TouchableOpacity>
 
           <TouchableOpacity 
-            onPress={() => router.push('/(app)/achievements')}
+            onPress={() => router.navigate('/(app)/achievements')}
             className="w-[48%] bg-white rounded-2xl p-5 mb-3 border border-slate-100 shadow-sm"
             activeOpacity={0.7}
           >
@@ -123,7 +140,7 @@ export default function Dashboard() {
           </TouchableOpacity>
 
           <TouchableOpacity 
-            onPress={() => router.push('/(app)/referrals')}
+            onPress={() => router.navigate('/(app)/referrals')}
             className="w-[48%] bg-white rounded-2xl p-5 mb-3 border border-slate-100 shadow-sm"
             activeOpacity={0.7}
           >
@@ -167,7 +184,7 @@ export default function Dashboard() {
         <View className="flex-row items-center justify-between mb-4">
           <Text className="text-lg font-bold text-slate-800">Recent Activity</Text>
           <TouchableOpacity 
-            onPress={() => router.push('/(app)/transactions')}
+            onPress={() => router.navigate('/(app)/transactions')}
             className="flex-row items-center"
           >
             <Text className="text-indigo-600 text-sm font-medium mr-1">View All</Text>

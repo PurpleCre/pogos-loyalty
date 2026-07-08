@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { router } from 'expo-router';
-import { User, Save, Trophy, Share2, Shield, Bell, ChevronRight } from 'lucide-react-native';
+import { router, useNavigation } from 'expo-router';
+import { DrawerActions } from '@react-navigation/native';
+import { User, Save, Trophy, Share2, Shield, Bell, ChevronRight, Menu, LogIn } from 'lucide-react-native';
 
 export default function Profile() {
   const { user, signOut } = useAuth();
@@ -35,8 +36,46 @@ export default function Profile() {
     router.replace('/(auth)/login');
   };
 
+  const navigation = useNavigation();
+
+  if (!user) {
+    return (
+      <View className="flex-1 bg-slate-50 items-center justify-center p-6">
+        <View className="absolute top-12 left-4">
+          <TouchableOpacity 
+            onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+            className="p-2 bg-white rounded-full shadow-sm"
+          >
+            <Menu size={24} color="#1f2937" />
+          </TouchableOpacity>
+        </View>
+        <View className="w-20 h-20 bg-red-100 rounded-full items-center justify-center mb-6">
+          <User size={32} color="#dc2626" />
+        </View>
+        <Text className="text-2xl font-bold text-slate-800 mb-2">Welcome to Pogo's</Text>
+        <Text className="text-slate-500 text-center mb-8">Sign in or create an account to manage your profile and view your rewards.</Text>
+        <TouchableOpacity 
+          onPress={() => router.push('/(auth)/login')}
+          className="bg-red-600 w-full py-4 rounded-xl flex-row items-center justify-center shadow-md"
+        >
+          <LogIn size={20} color="white" className="mr-2" />
+          <Text className="text-white font-bold text-lg">Sign In</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
   return (
-    <ScrollView className="flex-1 bg-slate-50" contentContainerStyle={{ padding: 16, paddingTop: 12, flexGrow: 1 }}>
+    <View className="flex-1 bg-slate-50">
+      <View className="absolute top-12 left-4 z-10">
+        <TouchableOpacity 
+          onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+          className="p-2 bg-white rounded-full shadow-sm border border-slate-100"
+        >
+          <Menu size={20} color="#1f2937" />
+        </TouchableOpacity>
+      </View>
+      <ScrollView className="flex-1" contentContainerStyle={{ padding: 16, paddingTop: 40, flexGrow: 1 }}>
       {/* Profile Header */}
       <View className="items-center py-6">
         <View className="w-20 h-20 bg-indigo-100 rounded-full items-center justify-center mb-4">
@@ -164,5 +203,6 @@ export default function Profile() {
         </TouchableOpacity>
       </View>
     </ScrollView>
+    </View>
   );
 }
