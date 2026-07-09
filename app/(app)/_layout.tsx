@@ -97,6 +97,13 @@ export default function AppLayout() {
           title: 'Admin',
         }}
       />
+      <Drawer.Screen
+        name="order-success"
+        options={{
+          drawerItemStyle: { display: 'none' },
+          title: 'Order Success',
+        }}
+      />
     </Drawer>
   );
 }

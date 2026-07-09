@@ -74,9 +74,7 @@ export default function CartScreen() {
 
       // 3. Clear cart and redirect
       clearCart();
-      Alert.alert('Success', 'Your order has been placed!', [
-        { text: 'OK', onPress: () => router.push('/(app)/dashboard') }
-      ]);
+      router.push(`/(app)/order-success?orderId=${orderData.id}`);
     } catch (error: any) {
       console.error('Checkout error:', error);
       Alert.alert('Order Failed', error.message || 'There was a problem placing your order.');
