@@ -1,7 +1,7 @@
 import { Drawer } from 'expo-router/drawer';
 import { useAuth } from '@/hooks/useAuth';
 import { View, ActivityIndicator } from 'react-native';
-import { Home, Gift, User, History, ShoppingBag } from 'lucide-react-native';
+import { Home, Gift, User, History, ShoppingBag, Truck } from 'lucide-react-native';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { Redirect } from 'expo-router';
 
@@ -64,6 +64,15 @@ export default function AppLayout() {
         options={{
           title: 'History',
           drawerIcon: ({ color, size }) => <History size={size} color={color} />,
+          drawerItemStyle: { display: session ? 'flex' : 'none' },
+        }}
+      />
+
+      <Drawer.Screen
+        name="order-tracking"
+        options={{
+          title: 'Track Orders',
+          drawerIcon: ({ color, size }) => <Truck size={size} color={color} />,
           drawerItemStyle: { display: session ? 'flex' : 'none' },
         }}
       />
