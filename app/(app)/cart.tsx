@@ -1,15 +1,29 @@
-import { View, Text, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Alert, ActivityIndicator, Image, Modal, Pressable } from 'react-native';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabase';
-import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag } from 'lucide-react-native';
+import { ArrowLeft, MapPin, Store, CreditCard, Banknote, ChevronDown, Check } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { useState } from 'react';
+import { useOrder } from '@/contexts/OrderContext';
+import { useMenu } from '@/hooks/useMenu';
 
 export default function CartScreen() {
-  const { items, updateQuantity, removeFromCart, cartTotal, clearCart } = useCart();
+  const { items, cartTotal, clearCart } = useCart();
   const { session } = useAuth();
+  const { selectedStore } = useOrder();
+  const { items: allMenu } = useMenu(false, selectedStore?.id);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Dropdown states
+  const [isCurrencyModalVisible, setIsCurrencyModalVisible] = useState(false);
+  const [selectedCurrency, setSelectedCurrency] = useState('$ (USD)');
+
+  const [isChangeModalVisible, setIsChangeModalVisible] = useState(false);
+  const [selectedChange, setSelectedChange] = useState('Yes, from $20.00');
+
+  const currencyOptions = ['$ (USD)', '€ (EUR)', '£ (GBP)', '$ (CAD)'];
+  const changeOptions = ['No change needed', 'Yes, from $20.00', 'Yes, from $50.00', 'Yes, from $100.00'];
 
   const handlePlaceOrder = async () => {
     if (items.length === 0) return;
@@ -35,6 +49,9 @@ export default function CartScreen() {
           total_amount: cartTotal,
           status: 'pending',
           points_earned: Math.floor(cartTotal * 10), // 10 points per dollar
+          currency: selectedCurrency,
+          change_needed: selectedChange,
+          store_id: selectedStore?.id || null,
         })
         .select()
         .single();
@@ -71,14 +88,14 @@ export default function CartScreen() {
   if (items.length === 0) {
     return (
       <View className="flex-1 bg-gray-50 items-center justify-center px-4">
-        <View className="w-20 h-20 bg-indigo-50 rounded-full items-center justify-center mb-4">
-          <ShoppingBag size={32} color="#4f46e5" />
+        <View className="w-20 h-20 bg-red-50 rounded-full items-center justify-center mb-4">
+          <Store size={32} color="#dc2626" />
         </View>
         <Text className="text-xl font-bold text-gray-900 mb-2">Your cart is empty</Text>
         <Text className="text-gray-500 text-center mb-8">Looks like you haven't added any items to your order yet.</Text>
         <TouchableOpacity 
           onPress={() => router.back()}
-          className="bg-indigo-600 px-6 py-3 rounded-xl"
+          className="bg-red-600 px-6 py-3 rounded-xl"
         >
           <Text className="text-white font-bold">Browse Menu</Text>
         </TouchableOpacity>
@@ -88,69 +105,180 @@ export default function CartScreen() {
 
   return (
     <View className="flex-1 bg-gray-50">
-      <View className="flex-row items-center justify-between px-4 pt-12 pb-4 bg-white border-b border-gray-100">
-        <TouchableOpacity onPress={() => router.back()} className="p-2 -ml-2">
-          <ArrowLeft size={24} color="#1f2937" />
-        </TouchableOpacity>
-        <Text className="text-xl font-bold text-gray-900">Your Order</Text>
-        <TouchableOpacity onPress={clearCart} className="p-2 -mr-2">
-          <Trash2 size={20} color="#ef4444" />
-        </TouchableOpacity>
+      {/* Red Header matching Pogo's identity */}
+      <View className="bg-red-600 pt-14 pb-4 px-4 rounded-b-3xl">
+        <View className="flex-row items-center justify-between mb-2">
+          <TouchableOpacity onPress={() => router.back()} className="w-10 h-10 items-center justify-center -ml-2">
+            <ArrowLeft size={28} color="#fff" />
+          </TouchableOpacity>
+          <Text className="text-white text-xl font-bold">Checkout</Text>
+          <View className="w-10" />
+        </View>
+        <Text className="text-white text-base font-medium">Checkout - Confirm Order</Text>
       </View>
 
-      <ScrollView className="flex-1 px-4 pt-4">
-        {items.map(item => (
-          <View key={item.id} className="bg-white p-4 rounded-2xl border border-gray-100 flex-row items-center mb-3">
-            <View className="flex-1 mr-4">
-              <Text className="font-bold text-gray-900 text-lg">{item.name}</Text>
-              <Text className="text-indigo-600 font-semibold mt-1">${(item.price * item.quantity).toFixed(2)}</Text>
-            </View>
+      <ScrollView className="flex-1 px-4 pt-4" showsVerticalScrollIndicator={false}>
+        
+        {/* Order Summary Card */}
+        <View className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-4">
+          <Text className="text-lg font-bold text-gray-900 mb-4">Order Summary</Text>
+          
+          {items.map((item, index) => {
+            const menuItem = allMenu.find(m => m.id === item.menu_item_id);
+            const isLast = index === items.length - 1;
+            
+            return (
+              <View key={item.id} className={`flex-row items-center py-3 ${!isLast ? 'border-b border-gray-50' : ''}`}>
+                {menuItem?.image_url ? (
+                  <Image 
+                    source={{ uri: menuItem.image_url }} 
+                    className="w-12 h-12 rounded-lg bg-gray-100 mr-3"
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <View className="w-12 h-12 rounded-lg bg-gray-100 mr-3 items-center justify-center">
+                    <Store size={20} color="#9ca3af" />
+                  </View>
+                )}
+                
+                <View className="flex-1">
+                  <Text className="font-semibold text-gray-900 leading-tight">
+                    {item.quantity}x {item.name}
+                  </Text>
+                  {/* Mock customized text if price > base price, could expand logically in future */}
+                  {menuItem && item.price > menuItem.price && (
+                    <Text className="text-xs text-gray-500">(Custom)</Text>
+                  )}
+                </View>
+                
+                <Text className="font-bold text-gray-900">${(item.price * item.quantity).toFixed(2)}</Text>
+              </View>
+            );
+          })}
+        </View>
 
-            <View className="flex-row items-center bg-gray-100 rounded-full">
-              <TouchableOpacity 
-                onPress={() => updateQuantity(item.id, item.quantity - 1)}
-                className="w-10 h-10 items-center justify-center rounded-full"
-              >
-                <Minus size={18} color="#4f46e5" />
-              </TouchableOpacity>
-              <Text className="font-bold text-gray-900 w-8 text-center">{item.quantity}</Text>
-              <TouchableOpacity 
-                onPress={() => updateQuantity(item.id, item.quantity + 1)}
-                className="w-10 h-10 items-center justify-center rounded-full bg-indigo-600"
-              >
-                <Plus size={18} color="#fff" />
-              </TouchableOpacity>
-            </View>
+        {/* Delivery Details Card */}
+        <View className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-4">
+          <Text className="text-lg font-bold text-gray-900 mb-4">Delivery Details</Text>
+          
+          <View className="flex-row items-center mb-4">
+            <Store size={20} color="#6b7280" className="mr-3" />
+            <Text className="text-base text-gray-800 font-medium">{selectedStore?.name || "Main St. QuickBite"}</Text>
           </View>
-        ))}
+          
+          <View className="flex-row items-center">
+            <MapPin size={20} color="#6b7280" className="mr-3" />
+            <Text className="text-base text-gray-800 font-medium">Main Street, City Center</Text>
+          </View>
+        </View>
+
+        {/* Payment Method Card (Cash on Delivery format from mockup) */}
+        <View className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-8">
+          <View className="flex-row items-center mb-2">
+            <Banknote size={24} color="#15803d" className="mr-2" />
+            <Text className="text-lg font-bold text-gray-900">Payment on Delivery</Text>
+          </View>
+          <Text className="text-sm text-gray-500 mb-4">Cash payment collected by the driver.</Text>
+          
+          <View className="flex-row justify-between border-t border-gray-100 pt-3">
+            <TouchableOpacity onPress={() => setIsCurrencyModalVisible(true)}>
+              <Text className="text-xs text-gray-400 mb-1">Currency</Text>
+              <View className="flex-row items-center">
+                <Text className="font-semibold text-gray-900 mr-1">{selectedCurrency}</Text>
+                <ChevronDown size={16} color="#6b7280" />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setIsChangeModalVisible(true)}>
+              <Text className="text-xs text-gray-400 mb-1">Need Change?</Text>
+              <View className="flex-row items-center">
+                <Text className="font-semibold text-gray-900 mr-1">{selectedChange}</Text>
+                <ChevronDown size={16} color="#6b7280" />
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+        
+        <View className="h-24" />
       </ScrollView>
 
-      <View className="bg-white p-6 border-t border-gray-100 rounded-t-3xl shadow-lg">
-        <View className="flex-row justify-between mb-2">
-          <Text className="text-gray-500">Subtotal</Text>
-          <Text className="font-semibold text-gray-900">${cartTotal.toFixed(2)}</Text>
+      {/* Sticky Footer */}
+      <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 pt-4 pb-8 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+        <View className="flex-row justify-between items-center mb-4">
+          <Text className="text-gray-600 font-medium">Est. Delivery: 20-30 min</Text>
+          <Text className="text-2xl font-black text-gray-900">${cartTotal.toFixed(2)}</Text>
         </View>
-        <View className="flex-row justify-between mb-4">
-          <Text className="text-gray-500">Taxes (8%)</Text>
-          <Text className="font-semibold text-gray-900">${(cartTotal * 0.08).toFixed(2)}</Text>
-        </View>
-        <View className="flex-row justify-between mb-6 pt-4 border-t border-gray-100">
-          <Text className="text-xl font-bold text-gray-900">Total</Text>
-          <Text className="text-xl font-bold text-indigo-600">${(cartTotal * 1.08).toFixed(2)}</Text>
-        </View>
-
+        
         <TouchableOpacity 
           onPress={handlePlaceOrder}
           disabled={isSubmitting}
-          className={`py-4 rounded-xl items-center ${isSubmitting ? 'bg-indigo-400' : 'bg-indigo-600'}`}
+          className={`py-4 rounded-xl items-center shadow-sm ${isSubmitting ? 'bg-red-400' : 'bg-red-600'}`}
         >
           {isSubmitting ? (
             <ActivityIndicator color="white" />
           ) : (
-            <Text className="text-white font-bold text-lg">Place Order</Text>
+            <View className="items-center">
+              <Text className="text-white font-black text-lg">PLACE ORDER</Text>
+              <Text className="text-red-100 text-xs mt-1">(Cash Payment on Delivery)</Text>
+            </View>
           )}
         </TouchableOpacity>
       </View>
+
+      {/* Currency Modal */}
+      <Modal visible={isCurrencyModalVisible} transparent animationType="fade" onRequestClose={() => setIsCurrencyModalVisible(false)}>
+        <View className="flex-1 justify-end bg-black/40">
+          <Pressable className="flex-1" onPress={() => setIsCurrencyModalVisible(false)} />
+          <View className="bg-white rounded-t-3xl p-6">
+            <Text className="text-xl font-bold text-gray-900 mb-4">Select Currency</Text>
+            {currencyOptions.map(option => (
+              <TouchableOpacity 
+                key={option} 
+                onPress={() => {
+                  setSelectedCurrency(option);
+                  setIsCurrencyModalVisible(false);
+                }}
+                className="flex-row items-center justify-between py-4 border-b border-gray-100"
+              >
+                <Text className={`text-lg ${selectedCurrency === option ? 'font-bold text-red-600' : 'text-gray-700'}`}>
+                  {option}
+                </Text>
+                {selectedCurrency === option && <Check size={20} color="#dc2626" />}
+              </TouchableOpacity>
+            ))}
+            <TouchableOpacity onPress={() => setIsCurrencyModalVisible(false)} className="mt-6 bg-gray-100 py-3 rounded-xl items-center">
+              <Text className="font-bold text-gray-700">Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Change Modal */}
+      <Modal visible={isChangeModalVisible} transparent animationType="fade" onRequestClose={() => setIsChangeModalVisible(false)}>
+        <View className="flex-1 justify-end bg-black/40">
+          <Pressable className="flex-1" onPress={() => setIsChangeModalVisible(false)} />
+          <View className="bg-white rounded-t-3xl p-6">
+            <Text className="text-xl font-bold text-gray-900 mb-4">Need Change For?</Text>
+            {changeOptions.map(option => (
+              <TouchableOpacity 
+                key={option} 
+                onPress={() => {
+                  setSelectedChange(option);
+                  setIsChangeModalVisible(false);
+                }}
+                className="flex-row items-center justify-between py-4 border-b border-gray-100"
+              >
+                <Text className={`text-lg ${selectedChange === option ? 'font-bold text-red-600' : 'text-gray-700'}`}>
+                  {option}
+                </Text>
+                {selectedChange === option && <Check size={20} color="#dc2626" />}
+              </TouchableOpacity>
+            ))}
+            <TouchableOpacity onPress={() => setIsChangeModalVisible(false)} className="mt-6 bg-gray-100 py-3 rounded-xl items-center">
+              <Text className="font-bold text-gray-700">Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }

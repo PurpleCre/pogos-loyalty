@@ -1,0 +1,4 @@
+ALTER TABLE public.orders
+ADD COLUMN IF NOT EXISTS currency TEXT,
+ADD COLUMN IF NOT EXISTS change_needed TEXT,
+ADD COLUMN IF NOT EXISTS store_id UUID REFERENCES public.stores(id);
