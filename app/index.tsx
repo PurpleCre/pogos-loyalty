@@ -1,11 +1,24 @@
 import { View, Text, Image, TouchableOpacity, TextInput, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { ShoppingCart, MapPin, User } from 'lucide-react-native';
+import { ShoppingCart, MapPin, User, Search } from 'lucide-react-native';
 import { useAuth } from '@/hooks/useAuth';
+import { useState } from 'react';
+import { useOrder } from '@/contexts/OrderContext';
+import { LocationPickerModal } from '@/components/LocationPickerModal';
 
 export default function LandingPage() {
   const { session } = useAuth();
+  const { deliveryLocation } = useOrder();
+  const [isLocationModalVisible, setLocationModalVisible] = useState(false);
+
+  const handleOrderNow = () => {
+    if (deliveryLocation) {
+      router.push('/store-picker');
+    } else {
+      setLocationModalVisible(true);
+    }
+  };
   
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
@@ -27,7 +40,7 @@ export default function LandingPage() {
         <View className="w-full h-[400px] relative">
           <Image 
             source={{ uri: 'https://images.unsplash.com/photo-1550547660-d9450f859349?w=800&auto=format&fit=crop&q=80' }} 
-            className="w-full h-full"
+            style={{ width: '100%', height: '100%' }}
             resizeMode="cover"
           />
           {/* Gradient overlay */}
@@ -46,7 +59,7 @@ export default function LandingPage() {
         {/* Main Content Area */}
         <View className="px-5 py-8 items-center bg-white">
           <TouchableOpacity 
-            onPress={() => router.push('/(app)/menu')}
+            onPress={handleOrderNow}
             className="bg-red-600 w-full py-4 rounded-xl shadow-md items-center mb-8"
             activeOpacity={0.8}
           >
@@ -62,16 +75,27 @@ export default function LandingPage() {
               <Text className="text-xl font-bold text-slate-800">Find a Store Near You</Text>
             </View>
             
-            <View className="bg-white border border-slate-200 rounded-xl flex-row items-center px-4 py-3 shadow-sm">
-              <TextInput 
-                placeholder="Enter Delivery Address..."
-                className="flex-1 text-base text-slate-800"
-                placeholderTextColor="#94a3b8"
-              />
-            </View>
+            <TouchableOpacity 
+              onPress={() => setLocationModalVisible(true)}
+              className="bg-white border border-slate-200 rounded-xl flex-row items-center px-4 py-3 shadow-sm"
+              activeOpacity={0.7}
+            >
+              <Text className={`flex-1 text-base ${deliveryLocation ? 'text-slate-800 font-bold' : 'text-slate-400'}`} numberOfLines={1}>
+                {deliveryLocation ? (deliveryLocation.tag ? `${deliveryLocation.tag} - ${deliveryLocation.address}` : deliveryLocation.address) : "Set Delivery Location..."}
+              </Text>
+              <View className="p-1">
+                <Search size={20} color="#dc2626" />
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
+
+      {/* Location Picker Modal */}
+      <LocationPickerModal 
+        visible={isLocationModalVisible} 
+        onClose={() => setLocationModalVisible(false)} 
+      />
     </SafeAreaView>
   );
 }

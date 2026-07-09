@@ -3,6 +3,7 @@
     "name": "mobile",
     "slug": "mobile",
     "version": "1.0.0",
+    "scheme": "pogos",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -14,7 +15,10 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.purpl3cr3.mobile"
+      "bundleIdentifier": "com.purpl3cr3.mobile",
+      "config": {
+        "googleMapsApiKey": "AIzaSyAaKEcCmNe92IEnKxU_aTfgRulH1NFyUxI"
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -23,7 +27,12 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.purpl3cr3.mobile"
+      "package": "com.purpl3cr3.mobile",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyAaKEcCmNe92IEnKxU_aTfgRulH1NFyUxI"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
