@@ -1,7 +1,7 @@
 import { View, Text, Image, TouchableOpacity, TextInput, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { ShoppingCart, MapPin, User, Search } from 'lucide-react-native';
+import { ShoppingCart, MapPin, User, Search, Menu } from 'lucide-react-native';
 import { useAuth } from '@/hooks/useAuth';
 import { useState } from 'react';
 import { useOrder } from '@/contexts/OrderContext';
@@ -24,13 +24,18 @@ export default function LandingPage() {
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
       <ScrollView className="flex-1" bounces={false}>
         {/* Red Header */}
-        <View className="bg-red-600 px-5 py-4 flex-row items-center justify-between">
-          <Text className="text-white text-2xl font-black tracking-wider">POGO'S</Text>
+        <View className="bg-red-600 px-5 py-4 pt-14 flex-row items-center justify-between">
+          <View className="flex-row items-center">
+            <TouchableOpacity onPress={() => router.push('/(app)/menu')} className="mr-4">
+              <Menu color="white" size={28} />
+            </TouchableOpacity>
+            <Text className="text-white text-2xl font-black tracking-wider">POGO'S</Text>
+          </View>
           <View className="flex-row items-center gap-5">
             <TouchableOpacity onPress={() => router.push(session ? '/(app)/profile' : '/(auth)/login')}>
               <User color="white" size={24} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/(app)/menu')} className="relative">
+            <TouchableOpacity onPress={() => router.push('/(app)/cart')} className="relative">
               <ShoppingCart color="white" size={24} />
             </TouchableOpacity>
           </View>

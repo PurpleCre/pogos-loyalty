@@ -2,8 +2,9 @@ import { View, Text, ScrollView, TouchableOpacity, Alert, ActivityIndicator, Ima
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabase';
-import { ArrowLeft, MapPin, Store, CreditCard, Banknote, ChevronDown, Check } from 'lucide-react-native';
-import { router } from 'expo-router';
+import { ArrowLeft, MapPin, Store, CreditCard, Banknote, ChevronDown, Check, Menu } from 'lucide-react-native';
+import { router, useNavigation } from 'expo-router';
+import { DrawerActions } from '@react-navigation/native';
 import { useState } from 'react';
 import { useOrder } from '@/contexts/OrderContext';
 import { useMenu } from '@/hooks/useMenu';
@@ -14,6 +15,7 @@ export default function CartScreen() {
   const { selectedStore } = useOrder();
   const { items: allMenu } = useMenu(false, selectedStore?.id);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigation = useNavigation();
 
   // Dropdown states
   const [isCurrencyModalVisible, setIsCurrencyModalVisible] = useState(false);
@@ -106,8 +108,8 @@ export default function CartScreen() {
       {/* Red Header matching Pogo's identity */}
       <View className="bg-red-600 pt-14 pb-4 px-4 rounded-b-3xl">
         <View className="flex-row items-center justify-between mb-2">
-          <TouchableOpacity onPress={() => router.back()} className="w-10 h-10 items-center justify-center -ml-2">
-            <ArrowLeft size={28} color="#fff" />
+          <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())} className="w-10 h-10 items-center justify-center -ml-2">
+            <Menu size={28} color="#fff" />
           </TouchableOpacity>
           <Text className="text-white text-xl font-bold">Checkout</Text>
           <View className="w-10" />

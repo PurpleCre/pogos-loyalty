@@ -2,8 +2,9 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator, Modal, Pressable } from 'react-native';
 import { useMenu, MenuItemOption, MenuItemOptionChoice } from '@/hooks/useMenu';
 import { useCart } from '@/contexts/CartContext';
-import { ShoppingCart, Plus, Minus, ChevronLeft, Utensils, CupSoda, Flame, Gift, Pizza, CheckCircle2, Clock, ShoppingBag, X, Circle, CheckCircle, CheckSquare, Square } from 'lucide-react-native';
+import { ShoppingCart, Plus, Minus, ChevronLeft, Utensils, CupSoda, Flame, Gift, Pizza, CheckCircle2, Clock, ShoppingBag, X, Circle, CheckCircle, CheckSquare, Square, Menu as MenuIcon } from 'lucide-react-native';
 import { router, useFocusEffect, useNavigation } from 'expo-router';
+import { DrawerActions } from '@react-navigation/native';
 import { useAuth } from '@/hooks/useAuth';
 import { useOrders } from '@/hooks/useOrders';
 import { useOrder } from '@/contexts/OrderContext';
@@ -155,8 +156,8 @@ export default function MenuScreen() {
       {/* Red Header matching screenshot style */}
       <View className="bg-red-600 pt-14 pb-4 px-4 rounded-b-3xl">
         <View className="flex-row justify-between items-center mb-4">
-          <TouchableOpacity onPress={() => router.back()} className="w-10 h-10 items-center justify-center -ml-2">
-            <ChevronLeft size={28} color="#fff" />
+          <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())} className="w-10 h-10 items-center justify-center -ml-2">
+            <MenuIcon size={28} color="#fff" />
           </TouchableOpacity>
           <Text className="text-white text-xl font-bold">Pogo's</Text>
           <TouchableOpacity onPress={() => router.push('/(app)/cart')} className="w-10 h-10 items-center justify-center">

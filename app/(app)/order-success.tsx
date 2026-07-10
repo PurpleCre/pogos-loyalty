@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react';
 import { View, Text, TouchableOpacity, Animated, Easing } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
-import { Check, Store, MapPin, Sparkles } from 'lucide-react-native';
+import { useLocalSearchParams, router, useNavigation } from 'expo-router';
+import { DrawerActions } from '@react-navigation/native';
+import { Check, Store, MapPin, Sparkles, Menu } from 'lucide-react-native';
 import { useOrder } from '@/contexts/OrderContext';
 
 export default function OrderSuccessScreen() {
   const { orderId } = useLocalSearchParams();
   const { selectedStore } = useOrder();
+  const navigation = useNavigation();
   
   // Simple animation for the checkmark
   const scaleValue = new Animated.Value(0);
@@ -23,8 +25,12 @@ export default function OrderSuccessScreen() {
   return (
     <View className="flex-1 bg-gray-50">
       {/* Red Header matching Pogo's identity */}
-      <View className="bg-red-600 pt-14 pb-4 px-4 rounded-b-3xl items-center justify-center">
+      <View className="bg-red-600 pt-14 pb-4 px-4 rounded-b-3xl flex-row items-center justify-between">
+        <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())} className="p-2 -ml-2">
+          <Menu size={24} color="#fff" />
+        </TouchableOpacity>
         <Text className="text-white text-xl font-bold">Pogo's</Text>
+        <View className="w-10" />
       </View>
 
       <View className="flex-1 px-4 pt-10">
