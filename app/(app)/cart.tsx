@@ -22,7 +22,7 @@ export default function CartScreen() {
   const [selectedCurrency, setSelectedCurrency] = useState('$ (USD)');
 
   const [isChangeModalVisible, setIsChangeModalVisible] = useState(false);
-  const [selectedChange, setSelectedChange] = useState('Yes, from $20.00');
+  const [selectedChange, setSelectedChange] = useState('No change needed');
 
   const currencyOptions = ['$ (USD)', '€ (EUR)', '£ (GBP)', '$ (CAD)'];
   const changeOptions = ['No change needed', 'Yes, from $20.00', 'Yes, from $50.00', 'Yes, from $100.00'];
