@@ -62,7 +62,7 @@ export default function CartScreen() {
         'You must be logged in to place an order.',
         [
           { text: 'Cancel', style: 'cancel' },
-          { text: 'Log In', onPress: () => router.push('/(auth)/login') }
+          { text: 'Log In', onPress: () => router.push('/(auth)/login?redirect=/(app)/cart') }
         ]
       );
       return;

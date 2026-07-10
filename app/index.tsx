@@ -32,7 +32,7 @@ export default function LandingPage() {
             <Text className="text-white text-2xl font-black tracking-wider">POGO'S</Text>
           </View>
           <View className="flex-row items-center gap-5">
-            <TouchableOpacity onPress={() => router.push(session ? '/(app)/profile' : '/(auth)/login')}>
+            <TouchableOpacity onPress={() => router.push(session ? '/(app)/profile' : '/(auth)/login?redirect=/')}>
               <User color="white" size={24} />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => router.push('/(app)/cart')} className="relative">

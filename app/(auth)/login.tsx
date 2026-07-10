@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { View, Text, Alert, Image, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
-import { Stack, router } from 'expo-router';
+import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { useAuth } from '@/hooks/useAuth';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,7 @@ export default function Login() {
   const [isSignUp, setIsSignUp] = useState(false);
   const { signIn, signUp, loading } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { redirect } = useLocalSearchParams<{ redirect: string }>();
 
   const handleSubmit = async () => {
     if (!email || !password) {
@@ -34,7 +35,11 @@ export default function Login() {
       } else {
         const { error } = await signIn(email, password);
         if (error) throw error;
-        router.replace('/(app)/dashboard');
+        if (redirect) {
+          router.replace(redirect as any);
+        } else {
+          router.replace('/(app)/dashboard');
+        }
       }
     } catch (error: any) {
       Alert.alert(
