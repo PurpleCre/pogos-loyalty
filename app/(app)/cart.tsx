@@ -77,7 +77,7 @@ export default function CartScreen() {
           user_id: session.user.id,
           total_amount: cartTotal,
           status: 'pending',
-          points_earned: Math.floor(cartTotal * 10), // 10 points per dollar
+          points_earned: Math.floor(cartTotal), // 1 point per US dollar
           currency: selectedCurrency,
           change_needed: selectedChange,
           store_id: selectedStore?.id || null,
