@@ -21,11 +21,38 @@ export default function CartScreen() {
   const [isCurrencyModalVisible, setIsCurrencyModalVisible] = useState(false);
   const [selectedCurrency, setSelectedCurrency] = useState('$ (USD)');
 
+  const currencyRates: Record<string, number> = {
+    '$ (USD)': 1.0,
+    '€ (EUR)': 0.92,
+    '£ (GBP)': 0.79,
+    '$ (CAD)': 1.35,
+    'ZiG (ZWG)': 26.0884,
+  };
+  const conversionRate = currencyRates[selectedCurrency] || 1.0;
+  const displaySymbol = selectedCurrency.split(' ')[0];
+
   const [isChangeModalVisible, setIsChangeModalVisible] = useState(false);
   const [selectedChange, setSelectedChange] = useState('No change needed');
 
-  const currencyOptions = ['$ (USD)', '€ (EUR)', '£ (GBP)', '$ (CAD)'];
-  const changeOptions = ['No change needed', 'Yes, from $20.00', 'Yes, from $50.00', 'Yes, from $100.00'];
+  const currencyOptions = ['$ (USD)', '€ (EUR)', '£ (GBP)', '$ (CAD)', 'ZiG (ZWG)'];
+  
+  const currencyNotes: Record<string, number[]> = {
+    '$ (USD)': [5, 10, 20, 50, 100],
+    '€ (EUR)': [5, 10, 20, 50, 100, 200, 500],
+    '£ (GBP)': [5, 10, 20, 50],
+    '$ (CAD)': [5, 10, 20, 50, 100],
+    'ZiG (ZWG)': [10, 20, 50, 100, 200],
+  };
+
+  const localTotal = cartTotal * conversionRate;
+  const availableNotes = currencyNotes[selectedCurrency] || [5, 10, 20, 50, 100];
+  
+  const changeOptions = ['No change needed'];
+  availableNotes.forEach(note => {
+    if (note > localTotal) {
+      changeOptions.push(`Yes, from ${displaySymbol}${note.toFixed(2)}`);
+    }
+  });
 
   const handlePlaceOrder = async () => {
     if (items.length === 0) return;
@@ -151,7 +178,7 @@ export default function CartScreen() {
                   )}
                 </View>
                 
-                <Text className="font-bold text-gray-900">${(item.price * item.quantity).toFixed(2)}</Text>
+                <Text className="font-bold text-gray-900">{displaySymbol}{(item.price * item.quantity * conversionRate).toFixed(2)}</Text>
               </View>
             );
           })}
@@ -205,7 +232,7 @@ export default function CartScreen() {
       <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 pt-4 pb-8 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
         <View className="flex-row justify-between items-center mb-4">
           <Text className="text-gray-600 font-medium">Est. Delivery: 20-30 min</Text>
-          <Text className="text-2xl font-black text-gray-900">${cartTotal.toFixed(2)}</Text>
+          <Text className="text-2xl font-black text-gray-900">{displaySymbol}{(cartTotal * conversionRate).toFixed(2)}</Text>
         </View>
         
         <TouchableOpacity 

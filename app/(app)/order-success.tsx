@@ -88,7 +88,7 @@ export default function OrderSuccessScreen() {
 
         {/* Action Buttons */}
         <TouchableOpacity 
-          onPress={() => router.push('/(app)/dashboard')}
+          onPress={() => router.push(`/(app)/order-tracking?orderId=${orderId}`)}
           className="bg-red-600 py-4 rounded-xl items-center shadow-sm mb-4"
         >
           <Text className="text-white font-black text-lg">TRACK YOUR ORDER</Text>
