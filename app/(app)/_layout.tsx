@@ -1,7 +1,7 @@
 import { Drawer } from 'expo-router/drawer';
 import { useAuth } from '@/hooks/useAuth';
 import { View, ActivityIndicator } from 'react-native';
-import { Home, Gift, User, History, ShoppingBag, Truck } from 'lucide-react-native';
+import { Home, Gift, User, History, ShoppingBag, Truck, ShoppingCart } from 'lucide-react-native';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { Redirect } from 'expo-router';
 
@@ -39,6 +39,14 @@ export default function AppLayout() {
         options={{
           title: 'Store Menu',
           drawerIcon: ({ color, size }) => <ShoppingBag size={size} color={color} />,
+        }}
+      />
+      
+      <Drawer.Screen
+        name="cart"
+        options={{
+          title: 'My Cart',
+          drawerIcon: ({ color, size }) => <ShoppingCart size={size} color={color} />,
         }}
       />
       

@@ -7,12 +7,14 @@ import { DrawerActions } from '@react-navigation/native';
 import { 
   Scan, Gift, Trophy, Users, Star, 
   ChevronRight, Sparkles, ArrowUpRight, ArrowDownRight,
-  Menu, Hexagon
+  Menu, Hexagon, ShoppingCart
 } from 'lucide-react-native';
+import { useCart } from '@/contexts/CartContext';
 
 export default function Dashboard() {
   const { user } = useAuth();
   const { userPoints, transactions, loading, refetch: refetchRewards } = useRewards();
+  const { itemCount } = useCart();
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
 
@@ -66,7 +68,14 @@ export default function Dashboard() {
           <Menu size={20} color="#f4f4f5" />
         </TouchableOpacity>
         <Text className="text-white text-xl font-black tracking-widest uppercase">Loyalty Hub</Text>
-        <View className="w-10" />
+        <TouchableOpacity onPress={() => router.push('/(app)/cart')} className="w-10 h-10 items-center justify-center">
+          <ShoppingCart size={24} color="#f4f4f5" />
+          {itemCount > 0 && (
+            <View className="absolute top-1 right-0 bg-red-600 w-4 h-4 rounded-full items-center justify-center border border-[#3f3f46]">
+              <Text className="text-white text-[10px] font-bold">{itemCount}</Text>
+            </View>
+          )}
+        </TouchableOpacity>
       </View>
 
       <ScrollView 

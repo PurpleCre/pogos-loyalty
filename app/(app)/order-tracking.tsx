@@ -194,6 +194,12 @@ export default function OrderTrackingScreen() {
             const menuItem = allMenu.find(m => m.id === item.menu_item_id);
             return `${item.quantity}x ${menuItem?.name || 'Item'}`;
           }).join(', ');
+          
+          const orderDate = order.created_at ? new Date(order.created_at) : new Date();
+          const etaStart = new Date(orderDate.getTime() + 20 * 60000);
+          const etaEnd = new Date(orderDate.getTime() + 30 * 60000);
+          const formatTime = (date: Date) => date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+          const etaString = `${formatTime(etaStart)} - ${formatTime(etaEnd)}`;
 
           return (
             <View key={order.id} className="mb-4 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
@@ -249,7 +255,7 @@ export default function OrderTrackingScreen() {
                   <View className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-4">
                     <Text className="text-base text-gray-900 font-bold mb-1">Status</Text>
                     <Text className="text-gray-600 text-sm mb-1">{statusText}</Text>
-                    <Text className="text-gray-600 text-sm">ETA: 11:45 AM - 12:00 PM</Text>
+                    <Text className="text-gray-600 text-sm">ETA: {etaString}</Text>
                   </View>
 
                   {/* Meet Your Driver Module */}

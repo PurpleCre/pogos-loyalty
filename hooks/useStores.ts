@@ -13,10 +13,8 @@ export interface Store {
 }
 
 const MOCK_STORES: Store[] = [
-  { id: '1', name: "Pogo's Main St.", address: "123 Main St, City Center", distance_miles: 1.2, is_open: true, latitude: 40.7128, longitude: -74.0060, image_url: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=500&q=80" },
-  { id: '2', name: "Pogo's Downtown", address: "456 Market St, Downtown", distance_miles: 3.1, is_open: true, latitude: 40.7282, longitude: -73.9942, image_url: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500&q=80" },
-  { id: '3', name: "Pogo's Uptown", address: "789 Park Ave, Uptown", distance_miles: 4.5, is_open: true, latitude: 40.7589, longitude: -73.9851, image_url: "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=500&q=80" },
-  { id: '4', name: "Pogo's Suburban", address: "101 Mall Rd, Suburbia", distance_miles: 8.9, is_open: false, latitude: 40.8500, longitude: -73.8667, image_url: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=500&q=80" }
+  { id: '1', name: "Pogo's Kamfinsa", address: "Shops 1 & 2, Kamfinsa Shopping Centre, Greendale, Harare", distance_miles: 1.2, is_open: true, latitude: -17.8083, longitude: 31.1098, image_url: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=500&q=80" },
+  { id: '2', name: "Pogo's Msasa", address: "94 Mutare Road, Msasa, Harare", distance_miles: 3.1, is_open: true, latitude: -17.8427, longitude: 31.0968, image_url: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500&q=80" }
 ];
 
 export function useStores() {

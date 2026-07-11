@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { View, Text, TouchableOpacity, Animated, Easing } from 'react-native';
 import { useLocalSearchParams, router, useNavigation } from 'expo-router';
 import { DrawerActions } from '@react-navigation/native';
@@ -7,7 +7,7 @@ import { useOrder } from '@/contexts/OrderContext';
 
 export default function OrderSuccessScreen() {
   const { orderId } = useLocalSearchParams();
-  const { selectedStore } = useOrder();
+  const { selectedStore, deliveryLocation } = useOrder();
   const navigation = useNavigation();
   
   // Simple animation for the checkmark
@@ -20,6 +20,16 @@ export default function OrderSuccessScreen() {
       tension: 40,
       useNativeDriver: true,
     }).start();
+  }, []);
+  const etaText = useMemo(() => {
+    const now = new Date();
+    const etaStart = new Date(now.getTime() + 20 * 60000);
+    const etaEnd = new Date(now.getTime() + 30 * 60000);
+    
+    const formatTime = (date: Date) => 
+      date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+      
+    return `${formatTime(etaStart)} - ${formatTime(etaEnd)}`;
   }, []);
 
   return (
@@ -60,7 +70,7 @@ export default function OrderSuccessScreen() {
 
           <Text className="text-2xl font-black text-gray-900 mb-2 tracking-tight">ORDER CONFIRMED!</Text>
           <Text className="text-base text-gray-500 mb-1">Order #{(orderId as string)?.slice(0, 8).toUpperCase() || 'POGO987654'}</Text>
-          <Text className="text-base font-semibold text-gray-700 mb-8">Est. Arrival: 20-30 min</Text>
+          <Text className="text-base font-semibold text-gray-700 mb-8">Est. Arrival: {etaText}</Text>
           
           {/* Delivery Context Card */}
           <View className="w-full bg-gray-50 rounded-xl p-4 border border-gray-100">
@@ -68,7 +78,7 @@ export default function OrderSuccessScreen() {
             
             <View className="flex-row items-center mb-4">
               <Store size={20} color="#6b7280" className="mr-3" />
-              <Text className="text-base text-gray-800 font-medium">{selectedStore?.name || "Main St. Store"}</Text>
+              <Text className="text-base text-gray-800 font-medium">{selectedStore?.name || "Pogo's Kamfinsa"}</Text>
             </View>
             
             <View className="flex-row items-center ml-2 mb-2">
@@ -81,7 +91,7 @@ export default function OrderSuccessScreen() {
             
             <View className="flex-row items-center">
               <MapPin size={20} color="#6b7280" className="mr-3" />
-              <Text className="text-base text-gray-800 font-medium">Main St. City Center</Text>
+              <Text className="text-base text-gray-800 font-medium">{deliveryLocation?.address || "Current Location"}</Text>
             </View>
           </View>
         </View>

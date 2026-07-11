@@ -101,7 +101,49 @@ export default function CartScreen() {
 
       if (itemsError) throw itemsError;
 
-      // 3. Clear cart and redirect
+      // 3. Log transaction and update points
+      const pointsEarned = Math.floor(cartTotal);
+      if (pointsEarned > 0) {
+        const { error: transactionError } = await supabase
+          .from('transactions')
+          .insert({
+            user_id: session.user.id,
+            amount: cartTotal,
+            points_earned: pointsEarned,
+            points_redeemed: 0,
+            transaction_type: 'purchase',
+            items: items.map(i => i.name)
+          });
+        
+        if (transactionError) console.error("Failed to log transaction", transactionError);
+
+        const { data: currentPoints } = await supabase
+          .from('user_points')
+          .select('current_points, total_earned')
+          .eq('user_id', session.user.id)
+          .single();
+        
+        if (currentPoints) {
+          await supabase
+            .from('user_points')
+            .update({
+              current_points: (currentPoints.current_points || 0) + pointsEarned,
+              total_earned: (currentPoints.total_earned || 0) + pointsEarned
+            })
+            .eq('user_id', session.user.id);
+        } else {
+          await supabase
+            .from('user_points')
+            .insert({
+              user_id: session.user.id,
+              current_points: pointsEarned,
+              total_earned: pointsEarned,
+              total_redeemed: 0
+            });
+        }
+      }
+
+      // 4. Clear cart and redirect
       clearCart();
       router.push(`/(app)/order-success?orderId=${orderData.id}`);
     } catch (error: any) {
