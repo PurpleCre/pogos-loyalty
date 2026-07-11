@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Modal, TouchableOpacity, TextInput, ScrollView, StyleSheet } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { X, MapPin, Search, Star, Home, Briefcase, Plus } from 'lucide-react-native';
 import { useOrder, LocationData } from '@/contexts/OrderContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
+import * as Location from 'expo-location';
 interface LocationPickerModalProps {
   visible: boolean;
   onClose: () => void;
@@ -25,6 +25,39 @@ export function LocationPickerModal({ visible, onClose }: LocationPickerModalPro
   const [selectedCoordinate, setSelectedCoordinate] = useState<{latitude: number, longitude: number} | null>(null);
   const [addressInput, setAddressInput] = useState('');
   const [tagInput, setTagInput] = useState('');
+
+  useEffect(() => {
+    if (visible) {
+      (async () => {
+        try {
+          const { status } = await Location.requestForegroundPermissionsAsync();
+          if (status !== 'granted') {
+            console.log('Location permission not granted');
+            return;
+          }
+
+          let location = await Location.getLastKnownPositionAsync({});
+          
+          if (!location) {
+             location = await Location.getCurrentPositionAsync({
+               accuracy: Location.Accuracy.Balanced
+             });
+          }
+          
+          if (location) {
+            setRegion({
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            });
+          }
+        } catch (error) {
+          console.error('Error fetching location:', error);
+        }
+      })();
+    }
+  }, [visible]);
 
   const handleMapPress = (e: any) => {
     setSelectedCoordinate(e.nativeEvent.coordinate);
@@ -107,6 +140,8 @@ export function LocationPickerModal({ visible, onClose }: LocationPickerModalPro
                 region={region}
                 onRegionChangeComplete={setRegion}
                 onPress={handleMapPress}
+                showsUserLocation={true}
+                showsMyLocationButton={true}
               >
                 {selectedCoordinate && (
                   <Marker coordinate={selectedCoordinate} pinColor="#dc2626" />
