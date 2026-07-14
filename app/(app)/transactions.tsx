@@ -26,7 +26,7 @@ export default function Transactions() {
   if (loading && transactions.length === 0) {
     return (
       <View className="flex-1 items-center justify-center bg-slate-50">
-        <ActivityIndicator size="large" color="#6366f1" />
+        <ActivityIndicator size="large" color="#dc2626" />
       </View>
     );
   }
@@ -44,15 +44,15 @@ export default function Transactions() {
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ padding: 16 }}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#6366f1" />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#dc2626" />
         }
         ListHeaderComponent={
           <View>
             {/* Summary Stats */}
             <View className="flex-row gap-3 mb-5">
               <View className="flex-1 bg-white rounded-2xl p-4 border border-slate-100 shadow-sm items-center">
-                <View className="w-10 h-10 bg-indigo-100 rounded-full items-center justify-center mb-2">
-                  <Star size={20} color="#6366f1" />
+                <View className="w-10 h-10 bg-red-100 rounded-full items-center justify-center mb-2">
+                  <Star size={20} color="#dc2626" />
                 </View>
                 <Text className="text-2xl font-bold text-slate-800">
                   {userPoints?.current_points || 0}
@@ -90,7 +90,7 @@ export default function Transactions() {
                     paddingVertical: 10,
                     borderRadius: 8,
                     alignItems: 'center',
-                    backgroundColor: filter === tab.key ? '#4f46e5' : 'transparent',
+                    backgroundColor: filter === tab.key ? '#dc2626' : 'transparent',
                     shadowColor: filter === tab.key ? '#000' : 'transparent',
                     shadowOffset: { width: 0, height: 1 },
                     shadowOpacity: 0.1,

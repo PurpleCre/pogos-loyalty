@@ -78,8 +78,8 @@ export default function Profile() {
       <ScrollView className="flex-1" contentContainerStyle={{ padding: 16, paddingTop: 40, flexGrow: 1 }}>
       {/* Profile Header */}
       <View className="items-center py-6">
-        <View className="w-20 h-20 bg-indigo-100 rounded-full items-center justify-center mb-4">
-          <User size={32} color="#6366f1" />
+        <View className="w-20 h-20 bg-red-100 rounded-full items-center justify-center mb-4">
+          <User size={32} color="#dc2626" />
         </View>
         <Text className="text-2xl font-bold text-slate-800">My Profile</Text>
         <Text className="text-slate-400">Manage your account information</Text>
@@ -157,8 +157,8 @@ export default function Profile() {
             className="flex-row items-center p-4 bg-slate-50 rounded-xl border border-slate-100"
             activeOpacity={0.7}
           >
-            <View className="w-9 h-9 bg-amber-100 rounded-lg items-center justify-center mr-3">
-              <Trophy size={18} color="#f59e0b" />
+            <View className="w-9 h-9 bg-red-100 rounded-lg items-center justify-center mr-3">
+              <Trophy size={18} color="#dc2626" />
             </View>
             <Text className="flex-1 font-medium text-slate-700">My Achievements</Text>
             <ChevronRight size={18} color="#94a3b8" />
@@ -169,8 +169,8 @@ export default function Profile() {
             className="flex-row items-center p-4 bg-slate-50 rounded-xl border border-slate-100"
             activeOpacity={0.7}
           >
-            <View className="w-9 h-9 bg-purple-100 rounded-lg items-center justify-center mr-3">
-              <Share2 size={18} color="#a855f7" />
+            <View className="w-9 h-9 bg-red-100 rounded-lg items-center justify-center mr-3">
+              <Share2 size={18} color="#dc2626" />
             </View>
             <Text className="flex-1 font-medium text-slate-700">Refer a Friend</Text>
             <ChevronRight size={18} color="#94a3b8" />
@@ -179,14 +179,14 @@ export default function Profile() {
           {isAdmin && (
             <TouchableOpacity 
               onPress={() => router.push('/(app)/admin')}
-              className="flex-row items-center p-4 bg-indigo-50 rounded-xl border border-indigo-100"
+              className="flex-row items-center p-4 bg-red-50 rounded-xl border border-red-100"
               activeOpacity={0.7}
             >
-              <View className="w-9 h-9 bg-indigo-100 rounded-lg items-center justify-center mr-3">
-                <Shield size={18} color="#6366f1" />
+              <View className="w-9 h-9 bg-red-100 rounded-lg items-center justify-center mr-3">
+                <Shield size={18} color="#dc2626" />
               </View>
-              <Text className="flex-1 font-bold text-indigo-900">Admin Panel</Text>
-              <ChevronRight size={18} color="#6366f1" />
+              <Text className="flex-1 font-bold text-red-900">Admin Panel</Text>
+              <ChevronRight size={18} color="#dc2626" />
             </TouchableOpacity>
           )}
         </View>

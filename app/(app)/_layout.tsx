@@ -1,12 +1,12 @@
 import { Drawer } from 'expo-router/drawer';
 import { useAuth } from '@/hooks/useAuth';
 import { View, ActivityIndicator } from 'react-native';
-import { Home, Gift, User, History, ShoppingBag, Truck, ShoppingCart } from 'lucide-react-native';
+import { Home, Gift, User, History, ShoppingBag, Truck, ShoppingCart, Shield, Store } from 'lucide-react-native';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { Redirect } from 'expo-router';
 
 export default function AppLayout() {
-  const { session, loading } = useAuth();
+  const { session, loading, userRole } = useAuth();
   usePushNotifications();
 
   if (loading) {
@@ -17,7 +17,9 @@ export default function AppLayout() {
     );
   }
 
-  // Allow public access, but we'll conditionally hide drawer items
+  const isStaff = userRole === 'staff';
+  const isAdmin = userRole === 'admin';
+  const isLoggedIn = !!session;
 
   return (
     <Drawer 
@@ -63,7 +65,7 @@ export default function AppLayout() {
         options={{
           title: 'Loyalty Hub',
           drawerIcon: ({ color, size }) => <Gift size={size} color={color} />,
-          drawerItemStyle: { display: session ? 'flex' : 'none' },
+          drawerItemStyle: { display: isLoggedIn ? 'flex' : 'none' },
         }}
       />
 
@@ -72,7 +74,7 @@ export default function AppLayout() {
         options={{
           title: 'History',
           drawerIcon: ({ color, size }) => <History size={size} color={color} />,
-          drawerItemStyle: { display: session ? 'flex' : 'none' },
+          drawerItemStyle: { display: isLoggedIn ? 'flex' : 'none' },
         }}
       />
 
@@ -81,7 +83,27 @@ export default function AppLayout() {
         options={{
           title: 'Track Orders',
           drawerIcon: ({ color, size }) => <Truck size={size} color={color} />,
-          drawerItemStyle: { display: session ? 'flex' : 'none' },
+          drawerItemStyle: { display: isLoggedIn ? 'flex' : 'none' },
+        }}
+      />
+
+      {/* Staff Dashboard - visible to staff and admins */}
+      <Drawer.Screen
+        name="staff-dashboard"
+        options={{
+          title: 'Staff Dashboard',
+          drawerIcon: ({ color, size }) => <Store size={size} color={color} />,
+          drawerItemStyle: { display: (isStaff || isAdmin) ? 'flex' : 'none' },
+        }}
+      />
+
+      {/* Admin Panel - visible to admins only */}
+      <Drawer.Screen
+        name="admin"
+        options={{
+          title: 'Admin Panel',
+          drawerIcon: ({ color, size }) => <Shield size={size} color={color} />,
+          drawerItemStyle: { display: isAdmin ? 'flex' : 'none' },
         }}
       />
 
@@ -108,13 +130,6 @@ export default function AppLayout() {
         }}
       />
       <Drawer.Screen
-        name="admin"
-        options={{
-          drawerItemStyle: { display: 'none' },
-          title: 'Admin',
-        }}
-      />
-      <Drawer.Screen
         name="order-success"
         options={{
           drawerItemStyle: { display: 'none' },
@@ -124,5 +139,3 @@ export default function AppLayout() {
     </Drawer>
   );
 }
-
-

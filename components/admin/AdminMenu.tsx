@@ -1,9 +1,13 @@
 import { View, Text, TouchableOpacity, Image, Modal, TextInput, ScrollView, Switch, Alert, ActivityIndicator } from 'react-native';
 import { useState } from 'react';
 import { useMenu, MenuItem, MenuCategory } from '@/hooks/useMenu';
-import { Plus, Edit2, Trash2, X } from 'lucide-react-native';
+import { Plus, Edit2, Trash2, X, Store, Globe } from 'lucide-react-native';
 
-export function AdminMenu() {
+interface AdminMenuProps {
+  stores: { id: string; name: string }[];
+}
+
+export function AdminMenu({ stores }: AdminMenuProps) {
   const { 
     categories, 
     items, 
@@ -15,6 +19,9 @@ export function AdminMenu() {
     deleteCategory
   } = useMenu(true);
   
+  // Context Switcher State
+  const [menuContext, setMenuContext] = useState<string | null>(null); // null = global
+
   // Item Modal State
   const [modalVisible, setModalVisible] = useState(false);
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
@@ -100,6 +107,7 @@ export function AdminMenu() {
       category_id: categoryId,
       image_url: imageUrl,
       is_available: isAvailable,
+      store_id: menuContext, // Apply the current context!
     };
 
     let result;
@@ -191,12 +199,57 @@ export function AdminMenu() {
     );
   };
 
+  // Filter items based on selected context
+  const filteredItems = items.filter(i => {
+    if (menuContext === null) {
+      return i.store_id === null; // Global items only
+    } else {
+      return i.store_id === menuContext; // Store specific items only
+    }
+  });
+
   return (
     <View className="gap-4 pb-8">
+      {/* Context Switcher */}
+      <View className="mb-4">
+        <Text className="text-sm font-bold text-gray-700 mb-2">Menu Context</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
+          <TouchableOpacity
+            onPress={() => setMenuContext(null)}
+            className={`mr-2 px-4 py-2.5 rounded-xl border flex-row items-center gap-2 ${
+              menuContext === null 
+                ? 'bg-red-600 border-red-600' 
+                : 'bg-white border-gray-300'
+            }`}
+          >
+            <Globe size={16} color={menuContext === null ? 'white' : '#4b5563'} />
+            <Text className={`font-bold ${menuContext === null ? 'text-white' : 'text-gray-700'}`}>
+              Global Menu
+            </Text>
+          </TouchableOpacity>
+          {stores.map(store => (
+            <TouchableOpacity
+              key={store.id}
+              onPress={() => setMenuContext(store.id)}
+              className={`mr-2 px-4 py-2.5 rounded-xl border flex-row items-center gap-2 ${
+                menuContext === store.id 
+                  ? 'bg-red-600 border-red-600' 
+                  : 'bg-white border-gray-300'
+              }`}
+            >
+              <Store size={16} color={menuContext === store.id ? 'white' : '#4b5563'} />
+              <Text className={`font-bold ${menuContext === store.id ? 'text-white' : 'text-gray-700'}`}>
+                {store.name}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+
       <View className="flex-row gap-2 mb-2">
         <TouchableOpacity 
           onPress={openAddModal}
-          className="flex-1 flex-row items-center justify-center bg-indigo-600 rounded-xl py-3.5"
+          className="flex-1 flex-row items-center justify-center bg-red-600 rounded-xl py-3.5"
         >
           <Plus size={18} color="white" className="mr-2" />
           <Text className="text-white font-bold">Add Item</Text>
@@ -204,22 +257,22 @@ export function AdminMenu() {
 
         <TouchableOpacity 
           onPress={openAddCatModal}
-          className="flex-1 flex-row items-center justify-center bg-indigo-100 rounded-xl py-3.5 border border-indigo-200"
+          className="flex-1 flex-row items-center justify-center bg-red-50 rounded-xl py-3.5 border border-red-200"
         >
-          <Plus size={18} color="#4f46e5" className="mr-2" />
-          <Text className="text-indigo-600 font-bold">Add Category</Text>
+          <Plus size={18} color="#e11d48" className="mr-2" />
+          <Text className="text-red-600 font-bold">Add Category</Text>
         </TouchableOpacity>
       </View>
 
       {categories.length === 0 && (
-        <View className="bg-indigo-50 p-6 rounded-2xl items-center border border-indigo-100 mt-4">
-          <Text className="text-lg font-bold text-indigo-900 mb-2">No Categories Yet</Text>
-          <Text className="text-indigo-600 text-center mb-4">
+        <View className="bg-red-50 p-6 rounded-2xl items-center border border-red-100 mt-4">
+          <Text className="text-lg font-bold text-red-900 mb-2">No Categories Yet</Text>
+          <Text className="text-red-600 text-center mb-4">
             You need to create at least one category before you can add menu items.
           </Text>
           <TouchableOpacity 
             onPress={openAddCatModal}
-            className="bg-indigo-600 px-6 py-3 rounded-xl"
+            className="bg-red-600 px-6 py-3 rounded-xl"
           >
             <Text className="text-white font-bold">Create Category</Text>
           </TouchableOpacity>
@@ -255,7 +308,7 @@ export function AdminMenu() {
           </View>
           
           <View className="gap-2">
-            {items.filter(i => i.category_id === category.id).map(item => (
+            {filteredItems.filter(i => i.category_id === category.id).map(item => (
               <View key={item.id} className={`bg-white p-3 rounded-xl border border-gray-100 flex-row items-center ${!item.is_available ? 'opacity-60' : ''}`}>
                 {item.image_url ? (
                   <Image source={{ uri: item.image_url }} className="w-12 h-12 rounded-lg bg-gray-100 mr-3" />
@@ -274,27 +327,29 @@ export function AdminMenu() {
                       </View>
                     )}
                   </View>
-                  <Text className="text-indigo-600 font-semibold">${item.price.toFixed(2)}</Text>
+                  <Text className="text-red-600 font-semibold">${item.price.toFixed(2)}</Text>
                 </View>
                 
                 <View className="flex-row gap-2">
                   <TouchableOpacity 
                     onPress={() => openEditModal(item)}
-                    className="w-8 h-8 bg-indigo-50 rounded-full items-center justify-center"
+                    className="w-8 h-8 bg-red-50 rounded-full items-center justify-center"
                   >
-                    <Edit2 size={14} color="#4f46e5" />
+                    <Edit2 size={14} color="#e11d48" />
                   </TouchableOpacity>
                   <TouchableOpacity 
                     onPress={() => handleDelete(item)}
-                    className="w-8 h-8 bg-red-50 rounded-full items-center justify-center"
+                    className="w-8 h-8 bg-gray-100 rounded-full items-center justify-center"
                   >
                     <Trash2 size={14} color="#ef4444" />
                   </TouchableOpacity>
                 </View>
               </View>
             ))}
-            {items.filter(i => i.category_id === category.id).length === 0 && (
-              <Text className="text-gray-500 italic py-2">No items in this category</Text>
+            {filteredItems.filter(i => i.category_id === category.id).length === 0 && (
+              <Text className="text-gray-500 italic py-2">
+                No items in this category for {menuContext === null ? 'the Global Menu' : stores.find(s => s.id === menuContext)?.name}
+              </Text>
             )}
           </View>
         </View>
@@ -310,9 +365,14 @@ export function AdminMenu() {
         <View className="flex-1 justify-end bg-black/50">
           <View className="bg-white rounded-t-3xl h-[85%]">
             <View className="flex-row justify-between items-center p-4 border-b border-gray-100">
-              <Text className="text-xl font-bold text-gray-900">
-                {editingItem ? 'Edit Menu Item' : 'Add Menu Item'}
-              </Text>
+              <View>
+                <Text className="text-xl font-bold text-gray-900">
+                  {editingItem ? 'Edit Menu Item' : 'Add Menu Item'}
+                </Text>
+                <Text className="text-xs font-semibold text-red-600">
+                  {menuContext === null ? 'Global Menu' : stores.find(s => s.id === menuContext)?.name}
+                </Text>
+              </View>
               <TouchableOpacity onPress={() => setModalVisible(false)} className="p-2">
                 <X size={24} color="#6b7280" />
               </TouchableOpacity>
@@ -365,7 +425,7 @@ export function AdminMenu() {
                           onPress={() => setCategoryId(cat.id)}
                           className={`mr-2 px-4 py-2 rounded-full border ${
                             categoryId === cat.id 
-                              ? 'bg-indigo-600 border-indigo-600' 
+                              ? 'bg-red-600 border-red-600' 
                               : 'bg-white border-gray-300'
                           }`}
                         >
@@ -397,15 +457,15 @@ export function AdminMenu() {
                   <Switch
                     value={isAvailable}
                     onValueChange={setIsAvailable}
-                    trackColor={{ false: '#d1d5db', true: '#818cf8' }}
-                    thumbColor={isAvailable ? '#4f46e5' : '#f3f4f6'}
+                    trackColor={{ false: '#d1d5db', true: '#fca5a5' }}
+                    thumbColor={isAvailable ? '#e11d48' : '#f3f4f6'}
                   />
                 </View>
 
                 <TouchableOpacity 
                   onPress={handleSave}
                   disabled={isSubmitting || categories.length === 0}
-                  className={`bg-indigo-600 py-4 rounded-xl items-center mt-4 mb-20 ${(isSubmitting || categories.length === 0) ? 'opacity-70' : ''}`}
+                  className={`bg-red-600 py-4 rounded-xl items-center mt-4 mb-20 ${(isSubmitting || categories.length === 0) ? 'opacity-70' : ''}`}
                 >
                   {isSubmitting ? (
                     <ActivityIndicator color="white" />
@@ -470,15 +530,15 @@ export function AdminMenu() {
                 <Switch
                   value={catIsActive}
                   onValueChange={setCatIsActive}
-                  trackColor={{ false: '#d1d5db', true: '#818cf8' }}
-                  thumbColor={catIsActive ? '#4f46e5' : '#f3f4f6'}
+                  trackColor={{ false: '#d1d5db', true: '#fca5a5' }}
+                  thumbColor={catIsActive ? '#e11d48' : '#f3f4f6'}
                 />
               </View>
 
               <TouchableOpacity 
                 onPress={handleSaveCategory}
                 disabled={isCatSubmitting}
-                className={`bg-indigo-600 py-4 rounded-xl items-center mt-2 ${isCatSubmitting ? 'opacity-70' : ''}`}
+                className={`bg-red-600 py-4 rounded-xl items-center mt-2 ${isCatSubmitting ? 'opacity-70' : ''}`}
               >
                 {isCatSubmitting ? (
                   <ActivityIndicator color="white" />

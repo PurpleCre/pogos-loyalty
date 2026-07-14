@@ -64,7 +64,7 @@ export default function Login() {
       className="flex-1"
     >
       <ScrollView 
-        className="flex-1 bg-amber-50"
+        className="flex-1 bg-red-50"
         contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 24 }}
         keyboardShouldPersistTaps="handled"
       >
@@ -75,8 +75,8 @@ export default function Login() {
           {/* Header */}
           <View className="items-center pt-8 pb-4 px-6">
             {/* Logo */}
-            <View className="w-16 h-16 bg-amber-100 rounded-2xl items-center justify-center mb-4 shadow-sm">
-              <Text className="text-3xl">🔥</Text>
+            <View className="w-16 h-16 bg-red-100 rounded-2xl items-center justify-center mb-4 shadow-sm">
+              <Text className="text-3xl">🍔</Text>
             </View>
             <Text className="text-2xl font-bold text-slate-900 mb-1">
               {isSignUp ? 'Create account' : 'Welcome back'}
@@ -132,7 +132,7 @@ export default function Login() {
             <Button 
               onPress={handleSubmit} 
               isLoading={isSubmitting || loading}
-              className="mt-4 bg-amber-500 rounded-xl h-12"
+              className="mt-4 bg-red-600 rounded-xl h-12"
               textClassName="text-white"
             >
               {isSignUp ? 'Sign Up' : 'Sign In'}
@@ -147,7 +147,7 @@ export default function Login() {
                   ? 'Already have an account? ' 
                   : "Don't have an account? "
                 }
-                <Text className="text-indigo-600 font-semibold">
+                <Text className="text-red-600 font-semibold">
                   {isSignUp ? 'Sign In' : 'Sign Up'}
                 </Text>
               </Text>

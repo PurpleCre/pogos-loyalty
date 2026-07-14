@@ -67,7 +67,7 @@ export default function Dashboard() {
         >
           <Menu size={20} color="#f4f4f5" />
         </TouchableOpacity>
-        <Text className="text-white text-xl font-black tracking-widest uppercase">Loyalty Hub</Text>
+        <Text className="text-white text-xl font-black tracking-widest uppercase">Pogo's</Text>
         <TouchableOpacity onPress={() => router.push('/(app)/cart')} className="w-10 h-10 items-center justify-center">
           <ShoppingCart size={24} color="#f4f4f5" />
           {itemCount > 0 && (

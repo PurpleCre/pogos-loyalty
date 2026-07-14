@@ -24,7 +24,7 @@ export default function ReferralsScreen() {
   if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center bg-slate-50">
-        <ActivityIndicator size="large" color="#6366f1" />
+        <ActivityIndicator size="large" color="#dc2626" />
       </View>
     );
   }
@@ -34,7 +34,7 @@ export default function ReferralsScreen() {
       className="flex-1 bg-slate-50" 
       contentContainerStyle={{ padding: 16 }}
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#6366f1" />
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#dc2626" />
       }
     >
       {/* Header */}
@@ -44,24 +44,24 @@ export default function ReferralsScreen() {
       </View>
 
       {/* Referral Code Card */}
-      <View className="bg-indigo-50 rounded-2xl p-6 border border-indigo-100 mb-5">
+      <View className="bg-red-50 rounded-2xl p-6 border border-red-100 mb-5">
         <View className="flex-row items-center gap-2 mb-2">
-          <Gift size={20} color="#6366f1" />
-          <Text className="text-lg font-bold text-indigo-900">Referral Rewards</Text>
+          <Gift size={20} color="#dc2626" />
+          <Text className="text-lg font-bold text-red-900">Referral Rewards</Text>
         </View>
-        <Text className="text-indigo-600 text-sm mb-5">
+        <Text className="text-red-600 text-sm mb-5">
           Invite friends and you both earn points! You get 100 points, they get 50 points.
         </Text>
 
         {referralCode ? (
           <View>
-            <View className="bg-white border border-indigo-200 rounded-xl flex-row items-center overflow-hidden">
-              <Text className="flex-1 text-center font-bold text-2xl tracking-widest text-indigo-800 py-4 font-mono">
+            <View className="bg-white border border-red-200 rounded-xl flex-row items-center overflow-hidden">
+              <Text className="flex-1 text-center font-bold text-2xl tracking-widest text-red-800 py-4 font-mono">
                 {referralCode.code}
               </Text>
               <TouchableOpacity 
                 onPress={() => copyCode(referralCode.code)}
-                className="bg-indigo-600 px-5 py-4 flex-row items-center gap-2"
+                className="bg-red-600 px-5 py-4 flex-row items-center gap-2"
                 activeOpacity={0.7}
               >
                 <Copy size={18} color="white" />
@@ -71,13 +71,13 @@ export default function ReferralsScreen() {
 
             {/* Stats Grid */}
             <View className="flex-row gap-3 mt-4">
-              <View className="flex-1 bg-white p-4 rounded-xl border border-indigo-100 items-center">
-                <Users size={22} color="#6366f1" />
+              <View className="flex-1 bg-white p-4 rounded-xl border border-red-100 items-center">
+                <Users size={22} color="#dc2626" />
                 <Text className="text-2xl font-bold text-slate-800 mt-2">{totalReferrals}</Text>
                 <Text className="text-xs text-slate-400 font-medium">Referrals</Text>
               </View>
-              <View className="flex-1 bg-white p-4 rounded-xl border border-indigo-100 items-center">
-                <TrendingUp size={22} color="#6366f1" />
+              <View className="flex-1 bg-white p-4 rounded-xl border border-red-100 items-center">
+                <TrendingUp size={22} color="#dc2626" />
                 <Text className="text-2xl font-bold text-slate-800 mt-2">{totalPointsEarned}</Text>
                 <Text className="text-xs text-slate-400 font-medium">Points Earned</Text>
               </View>
@@ -87,7 +87,7 @@ export default function ReferralsScreen() {
           <TouchableOpacity 
             onPress={() => generateCode()}
             disabled={isGenerating}
-            className={`py-4 rounded-xl items-center ${isGenerating ? 'bg-indigo-400' : 'bg-indigo-600'}`}
+            className={`py-4 rounded-xl items-center ${isGenerating ? 'bg-red-400' : 'bg-red-600'}`}
             activeOpacity={0.7}
           >
             {isGenerating ? (

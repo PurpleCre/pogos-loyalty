@@ -32,11 +32,12 @@ export function useStores() {
       const { data, error } = await supabase
         .from('stores')
         .select('*')
-        .order('distance_miles', { ascending: true });
+        .order('name', { ascending: true });
 
       if (error) {
         console.warn("Falling back to mock stores due to Supabase error:", error.message);
         setStores(MOCK_STORES);
+        setLoading(false);
         return;
       }
 

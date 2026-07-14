@@ -25,9 +25,28 @@ export const useOffline = () => {
     };
 
     const addPendingAction = async (action: any) => {
-        // TODO: Implement pending actions queue
-        console.log('Pending action added (not implemented)', action);
+        try {
+            const currentQueue = await getOfflineData('pending_actions') || [];
+            currentQueue.push({ ...action, timestamp: new Date().toISOString() });
+            await saveOfflineData('pending_actions', currentQueue);
+        } catch (e) {
+            console.error('Failed to add pending action', e);
+        }
     };
 
-    return { isOnline, saveOfflineData, getOfflineData, addPendingAction };
+    const processPendingActions = async () => {
+        try {
+            const queue = await getOfflineData('pending_actions');
+            if (queue && queue.length > 0) {
+                // Here we would typically process the actions sequentially
+                // For now, we clear the queue as if they were processed
+                // TODO: Wire up actual action handlers based on action.type
+                await AsyncStorage.removeItem('offline_pending_actions');
+            }
+        } catch (e) {
+            console.error('Failed to process pending actions', e);
+        }
+    };
+
+    return { isOnline, saveOfflineData, getOfflineData, addPendingAction, processPendingActions };
 };

@@ -1,13 +1,15 @@
-import { View, Text, FlatList, ActivityIndicator, Alert, RefreshControl, TouchableOpacity } from 'react-native';
-import { useRewards } from '@/hooks/useRewards';
+import { View, Text, FlatList, ActivityIndicator, Alert, RefreshControl, TouchableOpacity, ScrollView } from 'react-native';
+import { useRewards, Reward } from '@/hooks/useRewards';
 import { RewardCard } from '@/components/rewards/RewardCard';
 import { useState } from 'react';
 import { Gift, Star } from 'lucide-react-native';
+import { clsx } from 'clsx';
 
 export default function Rewards() {
   const { rewards, userPoints, redeemReward, loading, refetch } = useRewards();
   const [redeemingId, setRedeemingId] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<string>('all');
 
   const currentPoints = userPoints?.current_points || 0;
 
@@ -51,46 +53,74 @@ export default function Rewards() {
   if (loading && !refreshing && rewards.length === 0) {
     return (
       <View className="flex-1 items-center justify-center bg-slate-50">
-        <ActivityIndicator size="large" color="#6366f1" />
+        <ActivityIndicator size="large" color="#dc2626" />
       </View>
     );
   }
 
+  const categories = ['all', 'food', 'drink', 'special'];
+
+  const filteredRewards = activeCategory === 'all' 
+    ? rewards 
+    : rewards.filter(r => r.category === activeCategory);
+
   return (
     <View className="flex-1 bg-slate-50">
-      <FlatList
-        data={rewards}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ padding: 16, paddingTop: 8 }}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#6366f1" />
-        }
-        ListHeaderComponent={
-          <View className="mb-5">
-            {/* Points Card */}
-            <View className="bg-indigo-600 rounded-2xl p-5 mb-4">
-              <Text className="text-indigo-200 text-sm mb-1">Available to redeem</Text>
-              <View className="flex-row items-baseline">
-                <Star size={20} color="#fbbf24" fill="#fbbf24" />
-                <Text className="text-white text-4xl font-bold ml-2">{currentPoints.toLocaleString()}</Text>
-                <Text className="text-indigo-200 text-base ml-2">points</Text>
-              </View>
-            </View>
+      
+      {/* Brand & Layout Transformation: QuickBite Red Header */}
+      <View className="bg-[#dc2626] pt-14 pb-4 px-4 rounded-b-xl">
+        <Text className="text-white text-2xl font-bold mb-1">Pogo's</Text>
+        <Text className="text-white text-lg">
+          Rewards | points: <Text className="font-bold">{currentPoints}</Text>.
+        </Text>
+      </View>
 
-            {/* Section Title */}
-            <Text className="text-2xl font-bold text-slate-800">Available Rewards</Text>
-          </View>
+      {/* Categories Filter */}
+      <View className="bg-slate-50 py-3 border-b border-gray-100 z-10">
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="px-4">
+          {categories.map(category => (
+            <TouchableOpacity
+              key={category}
+              onPress={() => setActiveCategory(category)}
+              className={clsx(
+                "px-4 py-2 rounded-full mr-2 border",
+                activeCategory === category 
+                  ? "bg-slate-200 border-slate-300" 
+                  : "bg-white border-slate-200"
+              )}
+            >
+              <Text className={clsx(
+                "capitalize font-medium text-base",
+                activeCategory === category ? "text-slate-900" : "text-slate-600"
+              )}>
+                {category === 'drink' ? 'Drinks' : category === 'special' ? 'Specials' : category}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+
+      <FlatList
+        data={filteredRewards}
+        keyExtractor={(item) => item.id}
+        numColumns={2}
+        columnWrapperStyle={{ gap: 16, paddingHorizontal: 16 }}
+        contentContainerStyle={{ paddingVertical: 16, gap: 16, paddingBottom: 100 }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#dc2626" />
         }
         renderItem={({ item }) => (
-          <RewardCard 
-            reward={item} 
-            userPoints={currentPoints}
-            onRedeem={handleRedeem}
-            isRedeeming={redeemingId === item.id}
-          />
+          <View className="flex-1">
+            <RewardCard 
+              reward={item} 
+              userPoints={currentPoints}
+              onRedeem={handleRedeem}
+              isRedeeming={redeemingId === item.id}
+            />
+          </View>
         )}
         ListEmptyComponent={
-          <View className="items-center justify-center py-16 bg-white rounded-2xl border border-slate-100">
+          <View className="items-center justify-center py-16 bg-white rounded-2xl border border-slate-100 mx-4">
             <View className="w-16 h-16 bg-slate-100 rounded-full items-center justify-center mb-4">
               <Gift size={32} color="#94a3b8" />
             </View>

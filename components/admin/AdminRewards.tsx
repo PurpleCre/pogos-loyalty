@@ -116,7 +116,7 @@ export function AdminRewards({ rewards, createReward, updateReward, deleteReward
     <View className="gap-3 pb-8">
       <TouchableOpacity 
         onPress={openCreateModal}
-        className="flex-row items-center justify-center bg-indigo-600 rounded-xl py-3.5 mb-2"
+        className="flex-row items-center justify-center bg-red-600 rounded-xl py-3.5 mb-2"
         activeOpacity={0.8}
       >
         <Plus size={20} color="white" className="mr-2" />
@@ -132,7 +132,7 @@ export function AdminRewards({ rewards, createReward, updateReward, deleteReward
                 <Text className="text-sm text-gray-500 mt-1">{reward.description}</Text>
               ) : null}
             </View>
-            <Text className="font-bold text-indigo-600 text-lg">{reward.points_cost} pts</Text>
+            <Text className="font-bold text-red-600 text-lg">{reward.points_cost} pts</Text>
           </View>
           
           <View className="flex-row items-center justify-between mt-2 pt-3 border-t border-gray-50">
@@ -238,14 +238,19 @@ export function AdminRewards({ rewards, createReward, updateReward, deleteReward
                   <Text className="text-base font-medium text-gray-900">Available</Text>
                   <Text className="text-xs text-gray-500">Can users redeem this reward?</Text>
                 </View>
-                <Switch value={available} onValueChange={setAvailable} />
+                <Switch 
+                  value={available} 
+                  onValueChange={setAvailable} 
+                  trackColor={{ false: '#d1d5db', true: '#fca5a5' }}
+                  thumbColor={available ? '#e11d48' : '#f3f4f6'}
+                />
               </View>
             </View>
 
             <Button 
               onPress={handleSave} 
               isLoading={loading}
-              className="bg-indigo-600 mb-8"
+              className="bg-red-600 mb-8"
               textClassName="text-white font-bold"
             >
               {editingReward ? 'Save Changes' : 'Create Reward'}
