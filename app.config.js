@@ -1,4 +1,6 @@
-{
+import 'dotenv/config';
+
+export default {
   "expo": {
     "name": "Pogo's",
     "slug": "pogos",
@@ -18,7 +20,7 @@
       "bundleIdentifier": "com.purpl3cr3.pogos",
       "buildNumber": "1",
       "config": {
-        "googleMapsApiKey": "AIzaSyAaKEcCmNe92IEnKxU_aTfgRulH1NFyUxI"
+        "googleMapsApiKey": process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY
       },
       "runtimeVersion": {
         "policy": "appVersion"
@@ -35,7 +37,7 @@
       "versionCode": 1,
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyAaKEcCmNe92IEnKxU_aTfgRulH1NFyUxI"
+          "apiKey": process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY
         }
       },
       "runtimeVersion": "1.0.0"
@@ -60,4 +62,4 @@
       "url": "https://u.expo.dev/1341ce01-7787-4a04-95f1-0ad259a5847c"
     }
   }
-}
+};
