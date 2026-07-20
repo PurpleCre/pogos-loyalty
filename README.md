@@ -28,6 +28,7 @@ I used React with capacitor, then kotlin and java for the entire project.
 *   **App Store Compliance:** Add an in-app "Delete Account" button and link to a Privacy Policy to comply with Apple and Google app store requirements.
 *   **Email Branding:** Customize Supabase authentication emails (Confirmation, Password Reset) with the Pogo's brand and logo.
 *   **Automated Testing:** Add E2E tests (Jest/Maestro) for critical user paths to ensure OTA updates don't break the main flow.
+*   **Points Sharing:** Implement a feature that allows users to securely transfer or gift loyalty points to their friends and family.
 
 # Release
 
