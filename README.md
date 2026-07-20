@@ -19,9 +19,15 @@ I used React with capacitor, then kotlin and java for the entire project.
 * [capacitorjs.com](https://capacitorjs.com/solution/react)
 * [developer.android.com](https://developer.android.com/develop)
 
-# Future Work
+# Future Work (Production Readiness)
 
-* Referral system
+*   **Payment Processing:** Integrate a legitimate Payment Gateway (e.g., Stripe, Paynow) to process online transactions securely, or implement SMS OTP for cash-on-delivery validation.
+*   **Push Notifications:** Store Expo push tokens in the database and create a backend trigger to notify users when order statuses change.
+*   **Backend Security (Edge Functions):** Move sensitive operations (order total calculation, loyalty points awarding) off the client and into secure Supabase Edge Functions.
+*   **Crash Reporting & Analytics:** Properly configure Sentry with DSN and Project IDs for production crash reporting.
+*   **App Store Compliance:** Add an in-app "Delete Account" button and link to a Privacy Policy to comply with Apple and Google app store requirements.
+*   **Email Branding:** Customize Supabase authentication emails (Confirmation, Password Reset) with the Pogo's brand and logo.
+*   **Automated Testing:** Add E2E tests (Jest/Maestro) for critical user paths to ensure OTA updates don't break the main flow.
 
 # Release
 
