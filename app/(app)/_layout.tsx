@@ -23,6 +23,7 @@ export default function AppLayout() {
 
   return (
     <Drawer 
+      backBehavior="history"
       screenOptions={{
         headerShown: false,
         drawerActiveTintColor: '#e11d48',

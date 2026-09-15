@@ -1,8 +1,9 @@
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { useReferrals } from '@/hooks/useReferrals';
-import { Share2, Copy, Users, TrendingUp, Gift } from 'lucide-react-native';
+import { Share2, Copy, Users, TrendingUp, Gift, ArrowLeft } from 'lucide-react-native';
 import { useState, useCallback } from 'react';
 import { useIsFocused } from '@react-navigation/native';
+import { router } from 'expo-router';
 
 export default function ReferralsScreen() {
   const isFocused = useIsFocused();
@@ -38,9 +39,14 @@ export default function ReferralsScreen() {
       }
     >
       {/* Header */}
-      <View className="mb-6">
-        <Text className="text-3xl font-bold text-slate-800 mb-2">Refer Friends</Text>
-        <Text className="text-slate-400">Share your code and earn points together</Text>
+      <View className="mb-6 flex-row items-start">
+        <TouchableOpacity onPress={() => router.back()} className="mr-3 mt-1.5" hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
+          <ArrowLeft size={24} color="#0f172a" />
+        </TouchableOpacity>
+        <View className="flex-1">
+          <Text className="text-3xl font-bold text-slate-800 mb-1">Refer Friends</Text>
+          <Text className="text-slate-500">Share your code and earn points together</Text>
+        </View>
       </View>
 
       {/* Referral Code Card */}

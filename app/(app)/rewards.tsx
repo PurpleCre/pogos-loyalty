@@ -2,8 +2,9 @@ import { View, Text, FlatList, ActivityIndicator, Alert, RefreshControl, Touchab
 import { useRewards, Reward } from '@/hooks/useRewards';
 import { RewardCard } from '@/components/rewards/RewardCard';
 import { useState } from 'react';
-import { Gift, Star } from 'lucide-react-native';
+import { Gift, Star, ArrowLeft } from 'lucide-react-native';
 import { clsx } from 'clsx';
+import { router } from 'expo-router';
 
 export default function Rewards() {
   const { rewards, userPoints, redeemReward, loading, refetch } = useRewards();
@@ -69,8 +70,13 @@ export default function Rewards() {
       
       {/* Brand & Layout Transformation: Clean Light Header */}
       <View className="bg-white pt-14 pb-4 px-6 border-b border-slate-100 shadow-sm">
-        <View className="flex-row items-baseline justify-between mb-1">
-          <Text className="text-slate-900 text-2xl font-black tracking-tight">Rewards</Text>
+        <View className="flex-row items-center justify-between mb-1">
+          <View className="flex-row items-center">
+            <TouchableOpacity onPress={() => router.back()} className="mr-3" hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
+              <ArrowLeft size={24} color="#0f172a" />
+            </TouchableOpacity>
+            <Text className="text-slate-900 text-2xl font-black tracking-tight">Rewards</Text>
+          </View>
           <View className="bg-red-50 px-3 py-1 rounded-full border border-red-100">
             <Text className="text-red-600 font-bold text-sm">{currentPoints} pts</Text>
           </View>

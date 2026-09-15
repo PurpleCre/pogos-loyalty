@@ -1,7 +1,8 @@
-import { View, Text, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useAchievements } from '@/hooks/useAchievements';
-import { Trophy, Lock, CheckCircle2 } from 'lucide-react-native';
+import { Trophy, Lock, CheckCircle2, ArrowLeft } from 'lucide-react-native';
 import { useIsFocused } from '@react-navigation/native';
+import { router } from 'expo-router';
 
 export default function AchievementsScreen() {
   const isFocused = useIsFocused();
@@ -25,9 +26,14 @@ export default function AchievementsScreen() {
 
   return (
     <ScrollView className="flex-1 bg-gray-50" contentContainerStyle={{ padding: 16 }}>
-      <View className="mb-6">
-        <Text className="text-3xl font-bold text-gray-900 mb-2">Your Achievements</Text>
-        <Text className="text-gray-500">Unlock badges and earn bonus points by reaching milestones</Text>
+      <View className="mb-6 flex-row items-start">
+        <TouchableOpacity onPress={() => router.back()} className="mr-3 mt-1.5" hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
+          <ArrowLeft size={24} color="#0f172a" />
+        </TouchableOpacity>
+        <View className="flex-1">
+          <Text className="text-3xl font-bold text-gray-900 mb-1">Your Achievements</Text>
+          <Text className="text-gray-500">Unlock badges and earn bonus points by reaching milestones</Text>
+        </View>
       </View>
 
       <View className="bg-white shadow-sm border border-slate-100 rounded-2xl p-6 mb-6">
