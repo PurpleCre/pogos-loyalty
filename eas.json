@@ -11,7 +11,11 @@
     "preview": {
       "distribution": "internal",
       "channel": "preview",
+      "android": {
+        "resourceClass": "large"
+      },
       "env": {
+        "SENTRY_DISABLE_AUTO_UPLOAD": "true",
         "EXPO_PUBLIC_SUPABASE_PROJECT_ID": "hsyibcyvujwwqygigepe",
         "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzeWliY3l2dWp3d3F5Z2lnZXBlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzMzYyNTgsImV4cCI6MjA5ODkxMjI1OH0.WoLIFgWEOGCAr5JUmnRle0YSpXkgCfHfrYW8bnU3emI",
         "EXPO_PUBLIC_SUPABASE_URL": "https://hsyibcyvujwwqygigepe.supabase.co",
