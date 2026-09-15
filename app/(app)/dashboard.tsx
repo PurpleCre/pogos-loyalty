@@ -7,14 +7,16 @@ import { DrawerActions } from '@react-navigation/native';
 import { 
   Scan, Gift, Trophy, Users, Star, 
   ChevronRight, Sparkles, ArrowUpRight, ArrowDownRight,
-  Menu, Hexagon, ShoppingCart
+  Menu, Hexagon, ShoppingCart, ChevronDown, Send
 } from 'lucide-react-native';
 import { useCart } from '@/contexts/CartContext';
+import { useOrder } from '@/contexts/OrderContext';
 
 export default function Dashboard() {
   const { user } = useAuth();
   const { userPoints, transactions, loading, refetch: refetchRewards } = useRewards();
   const { itemCount } = useCart();
+  const { selectedStore } = useOrder();
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
 
@@ -67,7 +69,18 @@ export default function Dashboard() {
         >
           <Menu size={20} color="#1e293b" />
         </TouchableOpacity>
-        <Text className="text-red-600 text-xl font-black tracking-widest uppercase">Pogo's</Text>
+        <View className="items-center">
+          <Text className="text-red-600 text-xl font-black tracking-widest uppercase mb-1">Pogo's</Text>
+          <TouchableOpacity 
+            onPress={() => router.push('/store-picker')}
+            className="flex-row items-center bg-white px-3 py-1 rounded-full border border-slate-200 shadow-sm"
+          >
+            <Text className="text-slate-600 text-[10px] font-bold uppercase tracking-wider mr-1">
+              {selectedStore?.name.replace("Pogo's ", "") || 'Select Store'}
+            </Text>
+            <ChevronDown size={12} color="#64748b" />
+          </TouchableOpacity>
+        </View>
         <TouchableOpacity onPress={() => router.push('/(app)/cart')} className="w-10 h-10 items-center justify-center">
           <ShoppingCart size={24} color="#1e293b" />
           {itemCount > 0 && (
@@ -187,6 +200,26 @@ export default function Dashboard() {
                 <ChevronRight size={24} color="#fff" />
               </View>
             </View>
+          </View>
+
+          {/* Share Points Action */}
+          <View className="px-5 mt-4">
+            <TouchableOpacity 
+              onPress={() => router.push('/(app)/share-points')}
+              className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex-row items-center justify-between"
+              activeOpacity={0.7}
+            >
+              <View className="flex-row items-center">
+                <View className="w-12 h-12 rounded-full bg-purple-50 items-center justify-center mr-3">
+                  <Send size={24} color="#a855f7" strokeWidth={1.5} />
+                </View>
+                <View>
+                  <Text className="font-semibold text-slate-800 text-base">Share Points</Text>
+                  <Text className="text-slate-400 text-xs mt-0.5">Send points to friends</Text>
+                </View>
+              </View>
+              <ChevronRight size={20} color="#cbd5e1" />
+            </TouchableOpacity>
           </View>
 
           {/* Recent Activity */}

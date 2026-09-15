@@ -211,6 +211,36 @@ export const useRewards = () => {
         }
     };
 
+    const sharePoints = async (receiverEmail: string, points: number) => {
+        if (!user || !userPoints || userPoints.current_points < points) {
+            return { error: 'Insufficient points' };
+        }
+
+        if (points <= 0) {
+            return { error: 'Invalid points amount' };
+        }
+
+        try {
+            const { data, error } = await supabase.rpc('share_user_points', {
+                sender_id: user.id,
+                receiver_email: receiverEmail,
+                points_to_transfer: points
+            });
+
+            if (error) throw error;
+            if (data?.error) throw new Error(data.error);
+
+            // Refresh data
+            fetchUserPoints();
+            fetchTransactions();
+
+            return { error: null, success: true };
+        } catch (error: any) {
+            console.error('Error sharing points:', error);
+            return { error: error.message || 'Failed to share points' };
+        }
+    };
+
     return {
         rewards,
         userPoints,
@@ -218,6 +248,7 @@ export const useRewards = () => {
         loading,
         redeemReward,
         addPoints,
+        sharePoints,
         refetch: () => {
             fetchRewards();
             fetchUserPoints();
