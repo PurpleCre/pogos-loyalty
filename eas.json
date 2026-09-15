@@ -11,9 +11,6 @@
     "preview": {
       "distribution": "internal",
       "channel": "preview",
-      "android": {
-        "resourceClass": "large"
-      },
       "env": {
         "SENTRY_DISABLE_AUTO_UPLOAD": "true",
         "EXPO_PUBLIC_SUPABASE_PROJECT_ID": "hsyibcyvujwwqygigepe",
