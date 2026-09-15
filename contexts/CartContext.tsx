@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useMemo } from 'react';
+import { Alert } from 'react-native';
 
 export interface CartItem {
   id: string; // unique id for cart entry, usually menu_item_id
@@ -11,7 +12,8 @@ export interface CartItem {
 
 interface CartContextType {
   items: CartItem[];
-  addToCart: (item: Omit<CartItem, 'subtotal'>) => void;
+  storeId: string | null;
+  addToCart: (item: Omit<CartItem, 'subtotal'>, newStoreId: string) => void;
   removeFromCart: (menuItemId: string) => void;
   updateQuantity: (menuItemId: string, quantity: number) => void;
   clearCart: () => void;
@@ -23,8 +25,32 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [storeId, setStoreId] = useState<string | null>(null);
 
-  const addToCart = (newItem: Omit<CartItem, 'subtotal'>) => {
+  const addToCart = (newItem: Omit<CartItem, 'subtotal'>, newStoreId: string) => {
+    if (storeId && storeId !== newStoreId && items.length > 0) {
+      Alert.alert(
+        'Start new order?',
+        'Your cart contains items from another store. Do you want to clear it and start a new order?',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { 
+            text: 'Start New Order', 
+            style: 'destructive',
+            onPress: () => {
+              setStoreId(newStoreId);
+              setItems([{ ...newItem, subtotal: newItem.quantity * newItem.price }]);
+            }
+          }
+        ]
+      );
+      return;
+    }
+
+    if (!storeId || items.length === 0) {
+      setStoreId(newStoreId);
+    }
+
     setItems(prev => {
       const existing = prev.find(i => i.menu_item_id === newItem.menu_item_id);
       if (existing) {
@@ -39,7 +65,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   const removeFromCart = (menuItemId: string) => {
-    setItems(prev => prev.filter(i => i.menu_item_id !== menuItemId));
+    setItems(prev => {
+      const newItems = prev.filter(i => i.menu_item_id !== menuItemId);
+      if (newItems.length === 0) setStoreId(null);
+      return newItems;
+    });
   };
 
   const updateQuantity = (menuItemId: string, quantity: number) => {
@@ -54,7 +84,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     ));
   };
 
-  const clearCart = () => setItems([]);
+  const clearCart = () => {
+    setItems([]);
+    setStoreId(null);
+  };
 
   const cartTotal = useMemo(() => items.reduce((sum, item) => sum + item.subtotal, 0), [items]);
   const itemCount = useMemo(() => items.reduce((sum, item) => sum + item.quantity, 0), [items]);
@@ -62,6 +95,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   return (
     <CartContext.Provider value={{
       items,
+      storeId,
       addToCart,
       removeFromCart,
       updateQuantity,

@@ -123,7 +123,7 @@ export default function MenuScreen() {
       name: customizationItem.name,
       price: getCustomizedPrice(),
       quantity: 1
-    });
+    }, selectedStore?.id || '');
     closeCustomization();
   };
 
