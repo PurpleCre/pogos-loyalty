@@ -44,12 +44,12 @@ export default function ReferralsScreen() {
       </View>
 
       {/* Referral Code Card */}
-      <View className="bg-red-50 rounded-2xl p-6 border border-red-100 mb-5">
+      <View className="bg-white shadow-sm rounded-2xl p-6 border border-slate-100 mb-5">
         <View className="flex-row items-center gap-2 mb-2">
           <Gift size={20} color="#dc2626" />
-          <Text className="text-lg font-bold text-red-900">Referral Rewards</Text>
+          <Text className="text-lg font-bold text-slate-900">Referral Rewards</Text>
         </View>
-        <Text className="text-red-600 text-sm mb-5">
+        <Text className="text-slate-500 text-sm mb-5">
           Invite friends and you both earn points! You get 100 points, they get 50 points.
         </Text>
 
@@ -71,12 +71,12 @@ export default function ReferralsScreen() {
 
             {/* Stats Grid */}
             <View className="flex-row gap-3 mt-4">
-              <View className="flex-1 bg-white p-4 rounded-xl border border-red-100 items-center">
+              <View className="flex-1 bg-slate-50 p-4 rounded-xl border border-slate-100 items-center">
                 <Users size={22} color="#dc2626" />
                 <Text className="text-2xl font-bold text-slate-800 mt-2">{totalReferrals}</Text>
                 <Text className="text-xs text-slate-400 font-medium">Referrals</Text>
               </View>
-              <View className="flex-1 bg-white p-4 rounded-xl border border-red-100 items-center">
+              <View className="flex-1 bg-slate-50 p-4 rounded-xl border border-slate-100 items-center">
                 <TrendingUp size={22} color="#dc2626" />
                 <Text className="text-2xl font-bold text-slate-800 mt-2">{totalPointsEarned}</Text>
                 <Text className="text-xs text-slate-400 font-medium">Points Earned</Text>

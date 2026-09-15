@@ -67,12 +67,15 @@ export default function Rewards() {
   return (
     <View className="flex-1 bg-slate-50">
       
-      {/* Brand & Layout Transformation: QuickBite Red Header */}
-      <View className="bg-[#dc2626] pt-14 pb-4 px-4 rounded-b-xl">
-        <Text className="text-white text-2xl font-bold mb-1">Pogo's</Text>
-        <Text className="text-white text-lg">
-          Rewards | points: <Text className="font-bold">{currentPoints}</Text>.
-        </Text>
+      {/* Brand & Layout Transformation: Clean Light Header */}
+      <View className="bg-white pt-14 pb-4 px-6 border-b border-slate-100 shadow-sm">
+        <View className="flex-row items-baseline justify-between mb-1">
+          <Text className="text-slate-900 text-2xl font-black tracking-tight">Rewards</Text>
+          <View className="bg-red-50 px-3 py-1 rounded-full border border-red-100">
+            <Text className="text-red-600 font-bold text-sm">{currentPoints} pts</Text>
+          </View>
+        </View>
+        <Text className="text-slate-500 text-sm font-medium">Redeem your points for exclusive treats.</Text>
       </View>
 
       {/* Categories Filter */}

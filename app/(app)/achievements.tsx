@@ -30,16 +30,16 @@ export default function AchievementsScreen() {
         <Text className="text-gray-500">Unlock badges and earn bonus points by reaching milestones</Text>
       </View>
 
-      <View className="bg-red-50 border border-red-100 rounded-2xl p-6 mb-6">
+      <View className="bg-white shadow-sm border border-slate-100 rounded-2xl p-6 mb-6">
         <View className="flex-row items-center gap-2 mb-4">
           <Trophy size={20} color="#dc2626" />
-          <Text className="text-lg font-bold text-red-900">Achievement Progress</Text>
+          <Text className="text-lg font-bold text-slate-900">Achievement Progress</Text>
         </View>
         <View className="flex-row justify-between mb-2">
-          <Text className="text-red-600 font-medium">Completed</Text>
-          <Text className="text-red-900 font-bold">{earnedCount} / {totalCount}</Text>
+          <Text className="text-slate-500 font-medium">Completed</Text>
+          <Text className="text-slate-900 font-bold">{earnedCount} / {totalCount}</Text>
         </View>
-        <View className="h-2 bg-red-200 rounded-full overflow-hidden">
+        <View className="h-2 bg-slate-100 rounded-full overflow-hidden">
           <View className="h-full bg-red-600 rounded-full" style={{ width: `${progressPercentage}%` }} />
         </View>
       </View>
