@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator, Modal, Pressable } from 'react-native';
 import { useMenu, MenuItemOption, MenuItemOptionChoice } from '@/hooks/useMenu';
 import { useCart } from '@/contexts/CartContext';
-import { ShoppingCart, Plus, Minus, ChevronLeft, Utensils, CupSoda, Flame, Gift, Pizza, CheckCircle2, Clock, ShoppingBag, X, Circle, CheckCircle, CheckSquare, Square, Menu as MenuIcon } from 'lucide-react-native';
+import { ShoppingCart, Plus, Minus, ChevronLeft, Utensils, CupSoda, Flame, Gift, Pizza, CheckCircle2, Clock, ShoppingBag, X, Circle, CheckCircle, CheckSquare, Square, Menu as MenuIcon, ChevronDown } from 'lucide-react-native';
 import { router, useFocusEffect, useNavigation } from 'expo-router';
 import { DrawerActions } from '@react-navigation/native';
 import { useAuth } from '@/hooks/useAuth';
@@ -155,7 +155,7 @@ export default function MenuScreen() {
     <View className="flex-1 bg-gray-50">
       {/* Red Header matching screenshot style */}
       <View className="bg-red-600 pt-14 pb-4 px-4 rounded-b-3xl">
-        <View className="flex-row justify-between items-center mb-4">
+        <View className="flex-row justify-between items-center mb-2">
           <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())} className="w-10 h-10 items-center justify-center -ml-2">
             <MenuIcon size={28} color="#fff" />
           </TouchableOpacity>
@@ -169,9 +169,16 @@ export default function MenuScreen() {
             )}
           </TouchableOpacity>
         </View>
-        <Text className="text-white text-lg font-medium mb-1">
-          Menu - {selectedStore?.name.replace("Pogo's ", "") || 'All'} Store
-        </Text>
+        <TouchableOpacity 
+          onPress={() => router.push('/store-picker')}
+          className="flex-row items-center ml-1 pb-1"
+          activeOpacity={0.7}
+        >
+          <Text className="text-white text-lg font-medium mr-1.5">
+            Menu - {selectedStore?.name.replace("Pogo's ", "") || 'All'} Store
+          </Text>
+          <ChevronDown size={18} color="#ffffff" opacity={0.9} />
+        </TouchableOpacity>
       </View>
 
       {/* Category Scrollbar */}

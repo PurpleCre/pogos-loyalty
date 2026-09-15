@@ -1,15 +1,17 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
-import { ArrowLeft, MapPin } from 'lucide-react-native';
+import { ArrowLeft, MapPin, ChevronDown } from 'lucide-react-native';
 import { useStores, Store } from '@/hooks/useStores';
 import { useOrder } from '@/contexts/OrderContext';
+import { LocationPickerModal } from '@/components/LocationPickerModal';
 
 export default function StorePickerScreen() {
   const { stores, loading, error } = useStores();
   const { deliveryLocation, setSelectedStore } = useOrder();
   const { address } = useLocalSearchParams<{ address: string }>();
+  const [isLocationModalVisible, setLocationModalVisible] = useState(false);
 
   const handleSelectStore = (store: Store) => {
     setSelectedStore(store);
@@ -60,15 +62,20 @@ export default function StorePickerScreen() {
       </View>
 
       {/* Address Header */}
-      <View className="bg-white px-5 py-4 border-b border-gray-100 shadow-sm">
+      <TouchableOpacity 
+        onPress={() => setLocationModalVisible(true)}
+        className="bg-white px-5 py-4 border-b border-gray-100 shadow-sm"
+        activeOpacity={0.7}
+      >
         <Text className="text-gray-500 text-sm font-medium mb-1">Delivery Address</Text>
         <View className="flex-row items-center bg-gray-50 p-3 rounded-lg border border-gray-200">
           <MapPin size={18} color="#dc2626" className="mr-2" />
           <Text className="text-gray-800 flex-1 font-medium" numberOfLines={1}>
             {deliveryLocation ? (deliveryLocation.tag ? `${deliveryLocation.tag} - ${deliveryLocation.address}` : deliveryLocation.address) : "Location not set"}
           </Text>
+          <ChevronDown size={20} color="#9ca3af" />
         </View>
-      </View>
+      </TouchableOpacity>
 
       {/* Store List */}
       <ScrollView className="flex-1 px-5 pt-4">
@@ -124,6 +131,11 @@ export default function StorePickerScreen() {
         )}
         <View className="h-10" />
       </ScrollView>
+
+      <LocationPickerModal 
+        visible={isLocationModalVisible} 
+        onClose={() => setLocationModalVisible(false)} 
+      />
     </SafeAreaView>
   );
 }
