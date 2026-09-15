@@ -58,20 +58,20 @@ export default function Dashboard() {
   }, [refetchRewards]);
 
   return (
-    <View className="flex-1 bg-[#09090b]">
+    <View className="flex-1 bg-slate-50">
       {/* Sleek Header */}
-      <View className="pt-14 pb-4 px-6 flex-row items-center justify-between z-10 bg-[#09090b]/90">
+      <View className="pt-14 pb-4 px-6 flex-row items-center justify-between z-10 bg-slate-50/90 border-b border-slate-200/50">
         <TouchableOpacity 
           onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
-          className="w-10 h-10 rounded-full bg-[#27272a] items-center justify-center border border-[#3f3f46]"
+          className="w-10 h-10 rounded-full bg-white items-center justify-center border border-slate-200 shadow-sm"
         >
-          <Menu size={20} color="#f4f4f5" />
+          <Menu size={20} color="#1e293b" />
         </TouchableOpacity>
-        <Text className="text-white text-xl font-black tracking-widest uppercase">Pogo's</Text>
+        <Text className="text-red-600 text-xl font-black tracking-widest uppercase">Pogo's</Text>
         <TouchableOpacity onPress={() => router.push('/(app)/cart')} className="w-10 h-10 items-center justify-center">
-          <ShoppingCart size={24} color="#f4f4f5" />
+          <ShoppingCart size={24} color="#1e293b" />
           {itemCount > 0 && (
-            <View className="absolute top-1 right-0 bg-red-600 w-4 h-4 rounded-full items-center justify-center border border-[#3f3f46]">
+            <View className="absolute top-1 right-0 bg-red-600 w-4 h-4 rounded-full items-center justify-center border border-white">
               <Text className="text-white text-[10px] font-bold">{itemCount}</Text>
             </View>
           )}
@@ -82,34 +82,34 @@ export default function Dashboard() {
         className="flex-1"
         contentContainerStyle={{ paddingBottom: 40 }}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#ef4444" />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#dc2626" />
         }
       >
         <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
           
           {/* Membership Card (Points) */}
           <View className="px-5 mt-4">
-            <View className="bg-[#18181b] rounded-3xl p-6 border border-[#27272a] shadow-lg relative overflow-hidden">
+            <View className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm relative overflow-hidden">
               
               <View className="flex-row justify-between items-start mb-8 z-10">
                 <View>
-                  <Text className="text-[#a1a1aa] text-sm uppercase tracking-wider font-semibold mb-1">Available Points</Text>
+                  <Text className="text-slate-500 text-sm uppercase tracking-wider font-semibold mb-1">Available Points</Text>
                   <View className="flex-row items-baseline">
-                    <Text className="text-white text-5xl font-black">{currentPoints.toLocaleString()}</Text>
-                    <Text className="text-red-500 text-lg font-bold ml-1"> pts</Text>
+                    <Text className="text-slate-900 text-5xl font-black">{currentPoints.toLocaleString()}</Text>
+                    <Text className="text-red-600 text-lg font-bold ml-1"> pts</Text>
                   </View>
                 </View>
-                <View className="w-12 h-12 rounded-2xl bg-[#27272a] items-center justify-center border border-[#3f3f46]">
-                  <Hexagon size={24} color="#ef4444" strokeWidth={1.5} />
+                <View className="w-12 h-12 rounded-2xl bg-red-50 items-center justify-center border border-red-100">
+                  <Hexagon size={24} color="#dc2626" strokeWidth={1.5} />
                 </View>
               </View>
 
               <View className="z-10">
                 <View className="flex-row justify-between items-center mb-2">
-                  <Text className="text-[#d4d4d8] font-medium text-sm">Burger Fanatic Tier</Text>
-                  <Text className="text-[#a1a1aa] text-xs font-semibold">{Math.round(progress)}% to next reward</Text>
+                  <Text className="text-slate-700 font-medium text-sm">Burger Fanatic Tier</Text>
+                  <Text className="text-slate-500 text-xs font-semibold">{Math.round(progress)}% to next reward</Text>
                 </View>
-                <View className="h-2.5 bg-[#27272a] rounded-full overflow-hidden border border-[#3f3f46]/50">
+                <View className="h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200/50">
                   <View 
                     className="h-full bg-red-600 rounded-full"
                     style={{ width: `${progress}%` }}
@@ -124,57 +124,57 @@ export default function Dashboard() {
             <View className="flex-row flex-wrap justify-between">
               <TouchableOpacity 
                 onPress={() => router.push('/scan')}
-                className="w-[48%] bg-[#18181b] rounded-2xl p-4 mb-4 border border-[#27272a] items-center"
+                className="w-[48%] bg-white rounded-2xl p-4 mb-4 border border-slate-100 shadow-sm items-center"
                 activeOpacity={0.7}
               >
-                <View className="w-12 h-12 rounded-full bg-red-500/10 items-center justify-center mb-3">
-                  <Scan size={24} color="#ef4444" strokeWidth={1.5} />
+                <View className="w-12 h-12 rounded-full bg-red-50 items-center justify-center mb-3">
+                  <Scan size={24} color="#dc2626" strokeWidth={1.5} />
                 </View>
-                <Text className="font-semibold text-[#f4f4f5] text-sm">Scan Receipt</Text>
-                <Text className="text-[#71717a] text-[10px] mt-1 tracking-wider uppercase">Earn Points</Text>
+                <Text className="font-semibold text-slate-800 text-sm">Scan Receipt</Text>
+                <Text className="text-slate-400 text-[10px] mt-1 tracking-wider uppercase">Earn Points</Text>
               </TouchableOpacity>
 
               <TouchableOpacity 
                 onPress={() => router.navigate('/(app)/rewards')}
-                className="w-[48%] bg-[#18181b] rounded-2xl p-4 mb-4 border border-[#27272a] items-center"
+                className="w-[48%] bg-white rounded-2xl p-4 mb-4 border border-slate-100 shadow-sm items-center"
                 activeOpacity={0.7}
               >
-                <View className="w-12 h-12 rounded-full bg-orange-500/10 items-center justify-center mb-3">
+                <View className="w-12 h-12 rounded-full bg-orange-50 items-center justify-center mb-3">
                   <Gift size={24} color="#f97316" strokeWidth={1.5} />
                 </View>
-                <Text className="font-semibold text-[#f4f4f5] text-sm">Rewards</Text>
-                <Text className="text-[#71717a] text-[10px] mt-1 tracking-wider uppercase">Redeem Points</Text>
+                <Text className="font-semibold text-slate-800 text-sm">Rewards</Text>
+                <Text className="text-slate-400 text-[10px] mt-1 tracking-wider uppercase">Redeem Points</Text>
               </TouchableOpacity>
 
               <TouchableOpacity 
                 onPress={() => router.navigate('/(app)/achievements')}
-                className="w-[48%] bg-[#18181b] rounded-2xl p-4 mb-4 border border-[#27272a] items-center"
+                className="w-[48%] bg-white rounded-2xl p-4 mb-4 border border-slate-100 shadow-sm items-center"
                 activeOpacity={0.7}
               >
-                <View className="w-12 h-12 rounded-full bg-emerald-500/10 items-center justify-center mb-3">
+                <View className="w-12 h-12 rounded-full bg-emerald-50 items-center justify-center mb-3">
                   <Trophy size={24} color="#10b981" strokeWidth={1.5} />
                 </View>
-                <Text className="font-semibold text-[#f4f4f5] text-sm">Achievements</Text>
-                <Text className="text-[#71717a] text-[10px] mt-1 tracking-wider uppercase">View Badges</Text>
+                <Text className="font-semibold text-slate-800 text-sm">Achievements</Text>
+                <Text className="text-slate-400 text-[10px] mt-1 tracking-wider uppercase">View Badges</Text>
               </TouchableOpacity>
 
               <TouchableOpacity 
                 onPress={() => router.navigate('/(app)/referrals')}
-                className="w-[48%] bg-[#18181b] rounded-2xl p-4 mb-4 border border-[#27272a] items-center"
+                className="w-[48%] bg-white rounded-2xl p-4 mb-4 border border-slate-100 shadow-sm items-center"
                 activeOpacity={0.7}
               >
-                <View className="w-12 h-12 rounded-full bg-blue-500/10 items-center justify-center mb-3">
+                <View className="w-12 h-12 rounded-full bg-blue-50 items-center justify-center mb-3">
                   <Users size={24} color="#3b82f6" strokeWidth={1.5} />
                 </View>
-                <Text className="font-semibold text-[#f4f4f5] text-sm">Refer Friends</Text>
-                <Text className="text-[#71717a] text-[10px] mt-1 tracking-wider uppercase">Earn Bonus Pts</Text>
+                <Text className="font-semibold text-slate-800 text-sm">Refer Friends</Text>
+                <Text className="text-slate-400 text-[10px] mt-1 tracking-wider uppercase">Earn Bonus Pts</Text>
               </TouchableOpacity>
             </View>
           </View>
 
           {/* Promo Banner */}
           <View className="px-5 mt-2">
-            <View className="bg-red-600 rounded-2xl p-5 border border-red-500 flex-row items-center justify-between">
+            <View className="bg-red-600 rounded-2xl p-5 border border-red-500 flex-row items-center justify-between shadow-sm">
               <View className="flex-1 mr-4">
                 <View className="flex-row items-center mb-1">
                   <Sparkles size={14} color="#fca5a5" />
@@ -192,13 +192,13 @@ export default function Dashboard() {
           {/* Recent Activity */}
           <View className="px-5 mt-8">
             <View className="flex-row items-end justify-between mb-5">
-              <Text className="text-xl font-bold text-white">Recent Activity</Text>
+              <Text className="text-xl font-bold text-slate-900">Recent Activity</Text>
               <TouchableOpacity onPress={() => router.navigate('/(app)/transactions')}>
-                <Text className="text-red-500 text-sm font-semibold">View All</Text>
+                <Text className="text-red-600 text-sm font-semibold">View All</Text>
               </TouchableOpacity>
             </View>
 
-            <View className="bg-[#18181b] rounded-3xl border border-[#27272a] p-2">
+            <View className="bg-white rounded-3xl border border-slate-100 shadow-sm p-2">
               {transactions.length > 0 ? (
                 transactions.slice(0, 5).map((transaction, index) => {
                   const isPurchase = transaction.transaction_type === 'purchase';
@@ -206,8 +206,8 @@ export default function Dashboard() {
                   const isLast = index === Math.min(transactions.length, 5) - 1;
 
                   return (
-                    <View key={transaction.id} className={`flex-row items-center p-3 ${!isLast ? 'border-b border-[#27272a]' : ''}`}>
-                      <View className={`w-10 h-10 rounded-2xl items-center justify-center mr-4 ${isPurchase ? 'bg-emerald-500/10' : 'bg-red-500/10'}`}>
+                    <View key={transaction.id} className={`flex-row items-center p-3 ${!isLast ? 'border-b border-slate-50' : ''}`}>
+                      <View className={`w-10 h-10 rounded-2xl items-center justify-center mr-4 ${isPurchase ? 'bg-emerald-50' : 'bg-red-50'}`}>
                         {isPurchase ? (
                           <ArrowUpRight size={18} color="#10b981" />
                         ) : (
@@ -216,20 +216,20 @@ export default function Dashboard() {
                       </View>
                       
                       <View className="flex-1">
-                        <Text className="text-[#f4f4f5] font-semibold text-base" numberOfLines={1}>
+                        <Text className="text-slate-800 font-semibold text-base" numberOfLines={1}>
                           {transaction.items?.join(', ') || (isPurchase ? 'Order Completed' : 'Reward Claimed')}
                         </Text>
-                        <Text className="text-[#71717a] text-xs mt-0.5">
+                        <Text className="text-slate-500 text-xs mt-0.5">
                           {date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                         </Text>
                       </View>
 
                       <View className="items-end ml-3">
-                        <Text className={`font-bold text-base ${isPurchase ? 'text-emerald-500' : 'text-red-500'}`}>
+                        <Text className={`font-bold text-base ${isPurchase ? 'text-emerald-600' : 'text-red-600'}`}>
                           {isPurchase ? '+' : '-'}{isPurchase ? transaction.points_earned : transaction.points_redeemed} pts
                         </Text>
                         {isPurchase && (
-                          <Text className="text-[#71717a] text-xs mt-0.5">${transaction.amount}</Text>
+                          <Text className="text-slate-400 text-xs mt-0.5">${transaction.amount}</Text>
                         )}
                       </View>
                     </View>
@@ -237,11 +237,11 @@ export default function Dashboard() {
                 })
               ) : (
                 <View className="items-center justify-center py-10 px-6">
-                  <View className="w-16 h-16 bg-[#27272a] rounded-full items-center justify-center mb-4">
-                    <Star size={28} color="#71717a" />
+                  <View className="w-16 h-16 bg-slate-50 rounded-full items-center justify-center mb-4">
+                    <Star size={28} color="#94a3b8" />
                   </View>
-                  <Text className="text-[#a1a1aa] text-center font-medium mb-1">No points activity yet</Text>
-                  <Text className="text-[#71717a] text-center text-sm">
+                  <Text className="text-slate-600 text-center font-medium mb-1">No points activity yet</Text>
+                  <Text className="text-slate-400 text-center text-sm">
                     Start making orders to earn rewards!
                   </Text>
                 </View>
