@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import { View, Text, Alert, Image, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, Alert, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { useAuth } from '@/hooks/useAuth';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Eye, EyeOff } from 'lucide-react-native';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [fullName, setFullName] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const { signIn, signUp, loading } = useAuth();
@@ -116,12 +118,26 @@ export default function Login() {
 
             <View className="mb-2">
               <Text className="text-sm font-medium text-slate-700 mb-1.5">Password</Text>
-              <Input
-                placeholder="Enter your password"
-                secureTextEntry
-                value={password}
-                onChangeText={setPassword}
-              />
+              <View className="relative justify-center">
+                <Input
+                  placeholder="Enter your password"
+                  secureTextEntry={!showPassword}
+                  value={password}
+                  onChangeText={setPassword}
+                  className="pr-12"
+                />
+                <TouchableOpacity 
+                  onPress={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 items-center justify-center h-full"
+                  activeOpacity={0.7}
+                >
+                  {showPassword ? (
+                    <EyeOff size={20} color="#94a3b8" />
+                  ) : (
+                    <Eye size={20} color="#94a3b8" />
+                  )}
+                </TouchableOpacity>
+              </View>
               {isSignUp && (
                 <Text className="text-xs text-slate-400 mt-1.5">
                   Password must be at least 6 characters long
