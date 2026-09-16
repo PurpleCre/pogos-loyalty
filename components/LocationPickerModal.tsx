@@ -83,9 +83,12 @@ export function LocationPickerModal({ visible, onClose }: LocationPickerModalPro
     };
 
     if (tagInput) {
-      await saveLocation(newLocation);
+      const dbLocation = await saveLocation(newLocation);
+      setDeliveryLocation(dbLocation || newLocation);
+    } else {
+      setDeliveryLocation(newLocation);
     }
-    setDeliveryLocation(newLocation);
+    
     onClose();
   };
 

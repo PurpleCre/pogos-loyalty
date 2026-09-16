@@ -18,7 +18,7 @@ interface OrderContextType {
   selectedStore: Store | null;
   setSelectedStore: (store: Store | null) => void;
   savedLocations: LocationData[];
-  saveLocation: (location: LocationData) => Promise<void>;
+  saveLocation: (location: LocationData) => Promise<LocationData | null>;
   removeLocation: (id: string) => Promise<void>;
 }
 
@@ -72,36 +72,46 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       const exists = savedLocations.find(loc => loc.id === location.id);
       
       if (user) {
-        const isUUID = location.id && location.id.length === 36 && location.id.includes('-');
-        const insertData = {
-          user_id: user.id,
-          address: location.address,
-          latitude: location.latitude,
-          longitude: location.longitude,
-          tag: location.tag,
-        };
-        
-        if (isUUID) {
-          // Update existing
-          const { data, error } = await supabase
-            .from('user_locations')
-            .update(insertData)
-            .eq('id', location.id)
-            .select()
-            .single();
-            
-          if (error) throw error;
-          if (data) dbLocation = data as LocationData;
-        } else {
-          // Insert new (let Supabase generate UUID)
-          const { data, error } = await supabase
-            .from('user_locations')
-            .insert([insertData])
-            .select()
-            .single();
-            
-          if (error) throw error;
-          if (data) dbLocation = data as LocationData;
+        try {
+          const isUUID = location.id && location.id.length === 36 && location.id.includes('-');
+          const insertData = {
+            user_id: user.id,
+            address: location.address,
+            latitude: location.latitude,
+            longitude: location.longitude,
+            tag: location.tag,
+          };
+          
+          if (isUUID) {
+            // Update existing
+            const { data, error } = await supabase
+              .from('user_locations')
+              .update(insertData)
+              .eq('id', location.id)
+              .select()
+              .single();
+              
+            if (error) {
+              console.error('Failed to update in Supabase', error);
+            } else if (data) {
+              dbLocation = data as LocationData;
+            }
+          } else {
+            // Insert new (let Supabase generate UUID)
+            const { data, error } = await supabase
+              .from('user_locations')
+              .insert([insertData])
+              .select()
+              .single();
+              
+            if (error) {
+              console.error('Failed to insert in Supabase', error);
+            } else if (data) {
+              dbLocation = data as LocationData;
+            }
+          }
+        } catch (dbError) {
+          console.error('Supabase save error (falling back to local)', dbError);
         }
       }
       
@@ -118,8 +128,11 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       if (deliveryLocation?.id === location.id) {
         setDeliveryLocation(dbLocation);
       }
+      
+      return dbLocation;
     } catch (e) {
       console.error('Failed to save location', e);
+      return null;
     }
   };
 
