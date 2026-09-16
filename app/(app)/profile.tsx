@@ -72,7 +72,7 @@ export default function Profile() {
   return (
     <View className="flex-1 bg-slate-50">
       {/* Sleek Header */}
-      <View className="bg-red-600 pt-14 pb-6 px-4 rounded-b-3xl z-10 flex-row items-center">
+      <View className="bg-red-600 pt-14 pb-6 px-4 rounded-b-3xl flex-row items-center">
         <TouchableOpacity 
           onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
           className="w-10 h-10 items-center justify-center -ml-2"
