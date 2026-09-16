@@ -55,9 +55,13 @@ export function Button({
       {isLoading ? (
         <ActivityIndicator color={variant === 'default' ? 'white' : 'black'} />
       ) : (
-        <Text className={twMerge("font-semibold", textVariants[variant], textClassName)}>
-          {children}
-        </Text>
+        typeof children === 'string' ? (
+          <Text className={twMerge("font-semibold", textVariants[variant], textClassName)}>
+            {children}
+          </Text>
+        ) : (
+          children
+        )
       )}
     </TouchableOpacity>
   );
