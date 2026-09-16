@@ -1,4 +1,4 @@
-import { View, Text, Alert, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, Alert, ScrollView, TouchableOpacity, Modal } from 'react-native';
 import { useAuth } from '@/hooks/useAuth';
 import { useAdmin } from '@/hooks/useAdmin';
 import { Button } from '@/components/ui/button';
@@ -7,19 +7,23 @@ import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { router, useNavigation } from 'expo-router';
 import { DrawerActions } from '@react-navigation/native';
-import { User, Save, Trophy, Share2, Shield, Bell, ChevronRight, Menu, LogIn } from 'lucide-react-native';
+import { User, Save, Trophy, Share2, Shield, Bell, ChevronRight, Menu, LogIn, Edit2, X } from 'lucide-react-native';
+
+const EMOJI_AVATARS = ['🍔', '🍕', '🍟', '🍦', '☕️', '🦊', '🐼', '🦁', '🚀', '👑', '💎', '👻', '👽'];
 
 export default function Profile() {
   const { user, signOut } = useAuth();
   const { isAdmin } = useAdmin();
   const [fullName, setFullName] = useState(user?.user_metadata?.full_name || '');
+  const [avatar, setAvatar] = useState(user?.user_metadata?.avatar || '');
   const [loading, setLoading] = useState(false);
+  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
 
   const handleUpdate = async () => {
     setLoading(true);
     try {
       const { error } = await supabase.auth.updateUser({
-        data: { full_name: fullName }
+        data: { full_name: fullName, avatar: avatar }
       });
       
       if (error) throw error;
@@ -81,11 +85,23 @@ export default function Profile() {
       <ScrollView className="flex-1" contentContainerStyle={{ padding: 20, paddingBottom: 40, flexGrow: 1 }}>
       {/* Profile Avatar */}
       <View className="items-center -mt-12 mb-6 z-20">
-        <View className="w-24 h-24 bg-white rounded-full items-center justify-center shadow-md border-4 border-slate-50">
-          <View className="w-full h-full bg-red-50 rounded-full items-center justify-center">
-            <User size={36} color="#dc2626" />
+        <TouchableOpacity 
+          onPress={() => setShowAvatarPicker(true)}
+          activeOpacity={0.8}
+        >
+          <View className="w-24 h-24 bg-white rounded-full items-center justify-center shadow-md border-4 border-slate-50 relative">
+            <View className="w-full h-full bg-red-50 rounded-full items-center justify-center">
+              {avatar ? (
+                <Text style={{ fontSize: 40 }}>{avatar}</Text>
+              ) : (
+                <User size={36} color="#dc2626" />
+              )}
+            </View>
+            <View className="absolute bottom-0 right-0 bg-red-600 rounded-full p-1.5 border-2 border-white shadow-sm">
+              <Edit2 size={12} color="#fff" />
+            </View>
           </View>
-        </View>
+        </TouchableOpacity>
         <Text className="text-xl font-bold text-slate-800 mt-3">{fullName || 'Loyal Customer'}</Text>
         <Text className="text-slate-500 font-medium">{user?.email}</Text>
       </View>
@@ -199,6 +215,44 @@ export default function Profile() {
         </TouchableOpacity>
       </View>
     </ScrollView>
+
+    {/* Avatar Picker Modal */}
+    <Modal visible={showAvatarPicker} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setShowAvatarPicker(false)}>
+      <View className="flex-1 bg-slate-50 pt-6 px-5">
+        <View className="flex-row items-center justify-between mb-8">
+          <Text className="text-2xl font-bold text-slate-800">Choose Avatar</Text>
+          <TouchableOpacity onPress={() => setShowAvatarPicker(false)} className="p-2 bg-slate-200 rounded-full">
+            <X size={20} color="#475569" />
+          </TouchableOpacity>
+        </View>
+        
+        <View className="flex-row flex-wrap justify-center gap-4">
+          {EMOJI_AVATARS.map((emoji) => (
+            <TouchableOpacity 
+              key={emoji}
+              onPress={() => {
+                setAvatar(emoji);
+                setShowAvatarPicker(false);
+              }}
+              className={`w-20 h-20 items-center justify-center rounded-2xl border-2 ${avatar === emoji ? 'border-red-500 bg-red-50' : 'border-slate-200 bg-white'}`}
+            >
+              <Text style={{ fontSize: 36 }}>{emoji}</Text>
+            </TouchableOpacity>
+          ))}
+          
+          {/* Option to clear avatar */}
+          <TouchableOpacity 
+            onPress={() => {
+              setAvatar('');
+              setShowAvatarPicker(false);
+            }}
+            className={`w-20 h-20 items-center justify-center rounded-2xl border-2 ${!avatar ? 'border-red-500 bg-red-50' : 'border-slate-200 bg-white'}`}
+          >
+            <User size={36} color={!avatar ? "#dc2626" : "#94a3b8"} />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
     </View>
   );
 }
