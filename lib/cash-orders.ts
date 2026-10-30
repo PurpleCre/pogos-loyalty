@@ -5,7 +5,7 @@ import type { Json } from './types';
 import { cashQuoteSchema, orderResultSchema, createCheckoutRecovery, type CheckoutRequest } from './cash-checkout';
 
 export const checkoutRecovery = createCheckoutRecovery(AsyncStorage);
-async function accessTokenFor(owner: string) {
+export async function accessTokenFor(owner: string) {
   const { data: { session }, error } = await supabase.auth.getSession();
   if (error || !session || session.user.id !== owner) throw new Error('Your account changed. Sign in to check your order.');
   return session.access_token;

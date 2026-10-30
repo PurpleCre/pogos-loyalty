@@ -1,146 +1,79 @@
-import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, RefreshControl, TextInput } from 'react-native';
 import { useStaff } from '@/hooks/useStaff';
 import { useAuth } from '@/hooks/useAuth';
 import { StaffOrders } from '@/components/staff/StaffOrders';
-import { StaffMenuAvailability } from '@/components/staff/StaffMenuAvailability';
-import { useState, useEffect } from 'react';
-import { ClipboardList, UtensilsCrossed, Clock, CheckCircle2, AlertCircle, Store } from 'lucide-react-native';
+import { useState, useEffect, useRef } from 'react';
 import { useIsFocused } from '@react-navigation/native';
+import { useLocalSearchParams } from 'expo-router';
 import { useStores } from '@/hooks/useStores';
+import { formatMoney } from '@/lib/cash-orders';
+import { staffError } from '@/lib/staff-orders';
 
 export default function StaffDashboard() {
   const isFocused = useIsFocused();
-  const { userRole, staffStoreId } = useAuth();
-  const { 
-    activeOrders, menuItems, stats, isLoading, menuLoading, 
-    fetchStoreOrders, fetchStoreMenuItems, updateOrderStatus, toggleMenuItemAvailability 
-  } = useStaff();
+  const { user, userRole, staffStoreId } = useAuth();
   const { stores } = useStores();
-  const [activeTab, setActiveTab] = useState<'orders' | 'menu'>('orders');
-  const [refreshing, setRefreshing] = useState(false);
-
-  const storeName = stores.find(s => s.id === staffStoreId)?.name || 'Your Store';
-
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await Promise.all([fetchStoreOrders(), fetchStoreMenuItems()]);
-    setRefreshing(false);
+  const { storeId } = useLocalSearchParams<{ storeId?: string }>();
+  const [selectedBranch, setSelectedBranch] = useState<string | null>(storeId ?? null);
+  const [lookupState, setLookup] = useState<{ scope: string; value: string }>({ scope: '', value: '' });
+  const [messageState, setMessage] = useState<{ scope: string; value: string }>({ scope: '', value: '' });
+  const isAdmin = userRole === 'admin';
+  const branchId = isAdmin ? selectedBranch ?? stores[0]?.id ?? null : staffStoreId;
+  const scope = `${user?.id}:${branchId}`;
+  const current = useRef(scope); current.current = scope;
+  const message = messageState.scope === scope ? messageState.value : '';
+  const lookup = lookupState.scope === scope ? lookupState.value : '';
+  const showMessage = (value: string) => { if (current.current === scope) setMessage({ scope, value }); };
+  useEffect(() => { if (storeId) setSelectedBranch(storeId); }, [storeId]);
+  const { orders, roster, summary, error, isLoading, hasMore, loadMore, fetchStoreOrders, operate, recover,
+    pending, pendingError, busy, findOrder } = useStaff(branchId, isFocused);
+  const permitted = isAdmin || userRole === 'staff';
+  const checkPrevious = async () => {
+    showMessage('');
+    try { await recover(); showMessage('Previous action checked. Refresh the branch to see its current state.'); }
+    catch (err) { showMessage(staffError(err)); }
   };
-
+  const locate = async () => {
+    showMessage('');
+    try { await findOrder(lookup); } catch (err) { showMessage(staffError(err)); }
+  };
   if (!isFocused) return <View />;
-
-  if (userRole !== 'staff' && userRole !== 'admin') {
-    return (
-      <View className="flex-1 items-center justify-center bg-gray-50 px-6">
-        <Store size={48} color="#d1d5db" />
-        <Text className="text-xl font-bold text-gray-900 mt-4 mb-2">Staff Access Required</Text>
-        <Text className="text-gray-500 text-center">You need staff permissions to access this dashboard.</Text>
-      </View>
-    );
-  }
-
-  if (isLoading && activeOrders.length === 0) {
-    return (
-      <View className="flex-1 items-center justify-center bg-gray-50">
-        <ActivityIndicator size="large" color="#dc2626" />
-      </View>
-    );
-  }
-
-  return (
-    <View className="flex-1 bg-gray-50">
-      {/* Header */}
-      <View className="bg-[#18181b] pt-14 pb-4 px-5">
-        <View className="flex-row items-center gap-3 mb-3">
-          <View className="w-10 h-10 bg-red-600 rounded-xl items-center justify-center">
-            <Store size={20} color="white" />
-          </View>
-          <View className="flex-1">
-            <Text className="text-white text-lg font-bold">{storeName}</Text>
-            <Text className="text-gray-400 text-sm">Staff Dashboard</Text>
-          </View>
-        </View>
-
-        {/* Stats Bar */}
-        <View className="flex-row gap-2 mt-1">
-          <View className="flex-1 bg-[#27272a] rounded-xl p-3 items-center border border-[#3f3f46]">
-            <View className="flex-row items-center gap-1 mb-1">
-              <ClipboardList size={12} color="#a1a1aa" />
-              <Text className="text-gray-400 text-[10px] uppercase font-semibold">Today</Text>
-            </View>
-            <Text className="text-white text-xl font-bold">{stats.todayTotal}</Text>
-          </View>
-          <View className="flex-1 bg-[#27272a] rounded-xl p-3 items-center border border-[#3f3f46]">
-            <View className="flex-row items-center gap-1 mb-1">
-              <Clock size={12} color="#f59e0b" />
-              <Text className="text-gray-400 text-[10px] uppercase font-semibold">Pending</Text>
-            </View>
-            <Text className="text-amber-400 text-xl font-bold">{stats.pendingCount}</Text>
-          </View>
-          <View className="flex-1 bg-[#27272a] rounded-xl p-3 items-center border border-[#3f3f46]">
-            <View className="flex-row items-center gap-1 mb-1">
-              <AlertCircle size={12} color="#3b82f6" />
-              <Text className="text-gray-400 text-[10px] uppercase font-semibold">Active</Text>
-            </View>
-            <Text className="text-blue-400 text-xl font-bold">{stats.preparingCount}</Text>
-          </View>
-          <View className="flex-1 bg-[#27272a] rounded-xl p-3 items-center border border-[#3f3f46]">
-            <View className="flex-row items-center gap-1 mb-1">
-              <CheckCircle2 size={12} color="#22c55e" />
-              <Text className="text-gray-400 text-[10px] uppercase font-semibold">Done</Text>
-            </View>
-            <Text className="text-green-400 text-xl font-bold">{stats.completedToday}</Text>
-          </View>
-        </View>
-      </View>
-
-      {/* Tab Bar */}
-      <View className="px-4 pt-4 pb-2">
-        <View className="flex-row bg-gray-200 p-1 rounded-xl">
-          <TouchableOpacity
-            onPress={() => setActiveTab('orders')}
-            className={`flex-1 py-2.5 rounded-lg items-center flex-row justify-center gap-2 ${activeTab === 'orders' ? 'bg-white shadow-sm' : ''}`}
-          >
-            <ClipboardList size={16} color={activeTab === 'orders' ? '#dc2626' : '#6b7280'} />
-            <Text className={`font-semibold ${activeTab === 'orders' ? 'text-gray-900' : 'text-gray-500'}`}>
-              Live Orders {activeOrders.length > 0 ? `(${activeOrders.length})` : ''}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => setActiveTab('menu')}
-            className={`flex-1 py-2.5 rounded-lg items-center flex-row justify-center gap-2 ${activeTab === 'menu' ? 'bg-white shadow-sm' : ''}`}
-          >
-            <UtensilsCrossed size={16} color={activeTab === 'menu' ? '#dc2626' : '#6b7280'} />
-            <Text className={`font-semibold ${activeTab === 'menu' ? 'text-gray-900' : 'text-gray-500'}`}>
-              Menu
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      {/* Content */}
-      <ScrollView 
-        className="flex-1" 
-        contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#dc2626" />
-        }
-      >
-        {activeTab === 'orders' && (
-          <StaffOrders 
-            orders={activeOrders} 
-            isLoading={isLoading} 
-            onUpdateStatus={updateOrderStatus} 
-          />
-        )}
-        {activeTab === 'menu' && (
-          <StaffMenuAvailability 
-            items={menuItems} 
-            isLoading={menuLoading} 
-            onToggleAvailability={toggleMenuItemAvailability} 
-          />
-        )}
-      </ScrollView>
+  if (!permitted || !user) return <View className="flex-1 justify-center p-6"><Text>Staff access required.</Text></View>;
+  return <View className="flex-1 bg-slate-50">
+    <View className="bg-zinc-900 pt-14 pb-5 px-5">
+      <Text className="text-white text-xl font-bold">{stores.find(store => store.id === branchId)?.name ?? 'Select a branch'}</Text>
+      <Text className="text-slate-300">Orders and cash handover</Text>
+      {isAdmin ? <ScrollView horizontal className="mt-3">{stores.map(store => <TouchableOpacity key={store.id}
+        onPress={() => setSelectedBranch(store.id)} className={`px-4 py-3 rounded-lg mr-2 ${branchId === store.id ? 'bg-red-600' : 'bg-zinc-700'}`}>
+        <Text className="text-white">{store.name}</Text>
+      </TouchableOpacity>)}</ScrollView> : null}
     </View>
-  );
+    <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 48 }} refreshControl={<RefreshControl refreshing={isLoading && orders.length > 0} onRefresh={() => { void fetchStoreOrders(); }} />}>
+      {!branchId ? <Text className="text-amber-800 mb-4">Ask an administrator to assign your branch.</Text> : null}
+      {pending || pendingError ? <View className="bg-amber-50 border border-amber-300 p-4 rounded-xl mb-4">
+        <Text className="font-bold">Previous staff action needs checking</Text>
+        <Text>{pending ? `${pending.action.replaceAll('_', ' ')} · order ${pending.orderId}` : pendingError}</Text>
+        <Text className="mt-2">The action may already have succeeded. Check it before making another change.</Text>
+        <TouchableOpacity disabled={busy} onPress={() => { void checkPrevious(); }} className="p-3 bg-amber-200 rounded-lg mt-3"><Text>Check previous action</Text></TouchableOpacity>
+      </View> : null}
+      {message || error ? <Text accessibilityRole="alert" className="text-red-700 mb-4">{message || error}</Text> : null}
+      {summary ? <View className="bg-white border border-slate-200 p-4 rounded-xl mb-4">
+        <Text className="font-bold">Cash movements today · Harare time</Text>
+        {summary.currencies.map(row => <View key={row.currency} className="mt-3">
+          <Text>Received: {formatMoney(row.received_minor, row.currency)}</Text>
+          <Text>Refunded: {formatMoney(row.refunded_minor, row.currency)}</Text>
+          <Text>Net: {formatMoney(row.net_minor, row.currency)} · Into till: {formatMoney(row.settled_minor, row.currency)}</Text>
+          <Text className="font-bold">Outstanding cash, all dates: {formatMoney(row.held_minor, row.currency)}</Text>
+        </View>)}
+        {!summary.currencies.length ? <Text className="mt-2 text-slate-500">No recorded cash movements.</Text> : null}
+      </View> : null}
+      <View className="mb-4"><Text className="text-slate-600 mb-2">Find an older order in this branch by its full order ID</Text>
+        <TextInput accessibilityLabel="Full order ID" value={lookup} onChangeText={value => setLookup({ scope, value })} autoCapitalize="none" className="border border-slate-300 bg-white rounded-xl p-3" />
+        <TouchableOpacity disabled={busy || !lookup.trim()} onPress={() => { void locate(); }} className="p-3"><Text className="text-red-600 font-bold">Find order</Text></TouchableOpacity>
+      </View>
+      <StaffOrders orders={orders} roster={roster} actor={user.id} isAdmin={isAdmin} isLoading={isLoading}
+        blocked={busy || !!pending || !!pendingError} onCommand={operate} />
+      {hasMore ? <TouchableOpacity onPress={loadMore} className="p-4"><Text className="text-red-600 text-center font-bold">Load more outstanding orders</Text></TouchableOpacity> : null}
+    </ScrollView>
+  </View>;
 }

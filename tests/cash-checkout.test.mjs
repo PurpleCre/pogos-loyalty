@@ -14,6 +14,11 @@ before(async () => {
   await db.query(`INSERT INTO public.stores(id, name, address, distance_miles) VALUES ($1, 'Test Msasa', 'Fixture only', 0), ($2, 'Test Westgate', 'Fixture only', 0)`, [store, otherStore]);
   await db.query(`INSERT INTO public.cash_order_settings(store_id, currency, enabled, pricing_approved, delivery_enabled)
     VALUES ($1, 'USD', true, true, true)`, [store]);
+  const cashier = 'e1000000-0000-4000-8000-000000000005';
+  await db.query(`INSERT INTO auth.users(id, email) VALUES ($1, 'cashier-fixture@example.test')`, [cashier]);
+  await db.query(`INSERT INTO public.user_roles(user_id, role, staff_store_id) VALUES ($1, 'staff', $2)`, [cashier, store]);
+  await db.query(`INSERT INTO public.cash_branch_cashiers(store_id, user_id, active) VALUES ($1, $2, true)`, [store, cashier]);
+  await db.query(`UPDATE public.cash_order_settings SET fulfilment_enabled = true, acceptance_minutes = 10 WHERE store_id = $1`, [store]);
   const category = (await db.query(`INSERT INTO public.menu_categories(name) VALUES ('Test meals') RETURNING id`)).rows[0].id;
   item = (await db.query(`INSERT INTO public.menu_items(category_id, name, price, store_id) VALUES ($1, 'Test Pizza', 10.10, $2) RETURNING id`, [category, store])).rows[0].id;
   foreignItem = (await db.query(`INSERT INTO public.menu_items(category_id, name, price, store_id) VALUES ($1, 'Other branch meal', 1, $2) RETURNING id`, [category, otherStore])).rows[0].id;

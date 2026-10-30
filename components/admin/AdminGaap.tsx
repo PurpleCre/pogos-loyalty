@@ -125,6 +125,10 @@ export function AdminGaap({ stores }: AdminGaapProps) {
 
   return (
     <View className="gap-4">
+      <View className="bg-amber-50 border border-amber-200 p-4 rounded-xl">
+        <Text className="font-bold text-amber-900">Automatic GAAP ingestion is unavailable</Text>
+        <Text className="text-amber-900 mt-2">The legacy processor is disabled while the ledger integration is verified. For app orders, use branch fulfilment to record the full GAAP sale or credit note reference. Configuration changes here do not enable automatic points.</Text>
+      </View>
       {/* Section Tabs */}
       <View className="flex-row bg-white p-1 rounded-xl border border-gray-100">
         {sections.map((section) => {

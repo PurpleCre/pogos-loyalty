@@ -191,10 +191,10 @@ export default function Dashboard() {
               <View className="flex-1 mr-4">
                 <View className="flex-row items-center mb-1">
                   <Sparkles size={14} color="#fca5a5" />
-                  <Text className="text-red-200 text-xs font-bold uppercase tracking-widest ml-1.5">Weekend Exclusive</Text>
+                  <Text className="text-red-200 text-xs font-bold uppercase tracking-widest ml-1.5">Pogo’s loyalty</Text>
                 </View>
-                <Text className="text-white text-lg font-black mt-1">Double Points!</Text>
-                <Text className="text-red-100 text-sm mt-1">Earn 2x points on all orders this weekend.</Text>
+                <Text className="text-white text-lg font-black mt-1">Your points, recorded</Text>
+                <Text className="text-red-100 text-sm mt-1">Check your order quote for earning details. Points settle after payment and handover.</Text>
               </View>
               <View className="w-12 h-12 bg-red-700 rounded-full items-center justify-center">
                 <ChevronRight size={24} color="#fff" />
@@ -250,7 +250,7 @@ export default function Dashboard() {
                       
                       <View className="flex-1">
                         <Text className="text-slate-800 font-semibold text-base" numberOfLines={1}>
-                          {transaction.items?.join(', ') || (isPurchase ? 'Order Completed' : 'Reward Claimed')}
+                          {transaction.items?.join(', ') || (isPurchase ? 'Order Completed' : transaction.transaction_type === 'refund' ? 'Cash refund' : 'Reward Claimed')}
                         </Text>
                         {(transaction as any).source === 'gaap_pos' && (
                           <View className="flex-row items-center gap-0.5 mt-0.5">
@@ -268,7 +268,7 @@ export default function Dashboard() {
                           {isPurchase ? '+' : '-'}{isPurchase ? transaction.points_earned : transaction.points_redeemed} pts
                         </Text>
                         {isPurchase && (
-                          <Text className="text-slate-400 text-xs mt-0.5">${transaction.amount}</Text>
+                          <Text className="text-slate-400 text-xs mt-0.5">{transaction.currency ? `${transaction.currency} ${transaction.amount.toFixed(2)}` : `${transaction.amount.toFixed(2)} · currency unconfirmed`}</Text>
                         )}
                       </View>
                     </View>

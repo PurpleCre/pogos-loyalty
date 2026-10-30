@@ -1,12 +1,18 @@
 # Implementation progress
 
-Updated: 30 October 2026. Scope: local foundation and security containment increment for the cash-first release at Msasa, Kamfinsa and Westgate. GAAP is the confirmed POS vendor. Digital payments remain Release 2.
+Updated: 31 October 2026. Scope: local implementation increments for the cash-first release at Msasa, Kamfinsa and Westgate. GAAP is the confirmed POS vendor. Digital payments remain Release 2.
 
 ## Subsequent verification and checkout increment
 
 The foundation increment was rechecked before advancing: all 28 original tests, TypeScript, lint and database-type drift checks passed. The next local increment implements trusted cash quotation/order creation, modifier-aware cart lines, delivery-zone checks, immutable contact/item/address snapshots and persistent submission recovery. See the [cash checkout milestone](cash-checkout-milestone.md) for its acceptance report and boundaries. The combined suite now contains 67 tests and Android bundle export passes. No hosted configuration or deployment was performed.
 
-Branches remain disabled until configured and operationally ready. Creation leaves orders pending/unpaid without awarding points. Trusted staff cash/fulfilment transitions and the loyalty ledger are the next implementation work. The sections below preserve the foundation increment’s original scope and deployment notes; the disabled legacy checkout has now been replaced with the gated trusted path.
+## Cash fulfilment and ledger increment
+
+The next local milestone is implemented: branch-authorised/versioned fulfilment commands, delivery collector assignment, exact cash receipt/change, two-person till acknowledgement, full till-funded refunds, immutable earning rules, opening-balance review and a projected loyalty ledger. Staff actions survive interrupted responses through persisted command identity. Customer tracking/history now reflects the expanded states and refunds. The combined suite has 100 passing tests; TypeScript, lint, local type drift and Android bundle export pass.
+
+See [cash fulfilment acceptance and activation procedure](cash-fulfilment-milestone.md). Branch flags remain disabled by default; no real cashiers, timers or earning rules were assumed. Expiry has a service-only worker function but still requires a hosted schedule. The legacy GAAP processor is now disabled for the service role too. No hosted project or publication changed. Reward reservation/fulfilment is the next implementation increment.
+
+The remaining sections preserve the foundation milestone’s original evidence and deployment prerequisites. Statements about disabled legacy checkout and future ledger work below describe that earlier checkpoint; the linked milestone reports record the subsequent implementation.
 
 ## Implemented locally
 
@@ -58,8 +64,8 @@ No cloud deployment or native app release was performed. Hosted CI execution, li
 1. Inventory deployed data and ownership; separate historical demo fixtures from production data. Verify approved branch records, menus/modifiers, currencies, delivery zones/fees, staff devices and cash/till procedures for all three branches.
 2. Upgrade Expo/React Native and remediate dependencies with compatible native builds. Dependency installation currently reports 48 audit findings (8 low, 15 moderate, 23 high, 2 critical); these are not resolved by the authorization tests or a passing bundle export. Triage and verify remediation before release; do not use a blind force upgrade.
 3. Deploy and validate the implemented server quotations and atomic idempotent cash orders in staging, import verified business data and complete device/concurrent-session tests before activating a branch.
-4. Build the audited loyalty ledger and reward reservations/fulfilment, with cash-paid/completed earning and tested refunds/reversals. Replace the disabled reward paths through these commands.
-5. Implement branch-scoped staff transitions, cash receipt/custody, GAAP receipt references and reconciliation. Obtain the GAAP contract or approve/rehearse the documented manual till bridge.
+4. Validate the implemented earning/refund ledger in staging and complete opening-balance reconciliation. Build reward reservations/fulfilment and replace the disabled redemption paths through those commands.
+5. Stage and exercise the implemented branch fulfilment/cash workflow, configure the expiry worker, and reconcile it against real tills. Obtain the GAAP contract or approve/rehearse the documented manual bridge; automation remains disabled.
 6. Complete production identity/invitations/MFA, privacy/deletion and fiscal responsibilities, transaction notifications, offline/reconnect handling, reports, monitoring, recovery rehearsal and branch training.
 7. Run release acceptance and an observed one-branch pilot before enabling the remaining two branches. Retain the product/security/finance/privacy gates in the production plan.
 

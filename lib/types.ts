@@ -74,6 +74,39 @@ export type Database = {
 
       ]
     }
+    "cash_branch_cashiers": {
+      Row: {
+        "store_id": string
+        "user_id": string
+        "active": boolean
+      }
+      Insert: {
+        "store_id": string
+        "user_id": string
+        "active"?: boolean
+      }
+      Update: {
+        "store_id"?: string
+        "user_id"?: string
+        "active"?: boolean
+      }
+      Relationships: [
+        {
+          foreignKeyName: "cash_branch_cashiers_store_id_fkey"
+          columns: ["store_id"]
+          isOneToOne: false
+          referencedRelation: "stores"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "cash_branch_cashiers_user_id_fkey"
+          columns: ["user_id"]
+          isOneToOne: false
+          referencedRelation: "profiles"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
     "cash_delivery_zones": {
       Row: {
         "id": string
@@ -112,6 +145,153 @@ export type Database = {
         }
       ]
     }
+    "cash_loyalty_rules": {
+      Row: {
+        "id": string
+        "store_id": string
+        "currency": string
+        "basis": string
+        "points_per_unit": number
+        "spend_unit_minor": number
+        "max_points": number
+        "effective_from": string
+        "active": boolean
+      }
+      Insert: {
+        "id"?: string
+        "store_id": string
+        "currency": string
+        "basis": string
+        "points_per_unit": number
+        "spend_unit_minor": number
+        "max_points": number
+        "effective_from"?: string
+        "active"?: boolean
+      }
+      Update: {
+        "id"?: string
+        "store_id"?: string
+        "currency"?: string
+        "basis"?: string
+        "points_per_unit"?: number
+        "spend_unit_minor"?: number
+        "max_points"?: number
+        "effective_from"?: string
+        "active"?: boolean
+      }
+      Relationships: [
+        {
+          foreignKeyName: "cash_loyalty_rules_store_id_fkey"
+          columns: ["store_id"]
+          isOneToOne: false
+          referencedRelation: "stores"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
+    "cash_movements": {
+      Row: {
+        "id": string
+        "order_id": string
+        "store_id": string
+        "actor_id": string
+        "event_type": string
+        "amount_minor": number
+        "currency": string
+        "reference": string
+        "details": Json
+        "created_at": string
+      }
+      Insert: {
+        "id"?: string
+        "order_id": string
+        "store_id": string
+        "actor_id": string
+        "event_type": string
+        "amount_minor": number
+        "currency": string
+        "reference": string
+        "details"?: Json
+        "created_at"?: string
+      }
+      Update: {
+        "id"?: string
+        "order_id"?: string
+        "store_id"?: string
+        "actor_id"?: string
+        "event_type"?: string
+        "amount_minor"?: number
+        "currency"?: string
+        "reference"?: string
+        "details"?: Json
+        "created_at"?: string
+      }
+      Relationships: [
+        {
+          foreignKeyName: "cash_movements_actor_id_fkey"
+          columns: ["actor_id"]
+          isOneToOne: false
+          referencedRelation: "profiles"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "cash_movements_order_id_fkey"
+          columns: ["order_id"]
+          isOneToOne: false
+          referencedRelation: "orders"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "cash_movements_store_id_fkey"
+          columns: ["store_id"]
+          isOneToOne: false
+          referencedRelation: "stores"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
+    "cash_order_commands": {
+      Row: {
+        "actor_id": string
+        "command_id": string
+        "order_id": string
+        "request": Json
+        "result": Json
+        "created_at": string
+      }
+      Insert: {
+        "actor_id": string
+        "command_id": string
+        "order_id": string
+        "request": Json
+        "result": Json
+        "created_at"?: string
+      }
+      Update: {
+        "actor_id"?: string
+        "command_id"?: string
+        "order_id"?: string
+        "request"?: Json
+        "result"?: Json
+        "created_at"?: string
+      }
+      Relationships: [
+        {
+          foreignKeyName: "cash_order_commands_actor_id_fkey"
+          columns: ["actor_id"]
+          isOneToOne: false
+          referencedRelation: "profiles"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "cash_order_commands_order_id_fkey"
+          columns: ["order_id"]
+          isOneToOne: false
+          referencedRelation: "orders"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
     "cash_order_quotes": {
       Row: {
         "id": string
@@ -122,6 +302,7 @@ export type Database = {
         "expires_at": string
         "order_id": string | null
         "created_at": string
+        "earning_rule_id": string | null
       }
       Insert: {
         "id"?: string
@@ -132,6 +313,7 @@ export type Database = {
         "expires_at"?: string
         "order_id"?: string | null
         "created_at"?: string
+        "earning_rule_id"?: string | null
       }
       Update: {
         "id"?: string
@@ -142,8 +324,16 @@ export type Database = {
         "expires_at"?: string
         "order_id"?: string | null
         "created_at"?: string
+        "earning_rule_id"?: string | null
       }
       Relationships: [
+        {
+          foreignKeyName: "cash_order_quotes_earning_rule_id_fkey"
+          columns: ["earning_rule_id"]
+          isOneToOne: false
+          referencedRelation: "cash_loyalty_rules"
+          referencedColumns: ["id"]
+        },
         {
           foreignKeyName: "cash_order_quotes_order_id_fkey"
           columns: ["order_id"]
@@ -177,6 +367,8 @@ export type Database = {
         "delivery_enabled": boolean
         "minimum_subtotal_minor": number
         "max_total_minor": number
+        "fulfilment_enabled": boolean
+        "acceptance_minutes": number | null
       }
       Insert: {
         "store_id": string
@@ -187,6 +379,8 @@ export type Database = {
         "delivery_enabled"?: boolean
         "minimum_subtotal_minor"?: number
         "max_total_minor"?: number
+        "fulfilment_enabled"?: boolean
+        "acceptance_minutes"?: number | null
       }
       Update: {
         "store_id"?: string
@@ -197,12 +391,95 @@ export type Database = {
         "delivery_enabled"?: boolean
         "minimum_subtotal_minor"?: number
         "max_total_minor"?: number
+        "fulfilment_enabled"?: boolean
+        "acceptance_minutes"?: number | null
       }
       Relationships: [
         {
           foreignKeyName: "cash_order_settings_store_id_fkey"
           columns: ["store_id"]
           isOneToOne: true
+          referencedRelation: "stores"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
+    "cash_receipts": {
+      Row: {
+        "order_id": string
+        "store_id": string
+        "sale_reference": string
+        "currency": string
+        "amount_minor": number
+        "tendered_minor": number
+        "change_minor": number
+        "received_by": string
+        "current_holder_id": string
+        "pending_receiver_id": string | null
+        "settled_at": string | null
+        "created_at": string
+      }
+      Insert: {
+        "order_id": string
+        "store_id": string
+        "sale_reference": string
+        "currency": string
+        "amount_minor": number
+        "tendered_minor": number
+        "change_minor": number
+        "received_by": string
+        "current_holder_id": string
+        "pending_receiver_id"?: string | null
+        "settled_at"?: string | null
+        "created_at"?: string
+      }
+      Update: {
+        "order_id"?: string
+        "store_id"?: string
+        "sale_reference"?: string
+        "currency"?: string
+        "amount_minor"?: number
+        "tendered_minor"?: number
+        "change_minor"?: number
+        "received_by"?: string
+        "current_holder_id"?: string
+        "pending_receiver_id"?: string | null
+        "settled_at"?: string | null
+        "created_at"?: string
+      }
+      Relationships: [
+        {
+          foreignKeyName: "cash_receipts_current_holder_id_fkey"
+          columns: ["current_holder_id"]
+          isOneToOne: false
+          referencedRelation: "profiles"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "cash_receipts_order_id_fkey"
+          columns: ["order_id"]
+          isOneToOne: true
+          referencedRelation: "orders"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "cash_receipts_pending_receiver_id_fkey"
+          columns: ["pending_receiver_id"]
+          isOneToOne: false
+          referencedRelation: "profiles"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "cash_receipts_received_by_fkey"
+          columns: ["received_by"]
+          isOneToOne: false
+          referencedRelation: "profiles"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "cash_receipts_store_id_fkey"
+          columns: ["store_id"]
+          isOneToOne: false
           referencedRelation: "stores"
           referencedColumns: ["id"]
         }
@@ -361,6 +638,138 @@ export type Database = {
         },
         {
           foreignKeyName: "gaap_sync_log_user_id_fkey"
+          columns: ["user_id"]
+          isOneToOne: false
+          referencedRelation: "profiles"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
+    "loyalty_accounts": {
+      Row: {
+        "user_id": string
+        "opening_balance": number
+        "opening_earned": number
+        "opening_redeemed": number
+        "balance": number
+        "earned_gross": number
+        "redeemed_gross": number
+        "opening_reviewed": boolean
+        "reviewed_by": string | null
+        "reviewed_at": string | null
+      }
+      Insert: {
+        "user_id": string
+        "opening_balance": number
+        "opening_earned": number
+        "opening_redeemed": number
+        "balance": number
+        "earned_gross": number
+        "redeemed_gross": number
+        "opening_reviewed"?: boolean
+        "reviewed_by"?: string | null
+        "reviewed_at"?: string | null
+      }
+      Update: {
+        "user_id"?: string
+        "opening_balance"?: number
+        "opening_earned"?: number
+        "opening_redeemed"?: number
+        "balance"?: number
+        "earned_gross"?: number
+        "redeemed_gross"?: number
+        "opening_reviewed"?: boolean
+        "reviewed_by"?: string | null
+        "reviewed_at"?: string | null
+      }
+      Relationships: [
+        {
+          foreignKeyName: "loyalty_accounts_reviewed_by_fkey"
+          columns: ["reviewed_by"]
+          isOneToOne: false
+          referencedRelation: "profiles"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "loyalty_accounts_user_id_fkey"
+          columns: ["user_id"]
+          isOneToOne: true
+          referencedRelation: "profiles"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
+    "loyalty_ledger": {
+      Row: {
+        "id": string
+        "user_id": string
+        "order_id": string | null
+        "actor_id": string | null
+        "event_key": string
+        "kind": string
+        "points_delta": number
+        "rule_id": string | null
+        "reverses_id": string | null
+        "details": Json
+        "created_at": string
+      }
+      Insert: {
+        "id"?: string
+        "user_id": string
+        "order_id"?: string | null
+        "actor_id"?: string | null
+        "event_key": string
+        "kind": string
+        "points_delta": number
+        "rule_id"?: string | null
+        "reverses_id"?: string | null
+        "details"?: Json
+        "created_at"?: string
+      }
+      Update: {
+        "id"?: string
+        "user_id"?: string
+        "order_id"?: string | null
+        "actor_id"?: string | null
+        "event_key"?: string
+        "kind"?: string
+        "points_delta"?: number
+        "rule_id"?: string | null
+        "reverses_id"?: string | null
+        "details"?: Json
+        "created_at"?: string
+      }
+      Relationships: [
+        {
+          foreignKeyName: "loyalty_ledger_actor_id_fkey"
+          columns: ["actor_id"]
+          isOneToOne: false
+          referencedRelation: "profiles"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "loyalty_ledger_order_id_fkey"
+          columns: ["order_id"]
+          isOneToOne: false
+          referencedRelation: "orders"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "loyalty_ledger_reverses_id_fkey"
+          columns: ["reverses_id"]
+          isOneToOne: true
+          referencedRelation: "loyalty_ledger"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "loyalty_ledger_rule_id_fkey"
+          columns: ["rule_id"]
+          isOneToOne: false
+          referencedRelation: "cash_loyalty_rules"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "loyalty_ledger_user_id_fkey"
           columns: ["user_id"]
           isOneToOne: false
           referencedRelation: "profiles"
@@ -626,23 +1035,29 @@ export type Database = {
       Row: {
         "id": string
         "order_id": string
-        "actor_id": string
+        "actor_id": string | null
         "status": string
         "created_at": string
+        "event_type": string
+        "details": Json
       }
       Insert: {
         "id"?: string
         "order_id": string
-        "actor_id": string
+        "actor_id"?: string | null
         "status": string
         "created_at"?: string
+        "event_type"?: string
+        "details"?: Json
       }
       Update: {
         "id"?: string
         "order_id"?: string
-        "actor_id"?: string
+        "actor_id"?: string | null
         "status"?: string
         "created_at"?: string
+        "event_type"?: string
+        "details"?: Json
       }
       Relationships: [
         {
@@ -684,6 +1099,13 @@ export type Database = {
         "branch_snapshot": Json | null
         "payment_method": string | null
         "payment_status": string | null
+        "version": number
+        "acceptance_deadline": string | null
+        "assigned_collector_id": string | null
+        "cash_custody_status": string | null
+        "loyalty_status": string
+        "points_reversed": number
+        "earning_rule_id": string | null
       }
       Insert: {
         "id"?: string
@@ -707,6 +1129,13 @@ export type Database = {
         "branch_snapshot"?: Json | null
         "payment_method"?: string | null
         "payment_status"?: string | null
+        "version"?: number
+        "acceptance_deadline"?: string | null
+        "assigned_collector_id"?: string | null
+        "cash_custody_status"?: string | null
+        "loyalty_status"?: string
+        "points_reversed"?: number
+        "earning_rule_id"?: string | null
       }
       Update: {
         "id"?: string
@@ -730,8 +1159,29 @@ export type Database = {
         "branch_snapshot"?: Json | null
         "payment_method"?: string | null
         "payment_status"?: string | null
+        "version"?: number
+        "acceptance_deadline"?: string | null
+        "assigned_collector_id"?: string | null
+        "cash_custody_status"?: string | null
+        "loyalty_status"?: string
+        "points_reversed"?: number
+        "earning_rule_id"?: string | null
       }
       Relationships: [
+        {
+          foreignKeyName: "orders_assigned_collector_id_fkey"
+          columns: ["assigned_collector_id"]
+          isOneToOne: false
+          referencedRelation: "profiles"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "orders_earning_rule_id_fkey"
+          columns: ["earning_rule_id"]
+          isOneToOne: false
+          referencedRelation: "cash_loyalty_rules"
+          referencedColumns: ["id"]
+        },
         {
           foreignKeyName: "orders_quote_id_fkey"
           columns: ["quote_id"]
@@ -987,6 +1437,10 @@ export type Database = {
         "transaction_type": string
         "created_at": string | null
         "source": string | null
+        "order_id": string | null
+        "ledger_entry_id": string | null
+        "currency": string | null
+        "amount_minor": number | null
       }
       Insert: {
         "id"?: string
@@ -998,6 +1452,10 @@ export type Database = {
         "transaction_type": string
         "created_at"?: string | null
         "source"?: string | null
+        "order_id"?: string | null
+        "ledger_entry_id"?: string | null
+        "currency"?: string | null
+        "amount_minor"?: number | null
       }
       Update: {
         "id"?: string
@@ -1009,8 +1467,26 @@ export type Database = {
         "transaction_type"?: string
         "created_at"?: string | null
         "source"?: string | null
+        "order_id"?: string | null
+        "ledger_entry_id"?: string | null
+        "currency"?: string | null
+        "amount_minor"?: number | null
       }
       Relationships: [
+        {
+          foreignKeyName: "transactions_ledger_entry_id_fkey"
+          columns: ["ledger_entry_id"]
+          isOneToOne: true
+          referencedRelation: "loyalty_ledger"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "transactions_order_id_fkey"
+          columns: ["order_id"]
+          isOneToOne: false
+          referencedRelation: "orders"
+          referencedColumns: ["id"]
+        },
         {
           foreignKeyName: "transactions_user_id_fkey"
           columns: ["user_id"]
@@ -1151,6 +1627,53 @@ export type Database = {
     }
     Views: { [_ in never]: never }
     Functions: {
+    "apply_cash_order_earning": {
+      Args: {
+        "p_order": string
+        "p_actor": string
+      }
+      Returns: undefined
+    }
+    "approve_loyalty_opening": {
+      Args: {
+        "p_user_id": string
+        "p_expected_balance": number
+        "p_reason": string
+      }
+      Returns: Json
+    }
+    "cash_branch_summary": {
+      Args: {
+        "p_store_id": string
+      }
+      Returns: Json
+    }
+    "cash_is_cashier": {
+      Args: {
+        "p_store": string
+        "p_actor": string
+      }
+      Returns: boolean
+    }
+    "cash_reference": {
+      Args: {
+        "p_value": string
+      }
+      Returns: string
+    }
+    "cash_staff_access": {
+      Args: {
+        "p_store": string
+        "p_actor": string
+      }
+      Returns: boolean
+    }
+    "expire_pending_cash_orders": {
+      Args: {
+        "p_limit"?: number
+      }
+      Returns: number
+    }
     "generate_referral_code": {
       Args: Record<PropertyKey, never>
       Returns: string
@@ -1165,6 +1688,26 @@ export type Database = {
         "_role": Database["public"]["Enums"]["app_role"]
       }
       Returns: boolean
+    }
+    "list_cash_branch_staff": {
+      Args: {
+        "p_store_id": string
+      }
+      Returns: Json
+    }
+    "loyalty_reconciliation": {
+      Args: Record<PropertyKey, never>
+      Returns: Json
+    }
+    "operate_cash_order": {
+      Args: {
+        "p_order_id": string
+        "p_command_id": string
+        "p_expected_version": number
+        "p_action": string
+        "p_details"?: Json
+      }
+      Returns: Json
     }
     "place_cash_order": {
       Args: {
@@ -1188,6 +1731,12 @@ export type Database = {
       Returns: Json
     }
     "quote_cash_order": {
+      Args: {
+        "p_request": Json
+      }
+      Returns: Json
+    }
+    "quote_cash_order_internal": {
       Args: {
         "p_request": Json
       }

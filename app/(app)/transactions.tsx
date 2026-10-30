@@ -1,12 +1,13 @@
 import { View, Text, FlatList, ActivityIndicator, Pressable, RefreshControl } from 'react-native';
 import { useRewards } from '@/hooks/useRewards';
+import { formatMoney } from '@/lib/cash-orders';
 import { useState, useCallback } from 'react';
 import { 
   Star, ShoppingBag, Gift, History, 
   ArrowUpRight, ArrowDownRight, Zap 
 } from 'lucide-react-native';
 
-type FilterType = 'all' | 'purchase' | 'redemption';
+type FilterType = 'all' | 'purchase' | 'redemption' | 'refund';
 
 export default function Transactions() {
   const { transactions, userPoints, loading, refetch } = useRewards();
@@ -35,6 +36,7 @@ export default function Transactions() {
     { key: 'all', label: 'All' },
     { key: 'purchase', label: 'Purchases' },
     { key: 'redemption', label: 'Redemptions' },
+    { key: 'refund', label: 'Refunds' },
   ];
 
   return (
@@ -162,7 +164,7 @@ export default function Transactions() {
                       +{item.points_earned} pts
                     </Text>
                     <Text className="text-sm text-slate-400">
-                      ${item.amount?.toFixed(2) || '0.00'}
+                      {item.amount_minor != null && item.currency ? formatMoney(item.amount_minor, item.currency) : `${item.amount?.toFixed(2)} · currency unconfirmed`}
                     </Text>
                   </>
                 ) : (
@@ -170,7 +172,8 @@ export default function Transactions() {
                     <Text className="text-lg font-bold text-purple-600">
                       -{item.points_redeemed} pts
                     </Text>
-                    <Text className="text-sm text-slate-400">Redeemed</Text>
+                    <Text className="text-sm text-slate-400">{item.transaction_type === 'refund' ? 'Points reversed' : 'Redeemed'}</Text>
+                    {item.transaction_type === 'refund' && item.amount_minor != null && item.currency ? <Text className="text-sm text-slate-400">{formatMoney(item.amount_minor, item.currency)}</Text> : null}
                   </>
                 )}
               </View>

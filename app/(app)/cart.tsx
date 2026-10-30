@@ -173,6 +173,7 @@ function CashCart() {
               <Text>Meals: {formatMoney(quote.subtotal_minor, quote.currency)}</Text>
               {quote.fulfilment_mode === 'delivery' ? <Text>Delivery: {formatMoney(quote.delivery_fee_minor, quote.currency)}</Text> : null}
               <Text className="font-bold text-xl mt-2">Cash due: {formatMoney(quote.total_minor, quote.currency)}</Text>
+              <Text className="text-slate-600 mt-2">{quote.loyalty_earn_configured ? `Estimated earning: ${quote.estimated_points} points after payment and handover. Existing balances may need review.` : 'Points earning is not configured for this order.'}</Text>
               <Text className="text-slate-500 mt-3">This total is valid for five minutes. The branch still needs to confirm your order.</Text>
               <TouchableOpacity disabled={busy} onPress={placeOrder} className="p-4 bg-red-600 rounded-xl items-center mt-4"><Text className="text-white font-bold">{busy ? 'Submitting…' : 'Place cash order'}</Text></TouchableOpacity>
             </View> : <>

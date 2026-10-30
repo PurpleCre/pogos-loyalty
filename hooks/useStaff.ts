@@ -1,209 +1,115 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/hooks/useAuth';
-import type { Json } from '@/lib/types';
+import type { Tables } from '@/lib/types';
+import { accessTokenFor } from '@/lib/cash-orders';
+import { branchSummarySchema, rosterSchema, staffRecovery, submitStaffCommand, staffError, type BranchStaff, type BranchSummary } from '@/lib/staff-orders';
+import type { PendingStaffCommand, StaffCommand } from '@/lib/staff-commands';
+import { z } from 'zod';
 
-export interface StaffOrder {
-  id: string;
-  user_id: string;
-  status: 'pending' | 'preparing' | 'ready' | 'completed' | 'cancelled';
-  total_amount: number;
-  points_earned: number;
-  store_id: string;
-  created_at: string;
-  currency?: string | null;
-  total_minor?: number | null;
-  fulfilment_mode?: string | null;
-  payment_status?: string | null;
-  payment_method?: string | null;
-  contact_snapshot?: Json;
-  delivery_snapshot?: Json;
-  order_items?: {
-    id: string;
-    quantity: number;
-    unit_price: number;
-    item_name?: string | null;
-    modifiers_snapshot?: Json;
-    menu_item?: { name: string };
-  }[];
-  user?: {
-    full_name: string;
-    email: string;
-  };
+export type StaffOrder = Tables<'orders'> & {
+  order_items: Tables<'order_items'>[];
+  receipt: Tables<'cash_receipts'> | null;
+  events: Tables<'order_status_events'>[];
+};
+// Retained for the catalogue component; branch availability is a later milestone.
+export type StaffMenuItem = Tables<'menu_items'> & { category?: { name: string } };
+const selection = '*, order_items(*), receipt:cash_receipts(*), events:order_status_events(*)';
+function normaliseOrder(row: unknown): StaffOrder {
+  const value = row as StaffOrder;
+  return { ...value, receipt: Array.isArray(value.receipt) ? value.receipt[0] ?? null : value.receipt };
 }
-
-export interface StaffMenuItem {
-  id: string;
-  name: string;
-  description: string | null;
-  price: number;
-  image_url: string | null;
-  is_available: boolean;
-  category_id: string;
-  store_id: string | null;
-  category?: { name: string };
-}
-
-export function useStaff() {
-  const { session, staffStoreId } = useAuth();
-  const [orders, setOrders] = useState<StaffOrder[]>([]);
-  const [menuItems, setMenuItems] = useState<StaffMenuItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [menuLoading, setMenuLoading] = useState(true);
-  const [stats, setStats] = useState({
-    todayTotal: 0,
-    pendingCount: 0,
-    preparingCount: 0,
-    completedToday: 0,
-  });
-
-  const fetchStoreOrders = async () => {
-    if (!session?.user || !staffStoreId) return;
-    setIsLoading(true);
-
+export function useStaff(branchId: string | null, enabled = true) {
+  const { user, userRole } = useAuth();
+  const owner = user?.id ?? null;
+  const scope = `${owner}:${branchId}`;
+  const current = useRef(scope); current.current = scope;
+  const currentOwner = useRef(owner); currentOwner.current = owner;
+  const request = useRef(0);
+  const located = useRef<{ scope: string; ids: string[] }>({ scope, ids: [] });
+  if (located.current.scope !== scope) located.current = { scope, ids: [] };
+  const [state, setState] = useState<{ scope: string; orders: StaffOrder[]; roster: BranchStaff[]; summary: BranchSummary | null; error: string; hasMore: boolean }>({ scope, orders: [], roster: [], summary: null, error: '', hasMore: false });
+  const [limit, setLimit] = useState(100);
+  const [loadingScope, setLoadingScope] = useState<string | null>(null);
+  const [pendingState, setPending] = useState<{ owner: string; value: PendingStaffCommand | null; error: string } | null>(null);
+  const [busyOwner, setBusy] = useState<string | null>(null);
+  const visible = state.scope === scope ? state : { orders: [], roster: [], summary: null, error: '', hasMore: false };
+  const pending = pendingState?.owner === owner ? pendingState.value : null;
+  const pendingError = pendingState?.owner === owner ? pendingState.error : '';
+  const refreshPending = useCallback(async () => {
+    if (!owner) return;
     try {
-      const { data, error } = await supabase
-        .from('orders')
-        .select(`
-          *,
-          order_items (
-            id, quantity, unit_price, item_name, modifiers_snapshot,
-            menu_item:menu_items (name)
-          ),
-          user:profiles (full_name, email)
-        `)
-        .eq('store_id', staffStoreId)
-        .in('status', ['pending', 'preparing', 'ready'])
-        .order('created_at', { ascending: true });
-
-      if (error) throw error;
-      setOrders((data as any) || []);
-
-      // Calculate stats
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      const { data: todayOrders } = await supabase
-        .from('orders')
-        .select('id, status, total_amount')
-        .eq('store_id', staffStoreId)
-        .gte('created_at', today.toISOString());
-
-      if (todayOrders) {
-        setStats({
-          todayTotal: todayOrders.length,
-          pendingCount: todayOrders.filter(o => o.status === 'pending').length,
-          preparingCount: todayOrders.filter(o => o.status === 'preparing').length,
-          completedToday: todayOrders.filter(o => o.status === 'completed').length,
-        });
-      }
+      const value = await staffRecovery.load(owner);
+      if (currentOwner.current === owner) setPending({ owner, value, error: '' });
     } catch (error) {
-      console.error('Error fetching store orders:', error);
-    } finally {
-      setIsLoading(false);
+      if (currentOwner.current === owner) setPending({ owner, value: null, error: staffError(error) });
     }
-  };
-
-  const fetchStoreMenuItems = async () => {
-    if (!session?.user) return;
-    setMenuLoading(true);
-
+  }, [owner]);
+  const fetchStoreOrders = useCallback(async () => {
+    if (!owner || !branchId || !enabled || !['admin', 'staff'].includes(userRole ?? '')) return;
+    const revision = ++request.current;
+    setLoadingScope(scope);
     try {
-      // Fetch items that belong to this store OR are global (store_id IS NULL)
-      let query = supabase
-        .from('menu_items')
-        .select(`
-          *,
-          category:menu_categories (name)
-        `)
-        .order('name', { ascending: true });
-
-      if (staffStoreId) {
-        query = query.or(`store_id.eq.${staffStoreId},store_id.is.null`);
-      }
-
-      const { data, error } = await query;
-      if (error) throw error;
-      setMenuItems((data as any) || []);
+      const token = await accessTokenFor(owner);
+      const headers = `Bearer ${token}`;
+      const [orders, roster, summary] = await Promise.all([
+        supabase.from('orders').select(selection).eq('store_id', branchId)
+          .or(`status.in.(pending,accepted,preparing,ready,out_for_delivery),cash_custody_status.in.(held,handover_pending),loyalty_status.eq.awaiting_review${located.current.ids.length ? `,id.in.(${located.current.ids.join(',')})` : ''}`)
+          .order('created_at', { ascending: true }).limit(limit + 1).setHeader('Authorization', headers),
+        supabase.rpc('list_cash_branch_staff', { p_store_id: branchId }).setHeader('Authorization', headers),
+        supabase.rpc('cash_branch_summary', { p_store_id: branchId }).setHeader('Authorization', headers),
+      ]);
+      if (orders.error) throw orders.error;
+      if (roster.error) throw roster.error;
+      if (summary.error) throw summary.error;
+      if (current.current !== scope || request.current !== revision) return;
+      setState({ scope, orders: (orders.data ?? []).slice(0, limit).map(normaliseOrder), roster: rosterSchema.parse(roster.data),
+        summary: branchSummarySchema.parse(summary.data), error: '', hasMore: (orders.data?.length ?? 0) > limit });
     } catch (error) {
-      console.error('Error fetching menu items:', error);
-    } finally {
-      setMenuLoading(false);
-    }
-  };
-
-  const updateOrderStatus = async (orderId: string, status: StaffOrder['status']) => {
-    try {
-      const { error } = await supabase
-        .from('orders')
-        .update({ status, updated_at: new Date().toISOString() })
-        .eq('id', orderId);
-
-      if (error) throw error;
-      
-      // Update local state immediately
-      setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
-      
-      // Refresh stats
-      await fetchStoreOrders();
-    } catch (error) {
-      console.error('Error updating order status:', error);
-      throw error;
-    }
-  };
-
-  const toggleMenuItemAvailability = async (itemId: string, isAvailable: boolean) => {
-    try {
-      const { error } = await supabase
-        .from('menu_items')
-        .update({ is_available: isAvailable, updated_at: new Date().toISOString() })
-        .eq('id', itemId);
-
-      if (error) throw error;
-      
-      setMenuItems(prev => 
-        prev.map(item => item.id === itemId ? { ...item, is_available: isAvailable } : item)
-      );
-    } catch (error) {
-      console.error('Error toggling menu item:', error);
-      throw error;
-    }
-  };
-
+      if (current.current === scope && request.current === revision) setState(previous => ({
+        ...(previous.scope === scope ? previous : { scope, orders: [], roster: [], summary: null, hasMore: false }), error: staffError(error),
+      }));
+    } finally { if (current.current === scope && request.current === revision) setLoadingScope(null); }
+  }, [owner, branchId, enabled, userRole, scope, limit]);
+  useEffect(() => { void refreshPending(); }, [refreshPending]);
   useEffect(() => {
-    if (staffStoreId) {
-      fetchStoreOrders();
-      fetchStoreMenuItems();
-
-      // Real-time subscription for orders at this store
-      const subscription = supabase
-        .channel('staff_orders_channel')
-        .on('postgres_changes', {
-          event: '*',
-          schema: 'public',
-          table: 'orders',
-          filter: `store_id=eq.${staffStoreId}`
-        }, () => {
-          fetchStoreOrders();
-        })
-        .subscribe();
-
-      return () => {
-        subscription.unsubscribe();
-      };
-    }
-  }, [session?.user?.id, staffStoreId]);
-
-  return {
-    orders,
-    activeOrders: orders.filter(o => ['pending', 'preparing', 'ready'].includes(o.status)),
-    menuItems,
-    stats,
-    isLoading,
-    menuLoading,
-    fetchStoreOrders,
-    fetchStoreMenuItems,
-    updateOrderStatus,
-    toggleMenuItemAvailability,
+    if (!enabled || !branchId || !owner || !['admin', 'staff'].includes(userRole ?? '')) return;
+    void fetchStoreOrders();
+    const timer = setInterval(() => { void fetchStoreOrders(); }, 15000);
+    const channel = supabase.channel(`staff:${scope}`).on('postgres_changes', {
+      event: '*', schema: 'public', table: 'orders', filter: `store_id=eq.${branchId}`,
+    }, () => { void fetchStoreOrders(); }).subscribe();
+    return () => { clearInterval(timer); void supabase.removeChannel(channel); request.current++; };
+  }, [enabled, branchId, owner, userRole, scope, fetchStoreOrders]);
+  const operate = async (command: StaffCommand) => {
+    if (!owner) throw new Error('Sign in with your staff account.');
+    setBusy(owner);
+    try { return await staffRecovery.execute(owner, command, value => submitStaffCommand(owner, value)); }
+    finally { if (currentOwner.current === owner) setBusy(null); await refreshPending(); await fetchStoreOrders(); }
   };
+  const recover = async () => {
+    if (!owner) return;
+    setBusy(owner);
+    try { await staffRecovery.recover(owner, value => submitStaffCommand(owner, value)); }
+    finally { if (currentOwner.current === owner) setBusy(null); await refreshPending(); await fetchStoreOrders(); }
+  };
+  const findOrder = async (orderId: string) => {
+    if (!owner || !branchId) return;
+    orderId = z.uuid().parse(orderId.trim());
+    const token = await accessTokenFor(owner);
+    const { data, error } = await supabase.from('orders').select(selection).eq('store_id', branchId).eq('id', orderId.trim())
+      .setHeader('Authorization', `Bearer ${token}`).single();
+    if (error) throw error;
+    if (current.current === scope) {
+      if (!located.current.ids.includes(orderId)) located.current.ids.push(orderId);
+      setState(previous => ({
+        ...(previous.scope === scope ? previous : { scope, roster: [], summary: null, error: '', hasMore: false }),
+        orders: [normaliseOrder(data), ...(previous.scope === scope ? previous.orders.filter(row => row.id !== orderId) : [])],
+      }));
+    }
+  };
+  return { orders: visible.orders, roster: visible.roster, summary: visible.summary, error: visible.error,
+    isLoading: !!branchId && (state.scope !== scope || loadingScope === scope), hasMore: visible.hasMore,
+    loadMore: () => setLimit(value => value + 100), fetchStoreOrders, operate, recover, findOrder,
+    pending, pendingError, busy: busyOwner === owner && owner !== null };
 }

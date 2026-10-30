@@ -9,6 +9,7 @@ import {
 import { useState, useEffect } from 'react';
 import { AdminRewards } from '@/components/admin/AdminRewards';
 import { AdminOrders } from '@/components/admin/AdminOrders';
+import { AdminLoyalty } from '@/components/admin/AdminLoyalty';
 import { AdminMenu } from '@/components/admin/AdminMenu';
 import { AdminAchievements } from '@/components/admin/AdminAchievements';
 import { AdminGaap } from '@/components/admin/AdminGaap';
@@ -23,7 +24,7 @@ export default function AdminScreen() {
     createAchievement, updateAchievement, deleteAchievement,
     setUserRole, createUser, createStore, updateStore, deleteStore
   } = useAdmin();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'stores' | 'menu' | 'rewards' | 'achievements' | 'orders' | 'transactions' | 'gaap'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'stores' | 'menu' | 'rewards' | 'achievements' | 'orders' | 'transactions' | 'gaap' | 'loyalty'>('dashboard');
 
   // Create User Modal
   const [showCreateUser, setShowCreateUser] = useState(false);
@@ -216,6 +217,7 @@ export default function AdminScreen() {
     { key: 'users', label: 'Users', icon: Users },
     { key: 'stores', label: 'Stores', icon: Store },
     { key: 'orders', label: 'Orders', icon: ClipboardList },
+    { key: 'loyalty', label: 'Loyalty review', icon: UserCheck },
     { key: 'menu', label: 'Menu', icon: Gift }, // Icon changes inside component if needed
     { key: 'rewards', label: 'Rewards', icon: Gift },
     { key: 'achievements', label: 'Achievements', icon: Trophy },
@@ -266,6 +268,7 @@ export default function AdminScreen() {
       </View>
 
       <ScrollView className="flex-1" contentContainerStyle={{ padding: 16, paddingBottom: 40 }}>
+        {activeTab === 'loyalty' && <AdminLoyalty users={users} />}
         {/* Dashboard Tab */}
         {activeTab === 'dashboard' && (
           <View className="gap-4">

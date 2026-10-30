@@ -24,7 +24,9 @@ export interface Transaction {
     points_earned: number;
     points_redeemed: number;
     items: string[];
-    transaction_type: 'purchase' | 'redemption';
+    transaction_type: 'purchase' | 'redemption' | 'refund';
+    currency?: string | null;
+    amount_minor?: number | null;
     source?: 'app' | 'qr_scan' | 'gaap_pos' | 'admin' | 'referral' | 'gift';
     created_at: string;
 }
@@ -48,6 +50,12 @@ export const useRewards = () => {
             fetchRewards();
             fetchUserPoints();
             fetchTransactions();
+            const refresh = () => { void fetchUserPoints(); void fetchTransactions(); };
+            const timer = setInterval(refresh, 15000);
+            const channel = supabase.channel(`loyalty:${user.id}`)
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'user_points', filter: `user_id=eq.${user.id}` }, refresh)
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'transactions', filter: `user_id=eq.${user.id}` }, refresh).subscribe();
+            return () => { clearInterval(timer); void supabase.removeChannel(channel); };
         }
     }, [user]);
 

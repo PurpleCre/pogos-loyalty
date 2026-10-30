@@ -1,120 +1,43 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/hooks/useAuth';
+import type { Tables } from '@/lib/types';
 
-export interface OrderItem {
-  id: string;
-  order_id: string;
-  menu_item_id: string;
-  quantity: number;
-  unit_price: number;
-  menu_item?: {
-    name: string;
-  };
-}
-
-export interface Order {
-  id: string;
-  user_id: string;
-  status: 'pending' | 'preparing' | 'ready' | 'completed' | 'cancelled';
-  total_amount: number;
-  points_earned: number;
-  created_at: string;
-  order_items?: OrderItem[];
-  user?: {
-    full_name: string;
-    email: string;
-  };
-}
-
+export type OrderItem = Tables<'order_items'> & { menu_item?: { name: string } | null };
+export type Order = Tables<'orders'> & { order_items?: OrderItem[] };
+export const activeOrderStatuses = ['pending', 'accepted', 'preparing', 'ready', 'out_for_delivery'];
 export function useOrders(isAdminView = false) {
-  const { session } = useAuth();
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const fetchOrders = async () => {
-    if (!session?.user) return;
-    setIsLoading(true);
-
+  const { user, userRole } = useAuth();
+  const owner = user?.id;
+  const scope = `${owner}:${isAdminView}:${userRole}`;
+  const current = useRef(scope); current.current = scope;
+  const [state, setState] = useState<{ scope: string; orders: Order[] }>({ scope, orders: [] });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const orders = state.scope === scope ? state.orders : [];
+  const fetchOrders = useCallback(async () => {
+    if (!owner || (isAdminView && userRole !== 'admin')) { setLoading(false); return; }
     try {
-      let query = supabase
-        .from('orders')
-        .select(`
-          *,
-          order_items (
-            id, quantity, unit_price,
-            menu_item:menu_items (name)
-          ),
-          user:profiles (full_name, email)
-        `);
-
-      if (isAdminView) {
-        // Admin gets all active/recent orders, join with user data
-        query = query
-          .in('status', ['pending', 'preparing', 'ready'])
-          .order('created_at', { ascending: true }); // Oldest first for fulfillment
-      } else {
-        // Normal user gets only their orders
-        query = query.eq('user_id', session.user.id).order('created_at', { ascending: false });
-      }
-
-      const { data, error } = await query;
-
-      if (error) throw error;
-      setOrders(data as any);
-    } catch (error) {
-      console.error('Error fetching orders:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const updateOrderStatus = async (orderId: string, status: Order['status']) => {
-    try {
-      const { error } = await supabase
-        .from('orders')
-        .update({ status })
-        .eq('id', orderId);
-
-      if (error) throw error;
-
-      // If completed, we should ideally award points. For now, doing it naively here or via a Supabase trigger.
-      // A trigger is much safer!
-
-      setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
-    } catch (error) {
-      console.error('Error updating order status:', error);
-      throw error;
-    }
-  };
-
+      let query = supabase.from('orders').select('*, order_items(*, menu_item:menu_items(name))');
+      query = isAdminView ? query.in('status', activeOrderStatuses).order('created_at') :
+        query.eq('user_id', owner).order('created_at', { ascending: false });
+      const { data, error: failure } = await query;
+      if (failure) throw failure;
+      if (current.current === scope) { setState({ scope, orders: (data ?? []) as Order[] }); setError(''); }
+    } catch {
+      if (current.current === scope) setError('Unable to refresh orders. Please try again.');
+    } finally { if (current.current === scope) setLoading(false); }
+  }, [owner, isAdminView, userRole, scope]);
   useEffect(() => {
-    fetchOrders();
-
-    // Set up realtime subscription
-    const subscription = supabase
-      .channel('orders_channel')
-      .on('postgres_changes', { 
-        event: '*', 
-        schema: 'public', 
-        table: 'orders',
-        filter: isAdminView ? undefined : `user_id=eq.${session?.user?.id}`
-      }, () => {
-        fetchOrders();
-      })
-      .subscribe();
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [session?.user?.id, isAdminView]);
-
-  return {
-    orders,
-    activeOrders: orders.filter(o => ['pending', 'preparing', 'ready'].includes(o.status)),
-    pastOrders: orders.filter(o => ['completed', 'cancelled'].includes(o.status)),
-    isLoading,
-    refetch: fetchOrders,
-    updateOrderStatus
-  };
+    setLoading(!!owner);
+    void fetchOrders();
+    if (!owner) return;
+    const timer = setInterval(() => { void fetchOrders(); }, 15000);
+    const channel = supabase.channel(`orders:${scope}`).on('postgres_changes', {
+      event: '*', schema: 'public', table: 'orders', filter: isAdminView ? undefined : `user_id=eq.${owner}`,
+    }, () => { void fetchOrders(); }).subscribe();
+    return () => { clearInterval(timer); void supabase.removeChannel(channel); };
+  }, [owner, scope, isAdminView, fetchOrders]);
+  return { orders, activeOrders: orders.filter(row => activeOrderStatuses.includes(row.status)),
+    pastOrders: orders.filter(row => ['completed', 'cancelled'].includes(row.status)), isLoading: loading, error, refetch: fetchOrders };
 }

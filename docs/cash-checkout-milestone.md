@@ -50,7 +50,9 @@ Configure and validate `cash_order_settings` and `cash_delivery_zones` through a
 
 Quotes reject more than 50 lines or more than 99 units per line; a technical maximum of 100,000,000 minor units bounds an order. Finance/operations may configure a lower maximum and appropriate minimum. These are implementation safety limits, not approved trading policy. Quote cleanup, intake/rate limits and capacity policies belong to operational hardening before activation.
 
-## Next implementation boundary
+## Original next implementation boundary
+
+Follow-on update, 31 October 2026: the [cash fulfilment and ledger increment](cash-fulfilment-milestone.md) implements the next local scope. The paragraphs below describe this checkout increment’s original boundary; production activation remains gated.
 
 Trusted staff state transitions, acceptance expiry, delivery assignment/handover, cash receipt and custody, fiscal receipt references, cancellations/refunds, and the audited loyalty ledger are **not** implemented by this increment. New cash orders remain pending/unpaid; staff update buttons are disabled for them until those commands exist. The branch must not accept real app orders before that workflow passes its gate.
 

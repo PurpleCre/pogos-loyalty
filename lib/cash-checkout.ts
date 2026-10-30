@@ -6,6 +6,7 @@ export const cashQuoteSchema = z.object({
   currency: z.enum(['USD', 'ZWG']), fulfilment_mode: z.enum(['collection', 'delivery']),
   expires_at: z.string().refine(value => Number.isFinite(Date.parse(value))),
   subtotal_minor: minor, delivery_fee_minor: minor, total_minor: minor,
+  estimated_points: z.number().int().nonnegative().default(0), loyalty_earn_configured: z.boolean().default(false),
   contact: z.object({ name: z.string(), phone: z.string() }),
   address: z.object({ address: z.string(), latitude: z.number(), longitude: z.number(), instructions: z.string(), zone_id: z.uuid(), zone_name: z.string() }).nullable(),
   lines: z.array(z.object({

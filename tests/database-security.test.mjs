@@ -91,10 +91,10 @@ for (const role of ['anon', 'authenticated']) {
   });
 }
 
-test('GAAP processing is granted only to service role', async () => {
+test('legacy GAAP processing is disabled for service role until it uses the audited ledger', async () => {
   const result = await db.query(`SELECT has_function_privilege('service_role',
     'public.process_gaap_transaction(text,text,text,text,text,uuid,numeric,jsonb,jsonb)', 'EXECUTE') AS allowed`);
-  assert.equal(result.rows[0].allowed, true);
+  assert.equal(result.rows[0].allowed, false);
 });
 
 test('customers and branch staff see only their permitted orders', async () => {
