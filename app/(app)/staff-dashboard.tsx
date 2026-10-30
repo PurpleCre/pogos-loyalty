@@ -2,6 +2,7 @@ import { View, Text, ScrollView, TouchableOpacity, RefreshControl, TextInput } f
 import { useStaff } from '@/hooks/useStaff';
 import { useAuth } from '@/hooks/useAuth';
 import { StaffOrders } from '@/components/staff/StaffOrders';
+import { StaffRewards } from '@/components/staff/StaffRewards';
 import { useState, useEffect, useRef } from 'react';
 import { useIsFocused } from '@react-navigation/native';
 import { useLocalSearchParams } from 'expo-router';
@@ -14,6 +15,7 @@ export default function StaffDashboard() {
   const { user, userRole, staffStoreId } = useAuth();
   const { stores } = useStores();
   const { storeId } = useLocalSearchParams<{ storeId?: string }>();
+  const [tab, setTab] = useState<'orders' | 'rewards'>('orders');
   const [selectedBranch, setSelectedBranch] = useState<string | null>(storeId ?? null);
   const [lookupState, setLookup] = useState<{ scope: string; value: string }>({ scope: '', value: '' });
   const [messageState, setMessage] = useState<{ scope: string; value: string }>({ scope: '', value: '' });
@@ -26,7 +28,7 @@ export default function StaffDashboard() {
   const showMessage = (value: string) => { if (current.current === scope) setMessage({ scope, value }); };
   useEffect(() => { if (storeId) setSelectedBranch(storeId); }, [storeId]);
   const { orders, roster, summary, error, isLoading, hasMore, loadMore, fetchStoreOrders, operate, recover,
-    pending, pendingError, busy, findOrder } = useStaff(branchId, isFocused);
+    pending, pendingError, busy, findOrder } = useStaff(branchId, isFocused && tab === 'orders');
   const permitted = isAdmin || userRole === 'staff';
   const checkPrevious = async () => {
     showMessage('');
@@ -49,6 +51,9 @@ export default function StaffDashboard() {
       </TouchableOpacity>)}</ScrollView> : null}
     </View>
     <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 48 }} refreshControl={<RefreshControl refreshing={isLoading && orders.length > 0} onRefresh={() => { void fetchStoreOrders(); }} />}>
+      <View className="flex-row mb-4">
+        {(['orders', 'rewards'] as const).map(value => <TouchableOpacity key={value} onPress={() => setTab(value)} className={`flex-1 p-3 rounded-lg mr-2 ${tab === value ? 'bg-red-600' : 'bg-slate-200'}`}><Text className={`text-center font-bold ${tab === value ? 'text-white' : 'text-slate-700'}`}>{value === 'orders' ? 'Cash orders' : 'Reward collection'}</Text></TouchableOpacity>)}
+      </View>
       {!branchId ? <Text className="text-amber-800 mb-4">Ask an administrator to assign your branch.</Text> : null}
       {pending || pendingError ? <View className="bg-amber-50 border border-amber-300 p-4 rounded-xl mb-4">
         <Text className="font-bold">Previous staff action needs checking</Text>
@@ -57,6 +62,7 @@ export default function StaffDashboard() {
         <TouchableOpacity disabled={busy} onPress={() => { void checkPrevious(); }} className="p-3 bg-amber-200 rounded-lg mt-3"><Text>Check previous action</Text></TouchableOpacity>
       </View> : null}
       {message || error ? <Text accessibilityRole="alert" className="text-red-700 mb-4">{message || error}</Text> : null}
+      {tab === 'orders' ? <>
       {summary ? <View className="bg-white border border-slate-200 p-4 rounded-xl mb-4">
         <Text className="font-bold">Cash movements today · Harare time</Text>
         {summary.currencies.map(row => <View key={row.currency} className="mt-3">
@@ -74,6 +80,7 @@ export default function StaffDashboard() {
       <StaffOrders orders={orders} roster={roster} actor={user.id} isAdmin={isAdmin} isLoading={isLoading}
         blocked={busy || !!pending || !!pendingError} onCommand={operate} />
       {hasMore ? <TouchableOpacity onPress={loadMore} className="p-4"><Text className="text-red-600 text-center font-bold">Load more outstanding orders</Text></TouchableOpacity> : null}
+      </> : <StaffRewards key={`${user.id}:${branchId}`} branchId={branchId} enabled={isFocused} externalBlocked={busy || !!pending || !!pendingError} />}
     </ScrollView>
   </View>;
 }

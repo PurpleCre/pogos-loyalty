@@ -74,6 +74,52 @@ export type Database = {
 
       ]
     }
+    "branch_fiscal_references": {
+      Row: {
+        "store_id": string
+        "document_type": string
+        "reference": string
+        "cash_order_id": string | null
+        "reward_reservation_id": string | null
+      }
+      Insert: {
+        "store_id": string
+        "document_type": string
+        "reference": string
+        "cash_order_id"?: string | null
+        "reward_reservation_id"?: string | null
+      }
+      Update: {
+        "store_id"?: string
+        "document_type"?: string
+        "reference"?: string
+        "cash_order_id"?: string | null
+        "reward_reservation_id"?: string | null
+      }
+      Relationships: [
+        {
+          foreignKeyName: "branch_fiscal_references_cash_order_id_fkey"
+          columns: ["cash_order_id"]
+          isOneToOne: false
+          referencedRelation: "orders"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "branch_fiscal_references_reward_reservation_id_fkey"
+          columns: ["reward_reservation_id"]
+          isOneToOne: false
+          referencedRelation: "reward_reservations"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "branch_fiscal_references_store_id_fkey"
+          columns: ["store_id"]
+          isOneToOne: false
+          referencedRelation: "stores"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
     "cash_branch_cashiers": {
       Row: {
         "store_id": string
@@ -657,6 +703,7 @@ export type Database = {
         "opening_reviewed": boolean
         "reviewed_by": string | null
         "reviewed_at": string | null
+        "reserved_points": number
       }
       Insert: {
         "user_id": string
@@ -669,6 +716,7 @@ export type Database = {
         "opening_reviewed"?: boolean
         "reviewed_by"?: string | null
         "reviewed_at"?: string | null
+        "reserved_points"?: number
       }
       Update: {
         "user_id"?: string
@@ -681,6 +729,7 @@ export type Database = {
         "opening_reviewed"?: boolean
         "reviewed_by"?: string | null
         "reviewed_at"?: string | null
+        "reserved_points"?: number
       }
       Relationships: [
         {
@@ -712,6 +761,9 @@ export type Database = {
         "reverses_id": string | null
         "details": Json
         "created_at": string
+        "reservation_id": string | null
+        "reserved_delta": number
+        "redemption_points": number
       }
       Insert: {
         "id"?: string
@@ -725,6 +777,9 @@ export type Database = {
         "reverses_id"?: string | null
         "details"?: Json
         "created_at"?: string
+        "reservation_id"?: string | null
+        "reserved_delta"?: number
+        "redemption_points"?: number
       }
       Update: {
         "id"?: string
@@ -738,6 +793,9 @@ export type Database = {
         "reverses_id"?: string | null
         "details"?: Json
         "created_at"?: string
+        "reservation_id"?: string | null
+        "reserved_delta"?: number
+        "redemption_points"?: number
       }
       Relationships: [
         {
@@ -752,6 +810,13 @@ export type Database = {
           columns: ["order_id"]
           isOneToOne: false
           referencedRelation: "orders"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "loyalty_ledger_reservation_id_fkey"
+          columns: ["reservation_id"]
+          isOneToOne: false
+          referencedRelation: "reward_reservations"
           referencedColumns: ["id"]
         },
         {
@@ -1353,6 +1418,380 @@ export type Database = {
 
       ]
     }
+    "reward_branch_offers": {
+      Row: {
+        "id": string
+        "store_id": string
+        "reward_id": string
+        "name": string
+        "description": string
+        "terms": string
+        "gaap_product_reference": string
+        "points_cost": number
+        "reservation_minutes": number
+        "available_units": number
+        "enabled": boolean
+        "created_at": string
+      }
+      Insert: {
+        "id"?: string
+        "store_id": string
+        "reward_id": string
+        "name": string
+        "description"?: string
+        "terms": string
+        "gaap_product_reference": string
+        "points_cost": number
+        "reservation_minutes": number
+        "available_units"?: number
+        "enabled"?: boolean
+        "created_at"?: string
+      }
+      Update: {
+        "id"?: string
+        "store_id"?: string
+        "reward_id"?: string
+        "name"?: string
+        "description"?: string
+        "terms"?: string
+        "gaap_product_reference"?: string
+        "points_cost"?: number
+        "reservation_minutes"?: number
+        "available_units"?: number
+        "enabled"?: boolean
+        "created_at"?: string
+      }
+      Relationships: [
+        {
+          foreignKeyName: "reward_branch_offers_reward_id_fkey"
+          columns: ["reward_id"]
+          isOneToOne: false
+          referencedRelation: "rewards"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "reward_branch_offers_store_id_fkey"
+          columns: ["store_id"]
+          isOneToOne: false
+          referencedRelation: "stores"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
+    "reward_branch_settings": {
+      Row: {
+        "store_id": string
+        "enabled": boolean
+        "terms_approved": boolean
+        "max_active_per_customer": number
+      }
+      Insert: {
+        "store_id": string
+        "enabled"?: boolean
+        "terms_approved"?: boolean
+        "max_active_per_customer": number
+      }
+      Update: {
+        "store_id"?: string
+        "enabled"?: boolean
+        "terms_approved"?: boolean
+        "max_active_per_customer"?: number
+      }
+      Relationships: [
+        {
+          foreignKeyName: "reward_branch_settings_store_id_fkey"
+          columns: ["store_id"]
+          isOneToOne: true
+          referencedRelation: "stores"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
+    "reward_claim_secrets": {
+      Row: {
+        "reservation_id": string
+        "claim_code": string
+      }
+      Insert: {
+        "reservation_id": string
+        "claim_code"?: string
+      }
+      Update: {
+        "reservation_id"?: string
+        "claim_code"?: string
+      }
+      Relationships: [
+        {
+          foreignKeyName: "reward_claim_secrets_reservation_id_fkey"
+          columns: ["reservation_id"]
+          isOneToOne: true
+          referencedRelation: "reward_reservations"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
+    "reward_commands": {
+      Row: {
+        "actor_id": string
+        "command_id": string
+        "reservation_id": string
+        "request": Json
+        "result": Json
+        "created_at": string
+      }
+      Insert: {
+        "actor_id": string
+        "command_id": string
+        "reservation_id": string
+        "request": Json
+        "result": Json
+        "created_at"?: string
+      }
+      Update: {
+        "actor_id"?: string
+        "command_id"?: string
+        "reservation_id"?: string
+        "request"?: Json
+        "result"?: Json
+        "created_at"?: string
+      }
+      Relationships: [
+        {
+          foreignKeyName: "reward_commands_actor_id_fkey"
+          columns: ["actor_id"]
+          isOneToOne: false
+          referencedRelation: "profiles"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "reward_commands_reservation_id_fkey"
+          columns: ["reservation_id"]
+          isOneToOne: false
+          referencedRelation: "reward_reservations"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
+    "reward_events": {
+      Row: {
+        "id": string
+        "reservation_id": string
+        "actor_id": string | null
+        "event_type": string
+        "version": number
+        "details": Json
+        "created_at": string
+      }
+      Insert: {
+        "id"?: string
+        "reservation_id": string
+        "actor_id"?: string | null
+        "event_type": string
+        "version": number
+        "details"?: Json
+        "created_at"?: string
+      }
+      Update: {
+        "id"?: string
+        "reservation_id"?: string
+        "actor_id"?: string | null
+        "event_type"?: string
+        "version"?: number
+        "details"?: Json
+        "created_at"?: string
+      }
+      Relationships: [
+        {
+          foreignKeyName: "reward_events_actor_id_fkey"
+          columns: ["actor_id"]
+          isOneToOne: false
+          referencedRelation: "profiles"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "reward_events_reservation_id_fkey"
+          columns: ["reservation_id"]
+          isOneToOne: false
+          referencedRelation: "reward_reservations"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
+    "reward_fulfilments": {
+      Row: {
+        "reservation_id": string
+        "store_id": string
+        "actor_id": string
+        "gaap_reference": string
+        "created_at": string
+      }
+      Insert: {
+        "reservation_id": string
+        "store_id": string
+        "actor_id": string
+        "gaap_reference": string
+        "created_at"?: string
+      }
+      Update: {
+        "reservation_id"?: string
+        "store_id"?: string
+        "actor_id"?: string
+        "gaap_reference"?: string
+        "created_at"?: string
+      }
+      Relationships: [
+        {
+          foreignKeyName: "reward_fulfilments_actor_id_fkey"
+          columns: ["actor_id"]
+          isOneToOne: false
+          referencedRelation: "profiles"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "reward_fulfilments_reservation_id_fkey"
+          columns: ["reservation_id"]
+          isOneToOne: true
+          referencedRelation: "reward_reservations"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "reward_fulfilments_store_id_fkey"
+          columns: ["store_id"]
+          isOneToOne: false
+          referencedRelation: "stores"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
+    "reward_reservations": {
+      Row: {
+        "id": string
+        "user_id": string
+        "store_id": string
+        "offer_id": string
+        "points_cost": number
+        "snapshot": Json
+        "customer_name": string
+        "status": string
+        "claimed_by": string | null
+        "claimed_at": string | null
+        "version": number
+        "expires_at": string
+        "created_at": string
+        "updated_at": string
+      }
+      Insert: {
+        "id"?: string
+        "user_id": string
+        "store_id": string
+        "offer_id": string
+        "points_cost": number
+        "snapshot": Json
+        "customer_name": string
+        "status"?: string
+        "claimed_by"?: string | null
+        "claimed_at"?: string | null
+        "version"?: number
+        "expires_at": string
+        "created_at"?: string
+        "updated_at"?: string
+      }
+      Update: {
+        "id"?: string
+        "user_id"?: string
+        "store_id"?: string
+        "offer_id"?: string
+        "points_cost"?: number
+        "snapshot"?: Json
+        "customer_name"?: string
+        "status"?: string
+        "claimed_by"?: string | null
+        "claimed_at"?: string | null
+        "version"?: number
+        "expires_at"?: string
+        "created_at"?: string
+        "updated_at"?: string
+      }
+      Relationships: [
+        {
+          foreignKeyName: "reward_reservations_claimed_by_fkey"
+          columns: ["claimed_by"]
+          isOneToOne: false
+          referencedRelation: "profiles"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "reward_reservations_offer_id_fkey"
+          columns: ["offer_id"]
+          isOneToOne: false
+          referencedRelation: "reward_branch_offers"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "reward_reservations_store_id_fkey"
+          columns: ["store_id"]
+          isOneToOne: false
+          referencedRelation: "stores"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "reward_reservations_user_id_fkey"
+          columns: ["user_id"]
+          isOneToOne: false
+          referencedRelation: "profiles"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
+    "reward_voids": {
+      Row: {
+        "reservation_id": string
+        "store_id": string
+        "actor_id": string
+        "credit_note_reference": string
+        "reason": string
+        "created_at": string
+      }
+      Insert: {
+        "reservation_id": string
+        "store_id": string
+        "actor_id": string
+        "credit_note_reference": string
+        "reason": string
+        "created_at"?: string
+      }
+      Update: {
+        "reservation_id"?: string
+        "store_id"?: string
+        "actor_id"?: string
+        "credit_note_reference"?: string
+        "reason"?: string
+        "created_at"?: string
+      }
+      Relationships: [
+        {
+          foreignKeyName: "reward_voids_actor_id_fkey"
+          columns: ["actor_id"]
+          isOneToOne: false
+          referencedRelation: "profiles"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "reward_voids_reservation_id_fkey"
+          columns: ["reservation_id"]
+          isOneToOne: true
+          referencedRelation: "reward_reservations"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "reward_voids_store_id_fkey"
+          columns: ["store_id"]
+          isOneToOne: false
+          referencedRelation: "stores"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
     "rewards": {
       Row: {
         "id": string
@@ -1441,6 +1880,7 @@ export type Database = {
         "ledger_entry_id": string | null
         "currency": string | null
         "amount_minor": number | null
+        "reservation_id": string | null
       }
       Insert: {
         "id"?: string
@@ -1456,6 +1896,7 @@ export type Database = {
         "ledger_entry_id"?: string | null
         "currency"?: string | null
         "amount_minor"?: number | null
+        "reservation_id"?: string | null
       }
       Update: {
         "id"?: string
@@ -1471,6 +1912,7 @@ export type Database = {
         "ledger_entry_id"?: string | null
         "currency"?: string | null
         "amount_minor"?: number | null
+        "reservation_id"?: string | null
       }
       Relationships: [
         {
@@ -1485,6 +1927,13 @@ export type Database = {
           columns: ["order_id"]
           isOneToOne: false
           referencedRelation: "orders"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "transactions_reservation_id_fkey"
+          columns: ["reservation_id"]
+          isOneToOne: false
+          referencedRelation: "reward_reservations"
           referencedColumns: ["id"]
         },
         {
@@ -1567,6 +2016,7 @@ export type Database = {
         "total_earned": number | null
         "total_redeemed": number | null
         "updated_at": string | null
+        "reserved_points": number
       }
       Insert: {
         "user_id": string
@@ -1574,6 +2024,7 @@ export type Database = {
         "total_earned"?: number | null
         "total_redeemed"?: number | null
         "updated_at"?: string | null
+        "reserved_points"?: number
       }
       Update: {
         "user_id"?: string
@@ -1581,6 +2032,7 @@ export type Database = {
         "total_earned"?: number | null
         "total_redeemed"?: number | null
         "updated_at"?: string | null
+        "reserved_points"?: number
       }
       Relationships: [
         {
@@ -1674,6 +2126,12 @@ export type Database = {
       }
       Returns: number
     }
+    "expire_reward_reservations": {
+      Args: {
+        "p_limit"?: number
+      }
+      Returns: number
+    }
     "generate_referral_code": {
       Args: Record<PropertyKey, never>
       Returns: string
@@ -1681,6 +2139,12 @@ export type Database = {
     "get_current_user_role": {
       Args: Record<PropertyKey, never>
       Returns: Database["public"]["Enums"]["app_role"]
+    }
+    "get_my_reward_ticket": {
+      Args: {
+        "p_reservation_id": string
+      }
+      Returns: Json
     }
     "has_role": {
       Args: {
@@ -1695,6 +2159,19 @@ export type Database = {
       }
       Returns: Json
     }
+    "list_reward_offers": {
+      Args: {
+        "p_store_id": string
+      }
+      Returns: Json
+    }
+    "lookup_reward_claim": {
+      Args: {
+        "p_store_id": string
+        "p_claim_code": string
+      }
+      Returns: Json
+    }
     "loyalty_reconciliation": {
       Args: Record<PropertyKey, never>
       Returns: Json
@@ -1702,6 +2179,16 @@ export type Database = {
     "operate_cash_order": {
       Args: {
         "p_order_id": string
+        "p_command_id": string
+        "p_expected_version": number
+        "p_action": string
+        "p_details"?: Json
+      }
+      Returns: Json
+    }
+    "operate_reward_reservation": {
+      Args: {
+        "p_reservation_id": string
         "p_command_id": string
         "p_expected_version": number
         "p_action": string
@@ -1739,6 +2226,28 @@ export type Database = {
     "quote_cash_order_internal": {
       Args: {
         "p_request": Json
+      }
+      Returns: Json
+    }
+    "release_reward_hold": {
+      Args: {
+        "p_reservation": string
+        "p_actor": string
+        "p_status": string
+        "p_reason": string
+      }
+      Returns: undefined
+    }
+    "reserve_reward": {
+      Args: {
+        "p_offer_id": string
+        "p_command_id": string
+      }
+      Returns: Json
+    }
+    "reward_result": {
+      Args: {
+        "p_reservation": string
       }
       Returns: Json
     }

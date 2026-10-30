@@ -14,6 +14,7 @@ export interface Reward {
 
 export interface UserPoints {
     current_points: number;
+    reserved_points: number;
     total_earned: number;
     total_redeemed: number;
 }
@@ -24,7 +25,7 @@ export interface Transaction {
     points_earned: number;
     points_redeemed: number;
     items: string[];
-    transaction_type: 'purchase' | 'redemption' | 'refund';
+    transaction_type: 'purchase' | 'redemption' | 'refund' | 'reward_restore';
     currency?: string | null;
     amount_minor?: number | null;
     source?: 'app' | 'qr_scan' | 'gaap_pos' | 'admin' | 'referral' | 'gift';
@@ -92,12 +93,14 @@ export const useRewards = () => {
             if (data) {
                 setUserPoints({
                     current_points: data.current_points ?? 0,
+                    reserved_points: data.reserved_points,
                     total_earned: data.total_earned ?? 0,
                     total_redeemed: data.total_redeemed ?? 0
                 });
             } else {
                 setUserPoints({
                     current_points: 0,
+                    reserved_points: 0,
                     total_earned: 0,
                     total_redeemed: 0
                 });
@@ -128,12 +131,6 @@ export const useRewards = () => {
         }
     };
 
-    // Server permissions also deny these legacy write paths. Re-enable through
-    // trusted ledger/reservation commands with staff-confirmed fulfilment.
-    const redeemReward = async (_rewardId: string, _pointsCost: number) => ({
-        error: 'Reward redemption is not available yet. Please check with your branch.'
-    });
-
     const sharePoints = async (_receiverEmail: string, _points: number) => ({
         error: 'Points sharing is not available yet.'
     });
@@ -143,7 +140,6 @@ export const useRewards = () => {
         userPoints,
         transactions,
         loading,
-        redeemReward,
         sharePoints,
         refetch: () => {
             fetchRewards();

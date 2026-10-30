@@ -52,7 +52,9 @@ Database tests apply all migrations to disposable PGlite with Supabase-like iden
 
 Configuration writes remain a reviewed operator responsibility; this increment does not expose a customer or staff activation/rate editor. Approval of business policy is still outstanding; local implementation is not approval to trade.
 
-## Remaining work and next increment
+## Original next increment
+
+Follow-on update, 31 October 2026: [reward reservation and fulfilment](reward-redemption-milestone.md) is now implemented locally. The next paragraph records this cash milestone’s original boundary; live reward activation remains gated.
 
 Reward redemption remains disabled. Next: ledger-backed reward reservations, release/expiry, branch-scoped staff fulfilment, overspend prevention and refund interactions. QR claims, gifting/referrals and automatic in-store GAAP earning remain unavailable until their separate rules and verification exist. The legacy GAAP processor’s service execution is revoked; a webhook flag or saved integration configuration alone cannot enable it.
 

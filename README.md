@@ -6,11 +6,11 @@ The confirmed branches are **Msasa, Kamfinsa and Westgate**. The first productio
 
 ## Current status
 
-Production implementation is underway. The foundation and cash checkout increments are verified locally. Branch-scoped fulfilment, cash/till acknowledgement, full till-funded refunds and an audited loyalty ledger are now implemented locally. **This is not a production release.** Branch checkout stays disabled until its business data, cashier assignments, earning rules and operating procedures are approved and staged/device checks pass. QR points, redemption, gifting, self-service POS linking, unaudited points adjustments and client-side staff creation remain unavailable. GAAP ingestion is disabled by default pending vendor verification. Historical points are preserved as opening entries requiring review before new earning settles. The legacy GAAP processor is disabled until it uses the ledger.
+Production implementation is underway. The foundation and cash checkout increments are verified locally. Branch-scoped fulfilment, cash/till acknowledgement, full till-funded refunds and an audited loyalty ledger are now implemented locally. **This is not a production release.** Branch checkout stays disabled until its business data, cashier assignments, earning rules and operating procedures are approved and staged/device checks pass. Reward reservation, private collection tickets and staff handover are implemented locally and remain gated by approved branch offers and staging/device checks. QR receipt earning, gifting, self-service POS linking, unaudited points adjustments and client-side staff creation remain unavailable. GAAP ingestion is disabled by default pending vendor verification. Historical points are preserved as opening entries requiring review before new earning settles. The legacy GAAP processor is disabled until it uses the ledger.
 
 See the [production plan](docs/production-implementation-plan.md), [task backlog](docs/production-backlog.csv), and [implementation progress/deployment notes](docs/implementation-progress.md).
 
-See the [cash checkout milestone](docs/cash-checkout-milestone.md) for the original quotation/order-creation evidence. See the [cash fulfilment and ledger milestone](docs/cash-fulfilment-milestone.md) for the latest acceptance report, configuration and remaining release gates.
+See the [cash checkout milestone](docs/cash-checkout-milestone.md) for the original quotation/order-creation evidence. See the [cash fulfilment and ledger milestone](docs/cash-fulfilment-milestone.md) for cash handling evidence. The [reward redemption milestone](docs/reward-redemption-milestone.md) records the latest acceptance report, accounting rules, configuration and release gates.
 
 ## Local development
 

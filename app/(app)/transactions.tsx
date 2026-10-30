@@ -7,7 +7,7 @@ import {
   ArrowUpRight, ArrowDownRight, Zap 
 } from 'lucide-react-native';
 
-type FilterType = 'all' | 'purchase' | 'redemption' | 'refund';
+type FilterType = 'all' | 'purchase' | 'redemption' | 'refund' | 'reward_restore';
 
 export default function Transactions() {
   const { transactions, userPoints, loading, refetch } = useRewards();
@@ -37,6 +37,7 @@ export default function Transactions() {
     { key: 'purchase', label: 'Purchases' },
     { key: 'redemption', label: 'Redemptions' },
     { key: 'refund', label: 'Refunds' },
+    { key: 'reward_restore', label: 'Restored' },
   ];
 
   return (
@@ -59,7 +60,7 @@ export default function Transactions() {
                 <Text className="text-2xl font-bold text-slate-800">
                   {userPoints?.current_points || 0}
                 </Text>
-                <Text className="text-xs text-slate-400 font-medium">Current Points</Text>
+                <Text className="text-xs text-slate-400 font-medium">Available Points</Text>
               </View>
               <View className="flex-1 bg-white rounded-2xl p-4 border border-slate-100 shadow-sm items-center">
                 <View className="w-10 h-10 bg-emerald-100 rounded-full items-center justify-center mb-2">
@@ -117,9 +118,9 @@ export default function Transactions() {
             <View className="flex-row items-start justify-between">
               <View className="flex-row items-start gap-3 flex-1">
                 <View className={`w-10 h-10 rounded-full items-center justify-center ${
-                  item.transaction_type === 'purchase' ? 'bg-emerald-100' : 'bg-purple-100'
+                  ['purchase', 'reward_restore'].includes(item.transaction_type) ? 'bg-emerald-100' : 'bg-purple-100'
                 }`}>
-                  {item.transaction_type === 'purchase' ? (
+                  {['purchase', 'reward_restore'].includes(item.transaction_type) ? (
                     <ArrowUpRight size={20} color="#10b981" />
                   ) : (
                     <ArrowDownRight size={20} color="#a855f7" />
@@ -131,12 +132,12 @@ export default function Transactions() {
                       {item.items?.join(', ') || 'Transaction'}
                     </Text>
                     <View className={`px-2 py-0.5 rounded-full ${
-                      item.transaction_type === 'purchase' ? 'bg-emerald-100' : 'bg-purple-100'
+                      ['purchase', 'reward_restore'].includes(item.transaction_type) ? 'bg-emerald-100' : 'bg-purple-100'
                     }`}>
                       <Text className={`text-xs font-medium capitalize ${
-                        item.transaction_type === 'purchase' ? 'text-emerald-700' : 'text-purple-700'
+                        ['purchase', 'reward_restore'].includes(item.transaction_type) ? 'text-emerald-700' : 'text-purple-700'
                       }`}>
-                        {item.transaction_type}
+                        {item.transaction_type === 'reward_restore' ? 'Points restored' : item.transaction_type}
                       </Text>
                     </View>
                     {(item as any).source === 'gaap_pos' && (
@@ -158,13 +159,13 @@ export default function Transactions() {
                 </View>
               </View>
               <View className="items-end">
-                {item.transaction_type === 'purchase' ? (
+                {['purchase', 'reward_restore'].includes(item.transaction_type) ? (
                   <>
                     <Text className="text-lg font-bold text-emerald-600">
                       +{item.points_earned} pts
                     </Text>
                     <Text className="text-sm text-slate-400">
-                      {item.amount_minor != null && item.currency ? formatMoney(item.amount_minor, item.currency) : `${item.amount?.toFixed(2)} · currency unconfirmed`}
+                      {item.transaction_type === 'reward_restore' ? 'Reward correction' : item.amount_minor != null && item.currency ? formatMoney(item.amount_minor, item.currency) : `${item.amount?.toFixed(2)} · currency unconfirmed`}
                     </Text>
                   </>
                 ) : (

@@ -55,9 +55,7 @@ export default function Dashboard() {
   const currentPoints = userPoints?.current_points ?? 0;
   const totalEarned = userPoints?.total_earned ?? 0;
 
-  // Calculate progress
-  const nextRewardThreshold = currentPoints < 100 ? 100 : currentPoints < 250 ? 250 : currentPoints < 500 ? 500 : 1000;
-  const progress = Math.min((currentPoints / nextRewardThreshold) * 100, 100);
+  const heldPoints = userPoints?.reserved_points ?? 0;
 
   return (
     <View className="flex-1 bg-slate-50">
@@ -118,16 +116,8 @@ export default function Dashboard() {
               </View>
 
               <View className="z-10">
-                <View className="flex-row justify-between items-center mb-2">
-                  <Text className="text-slate-700 font-medium text-sm">Burger Fanatic Tier</Text>
-                  <Text className="text-slate-500 text-xs font-semibold">{Math.round(progress)}% to next reward</Text>
-                </View>
-                <View className="h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200/50">
-                  <View 
-                    className="h-full bg-red-600 rounded-full"
-                    style={{ width: `${progress}%` }}
-                  />
-                </View>
+                <Text className="text-slate-700 font-medium">{heldPoints.toLocaleString()} points held for reward collection</Text>
+                <Text className="text-slate-500 text-xs mt-2">Your available balance excludes held points. Approved rewards and costs depend on the collection branch.</Text>
               </View>
             </View>
           </View>
@@ -235,13 +225,14 @@ export default function Dashboard() {
               {transactions.length > 0 ? (
                 transactions.slice(0, 5).map((transaction, index) => {
                   const isPurchase = transaction.transaction_type === 'purchase';
+                  const isCredit = isPurchase || transaction.transaction_type === 'reward_restore';
                   const date = new Date(transaction.created_at);
                   const isLast = index === Math.min(transactions.length, 5) - 1;
 
                   return (
                     <View key={transaction.id} className={`flex-row items-center p-3 ${!isLast ? 'border-b border-slate-50' : ''}`}>
-                      <View className={`w-10 h-10 rounded-2xl items-center justify-center mr-4 ${isPurchase ? 'bg-emerald-50' : 'bg-red-50'}`}>
-                        {isPurchase ? (
+                      <View className={`w-10 h-10 rounded-2xl items-center justify-center mr-4 ${isCredit ? 'bg-emerald-50' : 'bg-red-50'}`}>
+                        {isCredit ? (
                           <ArrowUpRight size={18} color="#10b981" />
                         ) : (
                           <ArrowDownRight size={18} color="#ef4444" />
@@ -264,8 +255,8 @@ export default function Dashboard() {
                       </View>
 
                       <View className="items-end ml-3">
-                        <Text className={`font-bold text-base ${isPurchase ? 'text-emerald-600' : 'text-red-600'}`}>
-                          {isPurchase ? '+' : '-'}{isPurchase ? transaction.points_earned : transaction.points_redeemed} pts
+                        <Text className={`font-bold text-base ${isCredit ? 'text-emerald-600' : 'text-red-600'}`}>
+                          {isCredit ? '+' : '-'}{isCredit ? transaction.points_earned : transaction.points_redeemed} pts
                         </Text>
                         {isPurchase && (
                           <Text className="text-slate-400 text-xs mt-0.5">{transaction.currency ? `${transaction.currency} ${transaction.amount.toFixed(2)}` : `${transaction.amount.toFixed(2)} · currency unconfirmed`}</Text>

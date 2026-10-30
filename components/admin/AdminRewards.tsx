@@ -63,9 +63,9 @@ export function AdminRewards({ rewards, createReward, updateReward, deleteReward
       return;
     }
 
-    const points = parseInt(pointsCost, 10);
-    if (isNaN(points)) {
-      Alert.alert('Error', 'Points Cost must be a valid number.');
+    const points = Number(pointsCost.trim());
+    if (!Number.isSafeInteger(points) || points < 1 || points > 1000000) {
+      Alert.alert('Error', 'Points cost must be a whole number between 1 and 1,000,000.');
       return;
     }
 
@@ -114,6 +114,10 @@ export function AdminRewards({ rewards, createReward, updateReward, deleteReward
 
   return (
     <View className="gap-3 pb-8">
+      <View className="p-4 bg-amber-50 rounded-xl border border-amber-200">
+        <Text className="font-bold">Branch reward offers control redemption</Text>
+        <Text className="mt-2">This catalogue supplies categories and images. Each branch needs an approved offer with its exact benefit, terms, GAAP item, point cost, stock and expiry. Existing offer terms are immutable; create a new offer version to change them. Catalogue edits do not change reserved rewards.</Text>
+      </View>
       <TouchableOpacity 
         onPress={openCreateModal}
         className="flex-row items-center justify-center bg-red-600 rounded-xl py-3.5 mb-2"
@@ -236,7 +240,7 @@ export function AdminRewards({ rewards, createReward, updateReward, deleteReward
               <View className="flex-row items-center justify-between py-2 border-t border-gray-50 mt-2 pt-4">
                 <View>
                   <Text className="text-base font-medium text-gray-900">Available</Text>
-                  <Text className="text-xs text-gray-500">Can users redeem this reward?</Text>
+                  <Text className="text-xs text-gray-500">Include in new branch reward reservations?</Text>
                 </View>
                 <Switch 
                   value={available} 
