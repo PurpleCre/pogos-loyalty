@@ -3,7 +3,7 @@ import { useRewards } from '@/hooks/useRewards';
 import { useState, useCallback } from 'react';
 import { 
   Star, ShoppingBag, Gift, History, 
-  ArrowUpRight, ArrowDownRight 
+  ArrowUpRight, ArrowDownRight, Zap 
 } from 'lucide-react-native';
 
 type FilterType = 'all' | 'purchase' | 'redemption';
@@ -137,6 +137,12 @@ export default function Transactions() {
                         {item.transaction_type}
                       </Text>
                     </View>
+                    {(item as any).source === 'gaap_pos' && (
+                      <View className="flex-row items-center gap-0.5 px-2 py-0.5 rounded-full bg-blue-100">
+                        <Zap size={10} color="#2563eb" />
+                        <Text className="text-xs font-medium text-blue-700">POS</Text>
+                      </View>
+                    )}
                   </View>
                   <Text className="text-sm text-slate-400">
                     {new Date(item.created_at).toLocaleDateString('en-US', {

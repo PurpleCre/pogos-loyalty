@@ -7,7 +7,7 @@ import { DrawerActions } from '@react-navigation/native';
 import { 
   Scan, Gift, Trophy, Users, Star, 
   ChevronRight, Sparkles, ArrowUpRight, ArrowDownRight,
-  Menu, Hexagon, ShoppingCart, ChevronDown, Send
+  Menu, Hexagon, ShoppingCart, ChevronDown, Send, Zap
 } from 'lucide-react-native';
 import { useCart } from '@/contexts/CartContext';
 import { useOrder } from '@/contexts/OrderContext';
@@ -252,6 +252,12 @@ export default function Dashboard() {
                         <Text className="text-slate-800 font-semibold text-base" numberOfLines={1}>
                           {transaction.items?.join(', ') || (isPurchase ? 'Order Completed' : 'Reward Claimed')}
                         </Text>
+                        {(transaction as any).source === 'gaap_pos' && (
+                          <View className="flex-row items-center gap-0.5 mt-0.5">
+                            <Zap size={10} color="#2563eb" />
+                            <Text className="text-blue-600 text-[10px] font-bold">Auto-earned via POS</Text>
+                          </View>
+                        )}
                         <Text className="text-slate-500 text-xs mt-0.5">
                           {date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                         </Text>

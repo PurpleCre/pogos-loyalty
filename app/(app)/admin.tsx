@@ -4,13 +4,14 @@ import { useAdmin } from '@/hooks/useAdmin';
 import { 
   Shield, Users, Gift, Receipt, LayoutDashboard, Store, 
   ClipboardList, UserPlus, X, TrendingUp, 
-  DollarSign, UserCheck, MapPin, Trophy, Plus, Pencil, Trash2, Image 
+  DollarSign, UserCheck, MapPin, Trophy, Plus, Pencil, Trash2, Image, Zap 
 } from 'lucide-react-native';
 import { useState, useEffect } from 'react';
 import { AdminRewards } from '@/components/admin/AdminRewards';
 import { AdminOrders } from '@/components/admin/AdminOrders';
 import { AdminMenu } from '@/components/admin/AdminMenu';
 import { AdminAchievements } from '@/components/admin/AdminAchievements';
+import { AdminGaap } from '@/components/admin/AdminGaap';
 import { useIsFocused } from '@react-navigation/native';
 
 export default function AdminScreen() {
@@ -22,7 +23,7 @@ export default function AdminScreen() {
     createAchievement, updateAchievement, deleteAchievement,
     setUserRole, createUser, createStore, updateStore, deleteStore
   } = useAdmin();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'stores' | 'menu' | 'rewards' | 'achievements' | 'orders' | 'transactions'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'stores' | 'menu' | 'rewards' | 'achievements' | 'orders' | 'transactions' | 'gaap'>('dashboard');
 
   // Create User Modal
   const [showCreateUser, setShowCreateUser] = useState(false);
@@ -219,6 +220,7 @@ export default function AdminScreen() {
     { key: 'rewards', label: 'Rewards', icon: Gift },
     { key: 'achievements', label: 'Achievements', icon: Trophy },
     { key: 'transactions', label: 'Transact', icon: Receipt },
+    { key: 'gaap', label: 'GAAP POS', icon: Zap },
   ] as const;
 
   const getRoleBadgeColor = (role: string) => {
@@ -469,6 +471,8 @@ export default function AdminScreen() {
         {activeTab === 'orders' && <AdminOrders stores={stores} />}
         
         {activeTab === 'menu' && <AdminMenu stores={stores} />}
+
+        {activeTab === 'gaap' && <AdminGaap stores={stores} />}
       </ScrollView>
 
       {/* Create User Modal */}

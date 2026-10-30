@@ -27,6 +27,7 @@ export interface Transaction {
     points_redeemed: number;
     items: string[];
     transaction_type: 'purchase' | 'redemption';
+    source?: 'app' | 'qr_scan' | 'gaap_pos' | 'admin' | 'referral' | 'gift';
     created_at: string;
 }
 
