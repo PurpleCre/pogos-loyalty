@@ -36,6 +36,9 @@ export default function StorePickerScreen() {
     if (!deliveryLocation) return stores;
     
     const storesWithDistance = stores.map(store => {
+      if (store.latitude === null || store.longitude === null) {
+        return { ...store, computedDistanceKm: undefined, deliveryTimeMins: undefined };
+      }
       const computedDistanceKm = getDistanceInKm(
         deliveryLocation.latitude, 
         deliveryLocation.longitude, 
@@ -47,7 +50,7 @@ export default function StorePickerScreen() {
       return { ...store, computedDistanceKm, deliveryTimeMins };
     });
     
-    return storesWithDistance.sort((a, b) => a.computedDistanceKm - b.computedDistanceKm);
+    return storesWithDistance.sort((a, b) => (a.computedDistanceKm ?? Infinity) - (b.computedDistanceKm ?? Infinity));
   }, [stores, deliveryLocation]);
 
 

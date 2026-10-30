@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, useMemo } from 'react';
+import React, { createContext, useContext, useState, useMemo, useEffect } from 'react';
 import { Alert } from 'react-native';
+import { useAuth } from '@/hooks/useAuth';
 
 export interface CartItem {
   id: string; // unique id for cart entry, usually menu_item_id
@@ -24,8 +25,14 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
   const [items, setItems] = useState<CartItem[]>([]);
   const [storeId, setStoreId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setItems([]);
+    setStoreId(null);
+  }, [user?.id]);
 
   const addToCart = (newItem: Omit<CartItem, 'subtotal'>, newStoreId: string) => {
     if (storeId && storeId !== newStoreId && items.length > 0) {

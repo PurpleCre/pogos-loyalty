@@ -68,90 +68,10 @@ export default function CartScreen() {
       return;
     }
 
-    setIsSubmitting(true);
-    try {
-      // 1. Create the order
-      const { data: orderData, error: orderError } = await supabase
-        .from('orders')
-        .insert({
-          user_id: session.user.id,
-          total_amount: cartTotal,
-          status: 'pending',
-          points_earned: Math.floor(cartTotal), // 1 point per US dollar
-          currency: selectedCurrency,
-          change_needed: selectedChange,
-          store_id: selectedStore?.id || null,
-        })
-        .select()
-        .single();
-
-      if (orderError) throw orderError;
-
-      // 2. Create the order items
-      const orderItems = items.map(item => ({
-        order_id: orderData.id,
-        menu_item_id: item.menu_item_id,
-        quantity: item.quantity,
-        unit_price: item.price,
-      }));
-
-      const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(orderItems);
-
-      if (itemsError) throw itemsError;
-
-      // 3. Log transaction and update points
-      const pointsEarned = Math.floor(cartTotal);
-      if (pointsEarned > 0) {
-        const { error: transactionError } = await supabase
-          .from('transactions')
-          .insert({
-            user_id: session.user.id,
-            amount: cartTotal,
-            points_earned: pointsEarned,
-            points_redeemed: 0,
-            transaction_type: 'purchase',
-            items: items.map(i => i.name)
-          });
-        
-        if (transactionError) console.error("Failed to log transaction", transactionError);
-
-        const { data: currentPoints } = await supabase
-          .from('user_points')
-          .select('current_points, total_earned')
-          .eq('user_id', session.user.id)
-          .single();
-        
-        if (currentPoints) {
-          await supabase
-            .from('user_points')
-            .update({
-              current_points: (currentPoints.current_points || 0) + pointsEarned,
-              total_earned: (currentPoints.total_earned || 0) + pointsEarned
-            })
-            .eq('user_id', session.user.id);
-        } else {
-          await supabase
-            .from('user_points')
-            .insert({
-              user_id: session.user.id,
-              current_points: pointsEarned,
-              total_earned: pointsEarned,
-              total_redeemed: 0
-            });
-        }
-      }
-
-      // 4. Clear cart and redirect
-      clearCart();
-      router.push(`/(app)/order-success?orderId=${orderData.id}`);
-    } catch (error: any) {
-      console.error('Checkout error:', error);
-      Alert.alert('Order Failed', error.message || 'There was a problem placing your order.');
-    } finally {
-      setIsSubmitting(false);
-    }
+    Alert.alert(
+      'Ordering is not available yet',
+      'Please contact your Pogo’s branch to place a cash collection or delivery order.'
+    );
   };
 
   if (items.length === 0) {
@@ -273,21 +193,21 @@ export default function CartScreen() {
       {/* Sticky Footer */}
       <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 pt-4 pb-8 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
         <View className="flex-row justify-between items-center mb-4">
-          <Text className="text-gray-600 font-medium">Est. Delivery: 20-30 min</Text>
+          <Text className="text-gray-600 font-medium">Ordering coming soon</Text>
           <Text className="text-2xl font-black text-gray-900">{displaySymbol}{(cartTotal * conversionRate).toFixed(2)}</Text>
         </View>
         
         <TouchableOpacity 
           onPress={handlePlaceOrder}
-          disabled={isSubmitting}
+          disabled
           className={`py-4 rounded-xl items-center shadow-sm ${isSubmitting ? 'bg-red-400' : 'bg-red-600'}`}
         >
           {isSubmitting ? (
             <ActivityIndicator color="white" />
           ) : (
             <View className="items-center">
-              <Text className="text-white font-black text-lg">PLACE ORDER</Text>
-              <Text className="text-red-100 text-xs mt-1">(Cash Payment on Delivery)</Text>
+              <Text className="text-white font-black text-lg">ORDERING NOT YET AVAILABLE</Text>
+              <Text className="text-red-100 text-xs mt-1">Please contact your Pogo’s branch to order.</Text>
             </View>
           )}
         </TouchableOpacity>

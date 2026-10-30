@@ -4,7 +4,7 @@ project_id = "akxukhkkddfqodqmdtwx"
 verify_jwt = true
 
 [functions.customer-support-chat]
-verify_jwt = false
+verify_jwt = true
 
 [functions.send-special-offer]
 verify_jwt = true

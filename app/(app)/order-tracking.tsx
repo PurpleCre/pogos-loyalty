@@ -7,6 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabase';
 import { useMenu } from '@/hooks/useMenu';
 import { useCart } from '@/contexts/CartContext';
+import type { Tables } from '@/lib/types';
 
 type OrderStatus = 'pending' | 'preparing' | 'on_the_way' | 'delivered' | 'cancelled';
 
@@ -31,7 +32,7 @@ export default function OrderTrackingScreen() {
       
       try {
         setLoading(true);
-        let currentOrders = [];
+        let currentOrders: Tables<'orders'>[] = [];
 
         // Fetch all active orders
         const { data } = await supabase

@@ -10,8 +10,7 @@ interface RewardCardProps {
   isRedeeming?: boolean;
 }
 
-export function RewardCard({ reward, userPoints, onRedeem, isRedeeming }: RewardCardProps) {
-  const isAffordable = userPoints >= reward.points_cost;
+export function RewardCard({ reward, onRedeem }: RewardCardProps) {
 
   // Temporary hardcoded fallback URLs to match the aesthetic if image_url is missing
   const defaultImages: Record<string, string> = {
@@ -51,11 +50,11 @@ export function RewardCard({ reward, userPoints, onRedeem, isRedeeming }: Reward
         <Button 
           size="sm"
           onPress={() => onRedeem(reward.id, reward.points_cost)}
-          disabled={!isAffordable || isRedeeming}
-          className={isAffordable ? 'bg-red-600' : 'bg-slate-200 opacity-100'}
+          disabled
+          className="bg-slate-200 opacity-100"
         >
-          <Text className={isAffordable ? 'text-white font-bold' : 'text-slate-400 font-bold'}>
-            {isAffordable ? 'Redeem' : 'Needs points'}
+          <Text className="text-slate-500 font-bold">
+            Redemption coming soon
           </Text>
         </Button>
       </View>

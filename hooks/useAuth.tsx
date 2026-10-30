@@ -1,7 +1,10 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, useRef, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import * as Linking from 'expo-linking';
+import { useQueryClient } from '@tanstack/react-query';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createLocationCache } from '@/lib/location-cache';
 
 export type AppRole = 'user' | 'staff' | 'admin';
 
@@ -32,19 +35,23 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
+  const queryClient = useQueryClient();
+  const roleRevision = useRef(0);
+  const previousUserId = useRef<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState<AppRole>('user');
   const [staffStoreId, setStaffStoreId] = useState<string | null>(null);
 
-  const fetchUserRole = async (userId: string) => {
+  const fetchUserRole = async (userId: string, revision = roleRevision.current) => {
     try {
       const { data, error } = await supabase
         .from('user_roles')
         .select('role, staff_store_id')
         .eq('user_id', userId);
 
+      if (revision !== roleRevision.current) return;
       if (error || !data || data.length === 0) {
         setUserRole('user');
         setStaffStoreId(null);
@@ -69,6 +76,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUserRole('user');
       setStaffStoreId(null);
     } catch (err) {
+      if (revision !== roleRevision.current) return;
       console.error('Error fetching user role:', err);
       setUserRole('user');
       setStaffStoreId(null);
@@ -82,33 +90,60 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          await fetchUserRole(session.user.id);
-        } else {
-          setUserRole('user');
-          setStaffStoreId(null);
-        }
-        setLoading(false);
-      }
-    );
+    let active = true;
+    let receivedAuthEvent = false;
+    const timers = new Set<ReturnType<typeof setTimeout>>();
 
-    // THEN check for existing session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        await fetchUserRole(session.user.id);
+    const applySession = (nextSession: Session | null) => {
+      if (!active) return;
+      const revision = ++roleRevision.current;
+      const nextUserId = nextSession?.user.id ?? null;
+      const previousId = previousUserId.current;
+      if (previousId !== nextUserId) {
+        queryClient.clear();
+        if (previousId) {
+          void createLocationCache(AsyncStorage).clear(previousId).catch(() => {
+            console.error('Unable to clear departing account location cache');
+          });
+        }
+        setUserRole('user');
+        setStaffStoreId(null);
       }
-      setLoading(false);
+      previousUserId.current = nextUserId;
+      setSession(nextSession);
+      setUser(nextSession?.user ?? null);
+      setLoading(!!nextSession);
+      if (!nextUserId) return;
+
+      // Supabase auth callbacks run under the auth lock. Fetching via the same
+      // client inside an awaited callback can deadlock; defer until it returns.
+      const timer = setTimeout(() => {
+        timers.delete(timer);
+        if (!active || revision !== roleRevision.current) return;
+        void fetchUserRole(nextUserId, revision).finally(() => {
+          if (active && revision === roleRevision.current) setLoading(false);
+        });
+      }, 0);
+      timers.add(timer);
+    };
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      receivedAuthEvent = true;
+      applySession(nextSession);
+    });
+    void supabase.auth.getSession().then(({ data, error }) => {
+      if (!receivedAuthEvent) applySession(error ? null : data.session);
+    }).catch(() => {
+      if (!receivedAuthEvent) applySession(null);
     });
 
-    return () => subscription.unsubscribe();
-  }, []);
+    return () => {
+      active = false;
+      ++roleRevision.current;
+      timers.forEach(clearTimeout);
+      subscription.unsubscribe();
+    };
+  }, [queryClient]);
 
   const signUp = async (email: string, password: string, fullName?: string) => {
     const redirectUrl = Linking.createURL('/');

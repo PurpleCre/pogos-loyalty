@@ -20,6 +20,12 @@ export default function Dashboard() {
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
 
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    refetchRewards();
+    setTimeout(() => setRefreshing(false), 1000);
+  }, [refetchRewards]);
+
   // Animations
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
@@ -52,12 +58,6 @@ export default function Dashboard() {
   // Calculate progress
   const nextRewardThreshold = currentPoints < 100 ? 100 : currentPoints < 250 ? 250 : currentPoints < 500 ? 500 : 1000;
   const progress = Math.min((currentPoints / nextRewardThreshold) * 100, 100);
-
-  const onRefresh = useCallback(async () => {
-    setRefreshing(true);
-    refetchRewards();
-    setTimeout(() => setRefreshing(false), 1000);
-  }, [refetchRewards]);
 
   return (
     <View className="flex-1 bg-slate-50">

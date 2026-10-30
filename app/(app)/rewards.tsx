@@ -81,7 +81,7 @@ export default function Rewards() {
             <Text className="text-red-600 font-bold text-sm">{currentPoints} pts</Text>
           </View>
         </View>
-        <Text className="text-slate-500 text-sm font-medium">Redeem your points for exclusive treats.</Text>
+        <Text className="text-slate-500 text-sm font-medium">Browse rewards. Redemption is not available yet.</Text>
       </View>
 
       {/* Categories Filter */}

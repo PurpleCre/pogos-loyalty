@@ -1,8 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from './useAuth';
-import { useOffline } from './useOffline';
-import { Alert } from 'react-native';
 
 export interface Reward {
     id: string;
@@ -33,13 +31,19 @@ export interface Transaction {
 
 export const useRewards = () => {
     const { user } = useAuth();
-    const { isOnline, saveOfflineData, getOfflineData, addPendingAction } = useOffline();
     const [rewards, setRewards] = useState<Reward[]>([]);
-    const [userPoints, setUserPoints] = useState<UserPoints | null>(null);
-    const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const accountId = user?.id ?? null;
+    const currentAccount = useRef(accountId);
+    currentAccount.current = accountId;
+    const [pointsState, setPointsState] = useState<{ owner: string | null; value: UserPoints | null }>({ owner: accountId, value: null });
+    const [historyState, setHistoryState] = useState<{ owner: string | null; value: Transaction[] }>({ owner: accountId, value: [] });
+    const userPoints = pointsState.owner === accountId ? pointsState.value : null;
+    const transactions = historyState.owner === accountId ? historyState.value : [];
+    const setUserPoints = (value: UserPoints) => setPointsState({ owner: accountId, value });
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        setLoading(!!user);
         if (user) {
             fetchRewards();
             fetchUserPoints();
@@ -49,7 +53,6 @@ export const useRewards = () => {
 
     const fetchRewards = async () => {
         try {
-            // Simplification: Always try online first for now
             const { data, error } = await supabase
                 .from('rewards')
                 .select('*')
@@ -58,11 +61,8 @@ export const useRewards = () => {
 
             if (error) throw error;
             setRewards((data as Reward[]) || []);
-            // saveOfflineData('rewards', data || []);
         } catch (error) {
             console.error('Error fetching rewards:', error);
-            // const cached = await getOfflineData('rewards');
-            // if (cached) setRewards(cached);
         }
     };
 
@@ -76,6 +76,7 @@ export const useRewards = () => {
                 .eq('user_id', user.id)
                 .single();
 
+            if (currentAccount.current !== accountId) return;
             if (error && error.code !== 'PGRST116') {
                 console.error('Supabase error fetching points:', error);
             }
@@ -96,7 +97,7 @@ export const useRewards = () => {
         } catch (err: any) {
             console.error('Exception fetching user points:', err?.message || err);
         } finally {
-            setLoading(false);
+            if (currentAccount.current === accountId) setLoading(false);
         }
     };
 
@@ -111,136 +112,23 @@ export const useRewards = () => {
                 .limit(10);
 
             if (error) throw error;
-            setTransactions((data as Transaction[]) || []);
+            if (currentAccount.current === accountId) {
+                setHistoryState({ owner: accountId, value: (data as Transaction[]) || [] });
+            }
         } catch (error) {
             console.error('Error fetching transactions:', error);
         }
     };
 
-    const redeemReward = async (rewardId: string, pointsCost: number) => {
-        if (!user || !userPoints || userPoints.current_points < pointsCost) {
-            return { error: 'Insufficient points' };
-        }
+    // Server permissions also deny these legacy write paths. Re-enable through
+    // trusted ledger/reservation commands with staff-confirmed fulfilment.
+    const redeemReward = async (_rewardId: string, _pointsCost: number) => ({
+        error: 'Reward redemption is not available yet. Please check with your branch.'
+    });
 
-        try {
-            // Get reward details
-            const { data: reward, error: rewardError } = await supabase
-                .from('rewards')
-                .select('*')
-                .eq('id', rewardId)
-                .single();
-
-            if (rewardError) throw rewardError;
-
-            // Create transaction
-            const { error: transactionError } = await supabase
-                .from('transactions')
-                .insert({
-                    user_id: user.id,
-                    amount: 0,
-                    points_redeemed: pointsCost,
-                    items: [reward.name],
-                    transaction_type: 'redemption'
-                });
-
-            if (transactionError) throw transactionError;
-
-            // Update user points
-            const { error: pointsError } = await supabase
-                .from('user_points')
-                .update({
-                    current_points: userPoints.current_points - pointsCost,
-                    total_redeemed: userPoints.total_redeemed + pointsCost
-                })
-                .eq('user_id', user.id);
-
-            if (pointsError) throw pointsError;
-
-            // Refresh data
-            fetchUserPoints();
-            fetchTransactions();
-
-            return { error: null };
-        } catch (error: any) {
-            console.error('Error redeeming reward:', error);
-            return { error: error.message || 'Failed to redeem reward' };
-        }
-    };
-
-    const addPoints = async (points: number, amount: number, items: string[]) => {
-        if (!user) return { error: 'User not authenticated' };
-
-        try {
-            // Create transaction
-            const { error: transactionError } = await supabase
-                .from('transactions')
-                .insert({
-                    user_id: user.id,
-                    amount,
-                    points_earned: points,
-                    items,
-                    transaction_type: 'purchase'
-                });
-
-            if (transactionError) throw transactionError;
-
-            // Update or insert user points
-            const currentPoints = userPoints?.current_points || 0;
-            const totalEarned = userPoints?.total_earned || 0;
-            const totalRedeemed = userPoints?.total_redeemed || 0;
-
-            const { error: pointsError } = await supabase
-                .from('user_points')
-                .upsert({
-                    user_id: user.id,
-                    current_points: currentPoints + points,
-                    total_earned: totalEarned + points,
-                    total_redeemed: totalRedeemed,
-                    updated_at: new Date().toISOString()
-                });
-
-            if (pointsError) throw pointsError;
-
-            // Refresh data
-            fetchUserPoints();
-            fetchTransactions();
-
-            return { error: null };
-        } catch (error: any) {
-            console.error('Error adding points:', error);
-            return { error: error.message || 'Failed to add points' };
-        }
-    };
-
-    const sharePoints = async (receiverEmail: string, points: number) => {
-        if (!user || !userPoints || userPoints.current_points < points) {
-            return { error: 'Insufficient points' };
-        }
-
-        if (points <= 0) {
-            return { error: 'Invalid points amount' };
-        }
-
-        try {
-            const { data, error } = await supabase.rpc('share_user_points', {
-                sender_id: user.id,
-                receiver_email: receiverEmail,
-                points_to_transfer: points
-            });
-
-            if (error) throw error;
-            if (data?.error) throw new Error(data.error);
-
-            // Refresh data
-            fetchUserPoints();
-            fetchTransactions();
-
-            return { error: null, success: true };
-        } catch (error: any) {
-            console.error('Error sharing points:', error);
-            return { error: error.message || 'Failed to share points' };
-        }
-    };
+    const sharePoints = async (_receiverEmail: string, _points: number) => ({
+        error: 'Points sharing is not available yet.'
+    });
 
     return {
         rewards,
@@ -248,7 +136,6 @@ export const useRewards = () => {
         transactions,
         loading,
         redeemReward,
-        addPoints,
         sharePoints,
         refetch: () => {
             fetchRewards();

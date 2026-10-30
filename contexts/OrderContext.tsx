@@ -1,15 +1,16 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Store } from '@/hooks/useStores';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/hooks/useAuth';
+import { createLocationCache } from '@/lib/location-cache';
 
 export interface LocationData {
   id: string;
   address: string;
   latitude: number;
   longitude: number;
-  tag?: string; // 'Home', 'Work', 'Custom'
+  tag?: string | null; // 'Home', 'Work', 'Custom'
 }
 
 interface OrderContextType {
@@ -24,16 +25,27 @@ interface OrderContextType {
 
 const OrderContext = createContext<OrderContextType | undefined>(undefined);
 
-const LOCATIONS_KEY = '@pogos_saved_locations';
+const locationCache = createLocationCache(AsyncStorage);
 
 export function OrderProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
-  const [deliveryLocation, setDeliveryLocation] = useState<LocationData | null>(null);
+  const [deliveryState, setDeliveryState] = useState<{ owner: string | null; location: LocationData | null }>({ owner: user?.id ?? null, location: null });
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
-  const [savedLocations, setSavedLocations] = useState<LocationData[]>([]);
+  const accountId = user?.id ?? null;
+  const deliveryLocation = deliveryState.owner === accountId ? deliveryState.location : null;
+  const setDeliveryLocation = (location: LocationData | null) => setDeliveryState({ owner: accountId, location });
+  const currentAccount = useRef(accountId);
+  currentAccount.current = accountId;
+  const [locationState, setLocationState] = useState<{ owner: string | null; locations: LocationData[] }>({ owner: accountId, locations: [] });
+  const savedLocations = locationState.owner === accountId ? locationState.locations : [];
+  const setSavedLocations = (locations: LocationData[]) => setLocationState({ owner: accountId, locations });
 
   // Load saved locations on mount
   useEffect(() => {
+    let cancelled = false;
+    setDeliveryLocation(null);
+    setSelectedStore(null);
+    setLocationState({ owner: accountId, locations: [] });
     const loadLocations = async () => {
       try {
         if (user) {
@@ -47,24 +59,24 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
           if (error) {
             console.error('Supabase fetch error', error);
           } else if (data) {
-            setSavedLocations(data as LocationData[]);
+            if (cancelled) return;
+            setSavedLocations(data);
             // Cache locally
-            await AsyncStorage.setItem(LOCATIONS_KEY, JSON.stringify(data));
+            await locationCache.write(accountId, data);
             return;
           }
         }
 
         // Fallback to local storage (unauthenticated or offline)
-        const stored = await AsyncStorage.getItem(LOCATIONS_KEY);
-        if (stored) {
-          setSavedLocations(JSON.parse(stored));
-        }
+        const stored = await locationCache.read(accountId);
+        if (!cancelled) setSavedLocations(stored);
       } catch (e) {
         console.error('Failed to load saved locations', e);
       }
     };
     loadLocations();
-  }, [user]);
+    return () => { cancelled = true; };
+  }, [accountId]);
 
   const saveLocation = async (location: LocationData) => {
     try {
@@ -122,8 +134,9 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
         updatedLocations = [...savedLocations, dbLocation];
       }
       
+      if (currentAccount.current !== accountId) return null;
       setSavedLocations(updatedLocations);
-      await AsyncStorage.setItem(LOCATIONS_KEY, JSON.stringify(updatedLocations));
+      await locationCache.write(accountId, updatedLocations);
       
       if (deliveryLocation?.id === location.id) {
         setDeliveryLocation(dbLocation);
@@ -150,8 +163,9 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       }
       
       const updatedLocations = savedLocations.filter(loc => loc.id !== id);
+      if (currentAccount.current !== accountId) return;
       setSavedLocations(updatedLocations);
-      await AsyncStorage.setItem(LOCATIONS_KEY, JSON.stringify(updatedLocations));
+      await locationCache.write(accountId, updatedLocations);
       
       if (deliveryLocation?.id === id) {
         setDeliveryLocation(null);

@@ -44,27 +44,18 @@ export function useOrders(isAdminView = false) {
           order_items (
             id, quantity, unit_price,
             menu_item:menu_items (name)
-          )
-        `)
-        .order('created_at', { ascending: false });
+          ),
+          user:profiles (full_name, email)
+        `);
 
       if (isAdminView) {
         // Admin gets all active/recent orders, join with user data
-        query = supabase
-          .from('orders')
-          .select(`
-            *,
-            order_items (
-              id, quantity, unit_price,
-              menu_item:menu_items (name)
-            ),
-            user:profiles (full_name, email)
-          `)
+        query = query
           .in('status', ['pending', 'preparing', 'ready'])
           .order('created_at', { ascending: true }); // Oldest first for fulfillment
       } else {
         // Normal user gets only their orders
-        query = query.eq('user_id', session.user.id);
+        query = query.eq('user_id', session.user.id).order('created_at', { ascending: false });
       }
 
       const { data, error } = await query;

@@ -71,54 +71,12 @@ export async function linkGaapCustomer(
   phone?: string,
   email?: string
 ): Promise<{ error: string | null }> {
-  try {
-    const { error } = await supabase
-      .from('gaap_customer_links')
-      .upsert({
-        user_id: userId,
-        gaap_customer_id: gaapCustomerId,
-        gaap_customer_phone: phone || null,
-        gaap_customer_email: email || null,
-        verified: false, // Will be verified when first matching transaction comes through
-        linked_at: new Date().toISOString(),
-      }, { onConflict: 'user_id' });
-
-    if (error) throw error;
-
-    // Also update the profile for quick lookups
-    await supabase
-      .from('profiles')
-      .update({ gaap_customer_id: gaapCustomerId })
-      .eq('id', userId);
-
-    return { error: null };
-  } catch (err: any) {
-    console.error('Error linking GAAP customer:', err);
-    return { error: err.message || 'Failed to link GAAP account' };
-  }
+  return { error: 'Please ask your branch to verify your in-store account. Self-service linking is not available yet.' };
 }
 
-/**
- * Unlink the current user from GAAP.
- */
-export async function unlinkGaapCustomer(userId: string): Promise<{ error: string | null }> {
-  try {
-    const { error } = await supabase
-      .from('gaap_customer_links')
-      .delete()
-      .eq('user_id', userId);
-
-    if (error) throw error;
-
-    await supabase
-      .from('profiles')
-      .update({ gaap_customer_id: null })
-      .eq('id', userId);
-
-    return { error: null };
-  } catch (err: any) {
-    return { error: err.message || 'Failed to unlink GAAP account' };
-  }
+/** Linking changes require a verified server-side workflow. */
+export async function unlinkGaapCustomer(_userId: string): Promise<{ error: string | null }> {
+  return { error: 'Please contact your branch to update your in-store account link.' };
 }
 
 /**

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
+import type { Tables } from '@/lib/types';
 
 export interface MenuCategory {
   id: string;
@@ -35,18 +36,33 @@ export interface MenuItem {
   price: number;
   image_url: string;
   is_available: boolean;
-  store_id?: string;
+  store_id?: string | null;
   menu_item_options?: MenuItemOption[];
 }
 
-const MOCK_STORE_ITEMS: Record<string, MenuItem[]> = {
-  '1': [ // Main St
-    { id: 'm1', category_id: '1', name: 'Main St Signature Burger', description: 'Exclusive to Main St', price: 12.99, image_url: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd', is_available: true, store_id: '1' }
-  ],
-  '2': [ // Downtown
-    { id: 'm2', category_id: '1', name: 'Downtown Double', description: 'Exclusive to Downtown', price: 14.99, image_url: 'https://images.unsplash.com/photo-1594212202878-8cb6d50ff90e', is_available: true, store_id: '2' }
-  ]
+type MenuResult = Tables<'menu_items'> & {
+  menu_item_options?: (Tables<'menu_item_options'> & {
+    menu_item_option_choices: Tables<'menu_item_option_choices'>[];
+  })[];
 };
+
+function toMenuItem(row: MenuResult): MenuItem {
+  return {
+    ...row,
+    menu_item_options: row.menu_item_options?.map(option => ({
+      ...option,
+      is_required: option.is_required ?? false,
+      max_choices: option.max_choices ?? 1,
+      sort_order: option.sort_order ?? 0,
+      menu_item_option_choices: option.menu_item_option_choices.map(choice => ({
+        ...choice,
+        price_adjustment: choice.price_adjustment ?? 0,
+        is_default: choice.is_default ?? false,
+        sort_order: choice.sort_order ?? 0,
+      })),
+    })),
+  };
+}
 
 export function useMenu(isAdmin = false, storeId?: string) {
   const [categories, setCategories] = useState<MenuCategory[]>([]);
@@ -85,7 +101,7 @@ export function useMenu(isAdmin = false, storeId?: string) {
       if (itemsRes.error) throw itemsRes.error;
 
       setCategories(categoriesRes.data || []);
-      setItems(itemsRes.data || []);
+      setItems((itemsRes.data || []).map(toMenuItem));
     } catch (error) {
       console.error('Error fetching menu:', error);
     } finally {

@@ -95,7 +95,7 @@ export default function AdminScreen() {
     setIsCreatingUser(false);
 
     if (result.error) {
-      Alert.alert('Error', result.error.message || 'Failed to create user.');
+      Alert.alert('Error', result.error || 'Failed to create user.');
     } else {
       Alert.alert('Success', (result as any).note || 'User created successfully!');
       setShowCreateUser(false);

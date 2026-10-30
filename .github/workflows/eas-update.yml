@@ -6,7 +6,11 @@ on:
       - main # Triggers when you push to the main branch
 
 jobs:
+  checks:
+    uses: ./.github/workflows/checks.yml
+
   update:
+    needs: checks
     name: Publish EAS Update
     runs-on: ubuntu-latest
     steps:
@@ -16,7 +20,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 22.19.0
           cache: npm
 
       - name: Setup Expo and EAS

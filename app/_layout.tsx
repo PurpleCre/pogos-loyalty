@@ -8,7 +8,8 @@ import { OrderProvider } from '@/contexts/OrderContext';
 import * as Sentry from '@sentry/react-native';
 
 Sentry.init({
-  dsn: 'YOUR_SENTRY_DSN_HERE', // TODO: Replace with actual DSN
+  dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
+  enabled: !!process.env.EXPO_PUBLIC_SENTRY_DSN,
   debug: false,
 });
 

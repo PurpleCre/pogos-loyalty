@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
-import { hmac } from "https://deno.land/x/hmac@v2.0.1/mod.ts";
+import { verifyWebhookSignature } from '../_shared/webhook-signature.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -64,36 +64,6 @@ interface GaapWebhookPayload {
 }
 
 /**
- * Verify the webhook signature from GAAP.
- * Implementation will be updated once we get GAAP's signing spec.
- * Common patterns: HMAC-SHA256 of body using shared secret.
- */
-async function verifyWebhookSignature(
-  body: string,
-  signature: string | null,
-  secret: string
-): Promise<boolean> {
-  if (!signature || !secret) {
-    // In development/sandbox mode, skip verification if no secret configured
-    console.warn('⚠️ Webhook signature verification skipped - no secret configured');
-    return true;
-  }
-
-  try {
-    // Most POS webhooks use HMAC-SHA256
-    const expectedSignature = hmac('sha256', secret, body, 'utf8', 'hex');
-    
-    // Support both raw and prefixed signatures (e.g., "sha256=...")
-    const cleanSignature = signature.replace(/^sha256=/, '');
-    
-    return cleanSignature === expectedSignature;
-  } catch (error) {
-    console.error('Signature verification error:', error);
-    return false;
-  }
-}
-
-/**
  * Map a GAAP store ID to a Pogo's store UUID.
  * Looks up the gaap_config table for the matching store.
  */
@@ -125,6 +95,14 @@ const handler = async (req: Request): Promise<Response> => {
       JSON.stringify({ error: 'Method not allowed' }),
       { status: 405, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
     );
+  }
+
+  // The payload/signing contract is still provisional. A configured secret alone
+  // must not accidentally activate the speculative integration.
+  if (Deno.env.get('GAAP_WEBHOOK_ENABLED') !== 'true') {
+    return new Response(JSON.stringify({ error: 'GAAP integration is not enabled' }), {
+      status: 503, headers: { 'Content-Type': 'application/json', ...corsHeaders },
+    });
   }
 
   try {
@@ -194,6 +172,11 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Resolve the Pogo's store ID from GAAP store ID
     const pogosStoreId = await resolveStoreId(supabase, payload.store_id);
+    if (!pogosStoreId) {
+      return new Response(JSON.stringify({ error: 'Unknown or inactive branch' }), {
+        status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      });
+    }
 
     // Call the database function to process the transaction
     const { data: result, error } = await supabase.rpc('process_gaap_transaction', {
@@ -204,8 +187,8 @@ const handler = async (req: Request): Promise<Response> => {
       p_gaap_customer_id: payload.customer?.id || null,
       p_store_id: pogosStoreId,
       p_transaction_amount: payload.total_amount,
-      p_line_items: JSON.stringify(payload.line_items || []),
-      p_raw_payload: JSON.stringify(payload),
+      p_line_items: payload.line_items || [],
+      p_raw_payload: payload,
     });
 
     if (error) {

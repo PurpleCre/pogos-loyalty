@@ -28,6 +28,24 @@ const handler = async (req: Request): Promise<Response> => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
+    // A valid customer JWT is not permission to broadcast using service credentials.
+    const token = req.headers.get('Authorization')?.replace(/^Bearer\s+/i, '');
+    const { data: identity, error: authError } = token
+      ? await supabaseClient.auth.getUser(token)
+      : { data: { user: null }, error: new Error('Missing session') };
+    if (authError || !identity.user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401, headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      });
+    }
+    const { data: adminRole } = await supabaseClient.from('user_roles')
+      .select('id').eq('user_id', identity.user.id).eq('role', 'admin').maybeSingle();
+    if (!adminRole) {
+      return new Response(JSON.stringify({ error: 'Administrator access required' }), {
+        status: 403, headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      });
+    }
+
     const { title, body, icon, badge, data, userIds, sendToAll }: PushNotificationRequest = await req.json();
 
     console.log('Sending push notification:', { title, body, userIds, sendToAll });

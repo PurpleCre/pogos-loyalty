@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
+import type { Store } from '@/hooks/useStores';
 
 interface AdminUser {
   id: string;
@@ -37,16 +38,7 @@ interface AdminTransaction {
   created_at: string;
 }
 
-interface AdminStore {
-  id: string;
-  name: string;
-  address: string;
-  distance_miles: number;
-  is_open: boolean;
-  latitude: number;
-  longitude: number;
-  image_url?: string;
-}
+type AdminStore = Store;
 
 interface DashboardStats {
   totalUsers: number;
@@ -440,86 +432,11 @@ export const useAdmin = () => {
   };
 
   const createUser = async (email: string, password: string, fullName: string, role: string, storeId?: string) => {
-    // Sign up the user via Supabase auth
-    const { data, error: signUpError } = await supabase.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true,
-      user_metadata: { full_name: fullName }
-    });
-
-    if (signUpError) {
-      // Fallback: use regular signUp (admin API might not be available with anon key)
-      // Instead, we'll just use the standard signup and let the handle_new_user trigger handle profile creation
-      const { data: signUpData, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { full_name: fullName }
-        }
-      });
-
-      if (error) return { error };
-
-      // Note: the user will need to confirm their email before being usable
-      // The role assignment will be done after they confirm
-      return { error: null, note: 'User created. They need to confirm their email. Role will be set after confirmation.' };
-    }
-
-    // If admin API worked, set the role
-    if (data?.user) {
-      await setUserRole(data.user.id, role, storeId);
-    }
-
-    await fetchUsers();
-    return { error: null };
+    return { error: 'Staff invitations are not available yet. Use the controlled account setup process.' };
   };
 
-  const adjustUserPoints = async (userId: string, pointsChange: number, reason: string) => {
-    const { data: currentData } = await supabase
-      .from('user_points')
-      .select('current_points, total_earned, total_redeemed')
-      .eq('user_id', userId)
-      .single();
-
-    if (!currentData) return { error: 'User not found' };
-
-    const current_points = currentData.current_points || 0;
-    const total_earned = currentData.total_earned || 0;
-    const total_redeemed = currentData.total_redeemed || 0;
-
-    const newCurrentPoints = Math.max(0, current_points + pointsChange);
-    const newTotalEarned = pointsChange > 0 ? total_earned + pointsChange : total_earned;
-    const newTotalRedeemed = pointsChange < 0 ? total_redeemed + Math.abs(pointsChange) : total_redeemed;
-
-    const { error: pointsError } = await supabase
-      .from('user_points')
-      .update({
-        current_points: newCurrentPoints,
-        total_earned: newTotalEarned,
-        total_redeemed: newTotalRedeemed
-      })
-      .eq('user_id', userId);
-
-    if (pointsError) return { error: pointsError };
-
-    const { error: transactionError } = await supabase
-      .from('transactions')
-      .insert([{
-        user_id: userId,
-        transaction_type: pointsChange > 0 ? 'admin_credit' : 'admin_debit',
-        points_earned: pointsChange > 0 ? pointsChange : 0,
-        points_redeemed: pointsChange < 0 ? Math.abs(pointsChange) : 0,
-        amount: 0,
-        items: [reason]
-      }]);
-
-    if (!transactionError) {
-      await fetchUsers();
-      await fetchTransactions();
-    }
-
-    return { error: transactionError };
+  const adjustUserPoints = async (_userId: string, _pointsChange: number, _reason: string) => {
+    return { error: 'Points adjustments require the audited loyalty service, which is not available yet.' };
   };
 
   return {

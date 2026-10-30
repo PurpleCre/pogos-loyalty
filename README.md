@@ -1,35 +1,57 @@
-# Overview
+# Pogo’s Zimbabwe
 
-Loyalty app for a restaraunt written in React with Capacitor conversion and Android Studio.
+Mobile ordering and loyalty application for Pogo’s, built with Expo / React Native, Expo Router, TypeScript, NativeWind and Supabase.
 
-The app is designed to show useres promotions and to mainly track their purchases while also rewarding them at key moments. The app uses google qr scanner to scan receipts and award points for each purchase. To use the app, open it, create an account or login, tap scan qr and scan the code (Which you wont have for now). You can also browse the other functions.
+The confirmed branches are **Msasa, Kamfinsa and Westgate**. The first production release targets loyalty and ordering with cash on collection/delivery. GAAP is the POS vendor; digital payments follow later.
 
-The app is meant to reward loyal customers which free meals at certain milestones, while also collecting data to enhance the service offered by the restaurant.
+## Current status
 
-[Restaurant Loyalty App Demo](https://youtu.be/VhCDScEzQW0)
+Production implementation is underway. The first increment restores a reproducible local database/type baseline and contains the unsafe legacy write paths. **This is not a production release.** Legacy checkout, QR points, redemption, gifting, self-service POS linking, unaudited points adjustments and client-side staff creation are unavailable while trusted commands are built. GAAP ingestion is disabled by default pending vendor verification. Existing historical points records are preserved.
 
-# Development Environment
+See the [production plan](docs/production-implementation-plan.md), [task backlog](docs/production-backlog.csv), and [implementation progress/deployment notes](docs/implementation-progress.md).
 
-I used React to build a mobile first webapp, then I converted it to an android app using capicator through vscode, finally I made improvements and intergrations in android studio before shipping a release version of the app.
+## Local development
 
-I used React with capacitor, then kotlin and java for the entire project.
+Use Node.js 22.19 or a compatible Node 22 release; `.nvmrc` pins the version tested in CI.
 
-# Useful Websites
+```sh
+nvm use
+npm ci
+cp .env.example .env
+```
 
-* [capacitorjs.com](https://capacitorjs.com/solution/react)
-* [developer.android.com](https://developer.android.com/develop)
+Set the client-visible Supabase URL/anon or publishable key and the platform-restricted maps key for your development project. Sentry is optional through `EXPO_PUBLIC_SENTRY_DSN`. Never place service-role, payment or webhook secrets in `EXPO_PUBLIC_` values.
 
-# Future Work (Production Readiness)
+```sh
+npm start
+npm run android
+npm run ios
+```
 
-*   **Payment Processing:** Integrate a legitimate Payment Gateway (e.g., Stripe, Paynow) to process online transactions securely, or implement SMS OTP for cash-on-delivery validation.
-*   **Push Notifications:** Store Expo push tokens in the database and create a backend trigger to notify users when order statuses change.
-*   **Backend Security (Edge Functions):** Move sensitive operations (order total calculation, loyalty points awarding) off the client and into secure Supabase Edge Functions.
-*   **Crash Reporting & Analytics:** Properly configure Sentry with DSN and Project IDs for production crash reporting.
-*   **App Store Compliance:** Add an in-app "Delete Account" button and link to a Privacy Policy to comply with Apple and Google app store requirements.
-*   **Email Branding:** Customize Supabase authentication emails (Confirmation, Password Reset) with the Pogo's brand and logo.
-*   **Automated Testing:** Add E2E tests (Jest/Maestro) for critical user paths to ensure OTA updates don't break the main flow.
-*   **Points Sharing:** Implement a feature that allows users to securely transfer or gift loyalty points to their friends and family.
+Native builds require the corresponding Android/iOS development tools. For database-backed device testing, configure an isolated Supabase environment; the automated database below is an in-memory PostgreSQL test engine, not a network database for the app.
 
-# Release
+## Verification
 
-[pogosloyalty.apk](https://github.com/PurpleCre/pogos-loyalty-buzz/blob/main/android/app/release/baselineProfiles/0/app-release.dm)
+```sh
+npm run check
+npm run build:check
+```
+
+`check` runs TypeScript, lint, security/cache/signature tests and generated-database-type drift checks. Database tests apply the complete migration history to local PGlite, reproduce Supabase auth identities/roles, and execute SQL under anonymous/customer/staff/admin roles. They load no `.env` and contact no live database. They do not replace deployed Supabase, Edge Function or device acceptance tests.
+
+`build:check` exports the Android JavaScript/Hermes bundle to ignored `dist/android`; it does not produce or install a signed APK. Pull requests run these checks, and automatic preview EAS updates depend on them.
+
+After schema changes:
+
+```sh
+npm run db:types
+npm run db:types:check
+```
+
+Database types and enum constants are generated from the migrated local PostgreSQL catalogue; do not edit `lib/types.ts` by hand.
+
+## Database changes
+
+The historical catalogue/order creation migration fills a gap in the recorded history. **Do not push it blindly to an existing project.** First compare the deployed schema/history, review legacy policies and triggers, rehearse the upgrade, and follow the deployment notes. No hosted migrations have been applied by this implementation work.
+
+Some historical migrations still contain demo seeds. Fresh disposable resets are useful for engineering, but those records are not approved Pogo’s branch/menu data. Production fixture separation, verified branch/menu import, SDK/dependency upgrades, the transactional cash-order engine and the audited loyalty ledger remain planned work. Root maintenance scripts can write remote data and are not part of the test commands.

@@ -1,7 +1,6 @@
 import { View, Text, Alert, ScrollView, TouchableOpacity, Modal, TextInput, ActivityIndicator } from 'react-native';
 import { useAuth } from '@/hooks/useAuth';
 import { useAdmin } from '@/hooks/useAdmin';
-import { useGaapIntegration } from '@/hooks/useGaapIntegration';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
@@ -15,14 +14,10 @@ const EMOJI_AVATARS = ['🍔', '🍕', '🍟', '🍦', '☕️', '🦊', '🐼',
 export default function Profile() {
   const { user, signOut } = useAuth();
   const { isAdmin } = useAdmin();
-  const { customerLink, isLinked, linkLoading, linkAccount, unlinkAccount } = useGaapIntegration();
   const [fullName, setFullName] = useState(user?.user_metadata?.full_name || '');
   const [avatar, setAvatar] = useState(user?.user_metadata?.avatar || '');
   const [loading, setLoading] = useState(false);
   const [showAvatarPicker, setShowAvatarPicker] = useState(false);
-  const [showGaapLink, setShowGaapLink] = useState(false);
-  const [gaapPhone, setGaapPhone] = useState('');
-  const [gaapLinking, setGaapLinking] = useState(false);
 
   const handleUpdate = async () => {
     setLoading(true);
@@ -163,72 +158,11 @@ export default function Profile() {
         </View>
       </View>
 
-      {/* GAAP POS Link Card */}
-      <View className="bg-white rounded-3xl border border-slate-100 shadow-sm mb-5 overflow-hidden">
-        <View className="px-5 pt-5 pb-3 flex-row items-center justify-between">
-          <View className="flex-row items-center gap-2">
-            <Zap size={18} color="#2563eb" />
-            <Text className="text-lg font-bold text-slate-800">In-Store Points</Text>
-          </View>
-          {isLinked && (
-            <View className="flex-row items-center gap-1 bg-emerald-100 px-2 py-1 rounded-full">
-              <CheckCircle size={12} color="#10b981" />
-              <Text className="text-xs font-bold text-emerald-700">Linked</Text>
-            </View>
-          )}
-        </View>
-        <View className="px-5 pb-5">
-          {linkLoading ? (
-            <ActivityIndicator size="small" color="#2563eb" />
-          ) : isLinked ? (
-            <View>
-              <Text className="text-slate-500 text-sm mb-3">
-                Your account is linked to GAAP POS. You earn points automatically when you make in-store purchases!
-              </Text>
-              {customerLink?.gaap_customer_phone && (
-                <Text className="text-xs text-slate-400 mb-3">Phone: {customerLink.gaap_customer_phone}</Text>
-              )}
-              <TouchableOpacity
-                onPress={() => {
-                  Alert.alert(
-                    'Unlink Account',
-                    'You will stop earning automatic points from in-store purchases. You can still scan QR codes.',
-                    [
-                      { text: 'Cancel', style: 'cancel' },
-                      {
-                        text: 'Unlink',
-                        style: 'destructive',
-                        onPress: async () => {
-                          const result = await unlinkAccount();
-                          if (result.error) Alert.alert('Error', result.error);
-                          else Alert.alert('Unlinked', 'Your GAAP account has been unlinked.');
-                        },
-                      },
-                    ]
-                  );
-                }}
-                className="flex-row items-center justify-center p-3 bg-slate-50 rounded-xl border border-slate-200"
-              >
-                <Unlink size={16} color="#64748b" />
-                <Text className="text-slate-600 font-medium text-sm ml-2">Unlink Account</Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View>
-              <Text className="text-slate-500 text-sm mb-3">
-                Link your account to earn points automatically every time you buy at Pogo's — no scanning needed!
-              </Text>
-              <TouchableOpacity
-                onPress={() => setShowGaapLink(true)}
-                className="flex-row items-center justify-center p-3 bg-blue-600 rounded-xl"
-                activeOpacity={0.7}
-              >
-                <Link2 size={16} color="#fff" />
-                <Text className="text-white font-bold text-sm ml-2">Link to POS</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
+      <View className="bg-white rounded-3xl border border-slate-100 p-5 mb-5">
+        <Text className="text-lg font-bold text-slate-800">In-Store Points</Text>
+        <Text className="text-slate-500 text-sm mt-2">
+          In-store account linking is not available yet. Please check with your Pogo’s branch about your loyalty account.
+        </Text>
       </View>
 
       {/* Features Card */}
@@ -327,69 +261,6 @@ export default function Profile() {
       </View>
     </Modal>
 
-    {/* GAAP Link Modal */}
-    <Modal visible={showGaapLink} transparent animationType="slide">
-      <View className="flex-1 justify-end bg-black/50">
-        <View className="bg-white rounded-t-3xl p-6">
-          <View className="flex-row justify-between items-center mb-6">
-            <View>
-              <Text className="text-xl font-bold text-slate-900">Link to POS</Text>
-              <Text className="text-slate-500 text-sm mt-1">Earn points automatically on every purchase</Text>
-            </View>
-            <TouchableOpacity onPress={() => setShowGaapLink(false)}>
-              <X size={24} color="#6b7280" />
-            </TouchableOpacity>
-          </View>
-
-          <View className="mb-4">
-            <Text className="text-sm font-medium text-slate-700 mb-1">Phone Number *</Text>
-            <TextInput
-              value={gaapPhone}
-              onChangeText={setGaapPhone}
-              placeholder="+27 12 345 6789"
-              keyboardType="phone-pad"
-              className="bg-slate-100 rounded-xl px-4 py-3 text-slate-900"
-              placeholderTextColor="#9ca3af"
-            />
-            <Text className="text-xs text-slate-400 mt-1">
-              Enter the phone number you use at Pogo's counter. This links your purchases to your app account.
-            </Text>
-          </View>
-
-          <View className="bg-blue-50 rounded-xl p-4 mb-5 border border-blue-100">
-            <Text className="text-blue-800 text-xs leading-5">
-              ⚡ Once linked, every time you pay at any Pogo's store, your points will appear in the app automatically — no scanning required!
-            </Text>
-          </View>
-
-          <TouchableOpacity
-            onPress={async () => {
-              if (!gaapPhone.trim()) {
-                Alert.alert('Error', 'Please enter your phone number.');
-                return;
-              }
-              setGaapLinking(true);
-              // Use phone as the GAAP customer ID for now
-              const result = await linkAccount(gaapPhone.trim(), gaapPhone.trim());
-              setGaapLinking(false);
-              if (result.error) {
-                Alert.alert('Error', result.error);
-              } else {
-                Alert.alert('Linked!', 'Your account is now linked. Points will be earned automatically on your next purchase!');
-                setShowGaapLink(false);
-                setGaapPhone('');
-              }
-            }}
-            disabled={gaapLinking}
-            className="bg-blue-600 rounded-xl py-3.5 items-center mb-4"
-          >
-            <Text className="text-white font-bold text-base">
-              {gaapLinking ? 'Linking...' : 'Link My Account'}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </Modal>
     </View>
   );
 }
