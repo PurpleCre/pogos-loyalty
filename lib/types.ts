@@ -74,6 +74,140 @@ export type Database = {
 
       ]
     }
+    "cash_delivery_zones": {
+      Row: {
+        "id": string
+        "store_id": string
+        "name": string
+        "boundary": string
+        "fee_minor": number
+        "priority": number
+        "active": boolean
+      }
+      Insert: {
+        "id"?: string
+        "store_id": string
+        "name": string
+        "boundary": string
+        "fee_minor": number
+        "priority"?: number
+        "active"?: boolean
+      }
+      Update: {
+        "id"?: string
+        "store_id"?: string
+        "name"?: string
+        "boundary"?: string
+        "fee_minor"?: number
+        "priority"?: number
+        "active"?: boolean
+      }
+      Relationships: [
+        {
+          foreignKeyName: "cash_delivery_zones_store_id_fkey"
+          columns: ["store_id"]
+          isOneToOne: false
+          referencedRelation: "stores"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
+    "cash_order_quotes": {
+      Row: {
+        "id": string
+        "user_id": string
+        "store_id": string
+        "request": Json
+        "snapshot": Json
+        "expires_at": string
+        "order_id": string | null
+        "created_at": string
+      }
+      Insert: {
+        "id"?: string
+        "user_id": string
+        "store_id": string
+        "request": Json
+        "snapshot": Json
+        "expires_at"?: string
+        "order_id"?: string | null
+        "created_at"?: string
+      }
+      Update: {
+        "id"?: string
+        "user_id"?: string
+        "store_id"?: string
+        "request"?: Json
+        "snapshot"?: Json
+        "expires_at"?: string
+        "order_id"?: string | null
+        "created_at"?: string
+      }
+      Relationships: [
+        {
+          foreignKeyName: "cash_order_quotes_order_id_fkey"
+          columns: ["order_id"]
+          isOneToOne: true
+          referencedRelation: "orders"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "cash_order_quotes_store_id_fkey"
+          columns: ["store_id"]
+          isOneToOne: false
+          referencedRelation: "stores"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "cash_order_quotes_user_id_fkey"
+          columns: ["user_id"]
+          isOneToOne: false
+          referencedRelation: "profiles"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
+    "cash_order_settings": {
+      Row: {
+        "store_id": string
+        "enabled": boolean
+        "pricing_approved": boolean
+        "currency": string
+        "collection_enabled": boolean
+        "delivery_enabled": boolean
+        "minimum_subtotal_minor": number
+        "max_total_minor": number
+      }
+      Insert: {
+        "store_id": string
+        "enabled"?: boolean
+        "pricing_approved"?: boolean
+        "currency": string
+        "collection_enabled"?: boolean
+        "delivery_enabled"?: boolean
+        "minimum_subtotal_minor"?: number
+        "max_total_minor"?: number
+      }
+      Update: {
+        "store_id"?: string
+        "enabled"?: boolean
+        "pricing_approved"?: boolean
+        "currency"?: string
+        "collection_enabled"?: boolean
+        "delivery_enabled"?: boolean
+        "minimum_subtotal_minor"?: number
+        "max_total_minor"?: number
+      }
+      Relationships: [
+        {
+          foreignKeyName: "cash_order_settings_store_id_fkey"
+          columns: ["store_id"]
+          isOneToOne: true
+          referencedRelation: "stores"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
     "gaap_config": {
       Row: {
         "id": string
@@ -444,6 +578,10 @@ export type Database = {
         "menu_item_id": string
         "quantity": number
         "unit_price": number
+        "item_name": string | null
+        "modifiers_snapshot": Json | null
+        "unit_price_minor": number | null
+        "line_total_minor": number | null
       }
       Insert: {
         "id"?: string
@@ -451,6 +589,10 @@ export type Database = {
         "menu_item_id": string
         "quantity": number
         "unit_price": number
+        "item_name"?: string | null
+        "modifiers_snapshot"?: Json | null
+        "unit_price_minor"?: number | null
+        "line_total_minor"?: number | null
       }
       Update: {
         "id"?: string
@@ -458,6 +600,10 @@ export type Database = {
         "menu_item_id"?: string
         "quantity"?: number
         "unit_price"?: number
+        "item_name"?: string | null
+        "modifiers_snapshot"?: Json | null
+        "unit_price_minor"?: number | null
+        "line_total_minor"?: number | null
       }
       Relationships: [
         {
@@ -469,6 +615,45 @@ export type Database = {
         },
         {
           foreignKeyName: "order_items_order_id_fkey"
+          columns: ["order_id"]
+          isOneToOne: false
+          referencedRelation: "orders"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
+    "order_status_events": {
+      Row: {
+        "id": string
+        "order_id": string
+        "actor_id": string
+        "status": string
+        "created_at": string
+      }
+      Insert: {
+        "id"?: string
+        "order_id": string
+        "actor_id": string
+        "status": string
+        "created_at"?: string
+      }
+      Update: {
+        "id"?: string
+        "order_id"?: string
+        "actor_id"?: string
+        "status"?: string
+        "created_at"?: string
+      }
+      Relationships: [
+        {
+          foreignKeyName: "order_status_events_actor_id_fkey"
+          columns: ["actor_id"]
+          isOneToOne: false
+          referencedRelation: "profiles"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "order_status_events_order_id_fkey"
           columns: ["order_id"]
           isOneToOne: false
           referencedRelation: "orders"
@@ -488,6 +673,17 @@ export type Database = {
         "currency": string | null
         "change_needed": string | null
         "store_id": string | null
+        "quote_id": string | null
+        "submission_key": string | null
+        "subtotal_minor": number | null
+        "delivery_fee_minor": number | null
+        "total_minor": number | null
+        "fulfilment_mode": string | null
+        "contact_snapshot": Json | null
+        "delivery_snapshot": Json | null
+        "branch_snapshot": Json | null
+        "payment_method": string | null
+        "payment_status": string | null
       }
       Insert: {
         "id"?: string
@@ -500,6 +696,17 @@ export type Database = {
         "currency"?: string | null
         "change_needed"?: string | null
         "store_id"?: string | null
+        "quote_id"?: string | null
+        "submission_key"?: string | null
+        "subtotal_minor"?: number | null
+        "delivery_fee_minor"?: number | null
+        "total_minor"?: number | null
+        "fulfilment_mode"?: string | null
+        "contact_snapshot"?: Json | null
+        "delivery_snapshot"?: Json | null
+        "branch_snapshot"?: Json | null
+        "payment_method"?: string | null
+        "payment_status"?: string | null
       }
       Update: {
         "id"?: string
@@ -512,8 +719,26 @@ export type Database = {
         "currency"?: string | null
         "change_needed"?: string | null
         "store_id"?: string | null
+        "quote_id"?: string | null
+        "submission_key"?: string | null
+        "subtotal_minor"?: number | null
+        "delivery_fee_minor"?: number | null
+        "total_minor"?: number | null
+        "fulfilment_mode"?: string | null
+        "contact_snapshot"?: Json | null
+        "delivery_snapshot"?: Json | null
+        "branch_snapshot"?: Json | null
+        "payment_method"?: string | null
+        "payment_status"?: string | null
       }
       Relationships: [
+        {
+          foreignKeyName: "orders_quote_id_fkey"
+          columns: ["quote_id"]
+          isOneToOne: true
+          referencedRelation: "cash_order_quotes"
+          referencedColumns: ["id"]
+        },
         {
           foreignKeyName: "orders_store_id_fkey"
           columns: ["store_id"]
@@ -941,6 +1166,13 @@ export type Database = {
       }
       Returns: boolean
     }
+    "place_cash_order": {
+      Args: {
+        "p_quote_id": string
+        "p_submission_key": string
+      }
+      Returns: Json
+    }
     "process_gaap_transaction": {
       Args: {
         "p_gaap_transaction_id": string
@@ -952,6 +1184,12 @@ export type Database = {
         "p_transaction_amount"?: number
         "p_line_items"?: Json
         "p_raw_payload"?: Json
+      }
+      Returns: Json
+    }
+    "quote_cash_order": {
+      Args: {
+        "p_request": Json
       }
       Returns: Json
     }

@@ -1,116 +1,61 @@
-import React, { useEffect, useMemo } from 'react';
-import { View, Text, TouchableOpacity, Animated, Easing } from 'react-native';
-import { useLocalSearchParams, router, useNavigation } from 'expo-router';
-import { DrawerActions } from '@react-navigation/native';
-import { Check, Store, MapPin, Sparkles, Menu } from 'lucide-react-native';
-import { useOrder } from '@/contexts/OrderContext';
+import { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { useLocalSearchParams, router } from 'expo-router';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/lib/supabase';
+import type { Tables } from '@/lib/types';
+import { formatMoney } from '@/lib/cash-orders';
+
+function textField(value: unknown, field: string): string {
+  if (typeof value !== 'object' || value === null || !(field in value)) return '';
+  const result = (value as Record<string, unknown>)[field];
+  return typeof result === 'string' ? result : '';
+}
 
 export default function OrderSuccessScreen() {
-  const { orderId } = useLocalSearchParams();
-  const { selectedStore, deliveryLocation } = useOrder();
-  const navigation = useNavigation();
-  
-  // Simple animation for the checkmark
-  const scaleValue = new Animated.Value(0);
-
+  const { orderId } = useLocalSearchParams<{ orderId: string }>();
+  const { user } = useAuth();
+  const [record, setRecord] = useState<{ owner: string; order: Tables<'orders'>; items: Tables<'order_items'>[] } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const order = record && record.owner === user?.id ? record.order : null;
   useEffect(() => {
-    Animated.spring(scaleValue, {
-      toValue: 1,
-      friction: 4,
-      tension: 40,
-      useNativeDriver: true,
-    }).start();
-  }, []);
-  const etaText = useMemo(() => {
-    const now = new Date();
-    const etaStart = new Date(now.getTime() + 20 * 60000);
-    const etaEnd = new Date(now.getTime() + 30 * 60000);
-    
-    const formatTime = (date: Date) => 
-      date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-      
-    return `${formatTime(etaStart)} - ${formatTime(etaEnd)}`;
-  }, []);
+    let cancelled = false;
+    setLoading(true); setError('');
+    if (!user || !orderId) { setLoading(false); setError('Sign in to view your order.'); return; }
+    void (async () => {
+      const [orderResult, itemsResult] = await Promise.all([
+        supabase.from('orders').select('*').eq('id', orderId).eq('user_id', user.id).single(),
+        supabase.from('order_items').select('*').eq('order_id', orderId),
+      ]);
+      if (cancelled) return;
+      if (orderResult.error || itemsResult.error) { setError('Unable to load this order. Check your order history or contact your branch.'); return; }
+      setRecord({ owner: user.id, order: orderResult.data, items: itemsResult.data });
+    })().catch(() => { if (!cancelled) setError('Unable to load your order. Please check your order history.'); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [orderId, user?.id]);
 
-  return (
-    <View className="flex-1 bg-gray-50">
-      {/* Red Header matching Pogo's identity */}
-      <View className="bg-red-600 pt-14 pb-4 px-4 rounded-b-3xl flex-row items-center justify-between">
-        <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())} className="p-2 -ml-2">
-          <Menu size={24} color="#fff" />
-        </TouchableOpacity>
-        <Text className="text-white text-xl font-bold">Pogo's</Text>
-        <View className="w-10" />
-      </View>
-
-      <View className="flex-1 px-4 pt-10">
-        <View className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 items-center mb-8 relative overflow-hidden">
-          
-          {/* Mock Confetti Background Elements */}
-          <View className="absolute top-10 left-10 opacity-30">
-            <Sparkles size={24} color="#f59e0b" />
-          </View>
-          <View className="absolute top-20 right-12 opacity-30">
-            <Sparkles size={20} color="#10b981" />
-          </View>
-          <View className="absolute bottom-12 left-16 opacity-30">
-            <Sparkles size={18} color="#ef4444" />
-          </View>
-          <View className="absolute top-6 right-20 opacity-30">
-            <Sparkles size={16} color="#3b82f6" />
-          </View>
-
-          {/* Animated Checkmark */}
-          <Animated.View 
-            style={{ transform: [{ scale: scaleValue }] }}
-            className="w-32 h-32 bg-green-100 rounded-full items-center justify-center mb-6"
-          >
-            <Check size={80} color="#10b981" strokeWidth={3} />
-          </Animated.View>
-
-          <Text className="text-2xl font-black text-gray-900 mb-2 tracking-tight">ORDER CONFIRMED!</Text>
-          <Text className="text-base text-gray-500 mb-1">Order #{(orderId as string)?.slice(0, 8).toUpperCase() || 'POGO987654'}</Text>
-          <Text className="text-base font-semibold text-gray-700 mb-8">Est. Arrival: {etaText}</Text>
-          
-          {/* Delivery Context Card */}
-          <View className="w-full bg-gray-50 rounded-xl p-4 border border-gray-100">
-            <Text className="text-xs text-gray-500 font-bold mb-3 uppercase tracking-wider">Delivering from</Text>
-            
-            <View className="flex-row items-center mb-4">
-              <Store size={20} color="#6b7280" className="mr-3" />
-              <Text className="text-base text-gray-800 font-medium">{selectedStore?.name || "Pogo's Kamfinsa"}</Text>
-            </View>
-            
-            <View className="flex-row items-center ml-2 mb-2">
-              <View className="w-[1px] h-4 bg-gray-300" />
-            </View>
-            <View className="flex-row items-center ml-2 mb-4">
-              <View className="w-1 h-1 rounded-full bg-gray-400" />
-              <Text className="text-gray-400 text-xs ml-2">to</Text>
-            </View>
-            
-            <View className="flex-row items-center">
-              <MapPin size={20} color="#6b7280" className="mr-3" />
-              <Text className="text-base text-gray-800 font-medium">{deliveryLocation?.address || "Current Location"}</Text>
-            </View>
-          </View>
+  return <View className="flex-1 bg-slate-50">
+    <View className="bg-red-600 pt-14 pb-5 px-5"><Text className="text-white text-xl font-bold">Pogo’s</Text></View>
+    <ScrollView contentContainerStyle={{ padding: 24 }}>
+      {loading ? <ActivityIndicator color="#dc2626" /> : error ? <Text className="text-red-700">{error}</Text> : order ? <>
+        <Text className="text-2xl font-bold text-slate-900">Order received</Text>
+        <Text className="mt-3 text-slate-600">Order #{order.id.slice(0, 8).toUpperCase()}</Text>
+        <Text className="mt-2 text-slate-600">{order.status === 'pending' ? 'Awaiting confirmation from your branch.' : `Status: ${order.status}`}</Text>
+        <View className="p-5 bg-white rounded-xl border border-slate-200 my-5">
+          <Text className="font-bold text-lg">{textField(order.branch_snapshot, 'name') || 'Your selected branch'}</Text>
+          <Text className="mt-2">{order.fulfilment_mode === 'delivery' ? 'Cash on delivery' : 'Cash on collection'}</Text>
+          {order.fulfilment_mode === 'delivery' ? <Text className="mt-2">{textField(order.delivery_snapshot, 'address')}</Text> : null}
+          <Text className="mt-2">{textField(order.contact_snapshot, 'name')} · {textField(order.contact_snapshot, 'phone')}</Text>
+          {record?.items.map(item => <View key={item.id} className="mt-4"><Text>{item.quantity} × {item.item_name ?? 'Meal'}</Text><Text className="text-slate-500 text-sm">{Array.isArray(item.modifiers_snapshot) ? item.modifiers_snapshot.map(choice => textField(choice, 'name')).join(', ') : ''}</Text></View>)}
+          {order.total_minor !== null && order.currency ? <Text className="font-bold text-xl mt-5">Cash due: {formatMoney(order.total_minor, order.currency)}</Text> : null}
+          <Text className="mt-2 text-slate-500">Payment status: {order.payment_status ?? 'Check with branch'}</Text>
         </View>
-
-        {/* Action Buttons */}
-        <TouchableOpacity 
-          onPress={() => router.push(`/(app)/order-tracking?orderId=${orderId}`)}
-          className="bg-red-600 py-4 rounded-xl items-center shadow-sm mb-4"
-        >
-          <Text className="text-white font-black text-lg">TRACK YOUR ORDER</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          onPress={() => router.push('/(app)/menu')}
-          className="py-4 items-center"
-        >
-          <Text className="text-red-600 font-bold text-base">Back to Home</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+        <Text className="text-slate-600">Your branch will confirm preparation and handover. Points are not awarded for placing an unpaid order.</Text>
+      </> : null}
+      <TouchableOpacity onPress={() => router.push('/(app)/order-tracking')} className="bg-red-600 p-4 rounded-xl items-center mt-6"><Text className="text-white font-bold">View orders</Text></TouchableOpacity>
+      <TouchableOpacity onPress={() => router.push('/store-picker')} className="p-4 items-center mt-3"><Text className="text-red-600 font-bold">Back to branches</Text></TouchableOpacity>
+    </ScrollView>
+  </View>;
 }

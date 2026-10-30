@@ -1,5 +1,7 @@
 import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { StaffOrder } from '@/hooks/useStaff';
+import { snapshotText } from '@/lib/cash-checkout';
+import { formatMoney } from '@/lib/cash-orders';
 import { Clock, ChefHat, CheckCircle2, ChevronRight, Package, AlertCircle } from 'lucide-react-native';
 
 interface StaffOrdersProps {
@@ -84,7 +86,7 @@ export function StaffOrders({ orders, isLoading, onUpdateStatus }: StaffOrdersPr
               </View>
               <View className="flex-row items-center gap-2">
                 <Text className="text-xs text-gray-500">{getTimeSince(order.created_at)}</Text>
-                <Text className="font-bold text-gray-900">${order.total_amount.toFixed(2)}</Text>
+                <Text className="font-bold text-gray-900">{formatMoney(order.total_minor ?? Math.round(order.total_amount * 100), order.currency ?? 'Currency unconfirmed')}</Text>
               </View>
             </View>
 
@@ -92,17 +94,26 @@ export function StaffOrders({ orders, isLoading, onUpdateStatus }: StaffOrdersPr
             <View className="p-4">
               <View className="flex-row items-center mb-3">
                 <Text className="text-sm font-semibold text-gray-500 w-20">Customer:</Text>
-                <Text className="text-sm font-medium text-gray-900 flex-1">{order.user?.full_name || order.user?.email || 'Guest'}</Text>
+                <Text className="text-sm font-medium text-gray-900 flex-1">{snapshotText(order.contact_snapshot, 'name') || order.user?.full_name || 'Customer'}</Text>
               </View>
+              {order.fulfilment_mode ? <View className="mb-4">
+                <Text>{order.fulfilment_mode === 'delivery' ? 'Cash on delivery' : 'Cash on collection'} · {order.payment_status}</Text>
+                <Text>{snapshotText(order.contact_snapshot, 'phone')}</Text>
+                {order.fulfilment_mode === 'delivery' ? <>
+                  <Text>{snapshotText(order.delivery_snapshot, 'address')}</Text>
+                  <Text>{snapshotText(order.delivery_snapshot, 'instructions')}</Text>
+                </> : null}
+              </View> : null}
 
               <View className="bg-gray-50 rounded-xl p-3 mb-4">
                 <Text className="text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Order Items</Text>
                 {order.order_items?.map(item => (
                   <View key={item.id} className="flex-row justify-between mb-1">
                     <Text className="text-sm text-gray-900 flex-1">
-                      <Text className="font-bold">{item.quantity}x</Text> {item.menu_item?.name}
+                      <Text className="font-bold">{item.quantity}x</Text> {item.item_name || item.menu_item?.name}
+                      {Array.isArray(item.modifiers_snapshot) ? `\n${item.modifiers_snapshot.map(choice => snapshotText(choice, 'name')).join(', ')}` : ''}
                     </Text>
-                    <Text className="text-sm text-gray-500">${(item.unit_price * item.quantity).toFixed(2)}</Text>
+                    <Text className="text-sm text-gray-500">{formatMoney(Math.round(item.unit_price * item.quantity * 100), order.currency ?? 'Currency unconfirmed')}</Text>
                   </View>
                 ))}
               </View>
@@ -110,18 +121,21 @@ export function StaffOrders({ orders, isLoading, onUpdateStatus }: StaffOrdersPr
               <View className="flex-row gap-2">
                 <TouchableOpacity
                   onPress={() => handleCancel(order)}
+                  disabled={!!order.payment_method}
                   className="flex-1 py-3 rounded-xl border border-red-200 items-center justify-center bg-red-50"
                 >
                   <Text className="text-red-600 font-bold text-sm">Cancel</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => handleNextStatus(order)}
+                  disabled={!!order.payment_method}
                   className={`flex-[2] py-3 rounded-xl items-center justify-center flex-row ${config.btnBg}`}
                 >
                   <Text className="text-white font-bold text-sm mr-2">{config.btnText}</Text>
                   <ChevronRight size={16} color="white" />
                 </TouchableOpacity>
               </View>
+              {order.payment_method ? <Text className="text-slate-500 text-xs mt-3">Order updates are not available yet.</Text> : null}
             </View>
           </View>
         );

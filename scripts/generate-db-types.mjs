@@ -22,7 +22,7 @@ try {
     if (name === 'bool') return 'boolean';
     if (['json', 'jsonb'].includes(name)) return 'Json';
     if (name === 'void') return 'undefined';
-    if (['uuid', 'text', 'varchar', 'bpchar', 'timestamp', 'timestamptz', 'date', 'time', 'timetz', 'name'].includes(name)) return 'string';
+    if (['uuid', 'text', 'varchar', 'bpchar', 'timestamp', 'timestamptz', 'date', 'time', 'timetz', 'name', 'polygon'].includes(name)) return 'string';
     throw new Error(`Unmapped database type: ${name}`);
   }
   const { rows: keys } = await db.query(`

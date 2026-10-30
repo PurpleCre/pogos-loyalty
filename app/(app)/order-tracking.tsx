@@ -8,8 +8,10 @@ import { supabase } from '@/lib/supabase';
 import { useMenu } from '@/hooks/useMenu';
 import { useCart } from '@/contexts/CartContext';
 import type { Tables } from '@/lib/types';
+import { formatMoney } from '@/lib/cash-orders';
+import { snapshotText } from '@/lib/cash-checkout';
 
-type OrderStatus = 'pending' | 'preparing' | 'on_the_way' | 'delivered' | 'cancelled';
+type OrderStatus = 'pending' | 'preparing' | 'ready' | 'completed' | 'cancelled';
 
 export default function OrderTrackingScreen() {
   const { orderId: paramOrderId } = useLocalSearchParams();
@@ -39,8 +41,7 @@ export default function OrderTrackingScreen() {
           .from('orders')
           .select('*')
           .eq('user_id', session.user.id)
-          .neq('status', 'cancelled')
-          .neq('status', 'delivered')
+          .in('status', ['pending', 'preparing', 'ready'])
           .order('created_at', { ascending: false });
         if (data) currentOrders = data;
 
@@ -124,7 +125,7 @@ export default function OrderTrackingScreen() {
             <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())} className="p-2 -ml-2">
               <Menu size={24} color="#fff" />
             </TouchableOpacity>
-            <Text className="text-white text-xl font-bold">QuickBite</Text>
+            <Text className="text-white text-xl font-bold">Pogo’s</Text>
             <View className="w-10" />
           </View>
         </View>
@@ -151,7 +152,7 @@ export default function OrderTrackingScreen() {
           <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())} className="p-2 -ml-2">
             <Menu size={24} color="#fff" />
           </TouchableOpacity>
-          <Text className="text-white text-xl font-bold">QuickBite</Text>
+          <Text className="text-white text-xl font-bold">Pogo’s</Text>
           <TouchableOpacity onPress={() => router.push('/(app)/cart')} className="p-2 -mr-2 relative">
             <ShoppingCart size={24} color="#fff" />
             {itemCount > 0 && (
@@ -175,32 +176,27 @@ export default function OrderTrackingScreen() {
           const status: OrderStatus = order.status || 'pending';
           let currentStep = 0;
           if (status === 'preparing') currentStep = 1;
-          else if (status === 'on_the_way') currentStep = 2;
-          else if (status === 'delivered') currentStep = 3;
+          else if (status === 'ready') currentStep = 2;
+          else if (status === 'completed') currentStep = 3;
 
           const steps = [
             { title: 'Order\nPlaced', icon: ClipboardList },
             { title: 'Preparing', icon: Timer },
-            { title: 'On the\nWay', icon: Truck },
-            { title: 'Delivered', icon: Package }
+            { title: 'Ready', icon: Truck },
+            { title: 'Completed', icon: Package }
           ];
 
-          let statusText = "Order received and confirmed.";
+          let statusText = "Awaiting confirmation from your branch.";
           if (currentStep === 1) statusText = "Preparing your food...";
-          if (currentStep === 2) statusText = "Driver picked up your order.";
-          if (currentStep === 3) statusText = "Order has been delivered!";
+          if (currentStep === 2) statusText = "Your meal is ready.";
+          if (currentStep === 3) statusText = "Order completed.";
 
           const orderItems = orderItemsMap[order.id] || [];
           const summaryText = orderItems.map(item => {
             const menuItem = allMenu.find(m => m.id === item.menu_item_id);
-            return `${item.quantity}x ${menuItem?.name || 'Item'}`;
+            return `${item.quantity}x ${item.item_name || menuItem?.name || 'Item'}`;
           }).join(', ');
           
-          const orderDate = order.created_at ? new Date(order.created_at) : new Date();
-          const etaStart = new Date(orderDate.getTime() + 20 * 60000);
-          const etaEnd = new Date(orderDate.getTime() + 30 * 60000);
-          const formatTime = (date: Date) => date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-          const etaString = `${formatTime(etaStart)} - ${formatTime(etaEnd)}`;
 
           return (
             <View key={order.id} className="mb-4 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
@@ -214,7 +210,7 @@ export default function OrderTrackingScreen() {
                   {!isExpanded && <Text className="text-gray-500 text-sm mt-1">{statusText}</Text>}
                 </View>
                 <View className="flex-row items-center">
-                  <Text className="text-red-600 font-bold mr-3">${order.total_amount?.toFixed(2)}</Text>
+                  <Text className="text-red-600 font-bold mr-3">{formatMoney(order.total_minor ?? Math.round(order.total_amount * 100), order.currency ?? 'Currency unconfirmed')}</Text>
                   {isExpanded ? <ChevronUp size={20} color="#6b7280" /> : <ChevronDown size={20} color="#6b7280" />}
                 </View>
               </TouchableOpacity>
@@ -256,26 +252,14 @@ export default function OrderTrackingScreen() {
                   <View className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-4">
                     <Text className="text-base text-gray-900 font-bold mb-1">Status</Text>
                     <Text className="text-gray-600 text-sm mb-1">{statusText}</Text>
-                    <Text className="text-gray-600 text-sm">ETA: {etaString}</Text>
+                    <Text className="text-gray-600 text-sm">Your branch will confirm preparation and handover.</Text>
                   </View>
 
-                  {/* Meet Your Driver Module */}
-                  <View className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-4">
-                    <Text className="text-base text-gray-900 font-bold mb-4">Meet Your Driver</Text>
-                    
-                    <View className="flex-row items-center">
-                      <View className="w-12 h-12 bg-gray-200 rounded-full items-center justify-center mr-4 overflow-hidden">
-                        <User size={24} color="#6b7280" />
-                      </View>
-                      <View>
-                        <View className="flex-row items-center mb-1">
-                          <Text className="font-bold text-gray-900 mr-2">David L.</Text>
-                          <Star size={12} color="#f59e0b" fill="#f59e0b" />
-                          <Text className="text-sm font-medium text-gray-600 ml-1">4.9</Text>
-                        </View>
-                        <Text className="text-gray-500 text-sm">White Scooter</Text>
-                      </View>
-                    </View>
+                  <View className="bg-white rounded-2xl border border-gray-100 p-5 mb-4">
+                    <Text className="font-bold mb-2">{order.fulfilment_mode === 'collection' ? 'Collection' : 'Delivery'}</Text>
+                    <Text>{snapshotText(order.delivery_snapshot, 'address')}</Text>
+                    <Text>{snapshotText(order.delivery_snapshot, 'instructions')}</Text>
+                    <Text>Payment: {order.payment_status ?? 'Check with your branch'}</Text>
                   </View>
 
                   {/* Order Summary Module */}
@@ -284,18 +268,7 @@ export default function OrderTrackingScreen() {
                     <Text className="text-gray-600 text-sm leading-relaxed">{summaryText || "Fetching items..."}</Text>
                   </View>
 
-                  {/* Action Buttons */}
-                  <View className="flex-row justify-between">
-                    <TouchableOpacity className="bg-red-600 py-4 rounded-xl items-center shadow-sm flex-row justify-center flex-1 mr-2">
-                      <MessageSquare size={18} color="#fff" className="mr-2" />
-                      <Text className="text-white font-bold text-base">Contact Driver</Text>
-                    </TouchableOpacity>
 
-                    <TouchableOpacity className="bg-gray-800 py-4 rounded-xl items-center shadow-sm flex-row justify-center flex-1 ml-2">
-                      <HelpCircle size={18} color="#fff" className="mr-2" />
-                      <Text className="text-white font-bold text-base">Need Help?</Text>
-                    </TouchableOpacity>
-                  </View>
                 </View>
               )}
             </View>

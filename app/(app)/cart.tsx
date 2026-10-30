@@ -1,273 +1,188 @@
-import { View, Text, ScrollView, TouchableOpacity, Alert, ActivityIndicator, Image, Modal, Pressable } from 'react-native';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
+import { router } from 'expo-router';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/lib/supabase';
-import { ArrowLeft, MapPin, Store, CreditCard, Banknote, ChevronDown, Check, Menu } from 'lucide-react-native';
-import { router, useNavigation } from 'expo-router';
-import { DrawerActions } from '@react-navigation/native';
-import { useState } from 'react';
 import { useOrder } from '@/contexts/OrderContext';
-import { useMenu } from '@/hooks/useMenu';
+import { useStores } from '@/hooks/useStores';
+import { LocationPickerModal } from '@/components/LocationPickerModal';
+import { cartFingerprint, checkoutLines } from '@/lib/cart';
+import { normaliseContactPhone, type CashQuote, type CheckoutRequest, type PendingCheckout } from '@/lib/cash-checkout';
+import { checkoutRecovery, quoteCashOrder, submitCashOrder, formatMoney } from '@/lib/cash-orders';
 
 export default function CartScreen() {
-  const { items, cartTotal, clearCart } = useCart();
-  const { session } = useAuth();
-  const { selectedStore } = useOrder();
-  const { items: allMenu } = useMenu(false, selectedStore?.id);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const navigation = useNavigation();
+  const { user } = useAuth();
+  return <CashCart key={user?.id ?? 'guest'} />;
+}
 
-  // Dropdown states
-  const [isCurrencyModalVisible, setIsCurrencyModalVisible] = useState(false);
-  const [selectedCurrency, setSelectedCurrency] = useState('$ (USD)');
+function CashCart() {
+  const { items, storeId, updateQuantity, removeFromCart, clearCart } = useCart();
+  const { user } = useAuth();
+  const { selectedStore, deliveryLocation } = useOrder();
+  const { stores } = useStores();
+  const branch = selectedStore?.id === storeId ? selectedStore : stores.find(store => store.id === storeId);
+  const [mode, setMode] = useState<'collection' | 'delivery'>('delivery');
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
+  const [instructions, setInstructions] = useState('');
+  const [showLocation, setShowLocation] = useState(false);
+  const [review, setReview] = useState<{ draft: string; quote: CashQuote } | null>(null);
+  const [pending, setPending] = useState<PendingCheckout | null>(null);
+  const [loadingRecovery, setLoadingRecovery] = useState(true);
+  const [recoveryBlocked, setRecoveryBlocked] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const inFlight = useRef(false);
+  const mounted = useRef(true);
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+  const account = useRef(user?.id);
+  account.current = user?.id;
+  const currentItems = useRef(items);
+  currentItems.current = items;
+  const fingerprint = cartFingerprint(items);
 
-  const currencyRates: Record<string, number> = {
-    '$ (USD)': 1.0,
-    '€ (EUR)': 0.92,
-    '£ (GBP)': 0.79,
-    '$ (CAD)': 1.35,
-    'ZiG (ZWG)': 26.0884,
-  };
-  const conversionRate = currencyRates[selectedCurrency] || 1.0;
-  const displaySymbol = selectedCurrency.split(' ')[0];
+  useEffect(() => { setAddress(deliveryLocation?.address ?? ''); }, [deliveryLocation?.id, deliveryLocation?.address]);
+  useEffect(() => {
+    let cancelled = false;
+    setReview(null); setPending(null); setError(''); setName(''); setPhone('');
+    setRecoveryBlocked(false); setLoadingRecovery(true);
+    if (!user) { setLoadingRecovery(false); return; }
+    void checkoutRecovery.load(user.id).then(value => { if (!cancelled) setPending(value); })
+      .catch(() => { if (!cancelled) { setRecoveryBlocked(true); setError('Your previous order reference could not be read. Please contact your branch before ordering again.'); } })
+      .finally(() => { if (!cancelled) setLoadingRecovery(false); });
+    return () => { cancelled = true; };
+  }, [user?.id]);
 
-  const [isChangeModalVisible, setIsChangeModalVisible] = useState(false);
-  const [selectedChange, setSelectedChange] = useState('No change needed');
+  const request: CheckoutRequest = useMemo(() => ({
+    store_id: storeId ?? '', fulfilment_mode: mode,
+    contact: { name: name.trim(), phone: normaliseContactPhone(phone) },
+    address: mode === 'delivery' && deliveryLocation ? {
+      address: address.trim(), latitude: deliveryLocation.latitude, longitude: deliveryLocation.longitude, instructions: instructions.trim(),
+    } : null,
+    lines: checkoutLines(items),
+  }), [storeId, mode, name, phone, address, deliveryLocation, instructions, items]);
+  const draft = JSON.stringify(request);
+  const currentDraft = useRef(draft);
+  currentDraft.current = draft;
+  const quote = review?.draft === draft ? review.quote : null;
 
-  const currencyOptions = ['$ (USD)', '€ (EUR)', '£ (GBP)', '$ (CAD)', 'ZiG (ZWG)'];
-  
-  const currencyNotes: Record<string, number[]> = {
-    '$ (USD)': [5, 10, 20, 50, 100],
-    '€ (EUR)': [5, 10, 20, 50, 100, 200, 500],
-    '£ (GBP)': [5, 10, 20, 50],
-    '$ (CAD)': [5, 10, 20, 50, 100],
-    'ZiG (ZWG)': [10, 20, 50, 100, 200],
-  };
-
-  const localTotal = cartTotal * conversionRate;
-  const availableNotes = currencyNotes[selectedCurrency] || [5, 10, 20, 50, 100];
-  
-  const changeOptions = ['No change needed'];
-  availableNotes.forEach(note => {
-    if (note > localTotal) {
-      changeOptions.push(`Yes, from ${displaySymbol}${note.toFixed(2)}`);
+  const message = (cause: unknown) => typeof cause === 'object' && cause !== null && 'message' in cause && typeof cause.message === 'string'
+    ? cause.message : 'Unable to confirm your order. Please retry using the same order reference.';
+  const run = async (operation: (owner: string) => Promise<void>) => {
+    if (!user) { router.push('/(auth)/login?redirect=/(app)/cart'); return; }
+    if (inFlight.current) return;
+    const owner = user.id;
+    inFlight.current = true; setBusy(true); setError('');
+    try { await operation(owner); }
+    catch (cause) {
+      if (mounted.current && account.current === owner) {
+        setError(message(cause));
+        if (typeof cause === 'object' && cause !== null && 'code' in cause && cause.code === '22023') setReview(null);
+        try {
+          const checkpoint = await checkoutRecovery.load(owner);
+          if (mounted.current && account.current === owner) setPending(checkpoint);
+        }
+        catch { if (mounted.current && account.current === owner) setRecoveryBlocked(true); }
+      }
+    } finally {
+      inFlight.current = false;
+      if (mounted.current && account.current === owner) setBusy(false);
     }
+  };
+  const finish = (owner: string, orderId: string, submittedCart: string) => {
+    if (!mounted.current || account.current !== owner) return;
+    setPending(null); setReview(null);
+    if (cartFingerprint(currentItems.current) === submittedCart) clearCart();
+    router.replace(`/(app)/order-success?orderId=${orderId}`);
+  };
+  const getTotal = () => run(async owner => {
+    if (!storeId) throw new Error('Select the branch for this cart before checkout.');
+    if (mode === 'delivery' && !deliveryLocation) throw new Error('Choose your delivery location and enter its written address.');
+    const response = await quoteCashOrder(request, owner);
+    if (mounted.current && account.current === owner && currentDraft.current === draft) setReview({ draft, quote: response });
+  });
+  const placeOrder = () => run(async owner => {
+    if (!quote) throw new Error('Get and review your total before placing the order.');
+    const result = await checkoutRecovery.place(owner, quote.quote_id, fingerprint, (q, key) => submitCashOrder(owner, q, key));
+    finish(owner, result.order_id, fingerprint);
+  });
+  const retryPending = () => run(async owner => {
+    if (!pending) return;
+    const result = await checkoutRecovery.recover(owner, pending, (q, key) => submitCashOrder(owner, q, key));
+    finish(owner, result.order_id, pending.cartFingerprint);
   });
 
-  const handlePlaceOrder = async () => {
-    if (items.length === 0) return;
-    if (!session?.user?.id) {
-      Alert.alert(
-        'Sign in required', 
-        'You must be logged in to place an order.',
-        [
-          { text: 'Cancel', style: 'cancel' },
-          { text: 'Log In', onPress: () => router.push('/(auth)/login?redirect=/(app)/cart') }
-        ]
-      );
-      return;
-    }
-
-    Alert.alert(
-      'Ordering is not available yet',
-      'Please contact your Pogo’s branch to place a cash collection or delivery order.'
-    );
-  };
-
-  if (items.length === 0) {
-    return (
-      <View className="flex-1 bg-gray-50 items-center justify-center px-4">
-        <View className="w-20 h-20 bg-red-50 rounded-full items-center justify-center mb-4">
-          <Store size={32} color="#dc2626" />
-        </View>
-        <Text className="text-xl font-bold text-gray-900 mb-2">Your cart is empty</Text>
-        <Text className="text-gray-500 text-center mb-8">Looks like you haven't added any items to your order yet.</Text>
-        <TouchableOpacity 
-          onPress={() => router.back()}
-          className="bg-red-600 px-6 py-3 rounded-xl"
-        >
-          <Text className="text-white font-bold">Browse Menu</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
   return (
-    <View className="flex-1 bg-gray-50">
-      {/* Red Header matching Pogo's identity */}
-      <View className="bg-red-600 pt-14 pb-4 px-4 rounded-b-3xl">
-        <View className="flex-row items-center justify-between mb-2">
-          <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())} className="w-10 h-10 items-center justify-center -ml-2">
-            <Menu size={28} color="#fff" />
-          </TouchableOpacity>
-          <Text className="text-white text-xl font-bold">Checkout</Text>
-          <View className="w-10" />
-        </View>
-        <Text className="text-white text-base font-medium">Checkout - Confirm Order</Text>
+    <View className="flex-1 bg-slate-50">
+      <View className="bg-red-600 pt-14 pb-5 px-5 flex-row items-center justify-between">
+        <TouchableOpacity onPress={() => router.back()} accessibilityLabel="Go back"><Text className="text-white font-bold">Back</Text></TouchableOpacity>
+        <Text className="text-white text-xl font-bold">Your cash order</Text>
+        <View className="w-8" />
       </View>
-
-      <ScrollView className="flex-1 px-4 pt-4" showsVerticalScrollIndicator={false}>
-        
-        {/* Order Summary Card */}
-        <View className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-4">
-          <Text className="text-lg font-bold text-gray-900 mb-4">Order Summary</Text>
-          
-          {items.map((item, index) => {
-            const menuItem = allMenu.find(m => m.id === item.menu_item_id);
-            const isLast = index === items.length - 1;
-            
-            return (
-              <View key={item.id} className={`flex-row items-center py-3 ${!isLast ? 'border-b border-gray-50' : ''}`}>
-                {menuItem?.image_url ? (
-                  <Image 
-                    source={{ uri: menuItem.image_url }} 
-                    className="w-12 h-12 rounded-lg bg-gray-100 mr-3"
-                    resizeMode="cover"
-                  />
-                ) : (
-                  <View className="w-12 h-12 rounded-lg bg-gray-100 mr-3 items-center justify-center">
-                    <Store size={20} color="#9ca3af" />
+      <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }} keyboardShouldPersistTaps="handled">
+        {loadingRecovery ? <ActivityIndicator color="#dc2626" /> : pending ? (
+          <View className="bg-amber-50 border border-amber-200 p-5 rounded-xl mb-5">
+            <Text className="font-bold text-lg text-slate-900">Check your previous order</Text>
+            <Text className="text-slate-700 mt-2">Its confirmation was interrupted. Check it before placing another order.</Text>
+            <TouchableOpacity disabled={busy} onPress={retryPending} className="bg-red-600 p-4 rounded-xl mt-4 items-center">
+              <Text className="text-white font-bold">{busy ? 'Checking…' : 'Check order'}</Text>
+            </TouchableOpacity>
+          </View>
+        ) : null}
+        {error ? <Text accessibilityRole="alert" className="text-red-700 bg-red-50 p-4 rounded-xl mb-4">{error}</Text> : null}
+        {!loadingRecovery && !pending && !recoveryBlocked && items.length === 0 ? (
+          <View className="items-center py-12"><Text className="text-xl font-bold">Your cart is empty</Text>
+            <TouchableOpacity onPress={() => router.push('/store-picker')} className="mt-5 p-4 bg-red-600 rounded-xl"><Text className="text-white font-bold">Choose a branch</Text></TouchableOpacity>
+          </View>
+        ) : null}
+        {items.length > 0 && !pending && !loadingRecovery && !recoveryBlocked ? (
+          <>
+            <Text className="text-xl font-bold text-slate-900 mb-4">{branch?.name ?? 'Your selected branch'}</Text>
+            {items.map(item => (
+              <View key={item.id} className="bg-white rounded-xl border border-slate-200 p-4 mb-3">
+                <Text className="font-bold text-slate-900">{item.name}</Text>
+                {item.choice_labels.length > 0 ? <Text className="text-slate-500 mt-1">{item.choice_labels.join(', ')}</Text> : null}
+                <View className="flex-row items-center justify-between mt-3">
+                  <View className="flex-row items-center gap-4">
+                    <TouchableOpacity disabled={busy} accessibilityLabel={`Reduce ${item.name} quantity`} onPress={() => updateQuantity(item.id, item.quantity - 1)} className="p-3 bg-slate-100 rounded-lg"><Text>−</Text></TouchableOpacity>
+                    <Text>{item.quantity}</Text>
+                    <TouchableOpacity disabled={busy || item.quantity >= 99} accessibilityLabel={`Increase ${item.name} quantity`} onPress={() => updateQuantity(item.id, item.quantity + 1)} className="p-3 bg-slate-100 rounded-lg"><Text>+</Text></TouchableOpacity>
                   </View>
-                )}
-                
-                <View className="flex-1">
-                  <Text className="font-semibold text-gray-900 leading-tight">
-                    {item.quantity}x {item.name}
-                  </Text>
-                  {/* Mock customized text if price > base price, could expand logically in future */}
-                  {menuItem && item.price > menuItem.price && (
-                    <Text className="text-xs text-gray-500">(Custom)</Text>
-                  )}
+                  <TouchableOpacity disabled={busy} onPress={() => removeFromCart(item.id)}><Text className="text-red-600">Remove</Text></TouchableOpacity>
                 </View>
-                
-                <Text className="font-bold text-gray-900">{displaySymbol}{(item.price * item.quantity * conversionRate).toFixed(2)}</Text>
               </View>
-            );
-          })}
-        </View>
-
-        {/* Delivery Details Card */}
-        <View className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-4">
-          <Text className="text-lg font-bold text-gray-900 mb-4">Delivery Details</Text>
-          
-          <View className="flex-row items-center mb-4">
-            <Store size={20} color="#6b7280" className="mr-3" />
-            <Text className="text-base text-gray-800 font-medium">{selectedStore?.name || "Main St. QuickBite"}</Text>
-          </View>
-          
-          <View className="flex-row items-center">
-            <MapPin size={20} color="#6b7280" className="mr-3" />
-            <Text className="text-base text-gray-800 font-medium">Main Street, City Center</Text>
-          </View>
-        </View>
-
-        {/* Payment Method Card (Cash on Delivery format from mockup) */}
-        <View className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-8">
-          <View className="flex-row items-center mb-2">
-            <Banknote size={24} color="#15803d" className="mr-2" />
-            <Text className="text-lg font-bold text-gray-900">Payment on Delivery</Text>
-          </View>
-          <Text className="text-sm text-gray-500 mb-4">Cash payment collected by the driver.</Text>
-          
-          <View className="flex-row justify-between border-t border-gray-100 pt-3">
-            <TouchableOpacity onPress={() => setIsCurrencyModalVisible(true)}>
-              <Text className="text-xs text-gray-400 mb-1">Currency</Text>
-              <View className="flex-row items-center">
-                <Text className="font-semibold text-gray-900 mr-1">{selectedCurrency}</Text>
-                <ChevronDown size={16} color="#6b7280" />
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setIsChangeModalVisible(true)}>
-              <Text className="text-xs text-gray-400 mb-1">Need Change?</Text>
-              <View className="flex-row items-center">
-                <Text className="font-semibold text-gray-900 mr-1">{selectedChange}</Text>
-                <ChevronDown size={16} color="#6b7280" />
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View>
-        
-        <View className="h-24" />
-      </ScrollView>
-
-      {/* Sticky Footer */}
-      <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 pt-4 pb-8 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
-        <View className="flex-row justify-between items-center mb-4">
-          <Text className="text-gray-600 font-medium">Ordering coming soon</Text>
-          <Text className="text-2xl font-black text-gray-900">{displaySymbol}{(cartTotal * conversionRate).toFixed(2)}</Text>
-        </View>
-        
-        <TouchableOpacity 
-          onPress={handlePlaceOrder}
-          disabled
-          className={`py-4 rounded-xl items-center shadow-sm ${isSubmitting ? 'bg-red-400' : 'bg-red-600'}`}
-        >
-          {isSubmitting ? (
-            <ActivityIndicator color="white" />
-          ) : (
-            <View className="items-center">
-              <Text className="text-white font-black text-lg">ORDERING NOT YET AVAILABLE</Text>
-              <Text className="text-red-100 text-xs mt-1">Please contact your Pogo’s branch to order.</Text>
+            ))}
+            <View className="flex-row gap-3 my-4">
+              {(['delivery', 'collection'] as const).map(value => <TouchableOpacity key={value} disabled={busy} onPress={() => setMode(value)} className={`flex-1 p-4 rounded-xl border ${mode === value ? 'bg-red-50 border-red-500' : 'bg-white border-slate-200'}`}><Text className="text-center font-bold">{value === 'delivery' ? 'Cash on delivery' : 'Cash on collection'}</Text></TouchableOpacity>)}
             </View>
-          )}
-        </TouchableOpacity>
-      </View>
-
-      {/* Currency Modal */}
-      <Modal visible={isCurrencyModalVisible} transparent animationType="fade" onRequestClose={() => setIsCurrencyModalVisible(false)}>
-        <View className="flex-1 justify-end bg-black/40">
-          <Pressable className="flex-1" onPress={() => setIsCurrencyModalVisible(false)} />
-          <View className="bg-white rounded-t-3xl p-6">
-            <Text className="text-xl font-bold text-gray-900 mb-4">Select Currency</Text>
-            {currencyOptions.map(option => (
-              <TouchableOpacity 
-                key={option} 
-                onPress={() => {
-                  setSelectedCurrency(option);
-                  setIsCurrencyModalVisible(false);
-                }}
-                className="flex-row items-center justify-between py-4 border-b border-gray-100"
-              >
-                <Text className={`text-lg ${selectedCurrency === option ? 'font-bold text-red-600' : 'text-gray-700'}`}>
-                  {option}
-                </Text>
-                {selectedCurrency === option && <Check size={20} color="#dc2626" />}
-              </TouchableOpacity>
-            ))}
-            <TouchableOpacity onPress={() => setIsCurrencyModalVisible(false)} className="mt-6 bg-gray-100 py-3 rounded-xl items-center">
-              <Text className="font-bold text-gray-700">Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
-      {/* Change Modal */}
-      <Modal visible={isChangeModalVisible} transparent animationType="fade" onRequestClose={() => setIsChangeModalVisible(false)}>
-        <View className="flex-1 justify-end bg-black/40">
-          <Pressable className="flex-1" onPress={() => setIsChangeModalVisible(false)} />
-          <View className="bg-white rounded-t-3xl p-6">
-            <Text className="text-xl font-bold text-gray-900 mb-4">Need Change For?</Text>
-            {changeOptions.map(option => (
-              <TouchableOpacity 
-                key={option} 
-                onPress={() => {
-                  setSelectedChange(option);
-                  setIsChangeModalVisible(false);
-                }}
-                className="flex-row items-center justify-between py-4 border-b border-gray-100"
-              >
-                <Text className={`text-lg ${selectedChange === option ? 'font-bold text-red-600' : 'text-gray-700'}`}>
-                  {option}
-                </Text>
-                {selectedChange === option && <Check size={20} color="#dc2626" />}
-              </TouchableOpacity>
-            ))}
-            <TouchableOpacity onPress={() => setIsChangeModalVisible(false)} className="mt-6 bg-gray-100 py-3 rounded-xl items-center">
-              <Text className="font-bold text-gray-700">Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+            <Text className="font-semibold mb-2">Contact name</Text>
+            <TextInput accessibilityLabel="Contact name" editable={!busy} value={name} onChangeText={setName} maxLength={120} className="bg-white border border-slate-200 rounded-xl p-4 mb-4" />
+            <Text className="font-semibold mb-2">Phone number</Text>
+            <TextInput accessibilityLabel="Contact phone number" editable={!busy} value={phone} onChangeText={setPhone} keyboardType="phone-pad" placeholder="077 123 4567" maxLength={30} className="bg-white border border-slate-200 rounded-xl p-4 mb-4" />
+            {mode === 'delivery' ? <>
+              <TouchableOpacity disabled={busy} onPress={() => setShowLocation(true)} className="p-4 bg-white border border-slate-200 rounded-xl mb-4"><Text className="text-red-600 font-bold">{deliveryLocation ? 'Change map pin' : 'Choose delivery map pin'}</Text></TouchableOpacity>
+              <Text className="font-semibold mb-2">Written delivery address</Text>
+              <TextInput accessibilityLabel="Written delivery address" editable={!busy} value={address} onChangeText={setAddress} maxLength={500} multiline className="bg-white border border-slate-200 rounded-xl p-4 mb-4" />
+              <Text className="font-semibold mb-2">Landmarks or delivery instructions</Text>
+              <TextInput accessibilityLabel="Delivery instructions" editable={!busy} value={instructions} onChangeText={setInstructions} maxLength={500} multiline className="bg-white border border-slate-200 rounded-xl p-4 mb-4" />
+            </> : <Text className="text-slate-600 mb-4">Collect and pay cash at the selected branch.</Text>}
+            {quote ? <View className="p-5 bg-white border border-slate-200 rounded-xl mt-2">
+              <Text className="font-bold text-lg mb-3">Review your order</Text>
+              {quote.lines.map((line, index) => <View key={`${line.menu_item_id}-${index}`} className="mb-3"><Text>{line.quantity} × {line.name}: {formatMoney(line.line_total_minor, quote.currency)}</Text><Text className="text-slate-500 text-sm">{line.modifiers.map(option => option.name).join(', ')}</Text></View>)}
+              <Text>Meals: {formatMoney(quote.subtotal_minor, quote.currency)}</Text>
+              {quote.fulfilment_mode === 'delivery' ? <Text>Delivery: {formatMoney(quote.delivery_fee_minor, quote.currency)}</Text> : null}
+              <Text className="font-bold text-xl mt-2">Cash due: {formatMoney(quote.total_minor, quote.currency)}</Text>
+              <Text className="text-slate-500 mt-3">This total is valid for five minutes. The branch still needs to confirm your order.</Text>
+              <TouchableOpacity disabled={busy} onPress={placeOrder} className="p-4 bg-red-600 rounded-xl items-center mt-4"><Text className="text-white font-bold">{busy ? 'Submitting…' : 'Place cash order'}</Text></TouchableOpacity>
+            </View> : <>
+              <Text className="text-slate-500 mb-3">Get your branch’s total, including delivery, before placing the order.</Text>
+              <TouchableOpacity disabled={busy} onPress={getTotal} className="p-4 bg-red-600 rounded-xl items-center"><Text className="text-white font-bold">{busy ? 'Checking…' : 'Get total'}</Text></TouchableOpacity>
+            </>}
+          </>
+        ) : null}
+      </ScrollView>
+      <LocationPickerModal visible={showLocation} onClose={() => setShowLocation(false)} />
     </View>
   );
 }

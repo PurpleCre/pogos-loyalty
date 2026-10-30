@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator, Modal, Pressable } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator, Modal, Pressable, Alert } from 'react-native';
 import { useMenu, MenuItemOption, MenuItemOptionChoice } from '@/hooks/useMenu';
 import { useCart } from '@/contexts/CartContext';
 import { ShoppingCart, Plus, Minus, ChevronLeft, Utensils, CupSoda, Flame, Gift, Pizza, CheckCircle2, Clock, ShoppingBag, X, Circle, CheckCircle, CheckSquare, Square, Menu as MenuIcon, ChevronDown } from 'lucide-react-native';
@@ -45,16 +45,11 @@ export default function MenuScreen() {
   }
 
   const getQuantity = (menuItemId: string) => {
-    return cartItems.find(i => i.menu_item_id === menuItemId)?.quantity || 0;
+    return cartItems.filter(i => i.menu_item_id === menuItemId).reduce((sum, item) => sum + item.quantity, 0);
   };
 
   const handleIncrement = (item: any) => {
-    const qty = getQuantity(item.id);
-    if (qty > 0) {
-      updateQuantity(item.id, qty + 1);
-    } else {
-      openCustomization(item);
-    }
+    openCustomization(item);
   };
 
   const openCustomization = (item: any) => {
@@ -117,23 +112,35 @@ export default function MenuScreen() {
 
   const handleAddToOrder = () => {
     if (!customizationItem) return;
+    if (!selectedStore) {
+      closeCustomization();
+      router.push('/store-picker');
+      return;
+    }
+    const options: MenuItemOption[] = customizationItem.menu_item_options ?? [];
+    if (options.some(option => {
+      const count = (selectedOptions[option.id] ?? []).length;
+      return (option.is_required && count === 0) || count > option.max_choices;
+    })) {
+      Alert.alert('Check your meal', 'Choose the required options before adding this meal.');
+      return;
+    }
+    const selectedChoices = options.flatMap(option => (option.menu_item_option_choices ?? [])
+      .filter(choice => (selectedOptions[option.id] ?? []).includes(choice.id)));
     addToCart({
-      id: customizationItem.id, // In a real app, generate a unique ID for customized items
       menu_item_id: customizationItem.id,
       name: customizationItem.name,
       price: getCustomizedPrice(),
-      quantity: 1
-    }, selectedStore?.id || '');
+      quantity: 1,
+      choice_ids: selectedChoices.map(choice => choice.id),
+      choice_labels: selectedChoices.map(choice => choice.name),
+    }, selectedStore.id);
     closeCustomization();
   };
 
   const handleDecrement = (item: any) => {
-    const qty = getQuantity(item.id);
-    if (qty > 1) {
-      updateQuantity(item.id, qty - 1);
-    } else if (qty === 1) {
-      removeFromCart(item.id);
-    }
+    const line = cartItems.find(entry => entry.menu_item_id === item.id);
+    if (line) updateQuantity(line.id, line.quantity - 1);
   };
 
   const getCategoryIcon = (name: string, isActive: boolean) => {

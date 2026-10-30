@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/hooks/useAuth';
+import type { Json } from '@/lib/types';
 
 export interface StaffOrder {
   id: string;
@@ -10,10 +11,19 @@ export interface StaffOrder {
   points_earned: number;
   store_id: string;
   created_at: string;
+  currency?: string | null;
+  total_minor?: number | null;
+  fulfilment_mode?: string | null;
+  payment_status?: string | null;
+  payment_method?: string | null;
+  contact_snapshot?: Json;
+  delivery_snapshot?: Json;
   order_items?: {
     id: string;
     quantity: number;
     unit_price: number;
+    item_name?: string | null;
+    modifiers_snapshot?: Json;
     menu_item?: { name: string };
   }[];
   user?: {
@@ -57,7 +67,7 @@ export function useStaff() {
         .select(`
           *,
           order_items (
-            id, quantity, unit_price,
+            id, quantity, unit_price, item_name, modifiers_snapshot,
             menu_item:menu_items (name)
           ),
           user:profiles (full_name, email)

@@ -6,9 +6,11 @@ The confirmed branches are **Msasa, Kamfinsa and Westgate**. The first productio
 
 ## Current status
 
-Production implementation is underway. The first increment restores a reproducible local database/type baseline and contains the unsafe legacy write paths. **This is not a production release.** Legacy checkout, QR points, redemption, gifting, self-service POS linking, unaudited points adjustments and client-side staff creation are unavailable while trusted commands are built. GAAP ingestion is disabled by default pending vendor verification. Existing historical points records are preserved.
+Production implementation is underway. The foundation/security increment is verified locally, and server-priced cash quotation and atomic order creation are implemented. **This is not a production release.** Branch checkout stays disabled until its business data and remaining fulfilment/cash workflow are approved. QR points, redemption, gifting, self-service POS linking, unaudited points adjustments and client-side staff creation remain unavailable. GAAP ingestion is disabled by default pending vendor verification. Existing historical points records are preserved.
 
 See the [production plan](docs/production-implementation-plan.md), [task backlog](docs/production-backlog.csv), and [implementation progress/deployment notes](docs/implementation-progress.md).
+
+See the [cash checkout milestone](docs/cash-checkout-milestone.md) for acceptance evidence, recovery behavior, branch configuration and the next implementation boundary.
 
 ## Local development
 
@@ -54,4 +56,4 @@ Database types and enum constants are generated from the migrated local PostgreS
 
 The historical catalogue/order creation migration fills a gap in the recorded history. **Do not push it blindly to an existing project.** First compare the deployed schema/history, review legacy policies and triggers, rehearse the upgrade, and follow the deployment notes. No hosted migrations have been applied by this implementation work.
 
-Some historical migrations still contain demo seeds. Fresh disposable resets are useful for engineering, but those records are not approved Pogo’s branch/menu data. Production fixture separation, verified branch/menu import, SDK/dependency upgrades, the transactional cash-order engine and the audited loyalty ledger remain planned work. Root maintenance scripts can write remote data and are not part of the test commands.
+Some historical migrations still contain demo seeds. Fresh disposable resets are useful for engineering, but those records are not approved Pogo’s branch/menu data. Production fixture separation, verified branch/menu import, SDK/dependency upgrades, trusted staff/cash fulfilment and the audited loyalty ledger remain planned work. Root maintenance scripts can write remote data and are not part of the test commands.
