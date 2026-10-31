@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { StaffOrders } from '@/components/staff/StaffOrders';
 import { StaffRewards } from '@/components/staff/StaffRewards';
 import { useState, useEffect, useRef } from 'react';
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused } from 'expo-router/react-navigation';
 import { useLocalSearchParams } from 'expo-router';
 import { useStores } from '@/hooks/useStores';
 import { formatMoney } from '@/lib/cash-orders';
@@ -12,7 +12,7 @@ import { staffError } from '@/lib/staff-orders';
 
 export default function StaffDashboard() {
   const isFocused = useIsFocused();
-  const { user, userRole, staffStoreId } = useAuth();
+  const { user, userRole, staffStoreIds } = useAuth();
   const { stores } = useStores();
   const { storeId } = useLocalSearchParams<{ storeId?: string }>();
   const [tab, setTab] = useState<'orders' | 'rewards'>('orders');
@@ -20,7 +20,8 @@ export default function StaffDashboard() {
   const [lookupState, setLookup] = useState<{ scope: string; value: string }>({ scope: '', value: '' });
   const [messageState, setMessage] = useState<{ scope: string; value: string }>({ scope: '', value: '' });
   const isAdmin = userRole === 'admin';
-  const branchId = isAdmin ? selectedBranch ?? stores[0]?.id ?? null : staffStoreId;
+  const branches = isAdmin ? stores : stores.filter(store => staffStoreIds.includes(store.id));
+  const branchId = branches.some(store => store.id === selectedBranch) ? selectedBranch : branches[0]?.id ?? null;
   const scope = `${user?.id}:${branchId}`;
   const current = useRef(scope); current.current = scope;
   const message = messageState.scope === scope ? messageState.value : '';
@@ -45,7 +46,7 @@ export default function StaffDashboard() {
     <View className="bg-zinc-900 pt-14 pb-5 px-5">
       <Text className="text-white text-xl font-bold">{stores.find(store => store.id === branchId)?.name ?? 'Select a branch'}</Text>
       <Text className="text-slate-300">Orders and cash handover</Text>
-      {isAdmin ? <ScrollView horizontal className="mt-3">{stores.map(store => <TouchableOpacity key={store.id}
+      {branches.length > 1 ? <ScrollView horizontal className="mt-3">{branches.map(store => <TouchableOpacity key={store.id}
         onPress={() => setSelectedBranch(store.id)} className={`px-4 py-3 rounded-lg mr-2 ${branchId === store.id ? 'bg-red-600' : 'bg-zinc-700'}`}>
         <Text className="text-white">{store.name}</Text>
       </TouchableOpacity>)}</ScrollView> : null}

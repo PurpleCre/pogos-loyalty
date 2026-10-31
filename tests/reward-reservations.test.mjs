@@ -15,6 +15,7 @@ before(async () => {
   for (const user of [debtor, staff, otherStaff, admin, cashier]) await db.query('INSERT INTO auth.users(id, email) VALUES ($1, $2)', [user, `${user}@test.invalid`]);
   await db.query(`INSERT INTO public.stores(id, name, address, distance_miles) VALUES ($1, 'Fixture Msasa', 'Test only', 0), ($2, 'Fixture Westgate', 'Test only', 0)`, [store, otherStore]);
   await db.query(`INSERT INTO public.user_roles(user_id, role, staff_store_id) VALUES ($1, 'staff', $4), ($2, 'staff', $5), ($3, 'admin', NULL), ($6, 'staff', $4)`, [staff, otherStaff, admin, store, otherStore, cashier]);
+  await db.exec(`INSERT INTO public.staff_memberships(user_id, store_id) SELECT user_id, staff_store_id FROM public.user_roles WHERE role = 'staff' AND staff_store_id IS NOT NULL ON CONFLICT DO NOTHING`);
   for (const user of [customer, poor, secondCustomer]) await rpc('approve_loyalty_opening', [user, user === poor ? 5 : user === customer ? 10000 : 1000, 'Fixture reviewed opening'], admin);
   await db.query(`INSERT INTO public.reward_branch_settings(store_id, enabled, terms_approved, max_active_per_customer) VALUES ($1, true, true, 20), ($2, true, true, 20)`, [store, otherStore]);
   reward = (await db.query(`INSERT INTO public.rewards(name, points_cost, category, available) VALUES ('Fixture reward', 999, 'food', true) RETURNING id`)).rows[0].id;
@@ -30,7 +31,8 @@ before(async () => {
 });
 after(async () => { await db?.close(); });
 async function rpc(name, params = [], actor = customer, role = 'authenticated') {
-  return asRole(db, role, actor, async () => (await db.query(`SELECT public.${name}(${params.map((_, i) => `$${i + 1}`).join(',')}) AS result`, params)).rows[0].result);
+  return asRole(db, role, actor, async () => (await db.query(`SELECT public.${name}(${params.map((_, i) => `$${i + 1}`).join(',')}) AS result`, params)).rows[0].result,
+    { aal: [customer, poor, legacy, debtor, secondCustomer].includes(actor) ? 'aal1' : 'aal2' });
 }
 async function makeOffer(branch, cost = 80, stock = 5, minutes = 30) {
   return (await db.query(`INSERT INTO public.reward_branch_offers(store_id, reward_id, name, terms, gaap_product_reference, points_cost, reservation_minutes, available_units, enabled)

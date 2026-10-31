@@ -1,4 +1,19 @@
-project_id = "akxukhkkddfqodqmdtwx"
+# Local stack identity only; remote targets require an explicit reviewed project ref.
+project_id = "pogos-development"
+
+# Local auth defaults only. Hosted settings require a reviewed environment change.
+[auth]
+site_url = "http://localhost:8081"
+additional_redirect_urls = ["pogos-dev://auth/callback", "http://localhost:8081/auth/callback", "http://127.0.0.1:8081/auth/callback"]
+
+[auth.email]
+enable_confirmations = true
+double_confirm_changes = true
+max_frequency = "1m"
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
 
 [functions.send-push-notification]
 verify_jwt = true

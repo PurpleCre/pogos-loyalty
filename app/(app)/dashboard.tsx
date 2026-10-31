@@ -3,7 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, RefreshControl, Animated, Eas
 import { useAuth } from '@/hooks/useAuth';
 import { useRewards } from '@/hooks/useRewards';
 import { router, useNavigation } from 'expo-router';
-import { DrawerActions } from '@react-navigation/native';
+import { DrawerActions } from 'expo-router/react-navigation';
 import { 
   Scan, Gift, Trophy, Users, Star, 
   ChevronRight, Sparkles, ArrowUpRight, ArrowDownRight,

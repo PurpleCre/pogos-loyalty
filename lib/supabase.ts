@@ -1,15 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppState } from 'react-native';
 import type { Database } from './types';
 
-const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL || '';
-const SUPABASE_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '';
+import { runtimeEnvironment } from './environment';
+import { authStorage, authStorageKey } from './auth-storage';
 
 // Better formatting + Native adapter
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+export const supabase = createClient<Database>(runtimeEnvironment.supabaseUrl, runtimeEnvironment.supabaseKey, {
     auth: {
-        storage: AsyncStorage,
+        storage: authStorage,
+        storageKey: authStorageKey,
+        flowType: 'pkce',
         autoRefreshToken: true,
         persistSession: true,
         detectSessionInUrl: false,
@@ -26,3 +27,4 @@ AppState.addEventListener('change', (state) => {
     supabase.auth.stopAutoRefresh();
   }
 });
+if (AppState.currentState !== 'active') supabase.auth.stopAutoRefresh();

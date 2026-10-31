@@ -1,41 +1,55 @@
-name: Publish EAS Update
-
+name: Publish OTA update
 on:
   push:
-    branches:
-      - main # Triggers when you push to the main branch
-
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Approved non-production environment
+        type: choice
+        required: true
+        default: development
+        options: [development, staging]
+permissions:
+  contents: read
+concurrency:
+  group: eas-update-${{ inputs.target || 'development' }}
+  cancel-in-progress: false
 jobs:
   checks:
     uses: ./.github/workflows/checks.yml
-
   update:
     needs: checks
-    name: Publish EAS Update
     runs-on: ubuntu-latest
+    environment: ${{ inputs.target || 'development' }}
+    env:
+      EXPO_PUBLIC_APP_ENV: ${{ inputs.target || 'development' }}
+      POGOS_UPDATE_TARGET: ${{ inputs.target || 'development' }}
+      EXPO_PUBLIC_SUPABASE_URL: ${{ vars.EXPO_PUBLIC_SUPABASE_URL || secrets.EXPO_PUBLIC_SUPABASE_URL }}
+      EXPO_PUBLIC_SUPABASE_PROJECT_REF: ${{ vars.EXPO_PUBLIC_SUPABASE_PROJECT_REF }}
+      EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
+      ANDROID_MAPS_API_KEY: ${{ secrets.ANDROID_MAPS_API_KEY }}
+      IOS_MAPS_API_KEY: ${{ secrets.IOS_MAPS_API_KEY }}
+      EXPO_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY }}
+      EXPO_PUBLIC_SENTRY_DSN: ${{ vars.EXPO_PUBLIC_SENTRY_DSN }}
+      POGOS_PUBLISH: '1'
+      SENTRY_DISABLE_AUTO_UPLOAD: 'true'
+      EXPO_NO_TELEMETRY: '1'
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 22.19.0
+          node-version-file: .nvmrc
           cache: npm
-
-      - name: Setup Expo and EAS
-        uses: expo/expo-github-action@v8
+      - run: npm ci
+      - run: npm run config:check
+      - uses: expo/expo-github-action@v8
         with:
-          eas-version: latest
+          eas-version: 27.2.0
           packager: npm
           token: ${{ secrets.EXPO_TOKEN }}
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Publish Update
-        run: eas update --branch preview --message "Automated update from CI/CD [${{ github.sha }}]" --non-interactive
+      - name: Publish selected environment
         env:
-          EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}
-          EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
-          EXPO_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY }}
+          UPDATE_ENV: ${{ inputs.target == 'staging' && 'preview' || 'development' }}
+          UPDATE_CHANNEL: ${{ inputs.target || 'development' }}
+        run: eas update --channel "$UPDATE_CHANNEL" --environment "$UPDATE_ENV" --message "Verified source $GITHUB_SHA" --non-interactive

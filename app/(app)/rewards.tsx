@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused } from 'expo-router/react-navigation';
 import { useStores } from '@/hooks/useStores';
 import { useAuth } from '@/hooks/useAuth';
 import { useRewardReservations } from '@/hooks/useRewardReservations';

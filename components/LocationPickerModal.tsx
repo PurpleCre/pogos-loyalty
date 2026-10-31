@@ -139,7 +139,7 @@ export function LocationPickerModal({ visible, onClose }: LocationPickerModalPro
             <Text className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Pick on Map</Text>
             <View className="h-[250px] rounded-2xl overflow-hidden border border-gray-200 shadow-sm relative">
               <MapView 
-                style={StyleSheet.absoluteFillObject}
+                style={StyleSheet.absoluteFill}
                 region={region}
                 onRegionChangeComplete={setRegion}
                 onPress={handleMapPress}

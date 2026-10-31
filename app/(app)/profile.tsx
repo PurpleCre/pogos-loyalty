@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { router, useNavigation } from 'expo-router';
-import { DrawerActions } from '@react-navigation/native';
+import { DrawerActions } from 'expo-router/react-navigation';
 import { User, Save, Trophy, Share2, Shield, Bell, ChevronRight, Menu, LogIn, Edit2, X, Zap, Link2, Unlink, CheckCircle } from 'lucide-react-native';
 
 const EMOJI_AVATARS = ['🍔', '🍕', '🍟', '🍦', '☕️', '🦊', '🐼', '🦁', '🚀', '👑', '💎', '👻', '👽'];
@@ -36,7 +36,8 @@ export default function Profile() {
   };
 
   const handleSignOut = async () => {
-    await signOut();
+    const { error } = await signOut();
+    if (error) Alert.alert('Sign-out needs checking', 'We could not confirm all session cleanup. Check your connection and sign out again before sharing this device.');
     router.replace('/(auth)/login');
   };
 
@@ -130,6 +131,7 @@ export default function Profile() {
       </View>
 
       {/* Account Details Card */}
+      <Button className="mb-5" onPress={() => router.push('/auth/security')}>Account security and branch invitations</Button>
       <View className="bg-white rounded-3xl border border-slate-100 shadow-sm mb-5 overflow-hidden">
         <View className="px-5 pt-5 pb-2">
           <Text className="text-lg font-bold text-slate-800 mb-2">Account Details</Text>

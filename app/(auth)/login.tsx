@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Eye, EyeOff } from 'lucide-react-native';
+import { safeAuthDestination } from '@/lib/identity';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -12,7 +13,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [fullName, setFullName] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
-  const { signIn, signUp, loading } = useAuth();
+  const { signIn, signUp, resendConfirmation, loading } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { redirect } = useLocalSearchParams<{ redirect: string }>();
 
@@ -30,23 +31,20 @@ export default function Login() {
     setIsSubmitting(true);
     try {
       if (isSignUp) {
-        const { error } = await signUp(email, password, fullName);
+        const { error, session } = await signUp(email, password, fullName);
         if (error) throw error;
+        if (session) { router.replace('/(app)/dashboard'); return; }
         Alert.alert('Account created!', 'Please check your email to verify your account.');
         setIsSignUp(false);
       } else {
         const { error } = await signIn(email, password);
         if (error) throw error;
-        if (redirect) {
-          router.replace(redirect as any);
-        } else {
-          router.replace('/(app)/dashboard');
-        }
+        router.replace(safeAuthDestination(redirect) as '/(app)/dashboard');
       }
     } catch (error: any) {
       Alert.alert(
         isSignUp ? 'Error signing up' : 'Error signing in', 
-        error.message
+        isSignUp ? 'Use a valid email and a password of 12–128 characters. Check your connection and try again.' : 'Unable to sign in. Check your email, password, confirmation email and connection.'
       );
     } finally {
       setIsSubmitting(false);
@@ -140,7 +138,7 @@ export default function Login() {
               </View>
               {isSignUp && (
                 <Text className="text-xs text-slate-400 mt-1.5">
-                  Password must be at least 6 characters long
+                  Use a password between 12 and 128 characters
                 </Text>
               )}
             </View>
@@ -153,6 +151,15 @@ export default function Login() {
             >
               {isSignUp ? 'Sign Up' : 'Sign In'}
             </Button>
+
+            {!isSignUp ? <>
+              <Button variant="ghost" disabled={isSubmitting} onPress={() => router.push('/auth/forgot-password')}>Forgot password?</Button>
+              <Button variant="ghost" disabled={isSubmitting || !email.trim()} onPress={() => {
+                setIsSubmitting(true);
+                void resendConfirmation(email).then(() => Alert.alert('Check your inbox', 'If confirmation is needed, an email is on its way. Open it on this device.'))
+                  .catch(() => Alert.alert('Unable to resend', 'Check the email and connection, or wait before trying again.')).finally(() => setIsSubmitting(false));
+              }}>Resend confirmation email</Button>
+            </> : null}
 
             <TouchableOpacity 
               onPress={toggleMode}

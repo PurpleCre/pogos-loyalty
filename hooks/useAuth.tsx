@@ -1,192 +1,195 @@
-import { createContext, useContext, useEffect, useState, useRef, ReactNode } from 'react';
-import { User, Session } from '@supabase/supabase-js';
+import { createContext, useContext, useEffect, useState, useRef, ReactNode, useCallback } from 'react';
+import type { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import * as Linking from 'expo-linking';
+import { AppState, Platform } from 'react-native';
 import { useQueryClient } from '@tanstack/react-query';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createLocationCache } from '@/lib/location-cache';
+import { authStorage, authStorageKey, recoveryStorageKey, logoutStorageKey } from '@/lib/auth-storage';
+import { normaliseEmail, validatePassword, roleSnapshot } from '@/lib/identity';
+import bindings from '@/config/environments.json';
+import { createAuthCallback } from '@/lib/auth-callback';
+import { runtimeEnvironment } from '@/lib/environment';
 
 export type AppRole = 'user' | 'staff' | 'admin';
-
 interface AuthContextType {
-  user: User | null;
-  session: Session | null;
-  loading: boolean;
-  userRole: AppRole;
-  staffStoreId: string | null;
-  signUp: (email: string, password: string, fullName?: string) => Promise<{ error: any }>;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signOut: () => Promise<{ error: any }>;
-  refetchRole: () => Promise<void>;
+  user: User | null; session: Session | null; loading: boolean;
+  userRole: AppRole; staffStoreId: string | null; staffStoreIds: string[];
+  requiresMfa: boolean; recoveryRequired: boolean;
+  signUp(email: string, password: string, fullName?: string): Promise<{ error: Error | null; session?: Session | null }>;
+  signIn(email: string, password: string): Promise<{ error: Error | null }>;
+  signOut(): Promise<{ error: Error | null }>;
+  requestPasswordReset(email: string): Promise<void>;
+  resendConfirmation(email: string): Promise<void>;
+  completeCallback(params: Record<string, unknown>): Promise<'recovery' | 'signed-in'>;
+  updatePassword(password: string): Promise<{ otherSessionsRevoked: boolean }>;
+  refetchRole(): Promise<void>;
 }
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
-
-interface AuthProviderProps {
-  children: ReactNode;
+export function useAuth() {
+  const value = useContext(AuthContext);
+  if (!value) throw new Error('useAuth must be used within an AuthProvider');
+  return value;
 }
-
-export const AuthProvider = ({ children }: AuthProviderProps) => {
+const emptyAccess = { userRole: 'user' as AppRole, staffStoreIds: [] as string[], requiresMfa: false };
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const queryClient = useQueryClient();
-  const roleRevision = useRef(0);
-  const previousUserId = useRef<string | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const revision = useRef(0);
+  const currentSession = useRef<Session | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const [userRole, setUserRole] = useState<AppRole>('user');
-  const [staffStoreId, setStaffStoreId] = useState<string | null>(null);
-
-  const fetchUserRole = async (userId: string, revision = roleRevision.current) => {
+  const [access, setAccess] = useState(emptyAccess);
+  const [recoveryRequired, setRecoveryRequired] = useState(false);
+  const callback = useRef<ReturnType<typeof createAuthCallback> | null>(null);
+  const callbackRecoveryOwner = useRef<string | null>(null);
+  const signingOut = useRef(false);
+  const accessBoundary = useRef('');
+  const logoutInFlight = useRef<Promise<{ error: Error | null }> | null>(null);
+  const scheme = bindings[runtimeEnvironment.name].scheme;
+  const redirectTo = Platform.OS === 'web' ? Linking.createURL('/auth/callback') : scheme ? `${scheme}://auth/callback` : Linking.createURL('/auth/callback');
+  const fetchAccess = useCallback(async (userId: string, version: number) => {
     try {
-      const { data, error } = await supabase
-        .from('user_roles')
-        .select('role, staff_store_id')
-        .eq('user_id', userId);
-
-      if (revision !== roleRevision.current) return;
-      if (error || !data || data.length === 0) {
-        setUserRole('user');
-        setStaffStoreId(null);
-        return;
-      }
-
-      // Priority: admin > staff > user
-      const adminRole = data.find(r => r.role === 'admin');
-      if (adminRole) {
-        setUserRole('admin');
-        setStaffStoreId(null);
-        return;
-      }
-
-      const staffRole = data.find(r => r.role === 'staff');
-      if (staffRole) {
-        setUserRole('staff');
-        setStaffStoreId(staffRole.staff_store_id || null);
-        return;
-      }
-
-      setUserRole('user');
-      setStaffStoreId(null);
-    } catch (err) {
-      if (revision !== roleRevision.current) return;
-      console.error('Error fetching user role:', err);
-      setUserRole('user');
-      setStaffStoreId(null);
-    }
-  };
-
-  const refetchRole = async () => {
-    if (user?.id) {
-      await fetchUserRole(user.id);
-    }
-  };
-
+      const [roles, memberships, assurance] = await Promise.all([
+        supabase.from('user_roles').select('role, staff_store_id').eq('user_id', userId),
+        supabase.from('staff_memberships').select('store_id').eq('user_id', userId).eq('active', true),
+        supabase.auth.mfa.getAuthenticatorAssuranceLevel(),
+      ]);
+      if (version !== revision.current || currentSession.current?.user.id !== userId) return;
+      if (roles.error || memberships.error || assurance.error) throw new Error('Unable to verify account access.');
+      const stores = memberships.data.map(row => row.store_id).sort();
+      const snapshot = roleSnapshot(roles.data, stores, assurance.data.currentLevel);
+      const boundary = JSON.stringify([userId, snapshot.role, stores]);
+      if (accessBoundary.current && accessBoundary.current !== boundary) queryClient.clear();
+      accessBoundary.current = boundary;
+      setAccess({ userRole: snapshot.role as AppRole, staffStoreIds: stores,
+        requiresMfa: snapshot.requiresMfa || (assurance.data.nextLevel === 'aal2' && assurance.data.currentLevel !== 'aal2') });
+    } catch {
+      if (version === revision.current) { setAccess(emptyAccess); queryClient.clear(); }
+    } finally { if (version === revision.current) setLoading(false); }
+  }, [queryClient]);
+  const refetchRole = useCallback(async () => {
+    const owner = currentSession.current?.user.id;
+    if (owner) await fetchAccess(owner, ++revision.current);
+  }, [fetchAccess]);
   useEffect(() => {
-    let active = true;
-    let receivedAuthEvent = false;
+    let active = true; let receivedEvent = false;
     const timers = new Set<ReturnType<typeof setTimeout>>();
-
-    const applySession = (nextSession: Session | null) => {
+    const applySession = (next: Session | null, recovery = false) => {
       if (!active) return;
-      const revision = ++roleRevision.current;
-      const nextUserId = nextSession?.user.id ?? null;
-      const previousId = previousUserId.current;
-      if (previousId !== nextUserId) {
-        queryClient.clear();
-        if (previousId) {
-          void createLocationCache(AsyncStorage).clear(previousId).catch(() => {
-            console.error('Unable to clear departing account location cache');
-          });
-        }
-        setUserRole('user');
-        setStaffStoreId(null);
+      if (next && signingOut.current) return;
+      const version = ++revision.current;
+      const previous = currentSession.current?.user.id;
+      const owner = next?.user.id;
+      if (previous !== owner) {
+        queryClient.clear(); setAccess(emptyAccess); setRecoveryRequired(false);
+        if (previous) void createLocationCache(AsyncStorage).clear(previous).catch(() => undefined);
       }
-      previousUserId.current = nextUserId;
-      setSession(nextSession);
-      setUser(nextSession?.user ?? null);
-      setLoading(!!nextSession);
-      if (!nextUserId) return;
-
-      // Supabase auth callbacks run under the auth lock. Fetching via the same
-      // client inside an awaited callback can deadlock; defer until it returns.
+      currentSession.current = next; setSession(next); setLoading(!!next);
+      if (recovery) setRecoveryRequired(true);
+      // Never await another Supabase call inside the auth event lock.
       const timer = setTimeout(() => {
         timers.delete(timer);
-        if (!active || revision !== roleRevision.current) return;
-        void fetchUserRole(nextUserId, revision).finally(() => {
-          if (active && revision === roleRevision.current) setLoading(false);
-        });
+        if (!active || version !== revision.current) return;
+        void (async () => {
+          if (!owner) return;
+          if (await authStorage.getItem(logoutStorageKey)) {
+            signingOut.current = true; ++revision.current;
+            currentSession.current = null; setSession(null); setAccess(emptyAccess); setLoading(false); queryClient.clear();
+            await authStorage.removeItem(authStorageKey);
+            await supabase.auth.signOut({ scope: 'local' });
+            return;
+          }
+          if (recovery) await authStorage.setItem(recoveryStorageKey, owner);
+          const stored = await authStorage.getItem(recoveryStorageKey);
+          if (!active || version !== revision.current) return;
+          setRecoveryRequired(stored === 'pending' || stored === owner);
+          await fetchAccess(owner, version);
+        })().catch(() => { if (active && version === revision.current) { setAccess(emptyAccess); setRecoveryRequired(true); setLoading(false); } });
       }, 0);
       timers.add(timer);
     };
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      receivedAuthEvent = true;
-      applySession(nextSession);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, next) => {
+      if (event === 'PASSWORD_RECOVERY') callbackRecoveryOwner.current = next?.user.id ?? null;
+      receivedEvent = true; applySession(next, event === 'PASSWORD_RECOVERY');
     });
     void supabase.auth.getSession().then(({ data, error }) => {
-      if (!receivedAuthEvent) applySession(error ? null : data.session);
-    }).catch(() => {
-      if (!receivedAuthEvent) applySession(null);
-    });
-
-    return () => {
-      active = false;
-      ++roleRevision.current;
-      timers.forEach(clearTimeout);
-      subscription.unsubscribe();
-    };
-  }, [queryClient]);
-
-  const signUp = async (email: string, password: string, fullName?: string) => {
-    const redirectUrl = Linking.createURL('/');
-    
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: {
-          full_name: fullName,
-        }
-      }
-    });
-    return { error };
+      if (!receivedEvent) applySession(error ? null : data.session);
+    }).catch(() => { if (!receivedEvent) applySession(null); });
+    const foreground = AppState.addEventListener('change', state => { if (state === 'active') void refetchRole(); else { ++revision.current; setAccess(emptyAccess); } });
+    const interval = setInterval(() => { if (AppState.currentState === 'active') void refetchRole(); }, 30000);
+    return () => { active = false; ++revision.current; timers.forEach(clearTimeout); clearInterval(interval); foreground.remove(); subscription.unsubscribe(); };
+  }, [queryClient, fetchAccess, refetchRole]);
+  const signOut = (): Promise<{ error: Error | null }> => {
+    if (logoutInFlight.current) return logoutInFlight.current;
+    // Hide private state immediately. Local sign-out works without network and
+    // deletes stored refresh credentials; server-side role revocation is separate.
+    signingOut.current = true;
+    ++revision.current; currentSession.current = null; setSession(null); setAccess(emptyAccess); setRecoveryRequired(false); setLoading(false); queryClient.clear();
+    const operation = (async () => {
+      try {
+        // Persist intent before any network request: a kill/offline logout may
+        // not restore this session on restart, even if refresh revocation fails.
+        await authStorage.setItem(logoutStorageKey, '1');
+        const { error } = await supabase.auth.signOut({ scope: 'local' });
+        await authStorage.removeItem(authStorageKey); await authStorage.removeItem(recoveryStorageKey);
+        return { error };
+      } catch { return { error: new Error('Unable to clear this device session. Try signing out again.') }; }
+    })().finally(() => { logoutInFlight.current = null; });
+    logoutInFlight.current = operation; return operation;
   };
-
+  const signUp = async (email: string, password: string, fullName = '') => {
+    try {
+      validatePassword(password);
+      if (logoutInFlight.current) await logoutInFlight.current;
+      await authStorage.removeItem(logoutStorageKey);
+      signingOut.current = false;
+      const { data, error } = await supabase.auth.signUp({ email: normaliseEmail(email), password,
+        options: { emailRedirectTo: redirectTo, data: { full_name: fullName.trim().slice(0, 120) } } });
+      return { error, session: data.session };
+    } catch (error) { return { error: error instanceof Error ? error : new Error('Unable to create account.') }; }
+  };
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    return { error };
+    try {
+      if (logoutInFlight.current) await logoutInFlight.current;
+      await authStorage.removeItem(logoutStorageKey);
+      signingOut.current = false; const { error } = await supabase.auth.signInWithPassword({ email: normaliseEmail(email), password }); return { error };
+    }
+    catch { return { error: new Error('Unable to sign in. Check your connection and try again.') }; }
   };
-
-  const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    setUserRole('user');
-    setStaffStoreId(null);
-    return { error };
+  const requestPasswordReset = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(normaliseEmail(email), { redirectTo });
+    if (error) throw new Error('Unable to send recovery email. Wait a moment and try again.');
   };
-
-  const value = {
-    user,
-    session,
-    loading,
-    userRole,
-    staffStoreId,
-    signUp,
-    signIn,
-    signOut,
-    refetchRole,
+  const resendConfirmation = async (email: string) => {
+    const { error } = await supabase.auth.resend({ type: 'signup', email: normaliseEmail(email), options: { emailRedirectTo: redirectTo } });
+    if (error) throw new Error('Unable to resend confirmation. Wait a moment and try again.');
   };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  if (!callback.current) callback.current = createAuthCallback({
+    storage: authStorage, markerKey: recoveryStorageKey,
+    owner: () => currentSession.current?.user.id,
+    recoveryOwner: () => callbackRecoveryOwner.current,
+    beforeExchange: () => { callbackRecoveryOwner.current = null; signingOut.current = false; },
+    exchange: async (code, flowId) => {
+      if (logoutInFlight.current) await logoutInFlight.current;
+      await authStorage.removeItem(logoutStorageKey);
+      return supabase.auth.exchangeCodeForSession(code, flowId ? { flowId } : undefined);
+    },
+    signOut, setRecovery: setRecoveryRequired,
+  });
+  const completeCallback = callback.current;
+  const updatePassword = async (password: string) => {
+    if (!recoveryRequired || !currentSession.current) throw new Error('Open a fresh recovery email first.');
+    validatePassword(password);
+    const { error } = await supabase.auth.updateUser({ password });
+    if (error) throw new Error('Unable to update password. Try again or request a fresh recovery email.');
+    // Revoke refresh sessions elsewhere, then require a fresh login here too.
+    const revoked = await supabase.auth.signOut({ scope: 'global' });
+    const local = await signOut();
+    if (local.error) throw local.error;
+    return { otherSessionsRevoked: !revoked.error };
+  };
+  return <AuthContext.Provider value={{ user: session?.user ?? null, session, loading,
+    ...access, staffStoreId: access.staffStoreIds[0] ?? null, recoveryRequired,
+    signUp, signIn, signOut, requestPasswordReset, resendConfirmation, completeCallback, updatePassword, refetchRole }}>{children}</AuthContext.Provider>;
 };

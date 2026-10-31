@@ -113,7 +113,7 @@ export function useMenu(isAdmin = false, storeId?: string) {
     try {
       const { data, error } = await supabase
         .from('menu_items')
-        .insert(item)
+        .insert({ category_id: item.category_id, name: item.name, description: item.description, price: item.price, image_url: item.image_url, is_available: item.is_available, store_id: item.store_id })
         .select()
         .single();
         
@@ -132,7 +132,7 @@ export function useMenu(isAdmin = false, storeId?: string) {
     try {
       const { data, error } = await supabase
         .from('menu_items')
-        .update(updates)
+        .update({ category_id: updates.category_id, name: updates.name, description: updates.description, price: updates.price, image_url: updates.image_url, is_available: updates.is_available, store_id: updates.store_id })
         .eq('id', id)
         .select()
         .single();
@@ -187,7 +187,7 @@ export function useMenu(isAdmin = false, storeId?: string) {
     try {
       const { data, error } = await supabase
         .from('menu_categories')
-        .update(updates)
+        .update({ name: updates.name, sort_order: updates.sort_order, is_active: updates.is_active })
         .eq('id', id)
         .select()
         .single();

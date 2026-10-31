@@ -2,7 +2,7 @@ import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, RefreshCon
 import { useReferrals } from '@/hooks/useReferrals';
 import { Share2, Copy, Users, TrendingUp, Gift, ArrowLeft } from 'lucide-react-native';
 import { useState, useCallback } from 'react';
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused } from 'expo-router/react-navigation';
 import { router } from 'expo-router';
 
 export default function ReferralsScreen() {

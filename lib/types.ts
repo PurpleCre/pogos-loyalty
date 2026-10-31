@@ -691,6 +691,44 @@ export type Database = {
         }
       ]
     }
+    "identity_access_events": {
+      Row: {
+        "id": string
+        "actor_id": string
+        "subject_id": string | null
+        "invitation_id": string | null
+        "action": string
+        "details": Json
+        "created_at": string
+      }
+      Insert: {
+        "id"?: string
+        "actor_id": string
+        "subject_id"?: string | null
+        "invitation_id"?: string | null
+        "action": string
+        "details": Json
+        "created_at"?: string
+      }
+      Update: {
+        "id"?: string
+        "actor_id"?: string
+        "subject_id"?: string | null
+        "invitation_id"?: string | null
+        "action"?: string
+        "details"?: Json
+        "created_at"?: string
+      }
+      Relationships: [
+        {
+          foreignKeyName: "identity_access_events_invitation_id_fkey"
+          columns: ["invitation_id"]
+          isOneToOne: false
+          referencedRelation: "staff_invitations"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
     "loyalty_accounts": {
       Row: {
         "user_id": string
@@ -1827,6 +1865,85 @@ export type Database = {
 
       ]
     }
+    "staff_invitations": {
+      Row: {
+        "id": string
+        "email": string
+        "store_id": string
+        "invited_by": string
+        "reason": string
+        "expires_at": string
+        "accepted_by": string | null
+        "accepted_at": string | null
+        "revoked_at": string | null
+        "created_at": string
+      }
+      Insert: {
+        "id": string
+        "email": string
+        "store_id": string
+        "invited_by": string
+        "reason": string
+        "expires_at": string
+        "accepted_by"?: string | null
+        "accepted_at"?: string | null
+        "revoked_at"?: string | null
+        "created_at"?: string
+      }
+      Update: {
+        "id"?: string
+        "email"?: string
+        "store_id"?: string
+        "invited_by"?: string
+        "reason"?: string
+        "expires_at"?: string
+        "accepted_by"?: string | null
+        "accepted_at"?: string | null
+        "revoked_at"?: string | null
+        "created_at"?: string
+      }
+      Relationships: [
+        {
+          foreignKeyName: "staff_invitations_store_id_fkey"
+          columns: ["store_id"]
+          isOneToOne: false
+          referencedRelation: "stores"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
+    "staff_memberships": {
+      Row: {
+        "user_id": string
+        "store_id": string
+        "active": boolean
+        "granted_by": string | null
+        "updated_at": string
+      }
+      Insert: {
+        "user_id": string
+        "store_id": string
+        "active"?: boolean
+        "granted_by"?: string | null
+        "updated_at"?: string
+      }
+      Update: {
+        "user_id"?: string
+        "store_id"?: string
+        "active"?: boolean
+        "granted_by"?: string | null
+        "updated_at"?: string
+      }
+      Relationships: [
+        {
+          foreignKeyName: "staff_memberships_store_id_fkey"
+          columns: ["store_id"]
+          isOneToOne: false
+          referencedRelation: "stores"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
     "stores": {
       Row: {
         "id": string
@@ -2079,6 +2196,12 @@ export type Database = {
     }
     Views: { [_ in never]: never }
     Functions: {
+    "accept_staff_invitation": {
+      Args: {
+        "p_id": string
+      }
+      Returns: string
+    }
     "apply_cash_order_earning": {
       Args: {
         "p_order": string
@@ -2153,6 +2276,19 @@ export type Database = {
       }
       Returns: boolean
     }
+    "identity_aal2": {
+      Args: Record<PropertyKey, never>
+      Returns: boolean
+    }
+    "invite_branch_staff": {
+      Args: {
+        "p_id": string
+        "p_email": string
+        "p_store_id": string
+        "p_reason": string
+      }
+      Returns: string
+    }
     "list_cash_branch_staff": {
       Args: {
         "p_store_id": string
@@ -2173,6 +2309,10 @@ export type Database = {
       Returns: Json
     }
     "loyalty_reconciliation": {
+      Args: Record<PropertyKey, never>
+      Returns: Json
+    }
+    "my_staff_invitations": {
       Args: Record<PropertyKey, never>
       Returns: Json
     }
@@ -2245,11 +2385,27 @@ export type Database = {
       }
       Returns: Json
     }
+    "revoke_staff_invitation": {
+      Args: {
+        "p_id": string
+        "p_reason": string
+      }
+      Returns: undefined
+    }
     "reward_result": {
       Args: {
         "p_reservation": string
       }
       Returns: Json
+    }
+    "set_identity_access": {
+      Args: {
+        "p_user_id": string
+        "p_role": Database["public"]["Enums"]["app_role"]
+        "p_store_ids": (string)[]
+        "p_reason": string
+      }
+      Returns: undefined
     }
     "share_user_points": {
       Args: {
@@ -2258,6 +2414,20 @@ export type Database = {
         "points_to_transfer": number
       }
       Returns: Json
+    }
+    "staff_assignment": {
+      Args: {
+        "p_store": string
+        "p_actor": string
+      }
+      Returns: boolean
+    }
+    "staff_branch_member": {
+      Args: {
+        "p_store": string
+        "p_actor": string
+      }
+      Returns: boolean
     }
     }
     Enums: {

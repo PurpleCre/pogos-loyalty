@@ -18,6 +18,7 @@ before(async () => {
   }
   await db.query(`INSERT INTO public.stores(id, name, address, distance_miles) VALUES ($1, 'Fixture Msasa', 'Test only', 0), ($2, 'Fixture Westgate', 'Test only', 0)`, [store, otherStore]);
   await db.query(`INSERT INTO public.user_roles(user_id, role, staff_store_id) VALUES ($1, 'staff', $4), ($2, 'staff', $4), ($3, 'admin', NULL), ($5, 'staff', $6)`, [staff, cashier, admin, store, outsider, otherStore]);
+  await db.exec(`INSERT INTO public.staff_memberships(user_id, store_id) SELECT user_id, staff_store_id FROM public.user_roles WHERE role = 'staff' AND staff_store_id IS NOT NULL ON CONFLICT DO NOTHING`);
   await db.query(`INSERT INTO public.cash_branch_cashiers(store_id, user_id, active) VALUES ($1, $2, true)`, [store, cashier]);
   await db.query(`INSERT INTO public.cash_order_settings(store_id, currency, enabled, pricing_approved, collection_enabled, delivery_enabled, fulfilment_enabled, acceptance_minutes)
     VALUES ($1, 'USD', true, true, true, true, true, 10)`, [store]);
@@ -31,7 +32,8 @@ before(async () => {
 after(async () => { await db?.close(); });
 
 async function rpc(name, params, actor = staff, role = 'authenticated') {
-  return asRole(db, role, actor, async () => (await db.query(`SELECT public.${name}(${params.map((_, i) => `$${i + 1}`).join(',')}) AS result`, params)).rows[0].result);
+  return asRole(db, role, actor, async () => (await db.query(`SELECT public.${name}(${params.map((_, i) => `$${i + 1}`).join(',')}) AS result`, params)).rows[0].result,
+    { aal: [customer, legacy, debtor].includes(actor) ? 'aal1' : 'aal2' });
 }
 async function newOrder(mode = 'collection', owner = customer) {
   const request = { store_id: store, fulfilment_mode: mode, contact: { name: 'Test Customer', phone: '+263771234567' },
@@ -308,4 +310,18 @@ test('internal staff audit notes stay private to authorised branch operators', a
     const rows = await asRole(db, 'authenticated', actor, () => db.query('SELECT * FROM public.order_status_events WHERE order_id = $1', [id]));
     assert.equal(rows.rows.length, count);
   }
+});
+
+test('delivery can dispatch to an explicitly added second branch membership without trusting its legacy branch column', async () => {
+  await db.exec('BEGIN');
+  try {
+    await rpc('set_identity_access', [outsider, 'staff', [otherStore, store], 'Approved multi-branch delivery fixture'], admin);
+    assert.equal((await db.query('SELECT staff_store_id FROM public.user_roles WHERE user_id=$1 AND role=\'staff\'', [outsider])).rows[0].staff_store_id, otherStore);
+    const { id } = await ready('delivery');
+    await command(id, 'dispatch', { collector_id: outsider });
+    const completed = await command(id, 'complete', cashDetails(), outsider);
+    assert.equal(completed.status, 'completed');
+    await rpc('set_identity_access', [outsider, 'staff', [otherStore], 'Remove temporary branch fixture'], admin);
+    await assert.rejects(command(id, 'request_cash_handover', { receiver_id: cashier }, outsider), { code: '42501' });
+  } finally { await db.exec('ROLLBACK'); }
 });

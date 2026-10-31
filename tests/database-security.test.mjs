@@ -33,6 +33,7 @@ before(async () => {
   }
   await db.query(`INSERT INTO public.stores(id, name, address, distance_miles) VALUES ($1, 'Test A', 'Fixture', 0), ($2, 'Test B', 'Fixture', 0)`, [branchA, branchB]);
   await db.query(`INSERT INTO public.user_roles(user_id, role, staff_store_id) VALUES ($1, 'staff', $2), ($3, 'admin', NULL)`, [staff, branchA, admin]);
+  await db.exec(`INSERT INTO public.staff_memberships(user_id, store_id) SELECT user_id, staff_store_id FROM public.user_roles WHERE role = 'staff' AND staff_store_id IS NOT NULL ON CONFLICT DO NOTHING`);
   await db.query(`INSERT INTO public.orders(user_id, store_id, total_amount) VALUES ($1, $2, 10), ($3, $4, 20)`, [alice, branchA, bob, branchB]);
   await db.exec(`INSERT INTO public.order_items(order_id, menu_item_id, quantity, unit_price)
     SELECT o.id, m.id, 1, m.price FROM public.orders o

@@ -38,9 +38,11 @@ const handler = async (req: Request): Promise<Response> => {
         status: 401, headers: { 'Content-Type': 'application/json', ...corsHeaders },
       });
     }
-    const { data: adminRole } = await supabaseClient.from('user_roles')
-      .select('id').eq('user_id', identity.user.id).eq('role', 'admin').maybeSingle();
-    if (!adminRole) {
+    const caller = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_ANON_KEY') ?? '', {
+      global: { headers: { Authorization: `Bearer ${token}` } }, auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const { data: allowed, error: permissionError } = await caller.rpc('has_role', { _user_id: identity.user.id, _role: 'admin' });
+    if (permissionError || allowed !== true) {
       return new Response(JSON.stringify({ error: 'Administrator access required' }), {
         status: 403, headers: { 'Content-Type': 'application/json', ...corsHeaders },
       });
@@ -48,7 +50,6 @@ const handler = async (req: Request): Promise<Response> => {
 
     const { title, body, icon, badge, data, userIds, sendToAll }: PushNotificationRequest = await req.json();
 
-    console.log('Sending push notification:', { title, body, userIds, sendToAll });
 
     // Get VAPID keys from environment
     const VAPID_PUBLIC_KEY = Deno.env.get('VAPID_PUBLIC_KEY');
@@ -94,7 +95,6 @@ const handler = async (req: Request): Promise<Response> => {
         if (subscription.endpoint.startsWith('capacitor://fcm/')) {
           // Handle Capacitor/FCM notifications
           const fcmToken = subscription.endpoint.replace('capacitor://fcm/', '');
-          console.log(`Processing FCM notification for token: ${fcmToken}`);
           
           // For Capacitor apps, we mark as sent since the notification will be handled by FCM
           results.push({
@@ -251,7 +251,6 @@ async function sendWebPush(subscription: any, payload: string, options: any) {
     body: payload,
   });
 
-  console.log(`Push notification sent to ${endpoint}: ${response.status}`);
 
   if (!response.ok) {
     const errorText = await response.text();

@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 import type { Store } from '@/hooks/useStores';
+import { accessTokenFor } from '@/lib/cash-orders';
+import type { AppRole } from '@/hooks/useAuth';
 
 interface AdminUser {
   id: string;
@@ -13,6 +15,7 @@ interface AdminUser {
   created_at: string;
   role: string;
   staff_store_id?: string | null;
+  staff_store_ids: string[];
 }
 
 interface AdminReward {
@@ -50,42 +53,31 @@ interface DashboardStats {
 }
 
 export const useAdmin = () => {
-  const { user } = useAuth();
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [users, setUsers] = useState<AdminUser[]>([]);
+  const { user, userRole, loading } = useAuth();
+  const isAdmin = userRole === 'admin';
+  const scope = `${user?.id}:${isAdmin}`;
+  const currentScope = useRef(scope); currentScope.current = scope;
+  const [userState, setUserState] = useState<{ scope: string; rows: AdminUser[] }>({ scope, rows: [] });
+  const users = userState.scope === scope ? userState.rows : [];
+  const setUsers = (rows: AdminUser[]) => setUserState({ scope, rows });
   const [rewards, setRewards] = useState<AdminReward[]>([]);
   const [achievements, setAchievements] = useState<any[]>([]);
-  const [transactions, setTransactions] = useState<AdminTransaction[]>([]);
+  const [transactionState, setTransactionState] = useState<{ scope: string; rows: AdminTransaction[] }>({ scope, rows: [] });
+  const transactions = transactionState.scope === scope ? transactionState.rows : [];
+  const setTransactions = (rows: AdminTransaction[]) => setTransactionState({ scope, rows });
   const [stores, setStores] = useState<AdminStore[]>([]);
   const [dashboardStats, setDashboardStats] = useState<DashboardStats>({
     totalUsers: 0, totalOrdersToday: 0, revenueToday: 0, activeStaff: 0, totalStores: 0, pendingOrders: 0
   });
-  const [loading, setLoading] = useState(true);
-
-  // Check if current user is admin
   useEffect(() => {
-    const checkAdminRole = async () => {
-      if (!user) {
-        setIsAdmin(false);
-        setLoading(false);
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', user.id)
-        .eq('role', 'admin')
-        .single();
-
-      setIsAdmin(!error && data?.role === 'admin');
-      setLoading(false);
-    };
-
-    checkAdminRole();
-  }, [user]);
+    setUsers([]); setTransactions([]); setRewards([]); setAchievements([]); setStores([]);
+  }, [scope]);
 
   const fetchUsers = async () => {
+    const requestScope = scope;
+    if (!isAdmin || !user) return;
+    const token = await accessTokenFor(user.id);
+    const authorization = `Bearer ${token}`;
     // 1. Fetch profiles and points
     const { data: profilesData, error: profilesError } = await supabase
       .from('profiles')
@@ -100,7 +92,7 @@ export const useAdmin = () => {
           total_redeemed
         )
       `)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false }).setHeader('Authorization', authorization);
 
     if (profilesError || !profilesData) {
       console.error('Error fetching profiles:', profilesError);
@@ -110,17 +102,20 @@ export const useAdmin = () => {
     // 2. Fetch roles
     const { data: rolesData, error: rolesError } = await supabase
       .from('user_roles')
-      .select('user_id, role, staff_store_id');
+      .select('user_id, role, staff_store_id').setHeader('Authorization', authorization);
 
     if (rolesError) {
       console.error('Error fetching roles:', rolesError);
       return;
     }
 
+    const memberships = await supabase.from('staff_memberships').select('user_id, store_id').eq('active', true).setHeader('Authorization', authorization);
+    if (memberships.error || currentScope.current !== requestScope) return;
     // 3. Map roles by user_id
     const rolesMap = new Map();
     rolesData.forEach(r => {
-      rolesMap.set(r.user_id, r);
+      const priority = { admin: 3, staff: 2, user: 1 };
+      if (priority[r.role] > (priority[rolesMap.get(r.user_id)?.role as AppRole] ?? 0)) rolesMap.set(r.user_id, r);
     });
 
     // 4. Merge
@@ -135,7 +130,8 @@ export const useAdmin = () => {
         total_redeemed: (u.user_points as any)?.[0]?.total_redeemed || (u.user_points as any)?.total_redeemed || 0,
         created_at: u.created_at || '',
         role: roleData?.role || 'user',
-        staff_store_id: roleData?.staff_store_id || null
+        staff_store_id: roleData?.staff_store_id || null,
+        staff_store_ids: memberships.data.filter(m => m.user_id === u.id).map(m => m.store_id)
       };
     });
     
@@ -154,6 +150,9 @@ export const useAdmin = () => {
   };
 
   const fetchTransactions = async () => {
+    const requestScope = scope;
+    if (!isAdmin || !user) return;
+    const token = await accessTokenFor(user.id);
     const { data, error } = await supabase
       .from('transactions')
       .select(`
@@ -163,7 +162,7 @@ export const useAdmin = () => {
         )
       `)
       .order('created_at', { ascending: false })
-      .limit(100);
+      .limit(100).setHeader('Authorization', `Bearer ${token}`);
 
     if (!error && data) {
       const formattedTransactions = data.map(transaction => ({
@@ -177,7 +176,7 @@ export const useAdmin = () => {
         items: transaction.items || [],
         created_at: transaction.created_at || ''
       }));
-      setTransactions(formattedTransactions);
+      if (currentScope.current === requestScope) setTransactions(formattedTransactions);
     }
   };
 
@@ -319,91 +318,12 @@ export const useAdmin = () => {
     return { error };
   };
 
-  const makeUserAdmin = async (userId: string) => {
-    // Remove existing roles first, then insert admin
-    await supabase
-      .from('user_roles')
-      .delete()
-      .eq('user_id', userId);
-
-    const { error } = await supabase
-      .from('user_roles')
-      .insert([{ user_id: userId, role: 'admin' }]);
-
-    if (!error) {
-      await fetchUsers();
-    }
-    return { error };
-  };
-
-  const removeUserAdmin = async (userId: string) => {
-    await supabase
-      .from('user_roles')
-      .delete()
-      .eq('user_id', userId)
-      .eq('role', 'admin');
-
-    // Re-add as user
-    await supabase
-      .from('user_roles')
-      .insert([{ user_id: userId, role: 'user' }]);
-
-    await fetchUsers();
-    return { error: null };
-  };
-
-  const makeUserStaff = async (userId: string, storeId: string) => {
-    // Remove existing roles first
-    await supabase
-      .from('user_roles')
-      .delete()
-      .eq('user_id', userId);
-
-    const { error } = await supabase
-      .from('user_roles')
-      .insert([{ user_id: userId, role: 'staff', staff_store_id: storeId }]);
-
-    if (!error) {
-      await fetchUsers();
-    }
-    return { error };
-  };
-
-  const removeUserStaff = async (userId: string) => {
-    await supabase
-      .from('user_roles')
-      .delete()
-      .eq('user_id', userId)
-      .eq('role', 'staff');
-
-    // Re-add as user
-    await supabase
-      .from('user_roles')
-      .insert([{ user_id: userId, role: 'user' }]);
-
-    await fetchUsers();
-    return { error: null };
-  };
-
-  const setUserRole = async (userId: string, role: string, storeId?: string) => {
-    // Delete existing roles
-    await supabase
-      .from('user_roles')
-      .delete()
-      .eq('user_id', userId);
-
-    const roleData: any = { user_id: userId, role };
-    if (role === 'staff' && storeId) {
-      roleData.staff_store_id = storeId;
-    }
-
-    const { error } = await supabase
-      .from('user_roles')
-      .insert([roleData]);
-
-    if (!error) {
-      await fetchUsers();
-    }
+  const setUserRole = async (userId: string, role: AppRole, storeIds: string[], reason: string) => {
+    if (!user || !isAdmin) return { error: new Error('Administrator access required.') };
+    const token = await accessTokenFor(user.id);
+    const { error } = await supabase.rpc('set_identity_access', { p_user_id: userId, p_role: role, p_store_ids: role === 'staff' ? storeIds : [], p_reason: reason })
+      .setHeader('Authorization', `Bearer ${token}`);
+    if (!error && currentScope.current === scope) await fetchUsers();
     return { error };
   };
 
@@ -431,10 +351,6 @@ export const useAdmin = () => {
     return { error };
   };
 
-  const createUser = async (email: string, password: string, fullName: string, role: string, storeId?: string) => {
-    return { error: 'Staff invitations are not available yet. Use the controlled account setup process.' };
-  };
-
   const adjustUserPoints = async (_userId: string, _pointsChange: number, _reason: string) => {
     return { error: 'Points adjustments require the audited loyalty service, which is not available yet.' };
   };
@@ -442,10 +358,10 @@ export const useAdmin = () => {
   return {
     isAdmin,
     loading,
-    users,
+    users: isAdmin ? users : [],
     rewards,
     achievements,
-    transactions,
+    transactions: isAdmin ? transactions : [],
     stores,
     dashboardStats,
     fetchUsers,
@@ -460,15 +376,10 @@ export const useAdmin = () => {
     createAchievement,
     updateAchievement,
     deleteAchievement,
-    makeUserAdmin,
-    removeUserAdmin,
-    makeUserStaff,
-    removeUserStaff,
     setUserRole,
     createStore,
     updateStore,
     deleteStore,
-    createUser,
     adjustUserPoints
   };
 };

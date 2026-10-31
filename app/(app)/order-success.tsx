@@ -5,7 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabase';
 import type { Tables } from '@/lib/types';
 import { formatMoney } from '@/lib/cash-orders';
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused } from 'expo-router/react-navigation';
 
 function textField(value: unknown, field: string): string {
   if (typeof value !== 'object' || value === null || !(field in value)) return '';

@@ -4,7 +4,7 @@ import { useMenu, MenuItemOption, MenuItemOptionChoice } from '@/hooks/useMenu';
 import { useCart } from '@/contexts/CartContext';
 import { ShoppingCart, Plus, Minus, ChevronLeft, Utensils, CupSoda, Flame, Gift, Pizza, CheckCircle2, Clock, ShoppingBag, X, Circle, CheckCircle, CheckSquare, Square, Menu as MenuIcon, ChevronDown } from 'lucide-react-native';
 import { router, useFocusEffect, useNavigation } from 'expo-router';
-import { DrawerActions } from '@react-navigation/native';
+import { DrawerActions } from 'expo-router/react-navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { useOrders } from '@/hooks/useOrders';
 import { useOrder } from '@/contexts/OrderContext';

@@ -71,6 +71,6 @@ Claims are bearer secrets. Screens hide them on backgrounding, and API reads/com
 
 ## Next milestone
 
-Production platform and dependencies: supported Expo/React Native upgrade, dependency remediation, owned and isolated development/staging/production configuration, hosted CI, representative migration rehearsal and native build compatibility. The previously recorded dependency findings remain unresolved; this increment did not run a new full dependency audit or fix those findings.
+The subsequent [platform readiness increment](platform-readiness-milestone.md) reverified this 141-test checkpoint and implemented the Expo/React Native upgrade, explicit environment boundaries and expanded local verification. That report records the latest audit and remaining security, ownership, hosted-CI, migration-rehearsal and native acceptance gates. This reward increment itself did not upgrade dependencies.
 
 The broader cash-first roadmap still requires identity/privacy completion, approved real branch data and opening balances, actual GAAP/till finance acceptance, operational alerts/notifications/availability/offline behavior, independent hardening/recovery/training, and an observed pilot before three-branch rollout. This local acceptance report does not close those production gates.

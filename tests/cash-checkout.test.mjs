@@ -17,6 +17,7 @@ before(async () => {
   const cashier = 'e1000000-0000-4000-8000-000000000005';
   await db.query(`INSERT INTO auth.users(id, email) VALUES ($1, 'cashier-fixture@example.test')`, [cashier]);
   await db.query(`INSERT INTO public.user_roles(user_id, role, staff_store_id) VALUES ($1, 'staff', $2)`, [cashier, store]);
+  await db.exec(`INSERT INTO public.staff_memberships(user_id, store_id) SELECT user_id, staff_store_id FROM public.user_roles WHERE role = 'staff' AND staff_store_id IS NOT NULL ON CONFLICT DO NOTHING`);
   await db.query(`INSERT INTO public.cash_branch_cashiers(store_id, user_id, active) VALUES ($1, $2, true)`, [store, cashier]);
   await db.query(`UPDATE public.cash_order_settings SET fulfilment_enabled = true, acceptance_minutes = 10 WHERE store_id = $1`, [store]);
   const category = (await db.query(`INSERT INTO public.menu_categories(name) VALUES ('Test meals') RETURNING id`)).rows[0].id;
@@ -37,10 +38,10 @@ function request(overrides = {}) {
     lines: [{ menu_item_id: item, quantity: 2, choice_ids: [choice] }], ...overrides };
 }
 async function quote(payload = request(), actor = user) {
-  return asRole(db, 'authenticated', actor, async () => (await db.query('SELECT public.quote_cash_order($1::jsonb) AS result', [JSON.stringify(payload)])).rows[0].result);
+  return asRole(db, 'authenticated', actor, async () => (await db.query('SELECT public.quote_cash_order($1::jsonb) AS result', [JSON.stringify(payload)])).rows[0].result, { aal: 'aal1' });
 }
 async function place(quoteId, key = randomUUID(), actor = user) {
-  return asRole(db, 'authenticated', actor, async () => (await db.query('SELECT public.place_cash_order($1, $2) AS result', [quoteId, key])).rows[0].result);
+  return asRole(db, 'authenticated', actor, async () => (await db.query('SELECT public.place_cash_order($1, $2) AS result', [quoteId, key])).rows[0].result, { aal: 'aal1' });
 }
 
 test('server calculates exact minor-unit prices including modifiers', async () => {

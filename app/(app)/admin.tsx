@@ -1,6 +1,8 @@
 import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity, Modal, TextInput, Alert, StyleSheet } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { useAdmin } from '@/hooks/useAdmin';
+import type { AppRole } from '@/hooks/useAuth';
+import { StaffInvitations } from '@/components/admin/StaffInvitations';
 import { 
   Shield, Users, Gift, Receipt, LayoutDashboard, Store, 
   ClipboardList, UserPlus, X, TrendingUp, 
@@ -13,7 +15,7 @@ import { AdminLoyalty } from '@/components/admin/AdminLoyalty';
 import { AdminMenu } from '@/components/admin/AdminMenu';
 import { AdminAchievements } from '@/components/admin/AdminAchievements';
 import { AdminGaap } from '@/components/admin/AdminGaap';
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused } from 'expo-router/react-navigation';
 
 export default function AdminScreen() {
   const isFocused = useIsFocused();
@@ -22,24 +24,17 @@ export default function AdminScreen() {
     fetchUsers, fetchRewards, fetchAchievements, fetchTransactions, fetchStores, fetchDashboardStats,
     createReward, updateReward, deleteReward,
     createAchievement, updateAchievement, deleteAchievement,
-    setUserRole, createUser, createStore, updateStore, deleteStore
+    setUserRole, createStore, updateStore, deleteStore
   } = useAdmin();
   const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'stores' | 'menu' | 'rewards' | 'achievements' | 'orders' | 'transactions' | 'gaap' | 'loyalty'>('dashboard');
-
-  // Create User Modal
-  const [showCreateUser, setShowCreateUser] = useState(false);
-  const [newUserEmail, setNewUserEmail] = useState('');
-  const [newUserPassword, setNewUserPassword] = useState('');
-  const [newUserName, setNewUserName] = useState('');
-  const [newUserRole, setNewUserRole] = useState('user');
-  const [newUserStoreId, setNewUserStoreId] = useState('');
-  const [isCreatingUser, setIsCreatingUser] = useState(false);
 
   // Role Change Modal
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState('');
-  const [selectedRole, setSelectedRole] = useState('user');
-  const [selectedStoreId, setSelectedStoreId] = useState('');
+  const [selectedRole, setSelectedRole] = useState<AppRole>('user');
+  const [selectedStoreIds, setSelectedStoreIds] = useState<string[]>([]);
+  const [accessReason, setAccessReason] = useState('');
+  const [savingAccess, setSavingAccess] = useState(false);
 
   // Create Store Modal
   const [showCreateStore, setShowCreateStore] = useState(false);
@@ -81,46 +76,17 @@ export default function AdminScreen() {
 
   if (!isAdmin) return null;
 
-  const handleCreateUser = async () => {
-    if (!newUserEmail || !newUserPassword || !newUserName) {
-      Alert.alert('Missing Fields', 'Please fill in all required fields.');
-      return;
-    }
-    if (newUserRole === 'staff' && !newUserStoreId) {
-      Alert.alert('Missing Store', 'Please select a store for the staff member.');
-      return;
-    }
-
-    setIsCreatingUser(true);
-    const result = await createUser(newUserEmail, newUserPassword, newUserName, newUserRole, newUserStoreId);
-    setIsCreatingUser(false);
-
-    if (result.error) {
-      Alert.alert('Error', result.error || 'Failed to create user.');
-    } else {
-      Alert.alert('Success', (result as any).note || 'User created successfully!');
-      setShowCreateUser(false);
-      setNewUserEmail('');
-      setNewUserPassword('');
-      setNewUserName('');
-      setNewUserRole('user');
-      setNewUserStoreId('');
-    }
-  };
-
   const handleRoleChange = async () => {
-    if (selectedRole === 'staff' && !selectedStoreId) {
-      Alert.alert('Missing Store', 'Please select a store for the staff member.');
-      return;
+    if ((selectedRole === 'staff' && !selectedStoreIds.length) || accessReason.trim().length < 3) {
+      Alert.alert('Check access details', 'Select staff branches and provide a reason for this change.'); return;
     }
-
-    const { error } = await setUserRole(selectedUserId, selectedRole, selectedStoreId);
-    if (error) {
-      Alert.alert('Error', 'Failed to update role.');
-    } else {
-      Alert.alert('Success', 'User role updated!');
-      setShowRoleModal(false);
-    }
+    setSavingAccess(true);
+    try {
+      const { error } = await setUserRole(selectedUserId, selectedRole, selectedStoreIds, accessReason.trim());
+      if (error) throw error;
+      Alert.alert('Access updated', 'Subsequent server requests use the new permissions.'); setShowRoleModal(false);
+    } catch { Alert.alert('Unable to update access', 'Check your session, verified account, branch selection and connection. The last administrator cannot be removed.'); }
+    finally { setSavingAccess(false); }
   };
 
   const handleCreateStore = async () => {
@@ -326,13 +292,7 @@ export default function AdminScreen() {
         {/* Users Tab */}
         {activeTab === 'users' && (
           <View className="gap-3">
-            <TouchableOpacity
-              onPress={() => setShowCreateUser(true)}
-              className="bg-red-600 rounded-xl py-3 px-4 flex-row items-center justify-center gap-2 mb-2"
-            >
-              <UserPlus size={18} color="white" />
-              <Text className="text-white font-bold">Add New User</Text>
-            </TouchableOpacity>
+            <StaffInvitations stores={stores} />
 
             {users.map(u => {
               const badge = getRoleBadgeColor(u.role);
@@ -351,17 +311,17 @@ export default function AdminScreen() {
                     <View className="bg-red-50 px-2 py-1 rounded">
                       <Text className="text-xs font-semibold text-red-700">{u.current_points} pts</Text>
                     </View>
-                    {u.role === 'staff' && u.staff_store_id && (
+                    {u.role === 'staff' && u.staff_store_ids.length > 0 && (
                       <Text className="text-xs text-gray-400">
-                        Store: {stores.find(s => s.id === u.staff_store_id)?.name || 'Unknown'}
+                        Branches: {u.staff_store_ids.map(id => stores.find(s => s.id === id)?.name ?? 'Unknown').join(', ')}
                       </Text>
                     )}
                   </View>
                   <TouchableOpacity
                     onPress={() => {
                       setSelectedUserId(u.id);
-                      setSelectedRole(u.role);
-                      setSelectedStoreId(u.staff_store_id || '');
+                      setSelectedRole(u.role as AppRole);
+                      setSelectedStoreIds(u.staff_store_ids); setAccessReason('');
                       setShowRoleModal(true);
                     }}
                     className="bg-gray-100 rounded-lg py-2 items-center"
@@ -427,7 +387,7 @@ export default function AdminScreen() {
                   </TouchableOpacity>
                 </View>
                 <Text className="text-xs text-gray-400 mt-2">
-                  Staff: {users.filter(u => u.role === 'staff' && u.staff_store_id === store.id).length} assigned
+                  Staff: {users.filter(u => u.role === 'staff' && u.staff_store_ids.includes(store.id)).length} assigned
                 </Text>
               </View>
             ))}
@@ -478,101 +438,6 @@ export default function AdminScreen() {
         {activeTab === 'gaap' && <AdminGaap stores={stores} />}
       </ScrollView>
 
-      {/* Create User Modal */}
-      <Modal visible={showCreateUser} transparent animationType="slide">
-        <View className="flex-1 justify-end bg-black/50">
-          <View className="bg-white rounded-t-3xl p-6 max-h-[80%]">
-            <View className="flex-row justify-between items-center mb-6">
-              <Text className="text-xl font-bold text-gray-900">Add New User</Text>
-              <TouchableOpacity onPress={() => setShowCreateUser(false)}>
-                <X size={24} color="#6b7280" />
-              </TouchableOpacity>
-            </View>
-            <ScrollView className="gap-4">
-              <View className="mb-4">
-                <Text className="text-sm font-medium text-gray-700 mb-1">Full Name *</Text>
-                <TextInput
-                  value={newUserName}
-                  onChangeText={setNewUserName}
-                  placeholder="John Doe"
-                  className="bg-gray-100 rounded-xl px-4 py-3 text-gray-900"
-                  placeholderTextColor="#9ca3af"
-                />
-              </View>
-              <View className="mb-4">
-                <Text className="text-sm font-medium text-gray-700 mb-1">Email *</Text>
-                <TextInput
-                  value={newUserEmail}
-                  onChangeText={setNewUserEmail}
-                  placeholder="user@example.com"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  className="bg-gray-100 rounded-xl px-4 py-3 text-gray-900"
-                  placeholderTextColor="#9ca3af"
-                />
-              </View>
-              <View className="mb-4">
-                <Text className="text-sm font-medium text-gray-700 mb-1">Password *</Text>
-                <TextInput
-                  value={newUserPassword}
-                  onChangeText={setNewUserPassword}
-                  placeholder="Min 6 characters"
-                  secureTextEntry
-                  className="bg-gray-100 rounded-xl px-4 py-3 text-gray-900"
-                  placeholderTextColor="#9ca3af"
-                />
-              </View>
-              <View className="mb-4">
-                <Text className="text-sm font-medium text-gray-700 mb-2">Role</Text>
-                <View className="flex-row gap-2">
-                  {['user', 'staff', 'admin'].map(role => (
-                    <TouchableOpacity
-                      key={role}
-                      onPress={() => setNewUserRole(role)}
-                      className={`flex-1 py-2.5 rounded-xl items-center border ${
-                        newUserRole === role 
-                          ? 'bg-red-600 border-red-600' 
-                          : 'bg-white border-gray-200'
-                      }`}
-                    >
-                      <Text className={`font-medium capitalize ${newUserRole === role ? 'text-white' : 'text-gray-600'}`}>{role}</Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </View>
-              {newUserRole === 'staff' && (
-                <View className="mb-4">
-                  <Text className="text-sm font-medium text-gray-700 mb-2">Assign Store *</Text>
-                  {stores.map(store => (
-                    <TouchableOpacity
-                      key={store.id}
-                      onPress={() => setNewUserStoreId(store.id)}
-                      className={`px-4 py-3 rounded-xl mb-2 border ${
-                        newUserStoreId === store.id 
-                          ? 'bg-red-50 border-red-300' 
-                          : 'bg-gray-50 border-gray-200'
-                      }`}
-                    >
-                      <Text className={`font-medium ${newUserStoreId === store.id ? 'text-red-700' : 'text-gray-700'}`}>{store.name}</Text>
-                      <Text className="text-xs text-gray-500">{store.address}</Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              )}
-              <TouchableOpacity
-                onPress={handleCreateUser}
-                disabled={isCreatingUser}
-                className="bg-red-600 rounded-xl py-3.5 items-center mt-2 mb-8"
-              >
-                <Text className="text-white font-bold text-base">
-                  {isCreatingUser ? 'Creating...' : 'Create User'}
-                </Text>
-              </TouchableOpacity>
-            </ScrollView>
-          </View>
-        </View>
-      </Modal>
-
       {/* Role Change Modal */}
       <Modal visible={showRoleModal} transparent animationType="slide">
         <View className="flex-1 justify-end bg-black/50">
@@ -586,7 +451,7 @@ export default function AdminScreen() {
             <View className="mb-4">
               <Text className="text-sm font-medium text-gray-700 mb-2">Select Role</Text>
               <View className="flex-row gap-2">
-                {['user', 'staff', 'admin'].map(role => (
+                {(['user', 'staff', 'admin'] as const).map(role => (
                   <TouchableOpacity
                     key={role}
                     onPress={() => setSelectedRole(role)}
@@ -607,19 +472,21 @@ export default function AdminScreen() {
                 {stores.map(store => (
                   <TouchableOpacity
                     key={store.id}
-                    onPress={() => setSelectedStoreId(store.id)}
+                    onPress={() => setSelectedStoreIds(ids => ids.includes(store.id) ? ids.filter(id => id !== store.id) : [...ids, store.id])}
                     className={`px-4 py-3 rounded-xl mb-2 border ${
-                      selectedStoreId === store.id 
+                      selectedStoreIds.includes(store.id)
                         ? 'bg-red-50 border-red-300' 
                         : 'bg-gray-50 border-gray-200'
                     }`}
                   >
-                    <Text className={`font-medium ${selectedStoreId === store.id ? 'text-red-700' : 'text-gray-700'}`}>{store.name}</Text>
+                    <Text className={`font-medium ${selectedStoreIds.includes(store.id) ? 'text-red-700' : 'text-gray-700'}`}>{store.name}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
             )}
+            <TextInput accessibilityLabel="Access change reason" placeholder="Reason for this access change" value={accessReason} onChangeText={setAccessReason} maxLength={500} editable={!savingAccess} className="border border-slate-300 rounded-xl p-3 mb-3" />
             <TouchableOpacity
+              disabled={savingAccess}
               onPress={handleRoleChange}
               className="bg-red-600 rounded-xl py-3.5 items-center mt-2 mb-4"
             >

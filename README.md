@@ -10,7 +10,9 @@ Production implementation is underway. The foundation and cash checkout incremen
 
 See the [production plan](docs/production-implementation-plan.md), [task backlog](docs/production-backlog.csv), and [implementation progress/deployment notes](docs/implementation-progress.md).
 
-See the [cash checkout milestone](docs/cash-checkout-milestone.md) for the original quotation/order-creation evidence. See the [cash fulfilment and ledger milestone](docs/cash-fulfilment-milestone.md) for cash handling evidence. The [reward redemption milestone](docs/reward-redemption-milestone.md) records the latest acceptance report, accounting rules, configuration and release gates.
+See the [cash checkout milestone](docs/cash-checkout-milestone.md), [cash fulfilment and ledger milestone](docs/cash-fulfilment-milestone.md), and [reward redemption milestone](docs/reward-redemption-milestone.md) for financial workflow evidence. The [platform readiness report](docs/platform-readiness-milestone.md) records the Expo 58 / React Native 0.88 upgrade and open release gates. The latest [identity and staff access report](docs/identity-access-milestone.md) covers email recovery, secure sessions, staff MFA, branch invitations and revocation.
+
+Staff and administrator operations require authenticator verification. Administrators create branch invitations in **Admin → Users**; recipients verify their own email and accept under **Profile → Account security and branch invitations**. Invitations do not send email or create an account on the recipient’s behalf. A fresh native build is required for SecureStore; existing plaintext sessions require a new sign-in. Hosted auth configuration and migration/device acceptance remain outstanding.
 
 ## Local development
 
@@ -22,7 +24,7 @@ npm ci
 cp .env.example .env
 ```
 
-Set the client-visible Supabase URL/anon or publishable key and the platform-restricted maps key for your development project. Sentry is optional through `EXPO_PUBLIC_SENTRY_DSN`. Never place service-role, payment or webhook secrets in `EXPO_PUBLIC_` values.
+Set `EXPO_PUBLIC_APP_ENV=development` and the client-visible Supabase URL/anon or publishable key matching the approved development project in `config/environments.json`. The existing configured accounts are authorised for development only; staging/production bindings remain unconfirmed and fail closed. See `.env.example` for platform-specific Maps inputs. Sentry is optional through `EXPO_PUBLIC_SENTRY_DSN`. Never place service-role, payment or webhook secrets in `EXPO_PUBLIC_` values.
 
 ```sh
 npm start
@@ -37,11 +39,16 @@ Native builds require the corresponding Android/iOS development tools. For datab
 ```sh
 npm run check
 npm run build:check
+npm run native:preflight
+npm run doctor
+npm run config:check
 ```
 
-`check` runs TypeScript, lint, security/cache/signature tests and generated-database-type drift checks. Database tests apply the complete migration history to local PGlite, reproduce Supabase auth identities/roles, and execute SQL under anonymous/customer/staff/admin roles. They load no `.env` and contact no live database. They do not replace deployed Supabase, Edge Function or device acceptance tests.
+`check` runs TypeScript, lint, the full financial/security/identity suite, database-type drift, SDK compatibility and installed dependency checks. Database tests apply the complete migration history to local PGlite, reproduce Supabase auth identities/roles/AAL claims, and execute SQL under anonymous/customer/staff/admin roles. They load no `.env` and contact no live database. They do not replace deployed Supabase, concurrency, Edge Function or device acceptance tests.
 
-`build:check` exports the Android JavaScript/Hermes bundle to ignored `dist/android`; it does not produce or install a signed APK. Pull requests run these checks, and automatic preview EAS updates depend on them.
+`build:check` exports Android/iOS Hermes bundles and source maps to ignored `dist/android` and `dist/ios` using disposable inputs. `native:preflight` generates both native projects in a temporary copy without installing dependencies. These do not compile or sign an app. `doctor` requires public metadata access; this host passes 19/20 checks with missing CocoaPods remaining. Pull requests run checks, native generation and exports.
+
+OTA updates publish automatically to **development** after checks pass on pushes to `main`. To trigger one manually, open GitHub Actions → **Publish OTA update** → **Run workflow** and choose development or approved staging. See [OTA setup and runtime requirements](docs/ota-updates.md) for required GitHub/EAS configuration. Existing SDK 52 installations need a fresh SDK 58 native build first.
 
 After schema changes:
 
@@ -56,4 +63,4 @@ Database types and enum constants are generated from the migrated local PostgreS
 
 The historical catalogue/order creation migration fills a gap in the recorded history. **Do not push it blindly to an existing project.** First compare the deployed schema/history, review legacy policies and triggers, rehearse the upgrade, and follow the deployment notes. No hosted migrations have been applied by this implementation work.
 
-Some historical migrations still contain demo seeds. Fresh disposable resets are useful for engineering, but those records are not approved Pogo’s branch/menu data. Production fixture separation, verified branch/menu import, SDK/dependency upgrades, trusted staff/cash fulfilment and the audited loyalty ledger remain planned work. Root maintenance scripts can write remote data and are not part of the test commands.
+Some historical migrations still contain demo seeds. Fresh disposable resets are useful for engineering, but those records are not approved Pogo’s branch/menu data. Verified imports, representative upgrade rehearsal, security remediation and native/device acceptance remain outstanding. Cash fulfilment and loyalty/reward ledgers are implemented locally with activation gates. Root maintenance scripts can write remote data and are not part of the test commands.

@@ -1,7 +1,7 @@
 import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useAchievements } from '@/hooks/useAchievements';
 import { Trophy, Lock, CheckCircle2, ArrowLeft } from 'lucide-react-native';
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused } from 'expo-router/react-navigation';
 import { router } from 'expo-router';
 
 export default function AchievementsScreen() {

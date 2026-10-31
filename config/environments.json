@@ -1,0 +1,26 @@
+{
+  "development": {
+    "expoOwner": "purpl3cr3",
+    "expoProjectId": "1341ce01-7787-4a04-95f1-0ad259a5847c",
+    "supabaseProjectRef": "hsyibcyvujwwqygigepe",
+    "androidApplicationId": "com.purpl3cr3.pogos.dev",
+    "iosBundleIdentifier": "com.purpl3cr3.pogos.dev",
+    "scheme": "pogos-dev"
+  },
+  "staging": {
+    "expoOwner": null,
+    "expoProjectId": null,
+    "supabaseProjectRef": null,
+    "androidApplicationId": null,
+    "iosBundleIdentifier": null,
+    "scheme": null
+  },
+  "production": {
+    "expoOwner": null,
+    "expoProjectId": null,
+    "supabaseProjectRef": null,
+    "androidApplicationId": null,
+    "iosBundleIdentifier": null,
+    "scheme": null
+  }
+}

@@ -6,7 +6,7 @@ import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { Redirect } from 'expo-router';
 
 export default function AppLayout() {
-  const { session, loading, userRole } = useAuth();
+  const { session, loading, userRole, requiresMfa, recoveryRequired } = useAuth();
   usePushNotifications();
 
   if (loading) {
@@ -17,6 +17,8 @@ export default function AppLayout() {
     );
   }
 
+  if (session && recoveryRequired) return <Redirect href="/auth/reset-password" />;
+  if (session && requiresMfa) return <Redirect href="/auth/security" />;
   const isStaff = userRole === 'staff';
   const isAdmin = userRole === 'admin';
   const isLoggedIn = !!session;
@@ -137,6 +139,7 @@ export default function AppLayout() {
           title: 'Order Success',
         }}
       />
+      <Drawer.Screen name="share-points" options={{ drawerItemStyle: { display: 'none' }, title: 'Share Points' }} />
     </Drawer>
   );
 }

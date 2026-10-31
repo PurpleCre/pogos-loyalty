@@ -41,13 +41,11 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     // Check if user is admin
-    const { data: roleData } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", user.id)
-      .single();
-
-    if (!roleData || roleData.role !== "admin") {
+    const caller = createClient(supabaseUrl, Deno.env.get('SUPABASE_ANON_KEY') ?? '', {
+      global: { headers: { Authorization: `Bearer ${token}` } }, auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const { data: allowed, error: permissionError } = await caller.rpc('has_role', { _user_id: user.id, _role: 'admin' });
+    if (permissionError || allowed !== true) {
       throw new Error("Admin access required");
     }
 
