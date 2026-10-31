@@ -10,9 +10,11 @@ Production implementation is underway. The foundation and cash checkout incremen
 
 See the [production plan](docs/production-implementation-plan.md), [task backlog](docs/production-backlog.csv), and [implementation progress/deployment notes](docs/implementation-progress.md).
 
-See the [cash checkout milestone](docs/cash-checkout-milestone.md), [cash fulfilment and ledger milestone](docs/cash-fulfilment-milestone.md), and [reward redemption milestone](docs/reward-redemption-milestone.md) for financial workflow evidence. The [platform readiness report](docs/platform-readiness-milestone.md) records the Expo 58 / React Native 0.88 upgrade and open release gates. The latest [identity and staff access report](docs/identity-access-milestone.md) covers email recovery, secure sessions, staff MFA, branch invitations and revocation.
+See the [cash checkout milestone](docs/cash-checkout-milestone.md), [cash fulfilment and ledger milestone](docs/cash-fulfilment-milestone.md), and [reward redemption milestone](docs/reward-redemption-milestone.md) for financial workflow evidence. The [platform readiness report](docs/platform-readiness-milestone.md) and [identity report](docs/identity-access-milestone.md) record the SDK/session/MFA work and open release gates. The latest [privacy increment](docs/privacy-milestone.md) adds account exports, consent, deletion-request tracking and public-page previews; policy approval and actual erasure remain gated.
 
 Staff and administrator operations require authenticator verification. Administrators create branch invitations in **Admin → Users**; recipients verify their own email and accept under **Profile → Account security and branch invitations**. Invitations do not send email or create an account on the recipient’s behalf. A fresh native build is required for SecureStore; existing plaintext sessions require a new sign-in. Hosted auth configuration and migration/device acceptance remain outstanding.
+
+Privacy controls are under **Profile → Privacy, account export and deletion**. The temporary contact is **pgonese6@gmail.com**. No real policy, retention approval or privacy reviewer is seeded; deletion processing stays disabled. File exports need a fresh FileSystem/Sharing native build. The [operator runbook and data map](docs/privacy/data-lifecycle.md) record what must be approved and rehearsed before erasure or publication.
 
 ## Local development
 
@@ -42,6 +44,7 @@ npm run build:check
 npm run native:preflight
 npm run doctor
 npm run config:check
+npm run privacy:pages
 ```
 
 `check` runs TypeScript, lint, the full financial/security/identity suite, database-type drift, SDK compatibility and installed dependency checks. Database tests apply the complete migration history to local PGlite, reproduce Supabase auth identities/roles/AAL claims, and execute SQL under anonymous/customer/staff/admin roles. They load no `.env` and contact no live database. They do not replace deployed Supabase, concurrency, Edge Function or device acceptance tests.
@@ -49,6 +52,8 @@ npm run config:check
 `build:check` exports Android/iOS Hermes bundles and source maps to ignored `dist/android` and `dist/ios` using disposable inputs. `native:preflight` generates both native projects in a temporary copy without installing dependencies. These do not compile or sign an app. `doctor` requires public metadata access; this host passes 19/20 checks with missing CocoaPods remaining. Pull requests run checks, native generation and exports.
 
 OTA updates publish automatically to **development** after checks pass on pushes to `main`. To trigger one manually, open GitHub Actions → **Publish OTA update** → **Run workflow** and choose development or approved staging. See [OTA setup and runtime requirements](docs/ota-updates.md) for required GitHub/EAS configuration. Existing SDK 52 installations need a fresh SDK 58 native build first.
+
+`privacy:pages` builds standalone, unpublished privacy/deletion previews in `dist/privacy-pages`. A release build requires `-- --release --notice=/path/to/reviewed-notice.json`; a missing approved notice fails before output is created. The complete web app, public origin and store-link acceptance remain separate gates.
 
 After schema changes:
 

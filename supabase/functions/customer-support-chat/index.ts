@@ -26,6 +26,20 @@ serve(async (req) => {
         status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+    if (Deno.env.get('CUSTOMER_SUPPORT_AI_ENABLED') !== 'true') {
+      return new Response(JSON.stringify({ error: 'Automated support is unavailable. Contact Pogo’s for help.' }), {
+        status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const caller = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_ANON_KEY') ?? '', {
+      global: { headers: { Authorization: `Bearer ${token}` } }, auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const state = await caller.rpc('account_privacy_state');
+    if (state.error || !state.data || state.data.deleted || state.data.deletion_in_progress) {
+      return new Response(JSON.stringify({ error: 'Account unavailable for automated support' }), {
+        status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
     const { messages } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     

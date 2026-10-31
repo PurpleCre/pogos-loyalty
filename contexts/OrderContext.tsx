@@ -1,3 +1,4 @@
+import { logPrivateError } from '@/lib/privacy-logging';
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Store } from '@/hooks/useStores';
@@ -57,7 +58,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
             .order('created_at', { ascending: false });
             
           if (error) {
-            console.error('Supabase fetch error', error);
+            logPrivateError('Supabase fetch error', error);
           } else if (data) {
             if (cancelled) return;
             setSavedLocations(data);
@@ -71,7 +72,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
         const stored = await locationCache.read(accountId);
         if (!cancelled) setSavedLocations(stored);
       } catch (e) {
-        console.error('Failed to load saved locations', e);
+        logPrivateError('Failed to load saved locations', e);
       }
     };
     loadLocations();
@@ -104,7 +105,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
               .single();
               
             if (error) {
-              console.error('Failed to update in Supabase', error);
+              logPrivateError('Failed to update in Supabase', error);
             } else if (data) {
               dbLocation = data as LocationData;
             }
@@ -117,13 +118,13 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
               .single();
               
             if (error) {
-              console.error('Failed to insert in Supabase', error);
+              logPrivateError('Failed to insert in Supabase', error);
             } else if (data) {
               dbLocation = data as LocationData;
             }
           }
         } catch (dbError) {
-          console.error('Supabase save error (falling back to local)', dbError);
+          logPrivateError('Supabase save error (falling back to local)', dbError);
         }
       }
       
@@ -144,7 +145,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       
       return dbLocation;
     } catch (e) {
-      console.error('Failed to save location', e);
+      logPrivateError('Failed to save location', e);
       return null;
     }
   };
@@ -171,7 +172,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
         setDeliveryLocation(null);
       }
     } catch (e) {
-      console.error('Failed to remove location', e);
+      logPrivateError('Failed to remove location', e);
     }
   };
 

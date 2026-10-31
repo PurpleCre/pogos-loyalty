@@ -1,3 +1,4 @@
+import { logPrivateError } from '@/lib/privacy-logging';
 import React, { useState, useEffect } from 'react';
 import { View, Text, Modal, TouchableOpacity, TextInput, ScrollView, StyleSheet } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
@@ -53,7 +54,7 @@ export function LocationPickerModal({ visible, onClose }: LocationPickerModalPro
             });
           }
         } catch (error) {
-          console.error('Error fetching location:', error);
+          logPrivateError('Error fetching location:', error);
         }
       })();
     }

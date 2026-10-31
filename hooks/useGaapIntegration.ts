@@ -1,3 +1,4 @@
+import { logPrivateError } from '@/lib/privacy-logging';
 /**
  * useGaapIntegration Hook
  * 
@@ -93,7 +94,7 @@ export const useGaapIntegration = (): UseGaapIntegrationReturn => {
       const link = await getGaapCustomerLink(user.id);
       setCustomerLink(link);
     } catch (err) {
-      console.error('Error loading GAAP link:', err);
+      logPrivateError('Error loading GAAP link:', err);
     } finally {
       setLinkLoading(false);
     }

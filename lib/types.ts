@@ -1340,6 +1340,343 @@ export type Database = {
 
       ]
     }
+    "privacy_consent_events": {
+      Row: {
+        "id": string
+        "user_id": string
+        "marketing_email": boolean
+        "notice_version": string | null
+        "created_at": string
+      }
+      Insert: {
+        "id": string
+        "user_id": string
+        "marketing_email": boolean
+        "notice_version"?: string | null
+        "created_at"?: string
+      }
+      Update: {
+        "id"?: string
+        "user_id"?: string
+        "marketing_email"?: boolean
+        "notice_version"?: string | null
+        "created_at"?: string
+      }
+      Relationships: [
+        {
+          foreignKeyName: "privacy_consent_events_notice_version_fkey"
+          columns: ["notice_version"]
+          isOneToOne: false
+          referencedRelation: "privacy_notices"
+          referencedColumns: ["version"]
+        }
+      ]
+    }
+    "privacy_export_progress": {
+      Row: {
+        "request_id": string
+        "section": string
+        "cursor": string | null
+        "previous_cursor": string | null
+        "finished": boolean
+      }
+      Insert: {
+        "request_id": string
+        "section": string
+        "cursor"?: string | null
+        "previous_cursor"?: string | null
+        "finished"?: boolean
+      }
+      Update: {
+        "request_id"?: string
+        "section"?: string
+        "cursor"?: string | null
+        "previous_cursor"?: string | null
+        "finished"?: boolean
+      }
+      Relationships: [
+        {
+          foreignKeyName: "privacy_export_progress_request_id_fkey"
+          columns: ["request_id"]
+          isOneToOne: false
+          referencedRelation: "privacy_requests"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
+    "privacy_notices": {
+      Row: {
+        "version": string
+        "controller_name": string
+        "body": string
+        "support_email": string
+        "approval_reference": string
+        "approved_by": string
+        "approved_at": string
+      }
+      Insert: {
+        "version": string
+        "controller_name": string
+        "body": string
+        "support_email": string
+        "approval_reference": string
+        "approved_by": string
+        "approved_at": string
+      }
+      Update: {
+        "version"?: string
+        "controller_name"?: string
+        "body"?: string
+        "support_email"?: string
+        "approval_reference"?: string
+        "approved_by"?: string
+        "approved_at"?: string
+      }
+      Relationships: [
+
+      ]
+    }
+    "privacy_preferences": {
+      Row: {
+        "user_id": string
+        "marketing_email": boolean
+        "notice_version": string | null
+        "updated_at": string
+      }
+      Insert: {
+        "user_id": string
+        "marketing_email"?: boolean
+        "notice_version"?: string | null
+        "updated_at"?: string
+      }
+      Update: {
+        "user_id"?: string
+        "marketing_email"?: boolean
+        "notice_version"?: string | null
+        "updated_at"?: string
+      }
+      Relationships: [
+        {
+          foreignKeyName: "privacy_preferences_notice_version_fkey"
+          columns: ["notice_version"]
+          isOneToOne: false
+          referencedRelation: "privacy_notices"
+          referencedColumns: ["version"]
+        }
+      ]
+    }
+    "privacy_request_events": {
+      Row: {
+        "id": string
+        "request_id": string
+        "actor_id": string | null
+        "event_type": string
+        "public_message": string
+        "details": Json
+        "created_at": string
+      }
+      Insert: {
+        "id"?: string
+        "request_id": string
+        "actor_id"?: string | null
+        "event_type": string
+        "public_message": string
+        "details"?: Json
+        "created_at"?: string
+      }
+      Update: {
+        "id"?: string
+        "request_id"?: string
+        "actor_id"?: string | null
+        "event_type"?: string
+        "public_message"?: string
+        "details"?: Json
+        "created_at"?: string
+      }
+      Relationships: [
+        {
+          foreignKeyName: "privacy_request_events_request_id_fkey"
+          columns: ["request_id"]
+          isOneToOne: false
+          referencedRelation: "privacy_requests"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
+    "privacy_request_tasks": {
+      Row: {
+        "request_id": string
+        "system": string
+        "status": string
+        "evidence_reference": string | null
+        "recorded_by": string | null
+        "recorded_at": string | null
+      }
+      Insert: {
+        "request_id": string
+        "system": string
+        "status"?: string
+        "evidence_reference"?: string | null
+        "recorded_by"?: string | null
+        "recorded_at"?: string | null
+      }
+      Update: {
+        "request_id"?: string
+        "system"?: string
+        "status"?: string
+        "evidence_reference"?: string | null
+        "recorded_by"?: string | null
+        "recorded_at"?: string | null
+      }
+      Relationships: [
+        {
+          foreignKeyName: "privacy_request_tasks_request_id_fkey"
+          columns: ["request_id"]
+          isOneToOne: false
+          referencedRelation: "privacy_requests"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
+    "privacy_requests": {
+      Row: {
+        "id": string
+        "user_id": string
+        "kind": string
+        "status": string
+        "version": number
+        "blocker": string | null
+        "reviewed_by": string | null
+        "notice_version": string | null
+        "retention_policy_version": string | null
+        "created_at": string
+        "updated_at": string
+        "completed_at": string | null
+      }
+      Insert: {
+        "id": string
+        "user_id": string
+        "kind": string
+        "status"?: string
+        "version"?: number
+        "blocker"?: string | null
+        "reviewed_by"?: string | null
+        "notice_version"?: string | null
+        "retention_policy_version"?: string | null
+        "created_at"?: string
+        "updated_at"?: string
+        "completed_at"?: string | null
+      }
+      Update: {
+        "id"?: string
+        "user_id"?: string
+        "kind"?: string
+        "status"?: string
+        "version"?: number
+        "blocker"?: string | null
+        "reviewed_by"?: string | null
+        "notice_version"?: string | null
+        "retention_policy_version"?: string | null
+        "created_at"?: string
+        "updated_at"?: string
+        "completed_at"?: string | null
+      }
+      Relationships: [
+        {
+          foreignKeyName: "privacy_requests_notice_version_fkey"
+          columns: ["notice_version"]
+          isOneToOne: false
+          referencedRelation: "privacy_notices"
+          referencedColumns: ["version"]
+        },
+        {
+          foreignKeyName: "privacy_requests_retention_policy_version_fkey"
+          columns: ["retention_policy_version"]
+          isOneToOne: false
+          referencedRelation: "privacy_retention_approvals"
+          referencedColumns: ["version"]
+        }
+      ]
+    }
+    "privacy_retention_approvals": {
+      Row: {
+        "version": string
+        "policy_reference": string
+        "approved_by": string
+        "approved_at": string
+      }
+      Insert: {
+        "version": string
+        "policy_reference": string
+        "approved_by": string
+        "approved_at": string
+      }
+      Update: {
+        "version"?: string
+        "policy_reference"?: string
+        "approved_by"?: string
+        "approved_at"?: string
+      }
+      Relationships: [
+
+      ]
+    }
+    "privacy_reviewers": {
+      Row: {
+        "user_id": string
+        "active": boolean
+      }
+      Insert: {
+        "user_id": string
+        "active"?: boolean
+      }
+      Update: {
+        "user_id"?: string
+        "active"?: boolean
+      }
+      Relationships: [
+
+      ]
+    }
+    "privacy_settings": {
+      Row: {
+        "singleton": boolean
+        "support_email": string
+        "active_notice_version": string | null
+        "retention_policy_version": string | null
+        "deletion_processing_enabled": boolean
+      }
+      Insert: {
+        "singleton"?: boolean
+        "support_email"?: string
+        "active_notice_version"?: string | null
+        "retention_policy_version"?: string | null
+        "deletion_processing_enabled"?: boolean
+      }
+      Update: {
+        "singleton"?: boolean
+        "support_email"?: string
+        "active_notice_version"?: string | null
+        "retention_policy_version"?: string | null
+        "deletion_processing_enabled"?: boolean
+      }
+      Relationships: [
+        {
+          foreignKeyName: "privacy_settings_active_notice_version_fkey"
+          columns: ["active_notice_version"]
+          isOneToOne: false
+          referencedRelation: "privacy_notices"
+          referencedColumns: ["version"]
+        },
+        {
+          foreignKeyName: "privacy_settings_retention_policy_version_fkey"
+          columns: ["retention_policy_version"]
+          isOneToOne: false
+          referencedRelation: "privacy_retention_approvals"
+          referencedColumns: ["version"]
+        }
+      ]
+    }
     "profiles": {
       Row: {
         "id": string
@@ -2202,6 +2539,10 @@ export type Database = {
       }
       Returns: string
     }
+    "account_privacy_state": {
+      Args: Record<PropertyKey, never>
+      Returns: Json
+    }
     "apply_cash_order_earning": {
       Args: {
         "p_order": string
@@ -2216,6 +2557,13 @@ export type Database = {
         "p_reason": string
       }
       Returns: Json
+    }
+    "cancel_privacy_request": {
+      Args: {
+        "p_id": string
+        "p_expected_version": number
+      }
+      Returns: undefined
     }
     "cash_branch_summary": {
       Args: {
@@ -2243,6 +2591,14 @@ export type Database = {
       }
       Returns: boolean
     }
+    "complete_privacy_deletion": {
+      Args: {
+        "p_id": string
+        "p_expected_version": number
+        "p_completion_reference": string
+      }
+      Returns: undefined
+    }
     "expire_pending_cash_orders": {
       Args: {
         "p_limit"?: number
@@ -2254,6 +2610,21 @@ export type Database = {
         "p_limit"?: number
       }
       Returns: number
+    }
+    "export_privacy_section": {
+      Args: {
+        "p_id": string
+        "p_section": string
+        "p_after"?: string
+        "p_limit"?: number
+      }
+      Returns: Json
+    }
+    "finish_privacy_export": {
+      Args: {
+        "p_id": string
+      }
+      Returns: undefined
     }
     "generate_referral_code": {
       Args: Record<PropertyKey, never>
@@ -2312,6 +2683,12 @@ export type Database = {
       Args: Record<PropertyKey, never>
       Returns: Json
     }
+    "my_privacy_request_events": {
+      Args: {
+        "p_id": string
+      }
+      Returns: Json
+    }
     "my_staff_invitations": {
       Args: Record<PropertyKey, never>
       Returns: Json
@@ -2343,6 +2720,67 @@ export type Database = {
       }
       Returns: Json
     }
+    "privacy_account_live": {
+      Args: Record<PropertyKey, never>
+      Returns: boolean
+    }
+    "privacy_account_mutable": {
+      Args: Record<PropertyKey, never>
+      Returns: boolean
+    }
+    "privacy_assert_account_available": {
+      Args: Record<PropertyKey, never>
+      Returns: undefined
+    }
+    "privacy_assert_target_available": {
+      Args: {
+        "p_user": string
+      }
+      Returns: undefined
+    }
+    "privacy_deletion_blocker": {
+      Args: {
+        "p_user": string
+      }
+      Returns: string
+    }
+    "privacy_export_rows": {
+      Args: {
+        "p_user": string
+        "p_section": string
+        "p_after": string
+        "p_before": string
+        "p_limit": number
+      }
+      Returns: Json
+    }
+    "privacy_export_sections": {
+      Args: Record<PropertyKey, never>
+      Returns: (string)[]
+    }
+    "privacy_is_reviewer": {
+      Args: Record<PropertyKey, never>
+      Returns: boolean
+    }
+    "privacy_marketing_recipients": {
+      Args: {
+        "p_after"?: string
+        "p_limit"?: number
+      }
+      Returns: Json
+    }
+    "privacy_recent_identity": {
+      Args: Record<PropertyKey, never>
+      Returns: undefined
+    }
+    "privacy_review_queue": {
+      Args: {
+        "p_before"?: string
+        "p_limit"?: number
+        "p_before_id"?: string
+      }
+      Returns: Json
+    }
     "process_gaap_transaction": {
       Args: {
         "p_gaap_transaction_id": string
@@ -2369,6 +2807,16 @@ export type Database = {
       }
       Returns: Json
     }
+    "record_privacy_task": {
+      Args: {
+        "p_id": string
+        "p_system": string
+        "p_status": string
+        "p_evidence": string
+        "p_operator": string
+      }
+      Returns: undefined
+    }
     "release_reward_hold": {
       Args: {
         "p_reservation": string
@@ -2382,6 +2830,21 @@ export type Database = {
       Args: {
         "p_offer_id": string
         "p_command_id": string
+      }
+      Returns: Json
+    }
+    "restart_privacy_export": {
+      Args: {
+        "p_id": string
+      }
+      Returns: undefined
+    }
+    "review_privacy_deletion": {
+      Args: {
+        "p_id": string
+        "p_expected_version": number
+        "p_action": string
+        "p_reason": string
       }
       Returns: Json
     }
@@ -2407,6 +2870,14 @@ export type Database = {
       }
       Returns: undefined
     }
+    "set_privacy_marketing": {
+      Args: {
+        "p_id": string
+        "p_enabled": boolean
+        "p_notice_version"?: string
+      }
+      Returns: boolean
+    }
     "share_user_points": {
       Args: {
         "sender_id": string
@@ -2428,6 +2899,13 @@ export type Database = {
         "p_actor": string
       }
       Returns: boolean
+    }
+    "submit_privacy_request": {
+      Args: {
+        "p_id": string
+        "p_kind": string
+      }
+      Returns: Json
     }
     }
     Enums: {

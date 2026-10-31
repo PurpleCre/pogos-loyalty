@@ -18,7 +18,8 @@
     "sdk:check": "node scripts/sdk-check.mjs",
     "doctor": "node scripts/doctor-check.mjs",
     "native:preflight": "node scripts/native-preflight.mjs",
-    "deps:check": "node scripts/dependency-check.mjs"
+    "deps:check": "node scripts/dependency-check.mjs",
+    "privacy:pages": "node scripts/build-privacy-pages.mjs"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
@@ -33,11 +34,13 @@
     "expo-constants": "~58.0.14",
     "expo-dev-client": "~58.0.17",
     "expo-device": "~58.0.5",
+    "expo-file-system": "~58.0.13",
     "expo-linking": "~58.0.15",
     "expo-location": "~58.0.20",
     "expo-notifications": "~58.1.7",
     "expo-router": "~58.0.28",
     "expo-secure-store": "~58.0.2",
+    "expo-sharing": "~58.0.21",
     "expo-status-bar": "~58.0.4",
     "expo-system-ui": "~58.0.7",
     "expo-updates": "~58.0.19",

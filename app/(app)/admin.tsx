@@ -3,6 +3,7 @@ import MapView, { Marker } from 'react-native-maps';
 import { useAdmin } from '@/hooks/useAdmin';
 import type { AppRole } from '@/hooks/useAuth';
 import { StaffInvitations } from '@/components/admin/StaffInvitations';
+import { PrivacyRequests } from '@/components/admin/PrivacyRequests';
 import { 
   Shield, Users, Gift, Receipt, LayoutDashboard, Store, 
   ClipboardList, UserPlus, X, TrendingUp, 
@@ -26,7 +27,7 @@ export default function AdminScreen() {
     createAchievement, updateAchievement, deleteAchievement,
     setUserRole, createStore, updateStore, deleteStore
   } = useAdmin();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'stores' | 'menu' | 'rewards' | 'achievements' | 'orders' | 'transactions' | 'gaap' | 'loyalty'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'stores' | 'menu' | 'rewards' | 'achievements' | 'orders' | 'transactions' | 'gaap' | 'loyalty' | 'privacy'>('dashboard');
 
   // Role Change Modal
   const [showRoleModal, setShowRoleModal] = useState(false);
@@ -184,6 +185,7 @@ export default function AdminScreen() {
     { key: 'stores', label: 'Stores', icon: Store },
     { key: 'orders', label: 'Orders', icon: ClipboardList },
     { key: 'loyalty', label: 'Loyalty review', icon: UserCheck },
+    { key: 'privacy', label: 'Privacy requests', icon: Shield },
     { key: 'menu', label: 'Menu', icon: Gift }, // Icon changes inside component if needed
     { key: 'rewards', label: 'Rewards', icon: Gift },
     { key: 'achievements', label: 'Achievements', icon: Trophy },
@@ -235,6 +237,7 @@ export default function AdminScreen() {
 
       <ScrollView className="flex-1" contentContainerStyle={{ padding: 16, paddingBottom: 40 }}>
         {activeTab === 'loyalty' && <AdminLoyalty users={users} />}
+        {activeTab === 'privacy' && <PrivacyRequests />}
         {/* Dashboard Tab */}
         {activeTab === 'dashboard' && (
           <View className="gap-4">

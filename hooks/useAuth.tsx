@@ -5,7 +5,7 @@ import * as Linking from 'expo-linking';
 import { AppState, Platform } from 'react-native';
 import { useQueryClient } from '@tanstack/react-query';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createLocationCache } from '@/lib/location-cache';
+import { clearAccountLocalData } from '@/lib/account-cleanup';
 import { authStorage, authStorageKey, recoveryStorageKey, logoutStorageKey } from '@/lib/auth-storage';
 import { normaliseEmail, validatePassword, roleSnapshot } from '@/lib/identity';
 import bindings from '@/config/environments.json';
@@ -22,6 +22,7 @@ interface AuthContextType {
   signOut(): Promise<{ error: Error | null }>;
   requestPasswordReset(email: string): Promise<void>;
   resendConfirmation(email: string): Promise<void>;
+  reauthenticate(password: string): Promise<void>;
   completeCallback(params: Record<string, unknown>): Promise<'recovery' | 'signed-in'>;
   updatePassword(password: string): Promise<{ otherSessionsRevoked: boolean }>;
   refetchRole(): Promise<void>;
@@ -50,13 +51,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const redirectTo = Platform.OS === 'web' ? Linking.createURL('/auth/callback') : scheme ? `${scheme}://auth/callback` : Linking.createURL('/auth/callback');
   const fetchAccess = useCallback(async (userId: string, version: number) => {
     try {
-      const [roles, memberships, assurance] = await Promise.all([
+      const [roles, memberships, assurance, privacy] = await Promise.all([
         supabase.from('user_roles').select('role, staff_store_id').eq('user_id', userId),
         supabase.from('staff_memberships').select('store_id').eq('user_id', userId).eq('active', true),
         supabase.auth.mfa.getAuthenticatorAssuranceLevel(),
+        supabase.rpc('account_privacy_state'),
       ]);
       if (version !== revision.current || currentSession.current?.user.id !== userId) return;
-      if (roles.error || memberships.error || assurance.error) throw new Error('Unable to verify account access.');
+      if (roles.error || memberships.error || assurance.error || privacy.error) throw new Error('Unable to verify account access.');
+      if (privacy.data && typeof privacy.data==='object' && !Array.isArray(privacy.data) && privacy.data.deleted === true) {
+        signingOut.current=true; ++revision.current; currentSession.current=null; setSession(null); setAccess(emptyAccess); setLoading(false); queryClient.clear();
+        await authStorage.setItem(logoutStorageKey,'1');
+        await clearAccountLocalData(AsyncStorage,userId,true).catch(()=>undefined);
+        await supabase.auth.signOut({scope:'local'}); await authStorage.removeItem(authStorageKey); return;
+      }
       const stores = memberships.data.map(row => row.store_id).sort();
       const snapshot = roleSnapshot(roles.data, stores, assurance.data.currentLevel);
       const boundary = JSON.stringify([userId, snapshot.role, stores]);
@@ -83,7 +91,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const owner = next?.user.id;
       if (previous !== owner) {
         queryClient.clear(); setAccess(emptyAccess); setRecoveryRequired(false);
-        if (previous) void createLocationCache(AsyncStorage).clear(previous).catch(() => undefined);
+        if (previous) void clearAccountLocalData(AsyncStorage,previous).catch(() => undefined);
       }
       currentSession.current = next; setSession(next); setLoading(!!next);
       if (recovery) setRecoveryRequired(true);
@@ -125,15 +133,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Hide private state immediately. Local sign-out works without network and
     // deletes stored refresh credentials; server-side role revocation is separate.
     signingOut.current = true;
+    const previousOwner=currentSession.current?.user.id;
     ++revision.current; currentSession.current = null; setSession(null); setAccess(emptyAccess); setRecoveryRequired(false); setLoading(false); queryClient.clear();
     const operation = (async () => {
       try {
         // Persist intent before any network request: a kill/offline logout may
         // not restore this session on restart, even if refresh revocation fails.
         await authStorage.setItem(logoutStorageKey, '1');
+        const cleanupError=previousOwner?await clearAccountLocalData(AsyncStorage,previousOwner).then(()=>null).catch(()=>new Error('Account cache cleanup could not be confirmed.')):null;
         const { error } = await supabase.auth.signOut({ scope: 'local' });
         await authStorage.removeItem(authStorageKey); await authStorage.removeItem(recoveryStorageKey);
-        return { error };
+        return { error: error??cleanupError };
       } catch { return { error: new Error('Unable to clear this device session. Try signing out again.') }; }
     })().finally(() => { logoutInFlight.current = null; });
     logoutInFlight.current = operation; return operation;
@@ -160,6 +170,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const requestPasswordReset = async (email: string) => {
     const { error } = await supabase.auth.resetPasswordForEmail(normaliseEmail(email), { redirectTo });
     if (error) throw new Error('Unable to send recovery email. Wait a moment and try again.');
+  };
+  const reauthenticate = async (password:string) => {
+    const expected=currentSession.current?.user;
+    if(!expected?.email)throw new Error('Sign in first.');
+    const result=await signIn(expected.email,password);
+    if(result.error)throw result.error;
+    if(currentSession.current?.user.id!==expected.id){await signOut();throw new Error('Account changed. Sign in again.');}
   };
   const resendConfirmation = async (email: string) => {
     const { error } = await supabase.auth.resend({ type: 'signup', email: normaliseEmail(email), options: { emailRedirectTo: redirectTo } });
@@ -191,5 +208,5 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
   return <AuthContext.Provider value={{ user: session?.user ?? null, session, loading,
     ...access, staffStoreId: access.staffStoreIds[0] ?? null, recoveryRequired,
-    signUp, signIn, signOut, requestPasswordReset, resendConfirmation, completeCallback, updatePassword, refetchRole }}>{children}</AuthContext.Provider>;
+    signUp, signIn, signOut, requestPasswordReset, resendConfirmation, reauthenticate, completeCallback, updatePassword, refetchRole }}>{children}</AuthContext.Provider>;
 };

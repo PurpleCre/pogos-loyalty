@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AppState, ScrollView, Text, View } from 'react-native';
-import { Redirect, router } from 'expo-router';
+import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import Svg, { Path, Rect } from 'react-native-svg';
 import qrcode from 'qrcode-generator';
 import { useAuth } from '@/hooks/useAuth';
@@ -18,7 +18,7 @@ function SecretQr({ uri }: { uri: string }) {
   }, [uri]);
   return <Svg accessibilityLabel="Private authenticator setup QR" width={240} height={240} viewBox={`0 0 ${qr.size} ${qr.size}`}><Rect width={qr.size} height={qr.size} fill="white" /><Path d={qr.path} fill="black" /></Svg>;
 }
-function SecurityContent({ owner }: { owner: string }) {
+function SecurityContent({ owner, destination }: { owner: string; destination: '/privacy' | '/(app)/dashboard' }) {
   const { refetchRole, signOut } = useAuth();
   const [factor, setFactor] = useState<string | null>(null);
   const [factors, setFactors] = useState<{ id: string; friendly_name?: string }[]>([]);
@@ -108,7 +108,7 @@ function SecurityContent({ owner }: { owner: string }) {
         <Text className="font-bold">{invitation.store_name}</Text><Text>Expires {new Date(invitation.expires_at).toLocaleString()}</Text>
         <Button disabled={busy} onPress={() => { void run(() => accept(invitation.id)); }}>Accept branch invitation</Button>
       </View>)}
-      <Button disabled={busy} onPress={() => router.replace('/(app)/dashboard')}>Continue to Pogo’s</Button>
+      <Button disabled={busy} onPress={() => router.replace(destination)}>Continue to Pogo’s</Button>
     </> : null}
     <Button variant="ghost" disabled={busy} onPress={() => { void run(load); }}>Refresh security settings</Button>
     <Text>If you lose your authenticator, contact the branch manager. Password recovery does not bypass staff MFA.</Text>
@@ -116,9 +116,10 @@ function SecurityContent({ owner }: { owner: string }) {
   </ScrollView>;
 }
 export default function Security() {
+  const { returnTo }=useLocalSearchParams<{returnTo?:string}>();
   const { user, loading, recoveryRequired } = useAuth();
   if (loading) return <View />;
   if (!user) return <Redirect href="/(auth)/login" />;
   if (recoveryRequired) return <Redirect href="/auth/reset-password" />;
-  return <SecurityContent key={user.id} owner={user.id} />;
+  return <SecurityContent key={user.id} owner={user.id} destination={returnTo==='/privacy'?'/privacy':'/(app)/dashboard'} />;
 }

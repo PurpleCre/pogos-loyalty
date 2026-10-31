@@ -32,6 +32,14 @@ The identity increment implements one auth provider, email confirmation/resend a
 
 The combined suite has 181 passing tests, including customer cash/reward journeys at AAL1 and explicit staff/admin AAL2 denial/grant cases. TypeScript, lint, generated types, SDK/peer checks and Android/iOS exports pass; native generation verifies SecureStore backup-rule references. See [identity acceptance and activation](identity-access-milestone.md) for evidence, storage tradeoffs and the migration procedure. No invitation email, account creation, hosted setting change, migration or publication was performed. Cashier approval remains separate. Hosted Auth/PostgREST/Deno tests, fresh native builds/devices, lost-factor operations, granular manager/finance tiers and privacy/export/deletion remain open Phase 2 gates; the complete phase is not marked production-ready. Automatic development OTA after checks on `main` and manual development/staging triggers remain enabled.
 
+## Privacy request, export and consent increment
+
+The identity checkpoint was reverified before advancing; a subsequent review corrected explicit logout address-cache cleanup while preserving financial recovery checkpoints. The privacy increment adds fresh-identity account exports, versioned default-off marketing consent, durable deletion requests and customer updates, named MFA reviewer controls, processing pause/resume and six-system evidence gates. Approved processing freezes new trading; completed deletion denies old-token access while retaining approved financial records. No automatic erasure worker or real policy/retention approval is claimed.
+
+The user confirmed **pgonese6@gmail.com** as the temporary privacy contact. The local data map classifies all 57 public tables; the complete suite has **214 passing tests**, with type/lint/schema/SDK/peer checks, Android/iOS exports, native generation and standalone public-page preview generation passing. The new audit reports 26 affected entries (1 low, 23 moderate, 2 high, zero critical); tooling/security gates remain open. See [privacy acceptance](privacy-milestone.md) and [the approval/operator runbook](privacy/data-lifecycle.md).
+
+No cloud migration, account/vendor erasure, communication or website/OTA publication was performed. Approved executable erasure/minimisation, retention deadlines, provider/backup handling, public hosting, real Auth/Deno/Postgres and device/browser acceptance remain required. The next independent work area is branch operational readiness: intake/availability controls, new-order alerts and reconnect/shift behavior.
+
 The remaining sections preserve the foundation milestone’s original evidence and deployment prerequisites. Statements about disabled legacy checkout and future ledger work below describe that earlier checkpoint; the linked milestone reports record the subsequent implementation.
 
 ## Implemented locally
@@ -82,11 +90,11 @@ No cloud deployment or native app release was performed. Hosted CI execution, li
 ## Remaining first-release work
 
 1. Inventory deployed data and ownership; separate historical demo fixtures from production data. Verify approved branch records, menus/modifiers, currencies, delivery zones/fees, staff devices and cash/till procedures for all three branches.
-2. Complete security remediation/review, hosted CI and native build/device acceptance for the locally verified Expo 58 upgrade. The final audit has 26 affected package entries, including 3 high in a tooling dependency chain and zero critical. Resolve the remaining platform gates in the linked report before release.
+2. Complete security remediation/review, hosted CI and native build/device acceptance for the locally verified Expo 58 upgrade. The latest privacy audit has 26 affected package entries, including 2 high in a tooling dependency chain and zero critical. Resolve the remaining platform gates in the linked report before release.
 3. Deploy and validate the implemented server quotations and atomic idempotent cash orders in staging, import verified business data and complete device/concurrent-session tests before activating a branch.
 4. Stage the implemented earning/refund and reward reservation/fulfilment commands, complete opening-balance reconciliation, approve real benefits and configure/test reward expiry. Run concurrent-session and device acceptance before activating redemption.
 5. Stage and exercise the implemented branch fulfilment/cash workflow, configure the expiry worker, and reconcile it against real tills. Obtain the GAAP contract or approve/rehearse the documented manual bridge; automation remains disabled.
-6. Stage and accept the implemented identity/invitation/MFA flows; complete granular manager/finance permissions, privacy/deletion and fiscal responsibilities, transaction notifications, offline/reconnect handling, reports, monitoring, recovery rehearsal and branch training.
+6. Stage and accept identity/invitation/MFA and privacy request/export controls; approve and rehearse actual erasure/retention, complete granular manager/finance permissions and fiscal responsibilities, transaction notifications, offline/reconnect handling, reports, monitoring, recovery rehearsal and branch training.
 7. Run release acceptance and an observed one-branch pilot before enabling the remaining two branches. Retain the product/security/finance/privacy gates in the production plan.
 
 The backlog records partial work explicitly. Local containment is not marked as deployed, and broader phases are not marked complete by these changes.

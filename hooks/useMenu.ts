@@ -1,3 +1,4 @@
+import { logPrivateError } from '@/lib/privacy-logging';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { Tables } from '@/lib/types';
@@ -103,7 +104,7 @@ export function useMenu(isAdmin = false, storeId?: string) {
       setCategories(categoriesRes.data || []);
       setItems((itemsRes.data || []).map(toMenuItem));
     } catch (error) {
-      console.error('Error fetching menu:', error);
+      logPrivateError('Error fetching menu:', error);
     } finally {
       setIsLoading(false);
     }
@@ -123,7 +124,7 @@ export function useMenu(isAdmin = false, storeId?: string) {
       }
       return { success: true, data };
     } catch (error: any) {
-      console.error('Error adding menu item:', error);
+      logPrivateError('Error adding menu item:', error);
       return { success: false, error: error.message };
     }
   };
@@ -143,7 +144,7 @@ export function useMenu(isAdmin = false, storeId?: string) {
       }
       return { success: true, data };
     } catch (error: any) {
-      console.error('Error updating menu item:', error);
+      logPrivateError('Error updating menu item:', error);
       return { success: false, error: error.message };
     }
   };
@@ -159,7 +160,7 @@ export function useMenu(isAdmin = false, storeId?: string) {
       setItems(prev => prev.filter(item => item.id !== id));
       return { success: true };
     } catch (error: any) {
-      console.error('Error deleting menu item:', error);
+      logPrivateError('Error deleting menu item:', error);
       return { success: false, error: error.message };
     }
   };
@@ -178,7 +179,7 @@ export function useMenu(isAdmin = false, storeId?: string) {
       }
       return { success: true, data };
     } catch (error: any) {
-      console.error('Error adding category:', error);
+      logPrivateError('Error adding category:', error);
       return { success: false, error: error.message };
     }
   };
@@ -198,7 +199,7 @@ export function useMenu(isAdmin = false, storeId?: string) {
       }
       return { success: true, data };
     } catch (error: any) {
-      console.error('Error updating category:', error);
+      logPrivateError('Error updating category:', error);
       return { success: false, error: error.message };
     }
   };
@@ -216,7 +217,7 @@ export function useMenu(isAdmin = false, storeId?: string) {
       setItems(prev => prev.filter(item => item.category_id !== id));
       return { success: true };
     } catch (error: any) {
-      console.error('Error deleting category:', error);
+      logPrivateError('Error deleting category:', error);
       return { success: false, error: error.message };
     }
   };

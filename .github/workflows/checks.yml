@@ -17,10 +17,18 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check
+      - run: npm run privacy:pages
       - run: npm run native:preflight
       - run: npm run build:check
       - uses: actions/upload-artifact@v4
         with:
           name: offline-native-bundles
-          path: dist/
+          path: |
+            dist/android/
+            dist/ios/
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        with:
+          name: privacy-page-previews
+          path: dist/privacy-pages/
           retention-days: 7

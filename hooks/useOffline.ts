@@ -1,3 +1,4 @@
+import { logPrivateError } from '@/lib/privacy-logging';
 import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '@/lib/supabase';
@@ -10,7 +11,7 @@ export const useOffline = () => {
         try {
             await AsyncStorage.setItem(`offline_${key}`, JSON.stringify(data));
         } catch (e) {
-            console.error('Failed to save offline data', e);
+            logPrivateError('Failed to save offline data', e);
         }
     };
 
@@ -19,7 +20,7 @@ export const useOffline = () => {
             const data = await AsyncStorage.getItem(`offline_${key}`);
             return data ? JSON.parse(data) : null;
         } catch (e) {
-            console.error('Failed to get offline data', e);
+            logPrivateError('Failed to get offline data', e);
             return null;
         }
     };
@@ -30,7 +31,7 @@ export const useOffline = () => {
             currentQueue.push({ ...action, timestamp: new Date().toISOString() });
             await saveOfflineData('pending_actions', currentQueue);
         } catch (e) {
-            console.error('Failed to add pending action', e);
+            logPrivateError('Failed to add pending action', e);
         }
     };
 
@@ -44,7 +45,7 @@ export const useOffline = () => {
                 await AsyncStorage.removeItem('offline_pending_actions');
             }
         } catch (e) {
-            console.error('Failed to process pending actions', e);
+            logPrivateError('Failed to process pending actions', e);
         }
     };
 

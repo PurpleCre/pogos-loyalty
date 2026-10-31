@@ -1,3 +1,4 @@
+import { logPrivateError } from '@/lib/privacy-logging';
 /**
  * GAAP POS Integration Service
  * 
@@ -122,7 +123,7 @@ export async function fetchGaapSyncLog(
   const { data, error } = await query;
 
   if (error) {
-    console.error('Error fetching sync log:', error);
+    logPrivateError('Error fetching sync log:', error);
     return [];
   }
 

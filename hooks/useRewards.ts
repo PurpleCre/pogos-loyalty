@@ -1,3 +1,4 @@
+import { logPrivateError } from '@/lib/privacy-logging';
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from './useAuth';
@@ -71,7 +72,7 @@ export const useRewards = () => {
             if (error) throw error;
             setRewards((data as Reward[]) || []);
         } catch (error) {
-            console.error('Error fetching rewards:', error);
+            logPrivateError('Error fetching rewards:', error);
         }
     };
 
@@ -87,7 +88,7 @@ export const useRewards = () => {
 
             if (currentAccount.current !== accountId) return;
             if (error && error.code !== 'PGRST116') {
-                console.error('Supabase error fetching points:', error);
+                logPrivateError('Supabase error fetching points:', error);
             }
 
             if (data) {
@@ -106,7 +107,7 @@ export const useRewards = () => {
                 });
             }
         } catch (err: any) {
-            console.error('Exception fetching user points:', err?.message || err);
+            logPrivateError('Exception fetching user points:', err?.message || err);
         } finally {
             if (currentAccount.current === accountId) setLoading(false);
         }
@@ -127,7 +128,7 @@ export const useRewards = () => {
                 setHistoryState({ owner: accountId, value: (data as Transaction[]) || [] });
             }
         } catch (error) {
-            console.error('Error fetching transactions:', error);
+            logPrivateError('Error fetching transactions:', error);
         }
     };
 

@@ -15,6 +15,7 @@ interface SpecialOfferRequest {
   title: string;
   message: string;
   offerDetails?: string;
+  afterUserId?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -49,14 +50,20 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error("Admin access required");
     }
 
-    const { subject, title, message, offerDetails }: SpecialOfferRequest = await req.json();
+    if (Deno.env.get('MARKETING_EMAIL_ENABLED') !== 'true') {
+      return new Response(JSON.stringify({ error: 'Marketing delivery is disabled pending approved consent and delivery controls.' }), {
+        status: 503, headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      });
+    }
+    const { subject, title, message, offerDetails, afterUserId }: SpecialOfferRequest = await req.json();
+    if (afterUserId && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(afterUserId)) throw new Error('Invalid recipient cursor');
 
-    console.log("Sending special offer email to all users");
 
-    // Get all user profiles with emails
-    const { data: profiles, error: profilesError } = await supabase
-      .from("profiles")
-      .select("email, full_name");
+    // Only current, verified opt-ins; never infer consent from signup.
+    const { data: recipientData, error: profilesError } = await supabase.rpc('privacy_marketing_recipients', {
+      p_limit: 100, ...(afterUserId ? { p_after: afterUserId } : {}),
+    });
+    const profiles = Array.isArray(recipientData) ? recipientData as { user_id: string; email: string; full_name: string | null }[] : [];
 
     if (profilesError) {
       console.error("Error fetching profiles:", profilesError);
@@ -111,9 +118,6 @@ const handler = async (req: Request): Promise<Response> => {
                           <p>${offerDetails}</p>
                         </div>
                       ` : ''}
-                      <p style="text-align: center;">
-                        <a href="${supabaseUrl.replace('https://akxukhkkddfqodqmdtwx.supabase.co', 'https://c1470fda-d52b-4d69-beb6-cb538aa47b85.lovableproject.com')}" class="cta-button">View in App</a>
-                      </p>
                       <p>Thank you for being a loyal customer!</p>
                       <p>Best regards,<br>The Pogo's Team</p>
                       <div class="footer">
@@ -125,9 +129,9 @@ const handler = async (req: Request): Promise<Response> => {
               </html>
             `,
           });
-          console.log(`Email sent to ${profile.email}`);
+
         } catch (emailError) {
-          console.error(`Failed to send email to ${profile.email}:`, emailError);
+          console.error('A marketing email delivery failed');
         }
       });
 
@@ -137,8 +141,9 @@ const handler = async (req: Request): Promise<Response> => {
 
     return new Response(
       JSON.stringify({ 
-        message: `Special offer sent to ${profiles.length} users`,
-        recipientCount: profiles.length 
+        message: `Marketing batch processed for ${profiles.length} opted-in accounts`,
+        recipientCount: profiles.length,
+        next_cursor: profiles.length === 100 ? profiles.at(-1)?.user_id : null
       }),
       {
         status: 200,

@@ -16,9 +16,11 @@ export async function createTestDatabase({ beforeContainment, beforeMigration } 
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         email TEXT,
         email_confirmed_at TIMESTAMPTZ DEFAULT now(),
+        deleted_at TIMESTAMPTZ,
         raw_user_meta_data JSONB NOT NULL DEFAULT '{}',
         created_at TIMESTAMPTZ NOT NULL DEFAULT now()
       );
+      CREATE TABLE auth.mfa_factors (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), user_id UUID NOT NULL REFERENCES auth.users(id), status TEXT NOT NULL, factor_type TEXT NOT NULL DEFAULT 'totp');
       CREATE FUNCTION auth.uid() RETURNS UUID LANGUAGE SQL STABLE AS
         $$ SELECT nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
       CREATE FUNCTION auth.jwt() RETURNS JSONB LANGUAGE SQL STABLE AS

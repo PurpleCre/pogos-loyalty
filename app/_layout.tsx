@@ -7,6 +7,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CartProvider } from '@/contexts/CartContext';
 import { AuthProvider } from '@/hooks/useAuth';
 import { OrderProvider } from '@/contexts/OrderContext';
+import { PrivacyExportCleanup } from '@/components/auth/PrivacyExportCleanup';
+import { sanitizeTelemetry } from '@/lib/privacy-logging';
 
 import * as Sentry from '@sentry/react-native';
 
@@ -16,6 +18,8 @@ Sentry.init({
   debug: false,
   environment: runtimeEnvironment.name,
   sendDefaultPii: false,
+  beforeSend: event => sanitizeTelemetry(event),
+  beforeBreadcrumb: breadcrumb => sanitizeTelemetry(breadcrumb),
 });
 
 const queryClient = new QueryClient();
@@ -25,6 +29,7 @@ function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}><SafeAreaProvider>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <PrivacyExportCleanup />
         <OrderProvider>
           <CartProvider>
             <Slot />

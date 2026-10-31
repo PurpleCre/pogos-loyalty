@@ -1,0 +1,1140 @@
+{
+  "updated": "2026-10-31",
+  "scope": "Local migration inventory only; live systems, buckets, logs, backups and vendors must be reconciled before activation.",
+  "controllerLegalIdentity": null,
+  "privacyOwner": null,
+  "temporaryContact": "pgonese6@gmail.com",
+  "datasets": [
+    {
+      "table": "achievements",
+      "fields": [
+        "id",
+        "name",
+        "description",
+        "icon",
+        "criteria_type",
+        "criteria_value",
+        "points_reward",
+        "created_at"
+      ],
+      "classification": "public_catalogue",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "announcements",
+      "fields": [
+        "id",
+        "title",
+        "message",
+        "type",
+        "created_by",
+        "created_at",
+        "expires_at",
+        "active"
+      ],
+      "classification": "staff_operations",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "branch_fiscal_references",
+      "fields": [
+        "store_id",
+        "document_type",
+        "reference",
+        "cash_order_id",
+        "reward_reservation_id"
+      ],
+      "classification": "financial_or_operational_audit",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "cash_branch_cashiers",
+      "fields": [
+        "store_id",
+        "user_id",
+        "active"
+      ],
+      "classification": "staff_operations",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "cash_delivery_zones",
+      "fields": [
+        "id",
+        "store_id",
+        "name",
+        "boundary",
+        "fee_minor",
+        "priority",
+        "active"
+      ],
+      "classification": "configuration",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "cash_loyalty_rules",
+      "fields": [
+        "id",
+        "store_id",
+        "currency",
+        "basis",
+        "points_per_unit",
+        "spend_unit_minor",
+        "max_points",
+        "effective_from",
+        "active"
+      ],
+      "classification": "configuration",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "cash_movements",
+      "fields": [
+        "id",
+        "order_id",
+        "store_id",
+        "actor_id",
+        "event_type",
+        "amount_minor",
+        "currency",
+        "reference",
+        "details",
+        "created_at"
+      ],
+      "classification": "financial_or_operational_audit",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "cash_order_commands",
+      "fields": [
+        "actor_id",
+        "command_id",
+        "order_id",
+        "request",
+        "result",
+        "created_at"
+      ],
+      "classification": "financial_or_operational_audit",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "cash_order_quotes",
+      "fields": [
+        "id",
+        "user_id",
+        "store_id",
+        "request",
+        "snapshot",
+        "expires_at",
+        "order_id",
+        "created_at",
+        "earning_rule_id"
+      ],
+      "classification": "account",
+      "exportSection": "quotes",
+      "exportScope": "Caller-owned fields only; counterparties and privileged details omitted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "cash_order_settings",
+      "fields": [
+        "store_id",
+        "enabled",
+        "pricing_approved",
+        "currency",
+        "collection_enabled",
+        "delivery_enabled",
+        "minimum_subtotal_minor",
+        "max_total_minor",
+        "fulfilment_enabled",
+        "acceptance_minutes"
+      ],
+      "classification": "configuration",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "cash_receipts",
+      "fields": [
+        "order_id",
+        "store_id",
+        "sale_reference",
+        "currency",
+        "amount_minor",
+        "tendered_minor",
+        "change_minor",
+        "received_by",
+        "current_holder_id",
+        "pending_receiver_id",
+        "settled_at",
+        "created_at"
+      ],
+      "classification": "account",
+      "exportSection": "receipts",
+      "exportScope": "Caller-owned fields only; counterparties and privileged details omitted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "gaap_config",
+      "fields": [
+        "id",
+        "store_id",
+        "api_base_url",
+        "api_key",
+        "webhook_secret",
+        "environment",
+        "is_active",
+        "last_webhook_at",
+        "last_sync_error",
+        "config_metadata",
+        "created_at",
+        "updated_at"
+      ],
+      "classification": "credential_or_integration_secret",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "gaap_customer_links",
+      "fields": [
+        "id",
+        "user_id",
+        "gaap_customer_id",
+        "gaap_customer_phone",
+        "gaap_customer_email",
+        "linked_at",
+        "verified",
+        "last_synced_at",
+        "created_at"
+      ],
+      "classification": "account",
+      "exportSection": "pos_links",
+      "exportScope": "Caller-owned fields only; counterparties and privileged details omitted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "gaap_sync_log",
+      "fields": [
+        "id",
+        "gaap_transaction_id",
+        "gaap_receipt_number",
+        "user_id",
+        "store_id",
+        "points_awarded",
+        "transaction_amount",
+        "line_items",
+        "raw_payload",
+        "sync_status",
+        "error_message",
+        "synced_at",
+        "created_at"
+      ],
+      "classification": "account",
+      "exportSection": "pos_activity",
+      "exportScope": "Whitelisted metadata; private payloads/keys/notes omitted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "identity_access_events",
+      "fields": [
+        "id",
+        "actor_id",
+        "subject_id",
+        "invitation_id",
+        "action",
+        "details",
+        "created_at"
+      ],
+      "classification": "account",
+      "exportSection": "access_history",
+      "exportScope": "Whitelisted metadata; private payloads/keys/notes omitted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "loyalty_accounts",
+      "fields": [
+        "user_id",
+        "opening_balance",
+        "opening_earned",
+        "opening_redeemed",
+        "balance",
+        "earned_gross",
+        "redeemed_gross",
+        "opening_reviewed",
+        "reviewed_by",
+        "reviewed_at",
+        "reserved_points"
+      ],
+      "classification": "financial_or_operational_audit",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "loyalty_ledger",
+      "fields": [
+        "id",
+        "user_id",
+        "order_id",
+        "actor_id",
+        "event_key",
+        "kind",
+        "points_delta",
+        "rule_id",
+        "reverses_id",
+        "details",
+        "created_at",
+        "reservation_id",
+        "reserved_delta",
+        "redemption_points"
+      ],
+      "classification": "account",
+      "exportSection": "loyalty_ledger",
+      "exportScope": "Caller-owned fields only; counterparties and privileged details omitted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "menu_categories",
+      "fields": [
+        "id",
+        "name",
+        "sort_order",
+        "is_active",
+        "created_at"
+      ],
+      "classification": "public_catalogue",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "menu_item_option_choices",
+      "fields": [
+        "id",
+        "option_id",
+        "name",
+        "price_adjustment",
+        "is_default",
+        "sort_order",
+        "created_at"
+      ],
+      "classification": "public_catalogue",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "menu_item_options",
+      "fields": [
+        "id",
+        "menu_item_id",
+        "name",
+        "is_required",
+        "max_choices",
+        "sort_order",
+        "created_at"
+      ],
+      "classification": "public_catalogue",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "menu_items",
+      "fields": [
+        "id",
+        "category_id",
+        "name",
+        "description",
+        "price",
+        "image_url",
+        "is_available",
+        "created_at",
+        "updated_at",
+        "store_id"
+      ],
+      "classification": "public_catalogue",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "notifications",
+      "fields": [
+        "id",
+        "title",
+        "body",
+        "icon",
+        "badge",
+        "data",
+        "sent_by",
+        "sent_to",
+        "sent_at",
+        "read_at",
+        "delivery_status",
+        "created_at"
+      ],
+      "classification": "account",
+      "exportSection": "notifications",
+      "exportScope": "Caller-owned fields only; counterparties and privileged details omitted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "order_items",
+      "fields": [
+        "id",
+        "order_id",
+        "menu_item_id",
+        "quantity",
+        "unit_price",
+        "item_name",
+        "modifiers_snapshot",
+        "unit_price_minor",
+        "line_total_minor"
+      ],
+      "classification": "account",
+      "exportSection": "order_items",
+      "exportScope": "Caller-owned fields only; counterparties and privileged details omitted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "order_status_events",
+      "fields": [
+        "id",
+        "order_id",
+        "actor_id",
+        "status",
+        "created_at",
+        "event_type",
+        "details"
+      ],
+      "classification": "account",
+      "exportSection": "order_events",
+      "exportScope": "Whitelisted metadata; private payloads/keys/notes omitted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "orders",
+      "fields": [
+        "id",
+        "user_id",
+        "status",
+        "total_amount",
+        "points_earned",
+        "created_at",
+        "updated_at",
+        "currency",
+        "change_needed",
+        "store_id",
+        "quote_id",
+        "submission_key",
+        "subtotal_minor",
+        "delivery_fee_minor",
+        "total_minor",
+        "fulfilment_mode",
+        "contact_snapshot",
+        "delivery_snapshot",
+        "branch_snapshot",
+        "payment_method",
+        "payment_status",
+        "version",
+        "acceptance_deadline",
+        "assigned_collector_id",
+        "cash_custody_status",
+        "loyalty_status",
+        "points_reversed",
+        "earning_rule_id"
+      ],
+      "classification": "account",
+      "exportSection": "orders",
+      "exportScope": "Caller-owned fields only; counterparties and privileged details omitted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "point_gifts",
+      "fields": [
+        "id",
+        "sender_id",
+        "recipient_id",
+        "points",
+        "message",
+        "created_at",
+        "status"
+      ],
+      "classification": "account",
+      "exportSection": "gifts",
+      "exportScope": "Caller-owned fields only; counterparties and privileged details omitted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "privacy_consent_events",
+      "fields": [
+        "id",
+        "user_id",
+        "marketing_email",
+        "notice_version",
+        "created_at"
+      ],
+      "classification": "account",
+      "exportSection": "consent_history",
+      "exportScope": "Caller-owned fields only; counterparties and privileged details omitted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "privacy_export_progress",
+      "fields": [
+        "request_id",
+        "section",
+        "cursor",
+        "previous_cursor",
+        "finished"
+      ],
+      "classification": "privacy_operations",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "privacy_notices",
+      "fields": [
+        "version",
+        "controller_name",
+        "body",
+        "support_email",
+        "approval_reference",
+        "approved_by",
+        "approved_at"
+      ],
+      "classification": "published_notice_with_private_approval",
+      "exportSection": null,
+      "exportScope": "Only approved public notice columns are public; internal approval references and approver identities remain restricted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "privacy_preferences",
+      "fields": [
+        "user_id",
+        "marketing_email",
+        "notice_version",
+        "updated_at"
+      ],
+      "classification": "account",
+      "exportSection": "preferences",
+      "exportScope": "Caller-owned fields only; counterparties and privileged details omitted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "privacy_request_events",
+      "fields": [
+        "id",
+        "request_id",
+        "actor_id",
+        "event_type",
+        "public_message",
+        "details",
+        "created_at"
+      ],
+      "classification": "privacy_operations",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "privacy_request_tasks",
+      "fields": [
+        "request_id",
+        "system",
+        "status",
+        "evidence_reference",
+        "recorded_by",
+        "recorded_at"
+      ],
+      "classification": "privacy_operations",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "privacy_requests",
+      "fields": [
+        "id",
+        "user_id",
+        "kind",
+        "status",
+        "version",
+        "blocker",
+        "reviewed_by",
+        "notice_version",
+        "retention_policy_version",
+        "created_at",
+        "updated_at",
+        "completed_at"
+      ],
+      "classification": "account",
+      "exportSection": "privacy_requests",
+      "exportScope": "Caller-owned fields only; counterparties and privileged details omitted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "privacy_retention_approvals",
+      "fields": [
+        "version",
+        "policy_reference",
+        "approved_by",
+        "approved_at"
+      ],
+      "classification": "configuration",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "privacy_reviewers",
+      "fields": [
+        "user_id",
+        "active"
+      ],
+      "classification": "privacy_operations",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "privacy_settings",
+      "fields": [
+        "singleton",
+        "support_email",
+        "active_notice_version",
+        "retention_policy_version",
+        "deletion_processing_enabled"
+      ],
+      "classification": "configuration",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "profiles",
+      "fields": [
+        "id",
+        "email",
+        "full_name",
+        "created_at",
+        "updated_at",
+        "gaap_customer_id"
+      ],
+      "classification": "account",
+      "exportSection": "account",
+      "exportScope": "Caller-owned fields only; counterparties and privileged details omitted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "push_subscriptions",
+      "fields": [
+        "id",
+        "user_id",
+        "endpoint",
+        "p256dh",
+        "auth",
+        "user_agent",
+        "created_at",
+        "updated_at"
+      ],
+      "classification": "account",
+      "exportSection": "devices",
+      "exportScope": "Whitelisted metadata; private payloads/keys/notes omitted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "referral_codes",
+      "fields": [
+        "id",
+        "code",
+        "user_id",
+        "created_at"
+      ],
+      "classification": "account",
+      "exportSection": "referral_codes",
+      "exportScope": "Caller-owned fields only; counterparties and privileged details omitted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "referrals",
+      "fields": [
+        "id",
+        "referrer_id",
+        "referred_id",
+        "referral_code",
+        "points_awarded",
+        "created_at"
+      ],
+      "classification": "account",
+      "exportSection": "referrals",
+      "exportScope": "Caller-owned fields only; counterparties and privileged details omitted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "reward_branch_offers",
+      "fields": [
+        "id",
+        "store_id",
+        "reward_id",
+        "name",
+        "description",
+        "terms",
+        "gaap_product_reference",
+        "points_cost",
+        "reservation_minutes",
+        "available_units",
+        "enabled",
+        "created_at"
+      ],
+      "classification": "public_catalogue",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "reward_branch_settings",
+      "fields": [
+        "store_id",
+        "enabled",
+        "terms_approved",
+        "max_active_per_customer"
+      ],
+      "classification": "configuration",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "reward_claim_secrets",
+      "fields": [
+        "reservation_id",
+        "claim_code"
+      ],
+      "classification": "credential_or_integration_secret",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "reward_commands",
+      "fields": [
+        "actor_id",
+        "command_id",
+        "reservation_id",
+        "request",
+        "result",
+        "created_at"
+      ],
+      "classification": "financial_or_operational_audit",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "reward_events",
+      "fields": [
+        "id",
+        "reservation_id",
+        "actor_id",
+        "event_type",
+        "version",
+        "details",
+        "created_at"
+      ],
+      "classification": "account",
+      "exportSection": "reward_events",
+      "exportScope": "Whitelisted metadata; private payloads/keys/notes omitted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "reward_fulfilments",
+      "fields": [
+        "reservation_id",
+        "store_id",
+        "actor_id",
+        "gaap_reference",
+        "created_at"
+      ],
+      "classification": "financial_or_operational_audit",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "reward_reservations",
+      "fields": [
+        "id",
+        "user_id",
+        "store_id",
+        "offer_id",
+        "points_cost",
+        "snapshot",
+        "customer_name",
+        "status",
+        "claimed_by",
+        "claimed_at",
+        "version",
+        "expires_at",
+        "created_at",
+        "updated_at"
+      ],
+      "classification": "account",
+      "exportSection": "reward_reservations",
+      "exportScope": "Caller-owned fields only; counterparties and privileged details omitted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "reward_voids",
+      "fields": [
+        "reservation_id",
+        "store_id",
+        "actor_id",
+        "credit_note_reference",
+        "reason",
+        "created_at"
+      ],
+      "classification": "financial_or_operational_audit",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "rewards",
+      "fields": [
+        "id",
+        "name",
+        "description",
+        "points_cost",
+        "image_url",
+        "category",
+        "available",
+        "created_at"
+      ],
+      "classification": "public_catalogue",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "staff_invitations",
+      "fields": [
+        "id",
+        "email",
+        "store_id",
+        "invited_by",
+        "reason",
+        "expires_at",
+        "accepted_by",
+        "accepted_at",
+        "revoked_at",
+        "created_at"
+      ],
+      "classification": "account",
+      "exportSection": "staff_invitations",
+      "exportScope": "Caller-owned fields only; counterparties and privileged details omitted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "staff_memberships",
+      "fields": [
+        "user_id",
+        "store_id",
+        "active",
+        "granted_by",
+        "updated_at"
+      ],
+      "classification": "account",
+      "exportSection": "staff_memberships",
+      "exportScope": "Caller-owned fields only; counterparties and privileged details omitted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "stores",
+      "fields": [
+        "id",
+        "name",
+        "address",
+        "distance_miles",
+        "is_open",
+        "latitude",
+        "longitude",
+        "created_at",
+        "image_url"
+      ],
+      "classification": "public_catalogue",
+      "exportSection": null,
+      "exportScope": "Privacy reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "transactions",
+      "fields": [
+        "id",
+        "user_id",
+        "amount",
+        "points_earned",
+        "points_redeemed",
+        "items",
+        "transaction_type",
+        "created_at",
+        "source",
+        "order_id",
+        "ledger_entry_id",
+        "currency",
+        "amount_minor",
+        "reservation_id"
+      ],
+      "classification": "account",
+      "exportSection": "transactions",
+      "exportScope": "Caller-owned fields only; counterparties and privileged details omitted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "user_achievements",
+      "fields": [
+        "id",
+        "user_id",
+        "achievement_id",
+        "earned_at"
+      ],
+      "classification": "account",
+      "exportSection": "achievements",
+      "exportScope": "Caller-owned fields only; counterparties and privileged details omitted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "user_locations",
+      "fields": [
+        "id",
+        "user_id",
+        "address",
+        "latitude",
+        "longitude",
+        "tag",
+        "created_at",
+        "updated_at"
+      ],
+      "classification": "account",
+      "exportSection": "addresses",
+      "exportScope": "Caller-owned fields only; counterparties and privileged details omitted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "user_points",
+      "fields": [
+        "user_id",
+        "current_points",
+        "total_earned",
+        "total_redeemed",
+        "updated_at",
+        "reserved_points"
+      ],
+      "classification": "account",
+      "exportSection": "account",
+      "exportScope": "Caller-owned fields only; counterparties and privileged details omitted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "user_roles",
+      "fields": [
+        "id",
+        "user_id",
+        "role",
+        "created_at",
+        "staff_store_id"
+      ],
+      "classification": "account",
+      "exportSection": "account",
+      "exportScope": "Caller-owned fields only; counterparties and privileged details omitted",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    }
+  ],
+  "otherStores": [
+    {
+      "system": "Supabase Auth",
+      "data": "Email, password hash, MFA factors, sessions and auth audit records",
+      "exportScope": "Whitelisted account identity only; no credentials",
+      "retentionApproval": "unconfirmed"
+    },
+    {
+      "system": "Device storage",
+      "data": "Secure sessions/PKCE, saved-address cache, durable cash/staff/reward recovery identities and temporary export files",
+      "retentionApproval": "unconfirmed"
+    },
+    {
+      "system": "GAAP",
+      "data": "POS/fiscal identifiers and actual till records; automated ingestion disabled",
+      "retentionApproval": "unconfirmed"
+    },
+    {
+      "system": "Expo/EAS",
+      "data": "Build/update metadata; push lifecycle not yet a production service",
+      "retentionApproval": "unconfirmed"
+    },
+    {
+      "system": "Google Maps",
+      "data": "Delivery coordinates/address searches when used",
+      "retentionApproval": "unconfirmed"
+    },
+    {
+      "system": "Sentry",
+      "data": "Optional crash reports with client redaction; provider/account/region review pending",
+      "retentionApproval": "unconfirmed"
+    },
+    {
+      "system": "Resend / configured SMTP",
+      "data": "Email delivery/contact records; legacy marketing sender disabled by default",
+      "retentionApproval": "unconfirmed"
+    },
+    {
+      "system": "Lovable AI gateway",
+      "data": "Legacy support messages; disabled by default",
+      "retentionApproval": "unconfirmed"
+    },
+    {
+      "system": "Remote image providers",
+      "data": "Request metadata when historical/demo external images load; approved production media import pending",
+      "retentionApproval": "unconfirmed"
+    },
+    {
+      "system": "Backups, storage buckets, logs and external exports",
+      "data": "Inventory unknown; retention, expiry, restore suppression and erasure receipts required",
+      "retentionApproval": "unconfirmed"
+    }
+  ]
+}

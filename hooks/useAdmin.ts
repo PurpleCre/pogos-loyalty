@@ -1,3 +1,4 @@
+import { logPrivateError } from '@/lib/privacy-logging';
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
@@ -95,7 +96,7 @@ export const useAdmin = () => {
       .order('created_at', { ascending: false }).setHeader('Authorization', authorization);
 
     if (profilesError || !profilesData) {
-      console.error('Error fetching profiles:', profilesError);
+      logPrivateError('Error fetching profiles:', profilesError);
       return;
     }
 
@@ -105,7 +106,7 @@ export const useAdmin = () => {
       .select('user_id, role, staff_store_id').setHeader('Authorization', authorization);
 
     if (rolesError) {
-      console.error('Error fetching roles:', rolesError);
+      logPrivateError('Error fetching roles:', rolesError);
       return;
     }
 
