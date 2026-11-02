@@ -56,6 +56,8 @@ There is one open case per branch/day/currency. Acceptance is a statement about 
 
 The combined suite has **292 passing tests**, including **15 new database cases and 12 new client cases**. Coverage includes scoped role grants and revocation, MFA across reports/privacy/push, blocked invitation expansion, operational versus finance access, large exact totals, currency isolation, Harare boundaries/connection timezone independence, two-person review, immutable observations/audit, variances, stale sources, linked accepted-period revisions, same-transaction revision ordering and reaffirmation after rejection, rejected mutations, complete export/recovery failure modes and a real cash refund with continuing collector custody.
 
+Reverification on 2 November repeated the complete `npm run check` successfully. The current finance screen, client library and API adapter also match their source content in both successful Android/iOS bundle exports. **The local implementation checkpoint is complete; production acceptance remains open.** The [production readiness checkpoint](production-readiness-status.md) records the seven remaining delivery groups and carries forward the approvals below.
+
 TypeScript, lint, generated-type drift, SDK compatibility and installed peers pass. Android/iOS Hermes exports and temporary native project generation pass locally. The local engine uses simulated Supabase roles/JWT claims; signed JWT/PostgREST, true concurrent PostgreSQL, physical sharing/storage/lifecycle, signed builds, independent security review and actual tills remain separate gates. Existing platform advisory/native/CI and legal/ownership gates are not closed by these tests.
 
 ```sh

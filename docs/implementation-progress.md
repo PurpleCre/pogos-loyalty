@@ -2,6 +2,10 @@
 
 Updated: 2 November 2026. Scope: local implementation increments for the cash-first release at Msasa, Kamfinsa and Westgate. GAAP is the confirmed POS vendor. Digital payments remain Release 2.
 
+## Reverification and remaining delivery milestones
+
+The finance increment was reverified with a fresh `npm run check`: **292 passing tests**, zero failures, and successful type/lint/migration-type/SDK/peer checks. The finance screen and libraries match the successful Android/iOS exported source maps. Its local implementation is complete; Pogo’s authority approval, actual till reconciliation and hosted/concurrency/device acceptance remain open. The [production readiness checkpoint](production-readiness-status.md) consolidates all remaining implementation, review and release work into **seven delivery milestones**: six through an approved production candidate, followed by the observed pilot and staged three-branch rollout. This grouping carries forward earlier gates; it does not mark any original phase production-complete.
+
 ## Manager/finance permissions and reconciliation increment
 
 The 265-test notification checkpoint was reverified before adding branch-scoped manager/finance roles, current-row MFA/privacy/push checks, governed role assignment, masked exact-money reports and immutable two-person reconciliation cases. Variances cannot be accepted as matching, changed snapshots become stale and external evidence revisions retain their prior case. Reports distinguish daily sales/refunds/deposits from all-date custody and preserve currencies and integer precision. The administrator's mixed/unpaid revenue card now links to currency-specific reports. Durable command recovery and complete scoped JSON exports are included. The combined suite has **292 passing tests**; see [finance implementation and activation](finance-permissions-milestone.md).
