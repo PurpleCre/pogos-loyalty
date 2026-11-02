@@ -1,9 +1,11 @@
 import { useRef, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
+import { router } from 'expo-router';
 import { useIsFocused } from 'expo-router/react-navigation';
 import { useStores } from '@/hooks/useStores';
 import { useAuth } from '@/hooks/useAuth';
 import { useRewardReservations } from '@/hooks/useRewardReservations';
+import { ReadStatus } from '@/components/ReadStatus';
 import { RewardCard } from '@/components/rewards/RewardCard';
 import { RewardRecovery } from '@/components/rewards/RewardRecovery';
 import { RewardTicket } from '@/components/rewards/RewardTicket';
@@ -21,10 +23,10 @@ export default function Rewards() {
   const current = useRef(scope); current.current = scope;
   const [selection, setSelection] = useState<{ scope: string; offer: RewardOffer } | null>(null);
   const [messageState, setMessage] = useState<{ scope: string; text: string } | null>(null);
-  const { reservations, offers, balance, reviewed, error, more, loading, execute, recover, refresh, loadMore, pending, pendingError, busy } = useRewardReservations(branchId, false, focused);
+  const { reservations, offers, balance, reviewed, error, more, loading, execute, recover, refresh, loadMore, pending, pendingError, busy, fresh, refreshedAt } = useRewardReservations(branchId, false, focused);
   const message = messageState?.scope === scope ? messageState.text : '';
   const selected = selection?.scope === scope ? selection.offer : null;
-  const blocked = busy || !!pending || !!pendingError;
+  const blocked = busy || !!pending || !!pendingError || !fresh;
   const showMessage = (text: string) => { if (current.current === scope) setMessage({ scope, text }); };
   const act = async (request: RewardRequest) => {
     showMessage('');
@@ -41,7 +43,7 @@ export default function Rewards() {
     catch (err) { showMessage(rewardError(err)); }
   };
   if (!focused) return <View />;
-  if (!user) return <View className="flex-1 p-6"><Text>Sign in to use rewards.</Text></View>;
+  if (!user) return <View className="flex-1 p-6"><Text>Sign in to use rewards.</Text><TouchableOpacity accessibilityRole="button" onPress={() => router.push('/(auth)/login?redirect=/(app)/rewards')} className="py-4"><Text className="text-red-700 font-bold">Sign in</Text></TouchableOpacity></View>;
   return <View className="flex-1 bg-slate-50">
     <View className="pt-14 pb-5 px-5 bg-white border-b border-slate-200">
       <Text className="text-2xl font-bold">Pogo’s rewards</Text>
@@ -49,6 +51,7 @@ export default function Rewards() {
       <Text className="text-slate-500 mt-2">Reserve an item, then collect it at your chosen branch.</Text>
     </View>
     <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 48 }} refreshControl={<RefreshControl refreshing={loading} onRefresh={() => { void refresh(); }} />}>
+      <ReadStatus label="Rewards and points" fresh={fresh} at={refreshedAt} error={error} loading={loading} onRefresh={() => { void refresh(); }} />
       <RewardRecovery pending={pending} error={pendingError} busy={busy} onRecover={() => { void checkPrevious(); }} />
       {message || error ? <Text accessibilityRole="alert" className="text-red-700 mb-4">{message || error}</Text> : null}
       {balance && !reviewed ? <Text className="text-amber-800 mb-4">Your historical opening balance needs administrator review before you can reserve rewards.</Text> : null}
@@ -57,7 +60,7 @@ export default function Rewards() {
       <ScrollView horizontal className="mb-5">{stores.map(store => <TouchableOpacity key={store.id} onPress={() => setBranch(store.id)}
         className={`p-3 rounded-lg mr-2 ${branchId === store.id ? 'bg-red-600' : 'bg-slate-200'}`}><Text className={branchId === store.id ? 'text-white' : 'text-slate-700'}>{store.name}</Text></TouchableOpacity>)}</ScrollView>
       {loading && !offers.length && !reservations.length ? <ActivityIndicator color="#dc2626" /> : null}
-      {!offers.length && !loading ? <Text className="text-slate-500 mb-4">No approved rewards are available to reserve at this branch.</Text> : null}
+      {!offers.length && fresh ? <Text className="text-slate-500 mb-4">No approved rewards are available to reserve at this branch.</Text> : null}
       {offers.map(offer => <RewardCard key={offer.id} reward={offer} userPoints={balance?.current_points ?? 0}
         disabled={blocked || !reviewed} onReserve={value => { setSelection({ scope, offer: value }); }} />)}
       {selected ? <View className="bg-white border border-red-200 p-4 rounded-xl mb-5">
@@ -69,7 +72,7 @@ export default function Rewards() {
         <TouchableOpacity disabled={busy} onPress={() => setSelection(null)} className="p-3"><Text className="text-center">Close</Text></TouchableOpacity>
       </View> : null}
       <Text className="font-bold text-xl my-4">Reservations and history</Text>
-      {!reservations.length && !loading ? <Text className="text-slate-500">Your reward reservations will appear here.</Text> : null}
+      {!reservations.length && fresh ? <Text className="text-slate-500">Your reward reservations will appear here.</Text> : null}
       {reservations.map(reservation => <View key={`${user.id}:${reservation.id}:${reservation.version}`} className="bg-white rounded-xl border border-slate-200 p-4 mb-4">
         <Text className="font-bold text-lg">{snapshotText(reservation.snapshot, 'name')}</Text>
         <Text>{snapshotText(reservation.snapshot, 'branch_name')} · {reservation.status}</Text>

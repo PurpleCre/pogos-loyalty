@@ -5,10 +5,11 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, MapPin, ChevronDown } from 'lucide-react-native';
 import { useStores, Store } from '@/hooks/useStores';
 import { useOrder } from '@/contexts/OrderContext';
+import { ReadStatus } from '@/components/ReadStatus';
 import { LocationPickerModal } from '@/components/LocationPickerModal';
 
 export default function StorePickerScreen() {
-  const { stores, loading, error } = useStores();
+  const { stores, loading, error, fresh, refreshedAt, refetch } = useStores();
   const { deliveryLocation, setSelectedStore } = useOrder();
   const { address } = useLocalSearchParams<{ address: string }>();
   const [isLocationModalVisible, setLocationModalVisible] = useState(false);
@@ -37,7 +38,7 @@ export default function StorePickerScreen() {
     
     const storesWithDistance = stores.map(store => {
       if (store.latitude === null || store.longitude === null) {
-        return { ...store, computedDistanceKm: undefined, deliveryTimeMins: undefined };
+        return { ...store, computedDistanceKm: undefined };
       }
       const computedDistanceKm = getDistanceInKm(
         deliveryLocation.latitude, 
@@ -45,9 +46,7 @@ export default function StorePickerScreen() {
         store.latitude, 
         store.longitude
       );
-      // Base 15 mins + ~3 mins per km
-      const deliveryTimeMins = Math.round(15 + (computedDistanceKm * 3));
-      return { ...store, computedDistanceKm, deliveryTimeMins };
+      return { ...store, computedDistanceKm };
     });
     
     return storesWithDistance.sort((a, b) => (a.computedDistanceKm ?? Infinity) - (b.computedDistanceKm ?? Infinity));
@@ -82,11 +81,13 @@ export default function StorePickerScreen() {
 
       {/* Store List */}
       <ScrollView className="flex-1 px-5 pt-4">
-        {loading ? (
+        <ReadStatus label="Branches" fresh={fresh} at={refreshedAt} loading={loading} error={!!error} onRefresh={() => { void refetch(); }} />
+        {!loading && !stores.length && !error ? <Text className="p-5">No branches are available to browse yet.</Text> : null}
+        {loading && !stores.length ? (
           <View className="py-10 items-center">
             <ActivityIndicator size="large" color="#dc2626" />
           </View>
-        ) : error ? (
+        ) : error && !stores.length ? (
           <View className="py-10 items-center">
             <Text className="text-red-500 font-medium text-center">Failed to load stores.</Text>
           </View>
@@ -103,21 +104,15 @@ export default function StorePickerScreen() {
                 <View className="flex-row justify-between items-start mb-4">
                 <View className="flex-1 mr-2">
                   <Text className="text-lg font-bold text-gray-900 mb-1">
-                    {index + 1}. {store.name.replace("Pogo's ", "")} {store.computedDistanceKm !== undefined ? `(${store.computedDistanceKm.toFixed(1)} km)` : `(${store.distance_miles} mi)`}
+                    {index + 1}. {store.name.replace("Pogo's ", "")} {store.computedDistanceKm !== undefined ? `(${store.computedDistanceKm.toFixed(1)} km)` : ''}
                   </Text>
-                  {store.deliveryTimeMins && (
-                    <Text className="text-gray-500 text-sm font-medium">
-                      Est. Delivery: ~{store.deliveryTimeMins} mins
-                    </Text>
-                  )}
                 </View>
                 <Text className={`font-bold mt-1 ${store.is_open ? 'text-green-600' : 'text-red-500'}`}>
-                  {store.is_open ? 'Open' : 'Closed'}
+                  {fresh ? (store.is_open ? 'Reported open' : 'Reported closed') : 'Hours unverified'}
                 </Text>
               </View>
               
               <TouchableOpacity
-                disabled={!store.is_open}
                 onPress={() => handleSelectStore(store)}
                 className={`py-3.5 rounded-xl items-center ${
                   store.is_open ? 'bg-red-600' : 'bg-gray-300'
@@ -125,7 +120,7 @@ export default function StorePickerScreen() {
                 activeOpacity={0.8}
               >
                 <Text className={`font-bold text-lg ${store.is_open ? 'text-white' : 'text-gray-500'}`}>
-                  Select for Delivery
+                  Browse branch menu
                 </Text>
               </TouchableOpacity>
               </View>

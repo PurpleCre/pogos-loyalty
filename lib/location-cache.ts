@@ -15,8 +15,27 @@ interface Storage {
 const legacyKey = '@pogos_saved_locations';
 const keyFor = (userId: string | null) => `@pogos_locations:${userId ?? 'guest'}`;
 
+const lanes = new WeakMap<object, Map<string, { epoch: number; tail: Promise<unknown> }>>();
+function lane(storage: object, owner: string | null) {
+  let entries = lanes.get(storage); if (!entries) { entries = new Map(); lanes.set(storage, entries); }
+  const key = keyFor(owner); let entry = entries.get(key); if (!entry) { entry = { epoch: 0, tail: Promise.resolve() }; entries.set(key, entry); } return entry;
+}
+function enqueue<T>(entry: ReturnType<typeof lane>, action: () => Promise<T>) {
+  const next = entry.tail.catch(() => undefined).then(action); entry.tail = next; return next;
+}
+export async function clearLocationCache(storage: Pick<Storage, 'removeItem'>, owner: string | null) {
+  const entry = lane(storage, owner); ++entry.epoch;
+  const results = await Promise.allSettled([enqueue(entry, () => storage.removeItem(keyFor(owner))), storage.removeItem(legacyKey)]);
+  if (results.some(result => result.status === 'rejected')) throw new Error('Location cache cleanup failed.');
+}
+
 export function createLocationCache(storage: Storage) {
+  const writer = (owner: string | null) => {
+    const entry = lane(storage, owner); const epoch = entry.epoch;
+    return (locations: LocationRecord[]) => enqueue(entry, async () => { if (entry.epoch === epoch) await storage.setItem(keyFor(owner), JSON.stringify(locations)); });
+  };
   return {
+    writer,
     async read(userId: string | null): Promise<LocationRecord[]> {
       // Never migrate the old shared cache: its owner cannot be established.
       await storage.removeItem(legacyKey);
@@ -36,11 +55,10 @@ export function createLocationCache(storage: Storage) {
       }
     },
     async write(userId: string | null, locations: LocationRecord[]) {
-      await storage.setItem(keyFor(userId), JSON.stringify(locations));
+      await writer(userId)(locations);
     },
     async clear(userId: string | null) {
-      await storage.removeItem(keyFor(userId));
-      await storage.removeItem(legacyKey);
+      await clearLocationCache(storage, userId);
     },
   };
 }

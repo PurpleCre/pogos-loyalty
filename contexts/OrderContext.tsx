@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Store } from '@/hooks/useStores';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/hooks/useAuth';
+import { accessTokenFor } from '@/lib/cash-orders';
 import { createLocationCache } from '@/lib/location-cache';
 
 export interface LocationData {
@@ -43,7 +44,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
 
   // Load saved locations on mount
   useEffect(() => {
-    let cancelled = false;
+    let cancelled = false; const cacheWrite = locationCache.writer(accountId);
     setDeliveryLocation(null);
     setSelectedStore(null);
     setLocationState({ owner: accountId, locations: [] });
@@ -63,7 +64,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
             if (cancelled) return;
             setSavedLocations(data);
             // Cache locally
-            await locationCache.write(accountId, data);
+            await cacheWrite(data);
             return;
           }
         }
@@ -80,85 +81,37 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   }, [accountId]);
 
   const saveLocation = async (location: LocationData) => {
+    const cacheWrite = locationCache.writer(accountId);
     try {
-      let dbLocation = location;
-      const exists = savedLocations.find(loc => loc.id === location.id);
-      
+      let saved = location;
       if (user) {
-        try {
-          const isUUID = location.id && location.id.length === 36 && location.id.includes('-');
-          const insertData = {
-            user_id: user.id,
-            address: location.address,
-            latitude: location.latitude,
-            longitude: location.longitude,
-            tag: location.tag,
-          };
-          
-          if (isUUID) {
-            // Update existing
-            const { data, error } = await supabase
-              .from('user_locations')
-              .update(insertData)
-              .eq('id', location.id)
-              .select()
-              .single();
-              
-            if (error) {
-              logPrivateError('Failed to update in Supabase', error);
-            } else if (data) {
-              dbLocation = data as LocationData;
-            }
-          } else {
-            // Insert new (let Supabase generate UUID)
-            const { data, error } = await supabase
-              .from('user_locations')
-              .insert([insertData])
-              .select()
-              .single();
-              
-            if (error) {
-              logPrivateError('Failed to insert in Supabase', error);
-            } else if (data) {
-              dbLocation = data as LocationData;
-            }
-          }
-        } catch (dbError) {
-          logPrivateError('Supabase save error (falling back to local)', dbError);
-        }
+        const token = await accessTokenFor(user.id);
+        const input = { user_id: user.id, address: location.address, latitude: location.latitude, longitude: location.longitude, tag: location.tag };
+        const existing = savedLocations.some(row => row.id === location.id) && /^[0-9a-f-]{36}$/i.test(location.id);
+        const query = existing ? supabase.from('user_locations').update(input).eq('id', location.id).eq('user_id', user.id) : supabase.from('user_locations').insert(input);
+        const { data, error } = await query.select().single().setHeader('Authorization', `Bearer ${token}`);
+        if (error || !data) throw error ?? new Error('Save unconfirmed');
+        saved = data;
       }
-      
-      let updatedLocations;
-      if (exists) {
-        updatedLocations = savedLocations.map(loc => loc.id === location.id ? dbLocation : loc);
-      } else {
-        updatedLocations = [...savedLocations, dbLocation];
-      }
-      
       if (currentAccount.current !== accountId) return null;
-      setSavedLocations(updatedLocations);
-      await locationCache.write(accountId, updatedLocations);
-      
-      if (deliveryLocation?.id === location.id) {
-        setDeliveryLocation(dbLocation);
-      }
-      
-      return dbLocation;
-    } catch (e) {
-      logPrivateError('Failed to save location', e);
-      return null;
-    }
+      const next = [...savedLocations.filter(row => row.id !== location.id), saved];
+      setSavedLocations(next);
+      // A server-confirmed save remains valid if its optional local cache fails.
+      await cacheWrite(next).catch(() => undefined);
+      if (currentAccount.current !== accountId) return null;
+      if (deliveryLocation?.id === location.id) setDeliveryLocation(saved);
+      return saved;
+    } catch (error) { logPrivateError('Location save could not be confirmed', error); return null; }
   };
 
   const removeLocation = async (id: string) => {
+    const cacheWrite = locationCache.writer(accountId);
     try {
       if (user) {
         const isUUID = id && id.length === 36 && id.includes('-');
         if (isUUID) {
-          const { error } = await supabase
-            .from('user_locations')
-            .delete()
-            .eq('id', id);
+          const token = await accessTokenFor(user.id);
+          const { error } = await supabase.from('user_locations').delete().eq('id', id).eq('user_id', user.id).setHeader('Authorization', `Bearer ${token}`);
           if (error) throw error;
         }
       }
@@ -166,7 +119,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       const updatedLocations = savedLocations.filter(loc => loc.id !== id);
       if (currentAccount.current !== accountId) return;
       setSavedLocations(updatedLocations);
-      await locationCache.write(accountId, updatedLocations);
+      await cacheWrite(updatedLocations);
       
       if (deliveryLocation?.id === id) {
         setDeliveryLocation(null);

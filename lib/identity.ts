@@ -6,7 +6,7 @@ export function normaliseEmail(value: string): string {
 export function validatePassword(value: string): void {
   if (value.length < 12 || value.length > 128) throw new Error('Use a password between 12 and 128 characters.');
 }
-const destinations = new Set(['/', '/privacy', '/notifications', '/finance', '/(app)/dashboard', '/(app)/cart', '/(app)/profile', '/(app)/rewards', '/(app)/order-tracking', '/(app)/staff-dashboard']);
+const destinations = new Set(['/', '/privacy', '/notifications', '/finance', '/support', '/(app)/dashboard', '/(app)/cart', '/(app)/profile', '/(app)/rewards', '/(app)/order-tracking', '/(app)/transactions', '/(app)/staff-dashboard']);
 export function safeAuthDestination(value: unknown): string {
   return typeof value === 'string' && destinations.has(value) ? value : '/(app)/dashboard';
 }

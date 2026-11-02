@@ -1,10 +1,13 @@
 import 'react-native-get-random-values';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from './supabase';
+import { cartRepository } from './cart-persistence';
 import type { Json } from './types';
 import { cashQuoteSchema, orderResultSchema, createCheckoutRecovery, type CheckoutRequest } from './cash-checkout';
 
-export const checkoutRecovery = createCheckoutRecovery(AsyncStorage);
+export const checkoutRecovery = createCheckoutRecovery(AsyncStorage, {
+  onConfirmed: (owner, pending) => cartRepository.completeSubmission(owner, pending.cartFingerprint),
+});
 export async function accessTokenFor(owner: string) {
   const { data: { session }, error } = await supabase.auth.getSession();
   if (error || !session || session.user.id !== owner) throw new Error('Your account changed. Sign in to check your order.');

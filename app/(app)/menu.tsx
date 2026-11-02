@@ -7,14 +7,20 @@ import { router, useFocusEffect, useNavigation } from 'expo-router';
 import { DrawerActions } from 'expo-router/react-navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { useOrders } from '@/hooks/useOrders';
+import { ReadStatus } from '@/components/ReadStatus';
+import { CartStorageStatus } from '@/components/CartStorageStatus';
+import { useStores } from '@/hooks/useStores';
+import { formatMoney } from '@/lib/cash-orders';
 import { useOrder } from '@/contexts/OrderContext';
 
 export default function MenuScreen() {
   const { selectedStore } = useOrder();
-  const { categories, items, isLoading, refetch, error: menuError } = useMenu(false, selectedStore?.id);
-  const { items: cartItems, addToCart, removeFromCart, updateQuantity, itemCount, cartTotal } = useCart();
+  const { items: cartItems, storeId: cartStoreId, addToCart, removeFromCart, updateQuantity, itemCount, cartTotal, hydrated } = useCart();
+  const { stores } = useStores();
+  const branch = selectedStore ?? stores.find(row => row.id === cartStoreId);
+  const { categories, items, isLoading, refetch, error: menuError, fresh, refreshedAt } = useMenu(false, branch?.id);
   const { user } = useAuth();
-  const { activeOrders, refetch: refetchOrders } = useOrders();
+  const { activeOrders, refetch: refetchOrders, fresh: ordersFresh } = useOrders();
   const navigation = useNavigation();
 
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -34,7 +40,7 @@ export default function MenuScreen() {
     if (!categories.some(category => category.id === activeCategory)) setActiveCategory(categories[0]?.id ?? null);
   }, [categories, activeCategory]);
 
-  useEffect(() => { setCustomizationItem(null); setSelectedOptions({}); }, [selectedStore?.id]);
+  useEffect(() => { setCustomizationItem(null); setSelectedOptions({}); }, [branch?.id]);
 
   if (isLoading && categories.length === 0 && items.length === 0) {
     return (
@@ -111,8 +117,8 @@ export default function MenuScreen() {
   };
 
   const handleAddToOrder = () => {
-    if (!customizationItem) return;
-    if (!selectedStore) {
+    if (!customizationItem || !hydrated) return;
+    if (!branch) {
       closeCustomization();
       router.push('/store-picker');
       return;
@@ -134,7 +140,7 @@ export default function MenuScreen() {
       quantity: 1,
       choice_ids: selectedChoices.map(choice => choice.id),
       choice_labels: selectedChoices.map(choice => choice.name),
-    }, selectedStore.id);
+    }, branch.id);
     closeCustomization();
   };
 
@@ -182,7 +188,7 @@ export default function MenuScreen() {
           activeOpacity={0.7}
         >
           <Text className="text-white text-lg font-medium mr-1.5">
-            Menu - {selectedStore?.name.replace("Pogo's ", "") || 'All'} Store
+            Menu - {branch?.name.replace("Pogo's ", "") || 'Choose a'} Store
           </Text>
           <ChevronDown size={18} color="#ffffff" opacity={0.9} />
         </TouchableOpacity>
@@ -214,14 +220,13 @@ export default function MenuScreen() {
       </View>
 
       <ScrollView className="flex-1 px-4 pt-4">
-        {menuError ? <View className="bg-amber-50 border border-amber-300 p-4 rounded-xl mb-4">
-          <Text accessibilityRole="alert">{menuError}</Text>
-          <TouchableOpacity accessibilityRole="button" onPress={() => { void refetch(); }} className="py-3"><Text>Refresh menu</Text></TouchableOpacity>
-        </View> : null}
+        <CartStorageStatus />
+        <ReadStatus label="Menu" fresh={fresh} at={refreshedAt} error={menuError} loading={isLoading} onRefresh={() => { void refetch(); }} />
+        <Text className="text-slate-600 mb-4">Menu prices are estimates. A fresh online quote confirms currency, availability, delivery fees and the amount to pay.</Text>
         {/* Active Orders */}
         {activeOrders.length > 0 && (
           <View className="mb-6">
-            <Text className="text-xl font-bold text-gray-900 mb-4">Active Order</Text>
+            <Text className="text-xl font-bold text-gray-900 mb-4">Active orders {ordersFresh ? '' : '· last known status'}</Text>
             {activeOrders.map(order => (
               <View key={order.id} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm mb-3">
                 <View className="flex-row justify-between items-center mb-3">
@@ -239,7 +244,7 @@ export default function MenuScreen() {
                       <Text className="text-xs text-gray-500">Order #{order.id.slice(0, 6)}</Text>
                     </View>
                   </View>
-                  <Text className="font-bold text-red-600">${order.total_amount.toFixed(2)}</Text>
+                  <Text className="font-bold text-red-600">{formatMoney(order.total_minor ?? Math.round(order.total_amount * 100), order.currency ?? 'Currency unconfirmed')}</Text>
                 </View>
                 
                 <View className="bg-gray-50 p-3 rounded-xl">
@@ -282,14 +287,15 @@ export default function MenuScreen() {
                   <View className="p-3 flex-1 flex-col">
                     <Text className="font-bold text-gray-900 text-sm mb-1 leading-tight">{item.name}</Text>
                     <Text className="text-xs text-gray-500 mb-3 h-8 leading-tight" numberOfLines={2}>
-                      {item.description || "A delicious classic you'll love."}
+                      {item.description || "Check meal details with your branch."}
                     </Text>
                     
                     <View className="flex-row justify-between items-center mt-auto">
-                      <Text className="font-extrabold text-gray-900">${item.price.toFixed(2)}</Text>
+                      <Text className="font-extrabold text-gray-900">{item.price.toFixed(2)} · est.</Text>
                       
                       {qty === 0 ? (
                         <TouchableOpacity 
+                          accessibilityRole="button" accessibilityLabel={`Add ${item.name}`} disabled={!hydrated}
                           onPress={() => handleIncrement(item)}
                           className="bg-red-600 w-8 h-8 rounded-lg items-center justify-center shadow-sm"
                         >
@@ -305,7 +311,8 @@ export default function MenuScreen() {
                           </TouchableOpacity>
                           <Text className="font-bold text-gray-900 w-5 text-center text-xs">{qty}</Text>
                           <TouchableOpacity 
-                            onPress={() => handleIncrement(item)}
+                            accessibilityRole="button" accessibilityLabel={`Add ${item.name}`} disabled={!hydrated}
+                          onPress={() => handleIncrement(item)}
                             className="w-7 h-8 items-center justify-center bg-red-600"
                           >
                             <Plus size={14} color="#fff" />
@@ -335,7 +342,7 @@ export default function MenuScreen() {
                 <Text className="text-red-900 text-[10px] font-black">{itemCount}</Text>
               </View>
             </View>
-            <Text className="text-white font-extrabold text-lg tracking-tight">${cartTotal.toFixed(2)}</Text>
+            <Text className="text-white font-extrabold text-lg tracking-tight">Review {itemCount} items</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -407,7 +414,7 @@ export default function MenuScreen() {
                                   {choice.name}
                                 </Text>
                                 {choice.price_adjustment > 0 && (
-                                  <Text className="text-xs text-gray-400">+${choice.price_adjustment.toFixed(2)}</Text>
+                                  <Text className="text-xs text-gray-400">+{choice.price_adjustment.toFixed(2)} · est.</Text>
                                 )}
                               </View>
                             </TouchableOpacity>
@@ -429,10 +436,13 @@ export default function MenuScreen() {
               <View className="border-t border-gray-100 pt-4">
                 <View className="flex-row justify-between items-center mb-4">
                   <Text className="font-bold text-gray-900">Current Total:</Text>
-                  <Text className="font-semibold text-gray-500">Total: 1 item (${getCustomizedPrice().toFixed(2)})</Text>
+                  <Text className="font-semibold text-gray-500">1 item · estimate {getCustomizedPrice().toFixed(2)}</Text>
                 </View>
                 
                 <TouchableOpacity 
+                  disabled={!hydrated}
+                  accessibilityRole="button"
+                  accessibilityLabel="Add selections to cart"
                   onPress={handleAddToOrder}
                   className="bg-red-600 py-4 rounded-xl items-center shadow-sm"
                 >

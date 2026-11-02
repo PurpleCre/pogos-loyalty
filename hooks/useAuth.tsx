@@ -6,6 +6,11 @@ import { AppState, Platform } from 'react-native';
 import { useQueryClient } from '@tanstack/react-query';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { clearAccountLocalData } from '@/lib/account-cleanup';
+import { cartRepository } from '@/lib/cart-persistence';
+async function clearLocalAccount(owner: string, deleted = false) {
+  const results = await Promise.allSettled([clearAccountLocalData(AsyncStorage, owner, deleted), cartRepository.clearAccount(owner)]);
+  if (results.some(result => result.status === 'rejected')) throw new Error('Account cache cleanup could not be confirmed.');
+}
 import { authStorage, authStorageKey, recoveryStorageKey, logoutStorageKey } from '@/lib/auth-storage';
 import { normaliseEmail, validatePassword, roleSnapshot } from '@/lib/identity';
 import bindings from '@/config/environments.json';
@@ -66,7 +71,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         signingOut.current=true; ++revision.current; currentSession.current=null; setSession(null); setAccess(emptyAccess); setLoading(false); queryClient.clear();
         await authStorage.setItem(logoutStorageKey,'1');
         if(previousToken)await disablePushForLogout(userId,previousToken).catch(()=>undefined);
-        await clearAccountLocalData(AsyncStorage,userId,true).catch(()=>undefined);
+        await clearLocalAccount(userId,true).catch(()=>undefined);
         await supabase.auth.signOut({scope:'local'}); await authStorage.removeItem(authStorageKey); return;
       }
       const stores = memberships.data.map(row => row.store_id).sort();
@@ -97,7 +102,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (previous !== owner) {
         queryClient.clear(); setAccess(emptyAccess); setRecoveryRequired(false);
         if (previous) {
-          void clearAccountLocalData(AsyncStorage,previous).catch(() => undefined);
+          void clearLocalAccount(previous).catch(() => undefined);
           if(previousToken)void disablePushForLogout(previous,previousToken).catch(()=>undefined);
         }
       }
@@ -151,7 +156,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         // not restore this session on restart, even if refresh revocation fails.
         await authStorage.setItem(logoutStorageKey, '1');
         const pushError=previousSession?await disablePushForLogout(previousSession.user.id,previousSession.access_token).then(()=>null).catch(()=>new Error('Push removal needs checking. Retry on this account when online.')):null;
-        const cleanupError=previousOwner?await clearAccountLocalData(AsyncStorage,previousOwner).then(()=>null).catch(()=>new Error('Account cache cleanup could not be confirmed.')):null;
+        const cleanupError=previousOwner?await clearLocalAccount(previousOwner).then(()=>null).catch(()=>new Error('Account cache cleanup could not be confirmed.')):null;
         const { error } = await supabase.auth.signOut({ scope: 'local' });
         await authStorage.removeItem(authStorageKey); await authStorage.removeItem(recoveryStorageKey);
         return { error: error??cleanupError??pushError };

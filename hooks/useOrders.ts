@@ -1,4 +1,6 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
+import { useReadResource } from './useReadResource';
+import { accessTokenFor } from '@/lib/cash-orders';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/hooks/useAuth';
 import type { Tables } from '@/lib/types';
@@ -7,37 +9,28 @@ export type OrderItem = Tables<'order_items'> & { menu_item?: { name: string } |
 export type Order = Tables<'orders'> & { order_items?: OrderItem[] };
 export const activeOrderStatuses = ['pending', 'accepted', 'preparing', 'ready', 'out_for_delivery'];
 export function useOrders(isAdminView = false) {
-  const { user, userRole } = useAuth();
+  const { user, userRole, staffStoreIds } = useAuth();
   const owner = user?.id;
-  const scope = `${owner}:${isAdminView}:${userRole}`;
-  const current = useRef(scope); current.current = scope;
-  const [state, setState] = useState<{ scope: string; orders: Order[] }>({ scope, orders: [] });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const orders = state.scope === scope ? state.orders : [];
-  const fetchOrders = useCallback(async () => {
-    if (!owner || (isAdminView && userRole !== 'admin')) { setLoading(false); return; }
-    try {
-      let query = supabase.from('orders').select('*, order_items(*, menu_item:menu_items(name))');
-      query = isAdminView ? query.in('status', activeOrderStatuses).order('created_at') :
-        query.eq('user_id', owner).order('created_at', { ascending: false });
-      const { data, error: failure } = await query;
-      if (failure) throw failure;
-      if (current.current === scope) { setState({ scope, orders: (data ?? []) as Order[] }); setError(''); }
-    } catch {
-      if (current.current === scope) setError('Unable to refresh orders. Please try again.');
-    } finally { if (current.current === scope) setLoading(false); }
-  }, [owner, isAdminView, userRole, scope]);
+  const scope = `${owner}:${isAdminView}:${userRole}:${staffStoreIds.join(',')}`;
+  const load = useCallback(async (signal: AbortSignal) => {
+    if (!owner) return [];
+    const token = await accessTokenFor(owner);
+    let query = supabase.from('orders').select('*, order_items(*, menu_item:menu_items(name))').abortSignal(signal).setHeader('Authorization', `Bearer ${token}`);
+    query = isAdminView ? query.in('status', activeOrderStatuses).order('created_at') : query.eq('user_id', owner).order('created_at', { ascending: false });
+    const { data, error } = await query;
+    if (error) throw error;
+    return (data ?? []) as Order[];
+  }, [owner, isAdminView]);
+  const resource = useReadResource(scope, load, { enabled: !!owner && (!isAdminView || userRole === 'admin') });
   useEffect(() => {
-    setLoading(!!owner);
-    void fetchOrders();
     if (!owner) return;
-    const timer = setInterval(() => { void fetchOrders(); }, 15000);
     const channel = supabase.channel(`orders:${scope}`).on('postgres_changes', {
       event: '*', schema: 'public', table: 'orders', filter: isAdminView ? undefined : `user_id=eq.${owner}`,
-    }, () => { void fetchOrders(); }).subscribe();
-    return () => { clearInterval(timer); void supabase.removeChannel(channel); };
-  }, [owner, scope, isAdminView, fetchOrders]);
+    }, () => { void resource.refetch(); }).subscribe();
+    return () => { void supabase.removeChannel(channel); };
+  }, [owner, scope, isAdminView, resource.refetch]);
+  const orders = resource.data ?? [];
   return { orders, activeOrders: orders.filter(row => activeOrderStatuses.includes(row.status)),
-    pastOrders: orders.filter(row => ['completed', 'cancelled'].includes(row.status)), isLoading: loading, error, refetch: fetchOrders };
+    pastOrders: orders.filter(row => ['completed', 'cancelled'].includes(row.status)), isLoading: resource.loading,
+    error: resource.error ? 'Unable to refresh orders. The last displayed status may have changed.' : '', fresh: resource.fresh, refreshedAt: resource.refreshedAt, refetch: resource.refetch };
 }

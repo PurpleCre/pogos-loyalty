@@ -2,6 +2,12 @@
 
 Updated: 2 November 2026. Scope: local implementation increments for the cash-first release at Msasa, Kamfinsa and Westgate. GAAP is the confirmed POS vendor. Digital payments remain Release 2.
 
+## Offline/lifecycle and launch experience increment
+
+The 292-test finance checkpoint was reverified before advancing. Account/environment-scoped cart persistence, validated public menu/branch snapshots, explicit private-read freshness, foreground/late-response guards and quote expiry are implemented locally. Confirmed checkout now retires matching branch selections durably before removing its recovery key. Logout fences old cart/address writers while preserving financial journals; unknown legacy offline actions are preserved for investigation rather than cleared or replayed. Launch screens remove stock/disabled-feature promotions and guessed delivery promises, use Harare map defaults and require a written address, and provide a public help/recovery route. Manager reward worklist access now matches server permission.
+
+The combined suite has **315 passing tests**, including 23 new storage/interruption/freshness cases; type/lint/schema/SDK/peer checks and Android/iOS Hermes exports pass. See the [offline implementation and physical acceptance checklist](offline-launch-ux-milestone.md). Pogo’s artwork/product approval, actual devices/process kills, hosted acceptance and all earlier release gates remain open. No dependency, migration, cloud change, branch activation or publication was added. The [readiness checkpoint](production-readiness-status.md) now carries **six remaining delivery groups**, beginning with client ownership/data/business approval; current device/product acceptance is included in those groups.
+
 ## Reverification and remaining delivery milestones
 
 The finance increment was reverified with a fresh `npm run check`: **292 passing tests**, zero failures, and successful type/lint/migration-type/SDK/peer checks. The finance screen and libraries match the successful Android/iOS exported source maps. Its local implementation is complete; Pogo’s authority approval, actual till reconciliation and hosted/concurrency/device acceptance remain open. The [production readiness checkpoint](production-readiness-status.md) consolidates all remaining implementation, review and release work into **seven delivery milestones**: six through an approved production candidate, followed by the observed pilot and staged three-branch rollout. This grouping carries forward earlier gates; it does not mark any original phase production-complete.

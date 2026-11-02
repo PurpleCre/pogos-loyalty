@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, TextInput, ActivityIndicator, AppState } from 'react-native';
 import { router } from 'expo-router';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useOrder } from '@/contexts/OrderContext';
 import { useStores } from '@/hooks/useStores';
 import { LocationPickerModal } from '@/components/LocationPickerModal';
-import { cartFingerprint, checkoutLines } from '@/lib/cart';
+import { CartStorageStatus } from '@/components/CartStorageStatus';
+import { quoteReviewIsCurrent, createRecoveryReader } from '@/lib/checkout-lifecycle';
+import { cartSelectionFingerprint, checkoutLines } from '@/lib/cart';
 import { normaliseContactPhone, type CashQuote, type CheckoutRequest, type PendingCheckout } from '@/lib/cash-checkout';
 import { checkoutRecovery, quoteCashOrder, submitCashOrder, formatMoney } from '@/lib/cash-orders';
 
@@ -16,7 +18,7 @@ export default function CartScreen() {
 }
 
 function CashCart() {
-  const { items, storeId, updateQuantity, removeFromCart, clearCart } = useCart();
+  const { items, storeId, updateQuantity, removeFromCart, retireSubmittedSelections, hydrated, saving, storageError } = useCart();
   const { user } = useAuth();
   const { selectedStore, deliveryLocation } = useOrder();
   const { stores } = useStores();
@@ -27,32 +29,46 @@ function CashCart() {
   const [address, setAddress] = useState('');
   const [instructions, setInstructions] = useState('');
   const [showLocation, setShowLocation] = useState(false);
-  const [review, setReview] = useState<{ draft: string; quote: CashQuote } | null>(null);
+  const [review, setReview] = useState<{ draft: string; quote: CashQuote; receivedAt: number; monotonicAt: number; expiresAt: string } | null>(null);
   const [pending, setPending] = useState<PendingCheckout | null>(null);
   const [loadingRecovery, setLoadingRecovery] = useState(true);
   const [recoveryBlocked, setRecoveryBlocked] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const inFlight = useRef(false);
+  const lifecycle = useRef(0);
+  const [active, setActive] = useState(AppState.currentState === 'active');
+  const [clock, setClock] = useState(Date.now());
   const mounted = useRef(true);
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
   const account = useRef(user?.id);
   account.current = user?.id;
-  const currentItems = useRef(items);
-  currentItems.current = items;
-  const fingerprint = cartFingerprint(items);
+  const fingerprint = cartSelectionFingerprint({ items, storeId });
+  const recoveryReader = useMemo(() => createRecoveryReader(
+    () => user ? checkoutRecovery.load(user.id) : Promise.resolve(null),
+    state => {
+      setPending(state.pending); setLoadingRecovery(state.loading); setRecoveryBlocked(state.blocked);
+      if (state.blocked) setError('Your previous order reference could not be read. Retry checking it or contact your branch before ordering again.');
+    },
+  ), [user?.id]);
 
   useEffect(() => { setAddress(deliveryLocation?.address ?? ''); }, [deliveryLocation?.id, deliveryLocation?.address]);
   useEffect(() => {
-    let cancelled = false;
     setReview(null); setPending(null); setError(''); setName(''); setPhone('');
-    setRecoveryBlocked(false); setLoadingRecovery(true);
-    if (!user) { setLoadingRecovery(false); return; }
-    void checkoutRecovery.load(user.id).then(value => { if (!cancelled) setPending(value); })
-      .catch(() => { if (!cancelled) { setRecoveryBlocked(true); setError('Your previous order reference could not be read. Please contact your branch before ordering again.'); } })
-      .finally(() => { if (!cancelled) setLoadingRecovery(false); });
-    return () => { cancelled = true; };
-  }, [user?.id]);
+    recoveryReader.activate(); void recoveryReader.read();
+    return () => recoveryReader.stop();
+  }, [recoveryReader]);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', next => {
+      ++lifecycle.current; setActive(next === 'active'); setReview(null);
+      if (next === 'active' && user && !inFlight.current) {
+        void recoveryReader.read();
+      }
+    });
+    const timer = setInterval(() => { if (AppState.currentState === 'active') setClock(Date.now()); }, 1000);
+    return () => { subscription.remove(); clearInterval(timer); recoveryReader.invalidate(); };
+  }, [user?.id, recoveryReader]);
 
   const request: CheckoutRequest = useMemo(() => ({
     store_id: storeId ?? '', fulfilment_mode: mode,
@@ -65,13 +81,15 @@ function CashCart() {
   const draft = JSON.stringify(request);
   const currentDraft = useRef(draft);
   currentDraft.current = draft;
-  const quote = review?.draft === draft ? review.quote : null;
+  const quote = quoteReviewIsCurrent(review, draft, Math.max(clock, Date.now()), performance.now(), active) ? review!.quote : null;
+  const cartReady = hydrated && !saving && !storageError;
 
   const message = (cause: unknown) => typeof cause === 'object' && cause !== null && 'message' in cause && typeof cause.message === 'string'
     ? cause.message : 'Unable to confirm your order. Please retry using the same order reference.';
   const run = async (operation: (owner: string) => Promise<void>) => {
     if (!user) { router.push('/(auth)/login?redirect=/(app)/cart'); return; }
-    if (inFlight.current) return;
+    if (inFlight.current || AppState.currentState !== 'active') return;
+    recoveryReader.invalidate();
     const owner = user.id;
     inFlight.current = true; setBusy(true); setError('');
     try { await operation(owner); }
@@ -93,17 +111,20 @@ function CashCart() {
   const finish = (owner: string, orderId: string, submittedCart: string) => {
     if (!mounted.current || account.current !== owner) return;
     setPending(null); setReview(null);
-    if (cartFingerprint(currentItems.current) === submittedCart) clearCart();
+    retireSubmittedSelections(submittedCart);
     router.replace(`/(app)/order-success?orderId=${orderId}`);
   };
   const getTotal = () => run(async owner => {
+    if (!cartReady) throw new Error('Save or restore your selections before requesting a total.');
     if (!storeId) throw new Error('Select the branch for this cart before checkout.');
     if (mode === 'delivery' && !deliveryLocation) throw new Error('Choose your delivery location and enter its written address.');
+    const version = lifecycle.current;
     const response = await quoteCashOrder(request, owner);
-    if (mounted.current && account.current === owner && currentDraft.current === draft) setReview({ draft, quote: response });
+    if (mounted.current && account.current === owner && currentDraft.current === draft && lifecycle.current === version && AppState.currentState === 'active') setReview({ draft, quote: response, receivedAt: Date.now(), monotonicAt: performance.now(), expiresAt: response.expires_at });
   });
   const placeOrder = () => run(async owner => {
-    if (!quote) throw new Error('Get and review your total before placing the order.');
+    if (!cartReady) throw new Error('Save or restore your selections before ordering.');
+    if (!quote || !quoteReviewIsCurrent(review, draft, Date.now(), performance.now(), AppState.currentState === 'active')) throw new Error('Get and review your total before placing the order.');
     const result = await checkoutRecovery.place(owner, quote.quote_id, fingerprint, (q, key) => submitCashOrder(owner, q, key));
     finish(owner, result.order_id, fingerprint);
   });
@@ -121,6 +142,8 @@ function CashCart() {
         <View className="w-8" />
       </View>
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }} keyboardShouldPersistTaps="handled">
+        <CartStorageStatus />
+        <Text className="text-slate-600 mb-4">Selections are saved on this device. A fresh online total is required to order. After an interrupted submission, check the same saved order reference.</Text>
         {loadingRecovery ? <ActivityIndicator color="#dc2626" /> : pending ? (
           <View className="bg-amber-50 border border-amber-200 p-5 rounded-xl mb-5">
             <Text className="font-bold text-lg text-slate-900">Check your previous order</Text>
@@ -175,10 +198,10 @@ function CashCart() {
               <Text className="font-bold text-xl mt-2">Cash due: {formatMoney(quote.total_minor, quote.currency)}</Text>
               <Text className="text-slate-600 mt-2">{quote.loyalty_earn_configured ? `Estimated earning: ${quote.estimated_points} points after payment and handover. Existing balances may need review.` : 'Points earning is not configured for this order.'}</Text>
               <Text className="text-slate-500 mt-3">This total is valid for five minutes. The branch still needs to confirm your order.</Text>
-              <TouchableOpacity disabled={busy} onPress={placeOrder} className="p-4 bg-red-600 rounded-xl items-center mt-4"><Text className="text-white font-bold">{busy ? 'Submitting…' : 'Place cash order'}</Text></TouchableOpacity>
+              <TouchableOpacity disabled={busy || !cartReady} onPress={placeOrder} className="p-4 bg-red-600 rounded-xl items-center mt-4"><Text className="text-white font-bold">{busy ? 'Submitting…' : 'Place cash order'}</Text></TouchableOpacity>
             </View> : <>
               <Text className="text-slate-500 mb-3">Get your branch’s total, including delivery, before placing the order.</Text>
-              <TouchableOpacity disabled={busy} onPress={getTotal} className="p-4 bg-red-600 rounded-xl items-center"><Text className="text-white font-bold">{busy ? 'Checking…' : 'Get total'}</Text></TouchableOpacity>
+              <TouchableOpacity disabled={busy || !cartReady} onPress={getTotal} className="p-4 bg-red-600 rounded-xl items-center"><Text className="text-white font-bold">{busy ? 'Checking…' : 'Get total'}</Text></TouchableOpacity>
             </>}
           </>
         ) : null}

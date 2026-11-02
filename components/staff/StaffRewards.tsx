@@ -1,3 +1,4 @@
+import { ReadStatus } from '@/components/ReadStatus';
 import { useEffect, useRef, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Modal, ActivityIndicator, AppState } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
@@ -82,7 +83,7 @@ function ReservationCard({ row, actor, admin, blocked, execute }: { row: RewardR
 }
 export function StaffRewards({ branchId, enabled, externalBlocked = false }: { branchId: string | null; enabled: boolean; externalBlocked?: boolean }) {
   const { user, userRole } = useAuth();
-  const { reservations, execute, recover, refresh, findReservation, loadMore, more, error, loading, pending, pendingError, busy } = useRewardReservations(branchId, true, enabled);
+  const { reservations, execute, recover, refresh, findReservation, loadMore, more, error, loading, pending, pendingError, busy, fresh, refreshedAt } = useRewardReservations(branchId, true, enabled);
   const [permission, requestPermission] = useCameraPermissions();
   const [scanning, setScanning] = useState(false);
   const [claim, setClaim] = useState('');
@@ -98,7 +99,7 @@ export function StaffRewards({ branchId, enabled, externalBlocked = false }: { b
     });
     return () => { alive.current = false; lookupRevision.current++; listener.remove(); };
   }, []);
-  const blocked = externalBlocked || busy || !!pending || !!pendingError;
+  const blocked = !fresh || externalBlocked || busy || !!pending || !!pendingError;
   const check = async (input = claim) => {
     if (!user || !branchId) return;
     const version = ++lookupRevision.current;
@@ -154,6 +155,7 @@ export function StaffRewards({ branchId, enabled, externalBlocked = false }: { b
     </View>
     <TextInput accessibilityLabel="Reward reservation ID" value={locateId} onChangeText={setLocateId} autoCapitalize="none" placeholder="Find an older reservation by full ID" className="bg-white border border-slate-300 rounded-lg p-3" />
     <TouchableOpacity disabled={busy || !locateId.trim()} onPress={() => { void findReservation(locateId).catch(err => { if (alive.current) setMessage(rewardError(err)); }); }} className="p-3 mb-3"><Text className="text-red-600 font-bold">Find reservation</Text></TouchableOpacity>
+    <ReadStatus label="Reward worklist" fresh={fresh} at={refreshedAt} error={error} loading={loading} onRefresh={() => { void refresh(); }} />
     <TouchableOpacity onPress={() => { void refresh(); }} className="p-3"><Text className="text-red-600">Refresh worklist</Text></TouchableOpacity>
     {loading && !reservations.length ? <ActivityIndicator color="#dc2626" /> : null}
     {!loading && !reservations.length ? <Text className="text-slate-500 py-5">No outstanding reward reservations at this branch.</Text> : null}

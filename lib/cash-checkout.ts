@@ -54,7 +54,14 @@ export function newSubmissionKey() {
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
 
-export function createCheckoutRecovery(storage: Storage) {
+export function createCheckoutRecovery(storage: Storage, options: {
+  onConfirmed?: (owner: string, pending: PendingCheckout, result: OrderResult) => Promise<void>;
+} = {}) {
+  const busy = new Set<string>();
+  const lock = async <T>(owner: string, action: () => Promise<T>) => {
+    if (busy.has(owner)) throw new Error('Your previous order is still being checked.');
+    busy.add(owner); try { return await action(); } finally { busy.delete(owner); }
+  };
   const keyFor = (userId: string) => `@pogos_pending_cash_order:${userId}`;
   const load = async (userId: string): Promise<PendingCheckout | null> => {
     const raw = await storage.getItem(keyFor(userId));
@@ -63,15 +70,9 @@ export function createCheckoutRecovery(storage: Storage) {
     return pendingSchema.parse(JSON.parse(raw));
   };
   const recover = async (userId: string, pending: PendingCheckout, submit: SubmitOrder) => {
+    let result: OrderResult;
     try {
-      const result = orderResultSchema.parse(await submit(pending.quoteId, pending.submissionKey));
-      try {
-        await storage.removeItem(keyFor(userId));
-      } catch {
-        // A confirmed order must still be shown if local cleanup fails. A
-        // surviving checkpoint safely resolves to this same order next time.
-      }
-      return result;
+      result = orderResultSchema.parse(await submit(pending.quoteId, pending.submissionKey));
     } catch (error) {
       // These are definitive SQL validation failures. Ambiguous/network/auth
       // failures keep the checkpoint, including a lost successful response.
@@ -80,16 +81,26 @@ export function createCheckoutRecovery(storage: Storage) {
       }
       throw error;
     }
+    // Retire matching selections durably before dropping recovery identity.
+    // A process kill between these steps safely replays the same order.
+    await options.onConfirmed?.(userId, pending, result);
+    try { await storage.removeItem(keyFor(userId)); } catch { /* Replay remains safe. */ }
+    return result;
   };
   return {
-    load, recover,
-    async place(userId: string, quoteId: string, fingerprint: string, submit: SubmitOrder) {
+    load,
+    recover: (userId: string, pending: PendingCheckout, submit: SubmitOrder) => lock(userId, async () => {
+      const saved = await load(userId);
+      if (saved && JSON.stringify(saved) !== JSON.stringify(pendingSchema.parse(pending))) throw new Error('The saved order reference changed. Reload before checking.');
+      return recover(userId, pending, submit);
+    }),
+    place: (userId: string, quoteId: string, fingerprint: string, submit: SubmitOrder) => lock(userId, async () => {
       const existing = await load(userId);
       if (existing && existing.quoteId !== quoteId) throw new Error('Check your previous order before submitting another one.');
       const pending = existing ?? { quoteId, submissionKey: newSubmissionKey(), cartFingerprint: fingerprint };
       // Persist before the first network request. Failed persistence sends nothing.
       if (!existing) await storage.setItem(keyFor(userId), JSON.stringify(pending));
       return recover(userId, pending, submit);
-    },
+    }),
   };
 }

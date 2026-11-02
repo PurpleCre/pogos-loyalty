@@ -1300,7 +1300,7 @@
     },
     {
       "system": "Device storage",
-      "data": "Secure sessions/PKCE and per-environment push installation proof/preferences/revocation intent; saved-address cache; durable cash/staff/reward/branch recovery identities; temporary export files; owned finance recovery commands and temporary shared financial-report exports",
+      "data": "Secure sessions/PKCE and per-environment push installation proof/preferences/revocation intent; saved-address cache; durable cash/staff/reward/branch recovery identities; temporary export files; owned finance recovery commands and temporary shared financial-report exports; per-environment/account saved cart selections (no contact/address/bearer fields); whitelisted public branch/menu snapshots; preserved unknown legacy offline action evidence and legacy personal caches pending approved inventory",
       "retentionApproval": "unconfirmed"
     },
     {

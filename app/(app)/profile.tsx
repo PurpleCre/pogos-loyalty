@@ -176,30 +176,7 @@ export default function Profile() {
           <Text className="text-lg font-bold text-slate-800">Features</Text>
         </View>
         <View className="px-5 pb-5 space-y-3">
-          <TouchableOpacity 
-            onPress={() => router.push('/(app)/achievements')}
-            className="flex-row items-center p-4 bg-slate-50 rounded-2xl border border-slate-100"
-            activeOpacity={0.7}
-          >
-            <View className="w-10 h-10 bg-emerald-50 rounded-full items-center justify-center mr-3">
-              <Trophy size={20} color="#10b981" />
-            </View>
-            <Text className="flex-1 font-bold text-slate-800">My Achievements</Text>
-            <ChevronRight size={20} color="#cbd5e1" />
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            onPress={() => router.push('/(app)/referrals')}
-            className="flex-row items-center p-4 bg-slate-50 rounded-2xl border border-slate-100"
-            activeOpacity={0.7}
-          >
-            <View className="w-10 h-10 bg-blue-50 rounded-full items-center justify-center mr-3">
-              <Share2 size={20} color="#3b82f6" />
-            </View>
-            <Text className="flex-1 font-bold text-slate-800">Refer a Friend</Text>
-            <ChevronRight size={20} color="#cbd5e1" />
-          </TouchableOpacity>
-
+          <Button variant="outline" onPress={() => router.push('/support')}>Order help and account support</Button>
           {isAdmin && (
             <TouchableOpacity 
               onPress={() => router.push('/(app)/admin')}

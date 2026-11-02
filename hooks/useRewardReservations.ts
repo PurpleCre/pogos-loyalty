@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { AppState } from 'react-native';
+import { accessFailure } from '@/lib/read-resource';
 import { z } from 'zod';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from './useAuth';
@@ -18,9 +20,9 @@ const normalise = (value: unknown): RewardReservation => {
 };
 interface State {
   scope: string; reservations: RewardReservation[]; offers: RewardOffer[]; balance: Tables<'user_points'> | null;
-  reviewed: boolean; error: string; more: boolean;
+  reviewed: boolean; error: string; more: boolean; lastSuccess: number | null;
 }
-const empty = (scope: string): State => ({ scope, reservations: [], offers: [], balance: null, reviewed: false, error: '', more: false });
+const empty = (scope: string): State => ({ scope, reservations: [], offers: [], balance: null, reviewed: false, error: '', more: false, lastSuccess: null });
 export function useRewardReservations(branchId: string | null, staffView = false, enabled = true) {
   const { user, userRole } = useAuth();
   const owner = user?.id ?? null;
@@ -28,6 +30,8 @@ export function useRewardReservations(branchId: string | null, staffView = false
   const current = useRef(scope); current.current = scope;
   const currentOwner = useRef(owner); currentOwner.current = owner;
   const revision = useRef(0);
+  const foreground = useRef(AppState.currentState === 'active');
+  const [, setNow] = useState(Date.now());
   const located = useRef<{ scope: string; ids: string[] }>({ scope, ids: [] });
   if (located.current.scope !== scope) located.current = { scope, ids: [] };
   const [limit, setLimit] = useState(50);
@@ -43,44 +47,55 @@ export function useRewardReservations(branchId: string | null, staffView = false
     } catch (error) { if (currentOwner.current === owner) setPending({ owner, command: null, error: rewardError(error) }); }
   }, [owner]);
   const refresh = useCallback(async () => {
-    if (!enabled || !owner || current.current !== scope || (staffView && (!branchId || !['admin', 'staff'].includes(userRole)))) return;
+    if (!enabled || AppState.currentState !== 'active' || !owner || current.current !== scope || (staffView && (!branchId || !['admin', 'staff', 'manager'].includes(userRole)))) return;
     const version = ++revision.current;
     setLoading(true);
+    const controller = new AbortController(); const timeout = setTimeout(() => controller.abort(), 12000);
     try {
       const token = await accessTokenFor(owner); const bearer = `Bearer ${token}`;
       let active = supabase.from('reward_reservations').select(staffView ? staffSelect : '*').in('status', ['reserved', 'claiming']).order('created_at');
       active = staffView ? active.eq('store_id', branchId!) : active.eq('user_id', owner);
       const [activeResult, extra, offers, points, account] = await Promise.all([
-        active.limit(staffView ? limit + 1 : 1000).setHeader('Authorization', bearer),
-        staffView ? located.current.ids.length ? supabase.from('reward_reservations').select(staffSelect).eq('store_id', branchId!).in('id', located.current.ids).setHeader('Authorization', bearer) : Promise.resolve({ data: [], error: null }) :
-          supabase.from('reward_reservations').select('*').eq('user_id', owner).not('status', 'in', '(reserved,claiming)').order('created_at', { ascending: false }).limit(limit + 1).setHeader('Authorization', bearer),
-        !staffView && branchId ? supabase.rpc('list_reward_offers', { p_store_id: branchId }).setHeader('Authorization', bearer) : Promise.resolve({ data: [], error: null }),
-        supabase.from('user_points').select('*').eq('user_id', owner).maybeSingle().setHeader('Authorization', bearer),
-        supabase.from('loyalty_accounts').select('opening_reviewed').eq('user_id', owner).maybeSingle().setHeader('Authorization', bearer),
+        active.limit(staffView ? limit + 1 : 1000).setHeader('Authorization', bearer).abortSignal(controller.signal),
+        staffView ? located.current.ids.length ? supabase.from('reward_reservations').select(staffSelect).eq('store_id', branchId!).in('id', located.current.ids).setHeader('Authorization', bearer).abortSignal(controller.signal) : Promise.resolve({ data: [], error: null }) :
+          supabase.from('reward_reservations').select('*').eq('user_id', owner).not('status', 'in', '(reserved,claiming)').order('created_at', { ascending: false }).limit(limit + 1).setHeader('Authorization', bearer).abortSignal(controller.signal),
+        !staffView && branchId ? supabase.rpc('list_reward_offers', { p_store_id: branchId }).setHeader('Authorization', bearer).abortSignal(controller.signal) : Promise.resolve({ data: [], error: null }),
+        supabase.from('user_points').select('*').eq('user_id', owner).abortSignal(controller.signal).maybeSingle().setHeader('Authorization', bearer),
+        supabase.from('loyalty_accounts').select('opening_reviewed').eq('user_id', owner).abortSignal(controller.signal).maybeSingle().setHeader('Authorization', bearer),
       ]);
       for (const result of [activeResult, extra, offers, points, account]) if (result.error) throw result.error;
-      if (current.current !== scope || version !== revision.current) return;
+      if (current.current !== scope || version !== revision.current || !foreground.current) return;
       const activeRows = (activeResult.data ?? []).slice(0, staffView ? limit : 1000).map(normalise);
       const otherRows = (extra.data ?? []).slice(0, staffView ? 1000 : limit).map(normalise);
       const combined = new Map([...activeRows, ...otherRows].map(row => [row.id, row]));
       setState({ scope, reservations: [...combined.values()], offers: z.array(offerSchema).parse(offers.data), balance: points.data,
-        reviewed: account.data?.opening_reviewed ?? false, error: '', more: staffView ? (activeResult.data?.length ?? 0) > limit : (extra.data?.length ?? 0) > limit });
+        reviewed: account.data?.opening_reviewed ?? false, error: '', lastSuccess: Date.now(), more: staffView ? (activeResult.data?.length ?? 0) > limit : (extra.data?.length ?? 0) > limit });
     } catch (error) {
-      if (current.current === scope && version === revision.current) setState(previous => ({ ...(previous.scope === scope ? previous : empty(scope)), error: rewardError(error) }));
-    } finally { if (current.current === scope && version === revision.current) setLoading(false); }
+      if (current.current === scope && version === revision.current) setState(previous => ({ ...(previous.scope === scope && !accessFailure(error) ? previous : empty(scope)), lastSuccess: null, error: rewardError(error) }));
+    } finally { clearTimeout(timeout); if (current.current === scope && version === revision.current) setLoading(false); }
   }, [branchId, owner, scope, enabled, staffView, userRole, limit]);
   useEffect(() => { void refreshPending(); }, [refreshPending]);
   useEffect(() => {
     if (!enabled || !owner) return;
+    foreground.current = AppState.currentState === 'active';
+    setState(previous => ({ ...previous, lastSuccess: null }));
     void refresh();
+    void refreshPending();
+    const subscription = AppState.addEventListener('change', next => {
+      foreground.current = next === 'active'; revision.current++; setNow(Date.now());
+      setState(previous => ({ ...previous, lastSuccess: null }));
+      if (next === 'active') { void refresh(); void refreshPending(); }
+    });
+    const clock = setInterval(() => { if (foreground.current) setNow(Date.now()); }, 1000);
     const timer = setInterval(() => { void refresh(); }, 15000);
     const channel = supabase.channel(`reward:${scope}`).on('postgres_changes', {
       event: '*', schema: 'public', table: 'reward_reservations', filter: staffView ? `store_id=eq.${branchId}` : `user_id=eq.${owner}`,
     }, () => { void refresh(); }).subscribe();
-    return () => { clearInterval(timer); void supabase.removeChannel(channel); revision.current++; };
-  }, [enabled, owner, scope, branchId, staffView, refresh]);
+    return () => { subscription.remove(); clearInterval(clock); clearInterval(timer); void supabase.removeChannel(channel); revision.current++; };
+  }, [enabled, owner, scope, branchId, staffView, refresh, refreshPending]);
   const execute = async (request: RewardRequest) => {
     if (!owner) throw new Error('Sign in to use rewards.');
+    if (!fresh) throw new Error('Refresh your reward status online before starting another action.');
     setBusy(owner);
     try { return await rewardRecovery.execute(owner, request, command => submitRewardCommand(owner, command)); }
     finally { if (currentOwner.current === owner) setBusy(null); await refreshPending(); await refresh(); }
@@ -104,7 +119,8 @@ export function useRewardReservations(branchId: string | null, staffView = false
     }
   };
   const visible = state.scope === scope ? state : empty(scope);
-  return { ...visible, loading, execute, recover, refresh, findReservation, loadMore: () => setLimit(value => value + 50),
+  const fresh = enabled && foreground.current && visible.lastSuccess !== null && Date.now() >= visible.lastSuccess && Date.now() - visible.lastSuccess < 30000 && !visible.error;
+  return { ...visible, fresh, refreshedAt: visible.lastSuccess, loading, execute, recover, refresh, findReservation, loadMore: () => setLimit(value => value + 50),
     pending: pendingState?.owner === owner ? pendingState.command : null,
     pendingError: pendingState?.owner === owner ? pendingState.error : '', busy: !!owner && busyOwner === owner };
 }

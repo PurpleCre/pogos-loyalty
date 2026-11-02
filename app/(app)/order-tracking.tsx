@@ -1,12 +1,16 @@
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
+import { Redirect, router, useLocalSearchParams } from 'expo-router';
+import { useAuth } from '@/hooks/useAuth';
 import { useOrders } from '@/hooks/useOrders';
+import { ReadStatus } from '@/components/ReadStatus';
 import { formatMoney } from '@/lib/cash-orders';
 import { snapshotText } from '@/lib/cash-checkout';
 
 export default function OrderTrackingScreen() {
   const { orderId } = useLocalSearchParams<{ orderId?: string }>();
-  const { activeOrders, pastOrders, isLoading, error, refetch } = useOrders();
+  const { activeOrders, pastOrders, isLoading, error, fresh, refreshedAt, refetch } = useOrders();
+  const { user, loading: authLoading } = useAuth();
+  if (!user && !authLoading) return <Redirect href="/(auth)/login?redirect=/(app)/order-tracking" />;
   const recent = pastOrders.slice(0, 5);
   const requested = pastOrders.find(row => row.id === orderId);
   const history = requested && !recent.some(row => row.id === requested.id) ? [requested, ...recent] : recent;
@@ -14,9 +18,10 @@ export default function OrderTrackingScreen() {
     <View className="bg-red-600 pt-14 pb-5 px-5"><Text className="text-white text-xl font-bold">Pogo’s orders</Text></View>
     <ScrollView contentContainerStyle={{ padding: 20 }} refreshControl={<RefreshControl refreshing={isLoading} onRefresh={() => { void refetch(); }} />}>
       {isLoading && !activeOrders.length && !history.length ? <ActivityIndicator color="#dc2626" /> : null}
+      <ReadStatus label="Orders" fresh={fresh} at={refreshedAt} error={error} loading={isLoading} onRefresh={() => { void refetch(); }} />
       {error ? <Text className="text-red-700 mb-4">{error}</Text> : null}
       <Text className="font-bold text-xl mb-4">Active orders ({activeOrders.length})</Text>
-      {!activeOrders.length && !isLoading ? <Text className="text-slate-500 mb-5">No active orders.</Text> : null}
+      {!activeOrders.length && fresh ? <Text className="text-slate-500 mb-5">No active orders.</Text> : null}
       {activeOrders.map(order => {
         const steps = order.fulfilment_mode === 'delivery'
           ? ['pending', 'accepted', 'preparing', 'ready', 'out_for_delivery', 'completed']

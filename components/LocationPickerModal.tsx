@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Modal, TouchableOpacity, TextInput, ScrollView, StyleSheet } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { X, MapPin, Search, Star, Home, Briefcase, Plus } from 'lucide-react-native';
+import { useAuth } from '@/hooks/useAuth';
 import { useOrder, LocationData } from '@/contexts/OrderContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Location from 'expo-location';
@@ -13,12 +14,16 @@ interface LocationPickerModalProps {
 
 export function LocationPickerModal({ visible, onClose }: LocationPickerModalProps) {
   const { savedLocations, saveLocation, setDeliveryLocation } = useOrder();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [locationError, setLocationError] = useState('');
+  const [saving, setSaving] = useState(false);
+  const generation = React.useRef(0);
+  const { user } = useAuth();
+  const owner = React.useRef(user?.id); owner.current = user?.id;
   
-  // Default to City Center if no location
+  // Harare is a map viewport, not a delivery address or coverage promise.
   const [region, setRegion] = useState({
-    latitude: 40.7128,
-    longitude: -74.0060,
+    latitude: -17.8252,
+    longitude: 31.0335,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
@@ -28,12 +33,14 @@ export function LocationPickerModal({ visible, onClose }: LocationPickerModalPro
   const [tagInput, setTagInput] = useState('');
 
   useEffect(() => {
+    const version = ++generation.current;
     if (visible) {
+      setSelectedCoordinate(null); setAddressInput(''); setTagInput(''); setLocationError(''); setSaving(false);
       (async () => {
         try {
           const { status } = await Location.requestForegroundPermissionsAsync();
           if (status !== 'granted') {
-            console.log('Location permission not granted');
+            if (generation.current === version) setLocationError('Location permission is off. You can choose a map pin and enter your address manually.');
             return;
           }
 
@@ -45,7 +52,7 @@ export function LocationPickerModal({ visible, onClose }: LocationPickerModalPro
              });
           }
           
-          if (location) {
+          if (location && generation.current === version) {
             setRegion({
               latitude: location.coords.latitude,
               longitude: location.coords.longitude,
@@ -58,13 +65,12 @@ export function LocationPickerModal({ visible, onClose }: LocationPickerModalPro
         }
       })();
     }
-  }, [visible]);
+    return () => { ++generation.current; };
+  }, [visible, user?.id]);
 
   const handleMapPress = (e: any) => {
     setSelectedCoordinate(e.nativeEvent.coordinate);
-    // In a real app, you would reverse-geocode this coordinate to an address string here.
-    // For this prototype, we'll just set a placeholder address.
-    setAddressInput('Selected from Map');
+    setAddressInput('');
   };
 
   const handleSelectSavedLocation = (location: LocationData) => {
@@ -73,28 +79,21 @@ export function LocationPickerModal({ visible, onClose }: LocationPickerModalPro
   };
 
   const handleConfirmNewLocation = async () => {
-    if (!selectedCoordinate) return;
-
-    const newLocation: LocationData = {
-      id: Math.random().toString(36).substring(2, 15) + Date.now().toString(36),
-      address: addressInput || 'Unknown Address',
-      latitude: selectedCoordinate.latitude,
-      longitude: selectedCoordinate.longitude,
-      tag: tagInput || undefined,
-    };
-
-    if (tagInput) {
-      const dbLocation = await saveLocation(newLocation);
-      setDeliveryLocation(dbLocation || newLocation);
-    } else {
-      setDeliveryLocation(newLocation);
-    }
-    
-    onClose();
+    if (!selectedCoordinate || saving) return;
+    if (addressInput.trim().length < 5) { setLocationError('Enter a written delivery address and landmarks for this map pin.'); return; }
+    const version = generation.current; const account = user?.id;
+    setSaving(true); setLocationError('');
+    try {
+      const next: LocationData = { id: Math.random().toString(36).slice(2), address: addressInput.trim(), ...selectedCoordinate, tag: tagInput.trim() || undefined };
+      const saved = tagInput.trim() ? await saveLocation(next) : next;
+      if (version !== generation.current || owner.current !== account) return;
+      if (!saved) { setLocationError('The location could not be saved. Retry, or use it without saving a label.'); return; }
+      setDeliveryLocation(saved); onClose();
+    } finally { if (version === generation.current) setSaving(false); }
   };
 
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
+    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
       <SafeAreaView className="flex-1 bg-white" edges={['top']}>
         {/* Header */}
         <View className="flex-row items-center justify-between px-5 py-4 border-b border-gray-100">
@@ -105,6 +104,8 @@ export function LocationPickerModal({ visible, onClose }: LocationPickerModalPro
         </View>
 
         <ScrollView className="flex-1" bounces={false}>
+          {locationError ? <Text accessibilityRole="alert" className="p-4 text-amber-800">{locationError}</Text> : null}
+          <Text className="p-4 text-slate-600">Choose a pin and a written address. The branch confirms delivery coverage in your online quote.</Text>
           {/* Saved Locations */}
           {savedLocations.length > 0 && (
             <View className="px-5 py-4">
@@ -174,7 +175,7 @@ export function LocationPickerModal({ visible, onClose }: LocationPickerModalPro
                     <TextInput 
                       value={addressInput}
                       onChangeText={setAddressInput}
-                      placeholder="e.g. 123 Main St"
+                      accessibilityLabel="Written delivery address" maxLength={500} placeholder="Street, suburb and useful landmarks"
                       className="flex-1 text-gray-900 font-medium"
                     />
                   </View>
@@ -194,10 +195,11 @@ export function LocationPickerModal({ visible, onClose }: LocationPickerModalPro
                 </View>
 
                 <TouchableOpacity 
+                  accessibilityRole="button" disabled={saving}
                   onPress={handleConfirmNewLocation}
                   className="bg-red-600 rounded-lg py-3.5 items-center shadow-sm mt-2"
                 >
-                  <Text className="text-white font-bold text-lg">Confirm Location</Text>
+                  <Text className="text-white font-bold text-lg">{saving ? 'Saving…' : 'Confirm Location'}</Text>
                 </TouchableOpacity>
               </View>
             </View>

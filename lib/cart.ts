@@ -39,3 +39,7 @@ export function checkoutLines(items: CartItem[]) {
 export function cartFingerprint(items: CartItem[]) {
   return JSON.stringify(checkoutLines(items).sort((a, b) => cartLineId(a.menu_item_id, a.choice_ids).localeCompare(cartLineId(b.menu_item_id, b.choice_ids))));
 }
+
+export function cartSelectionFingerprint(cart: Pick<CartState, 'storeId' | 'items'>) {
+  return JSON.stringify([cart.storeId, cartFingerprint(cart.items)]);
+}

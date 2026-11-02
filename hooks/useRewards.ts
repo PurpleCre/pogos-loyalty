@@ -1,5 +1,7 @@
 import { logPrivateError } from '@/lib/privacy-logging';
-import { useState, useEffect, useRef } from 'react';
+import { useCallback, useEffect } from 'react';
+import { useReadResource } from './useReadResource';
+import { accessTokenFor } from '@/lib/cash-orders';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from './useAuth';
 
@@ -34,118 +36,27 @@ export interface Transaction {
 }
 
 export const useRewards = () => {
-    const { user } = useAuth();
-    const [rewards, setRewards] = useState<Reward[]>([]);
-    const accountId = user?.id ?? null;
-    const currentAccount = useRef(accountId);
-    currentAccount.current = accountId;
-    const [pointsState, setPointsState] = useState<{ owner: string | null; value: UserPoints | null }>({ owner: accountId, value: null });
-    const [historyState, setHistoryState] = useState<{ owner: string | null; value: Transaction[] }>({ owner: accountId, value: [] });
-    const userPoints = pointsState.owner === accountId ? pointsState.value : null;
-    const transactions = historyState.owner === accountId ? historyState.value : [];
-    const setUserPoints = (value: UserPoints) => setPointsState({ owner: accountId, value });
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        setLoading(!!user);
-        if (user) {
-            fetchRewards();
-            fetchUserPoints();
-            fetchTransactions();
-            const refresh = () => { void fetchUserPoints(); void fetchTransactions(); };
-            const timer = setInterval(refresh, 15000);
-            const channel = supabase.channel(`loyalty:${user.id}`)
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'user_points', filter: `user_id=eq.${user.id}` }, refresh)
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'transactions', filter: `user_id=eq.${user.id}` }, refresh).subscribe();
-            return () => { clearInterval(timer); void supabase.removeChannel(channel); };
-        }
-    }, [user]);
-
-    const fetchRewards = async () => {
-        try {
-            const { data, error } = await supabase
-                .from('rewards')
-                .select('*')
-                .eq('available', true)
-                .order('points_cost');
-
-            if (error) throw error;
-            setRewards((data as Reward[]) || []);
-        } catch (error) {
-            logPrivateError('Error fetching rewards:', error);
-        }
-    };
-
-    const fetchUserPoints = async () => {
-        if (!user) return;
-
-        try {
-            const { data, error } = await supabase
-                .from('user_points')
-                .select('*')
-                .eq('user_id', user.id)
-                .single();
-
-            if (currentAccount.current !== accountId) return;
-            if (error && error.code !== 'PGRST116') {
-                logPrivateError('Supabase error fetching points:', error);
-            }
-
-            if (data) {
-                setUserPoints({
-                    current_points: data.current_points ?? 0,
-                    reserved_points: data.reserved_points,
-                    total_earned: data.total_earned ?? 0,
-                    total_redeemed: data.total_redeemed ?? 0
-                });
-            } else {
-                setUserPoints({
-                    current_points: 0,
-                    reserved_points: 0,
-                    total_earned: 0,
-                    total_redeemed: 0
-                });
-            }
-        } catch (err: any) {
-            logPrivateError('Exception fetching user points:', err?.message || err);
-        } finally {
-            if (currentAccount.current === accountId) setLoading(false);
-        }
-    };
-
-    const fetchTransactions = async () => {
-        if (!user) return;
-        try {
-            const { data, error } = await supabase
-                .from('transactions')
-                .select('*')
-                .eq('user_id', user.id)
-                .order('created_at', { ascending: false })
-                .limit(10);
-
-            if (error) throw error;
-            if (currentAccount.current === accountId) {
-                setHistoryState({ owner: accountId, value: (data as Transaction[]) || [] });
-            }
-        } catch (error) {
-            logPrivateError('Error fetching transactions:', error);
-        }
-    };
-
-    const sharePoints = async (_receiverEmail: string, _points: number) => ({
-        error: 'Points sharing is not available yet.'
-    });
-
-    return {
-        rewards,
-        userPoints,
-        transactions,
-        loading,
-        sharePoints,
-        refetch: () => {
-            fetchRewards();
-            fetchUserPoints();
-            fetchTransactions();
-        }
-    };
+  const { user } = useAuth(); const owner = user?.id;
+  const load = useCallback(async (signal: AbortSignal) => {
+    if (!owner) return { userPoints: null, transactions: [] as Transaction[] };
+    const token = await accessTokenFor(owner); const bearer = `Bearer ${token}`;
+    const [points, history] = await Promise.all([
+      supabase.from('user_points').select('*').eq('user_id', owner).abortSignal(signal).maybeSingle().setHeader('Authorization', bearer),
+      supabase.from('transactions').select('*').eq('user_id', owner).order('created_at', { ascending: false }).limit(10).abortSignal(signal).setHeader('Authorization', bearer),
+    ]);
+    if (points.error) throw points.error; if (history.error) throw history.error;
+    return { userPoints: points.data ? { current_points: points.data.current_points ?? 0, reserved_points: points.data.reserved_points,
+      total_earned: points.data.total_earned ?? 0, total_redeemed: points.data.total_redeemed ?? 0 } : null, transactions: (history.data ?? []) as Transaction[] };
+  }, [owner]);
+  const resource = useReadResource(owner ?? 'guest', load, { enabled: !!owner });
+  useEffect(() => {
+    if (!owner) return;
+    const refresh = () => { void resource.refetch(); };
+    const channel = supabase.channel(`loyalty:${owner}`).on('postgres_changes', { event: '*', schema: 'public', table: 'user_points', filter: `user_id=eq.${owner}` }, refresh)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'transactions', filter: `user_id=eq.${owner}` }, refresh).subscribe();
+    return () => { void supabase.removeChannel(channel); };
+  }, [owner, resource.refetch]);
+  return { rewards: [] as Reward[], userPoints: resource.data?.userPoints ?? null, transactions: resource.data?.transactions ?? [],
+    loading: resource.loading, fresh: resource.fresh, refreshedAt: resource.refreshedAt, error: resource.error,
+    sharePoints: async (_email: string, _points: number) => ({ error: 'Points sharing is not available yet.' }), refetch: resource.refetch };
 };

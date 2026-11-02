@@ -1,5 +1,8 @@
 import { View, Text, FlatList, ActivityIndicator, Pressable, RefreshControl } from 'react-native';
+import { useAuth } from '@/hooks/useAuth';
+import { Redirect } from 'expo-router';
 import { useRewards } from '@/hooks/useRewards';
+import { ReadStatus } from '@/components/ReadStatus';
 import { formatMoney } from '@/lib/cash-orders';
 import { useState, useCallback } from 'react';
 import { 
@@ -10,7 +13,7 @@ import {
 type FilterType = 'all' | 'purchase' | 'redemption' | 'refund' | 'reward_restore';
 
 export default function Transactions() {
-  const { transactions, userPoints, loading, refetch } = useRewards();
+  const { transactions, userPoints, loading, fresh, refreshedAt, error, refetch } = useRewards();
   const [filter, setFilter] = useState<FilterType>('all');
   const [refreshing, setRefreshing] = useState(false);
 
@@ -20,10 +23,11 @@ export default function Transactions() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    refetch();
-    setTimeout(() => setRefreshing(false), 1000);
+    try { await refetch(); } finally { setRefreshing(false); }
   }, [refetch]);
 
+  const { user, loading: authLoading } = useAuth();
+  if (!user && !authLoading) return <Redirect href="/(auth)/login?redirect=/(app)/transactions" />;
   if (loading && transactions.length === 0) {
     return (
       <View className="flex-1 items-center justify-center bg-slate-50">
@@ -51,6 +55,7 @@ export default function Transactions() {
         }
         ListHeaderComponent={
           <View>
+            <ReadStatus label="Points and recent history" fresh={fresh} at={refreshedAt} error={error} loading={loading} onRefresh={() => { void refetch(); }} />
             {/* Summary Stats */}
             <View className="flex-row gap-3 mb-5">
               <View className="flex-1 bg-white rounded-2xl p-4 border border-slate-100 shadow-sm items-center">
@@ -58,7 +63,7 @@ export default function Transactions() {
                   <Star size={20} color="#dc2626" />
                 </View>
                 <Text className="text-2xl font-bold text-slate-800">
-                  {userPoints?.current_points || 0}
+                  {userPoints?.current_points ?? 'Unconfirmed'}
                 </Text>
                 <Text className="text-xs text-slate-400 font-medium">Available Points</Text>
               </View>
@@ -67,7 +72,7 @@ export default function Transactions() {
                   <ShoppingBag size={20} color="#10b981" />
                 </View>
                 <Text className="text-2xl font-bold text-slate-800">
-                  {userPoints?.total_earned || 0}
+                  {userPoints?.total_earned ?? 'Unconfirmed'}
                 </Text>
                 <Text className="text-xs text-slate-400 font-medium">Total Earned</Text>
               </View>
@@ -76,7 +81,7 @@ export default function Transactions() {
                   <Gift size={20} color="#a855f7" />
                 </View>
                 <Text className="text-2xl font-bold text-slate-800">
-                  {userPoints?.total_redeemed || 0}
+                  {userPoints?.total_redeemed ?? 'Unconfirmed'}
                 </Text>
                 <Text className="text-xs text-slate-400 font-medium">Total Redeemed</Text>
               </View>
@@ -110,7 +115,7 @@ export default function Transactions() {
             </View>
 
             {/* Section Title */}
-            <Text className="text-2xl font-bold text-slate-800 mb-4">Transaction History</Text>
+            <Text className="text-2xl font-bold text-slate-800 mb-4">Recent history (latest 10)</Text>
           </View>
         }
         renderItem={({ item }) => (

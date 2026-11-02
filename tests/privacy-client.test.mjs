@@ -58,5 +58,5 @@ test('ordinary logout clears the departing address cache without dropping financ
 test('cleanup attempts every account key and reports failures instead of claiming complete erasure',async()=>{
   const {clearAccountLocalData}=await import('../lib/account-cleanup.ts');const attempted=[];
   await assert.rejects(clearAccountLocalData({async removeItem(key){attempted.push(key);if(key.startsWith('@pogos_locations:'))throw Error('Storage unavailable');}},'alice',true),/could not be confirmed/);
-  assert.equal(attempted.length,7);
+  assert.equal(attempted.length,10);
 });
