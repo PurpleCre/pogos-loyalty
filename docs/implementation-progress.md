@@ -2,6 +2,10 @@
 
 Updated: 31 October 2026. Scope: local implementation increments for the cash-first release at Msasa, Kamfinsa and Westgate. GAAP is the confirmed POS vendor. Digital payments remain Release 2.
 
+## Historical migration replay correction
+
+A reported remote push stopped at the location migration because an identically named policy already existed. The historical location and GAAP migrations now replace only their known policy names, preserving tables/data and unrelated policies. Added upgrade regressions exercise preinstalled objects/data, repeated migration execution, address ownership and final GAAP containment. The combined suite now has **216 passing tests**; type/lint/schema/SDK/peer checks pass. See [migration recovery steps](migration-replay-recovery.md) for explicit linked-project planning/retry commands and history-reconciliation boundaries. No remote command was executed while preparing this correction; the rest of this report retains its checkpoint-specific test counts.
+
 ## Subsequent verification and checkout increment
 
 The foundation increment was rechecked before advancing: all 28 original tests, TypeScript, lint and database-type drift checks passed. The next local increment implements trusted cash quotation/order creation, modifier-aware cart lines, delivery-zone checks, immutable contact/item/address snapshots and persistent submission recovery. See the [cash checkout milestone](cash-checkout-milestone.md) for its acceptance report and boundaries. The combined suite now contains 67 tests and Android bundle export passes. No hosted configuration or deployment was performed.

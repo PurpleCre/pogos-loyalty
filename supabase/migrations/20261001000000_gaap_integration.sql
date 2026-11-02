@@ -91,30 +91,38 @@ BEGIN
 END $$;
 
 -- 6. RLS policies for gaap tables (admin only for config, user can read own links)
+-- Legacy installations may already have these policies without a history row.
+-- Replace only their known names; later containment migrations must still run.
 
 -- gaap_sync_log: admin read-only
 ALTER TABLE gaap_sync_log ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Admin can view all sync logs" ON public.gaap_sync_log;
 CREATE POLICY "Admin can view all sync logs" ON gaap_sync_log
   FOR SELECT USING (
     EXISTS (SELECT 1 FROM user_roles WHERE user_id = auth.uid() AND role = 'admin')
   );
 
+DROP POLICY IF EXISTS "Service role can insert sync logs" ON public.gaap_sync_log;
 CREATE POLICY "Service role can insert sync logs" ON gaap_sync_log
   FOR INSERT WITH CHECK (true);
 
 -- gaap_customer_links: users can see their own link
 ALTER TABLE gaap_customer_links ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view own GAAP link" ON public.gaap_customer_links;
 CREATE POLICY "Users can view own GAAP link" ON gaap_customer_links
   FOR SELECT USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can create own GAAP link" ON public.gaap_customer_links;
 CREATE POLICY "Users can create own GAAP link" ON gaap_customer_links
   FOR INSERT WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can update own GAAP link" ON public.gaap_customer_links;
 CREATE POLICY "Users can update own GAAP link" ON gaap_customer_links
   FOR UPDATE USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Admin can view all GAAP links" ON public.gaap_customer_links;
 CREATE POLICY "Admin can view all GAAP links" ON gaap_customer_links
   FOR SELECT USING (
     EXISTS (SELECT 1 FROM user_roles WHERE user_id = auth.uid() AND role = 'admin')
@@ -123,6 +131,7 @@ CREATE POLICY "Admin can view all GAAP links" ON gaap_customer_links
 -- gaap_config: admin only
 ALTER TABLE gaap_config ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Admin can manage GAAP config" ON public.gaap_config;
 CREATE POLICY "Admin can manage GAAP config" ON gaap_config
   FOR ALL USING (
     EXISTS (SELECT 1 FROM user_roles WHERE user_id = auth.uid() AND role = 'admin')

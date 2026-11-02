@@ -1,7 +1,84 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { randomUUID } from 'node:crypto';
+import { readFile } from 'node:fs/promises';
 import { createTestDatabase, asRole } from '../scripts/test-database.mjs';
+
+test('location migration tolerates existing policies, preserves addresses and keeps ownership boundaries', async () => {
+  const alice = randomUUID(); const bob = randomUUID();
+  const aliceAddress = randomUUID(); const bobAddress = randomUUID();
+  const migration = '20260916010000_user_locations.sql';
+  let originalRows;
+  const db = await createTestDatabase({ beforeMigration: async (database, name) => {
+    if (name !== migration) return;
+    const sql = await readFile(new URL(`../supabase/migrations/${migration}`, import.meta.url), 'utf8');
+    await database.exec(sql);
+    for (const id of [alice, bob]) await database.query('INSERT INTO auth.users(id,email) VALUES ($1,$2)', [id, `${id}@fixture.test`]);
+    await database.query(`INSERT INTO public.user_locations(id,user_id,address,latitude,longitude)
+      VALUES ($1,$2,'Alice original',-17,31),($3,$4,'Bob original',-18,30)`, [aliceAddress,alice,bobAddress,bob]);
+    originalRows = (await database.query('SELECT * FROM public.user_locations ORDER BY id')).rows;
+    await database.exec(`CREATE POLICY "Deployment-specific address boundary" ON public.user_locations
+      AS RESTRICTIVE FOR SELECT TO authenticated USING (user_id=auth.uid());
+      ALTER POLICY "Users can update their own locations" ON public.user_locations USING (true)`);
+    // Simulate an unrecorded manual install, then another attempted replay.
+    await database.exec(sql);
+  }});
+  try {
+    assert.deepEqual((await db.query('SELECT * FROM public.user_locations ORDER BY id')).rows, originalRows);
+    assert.equal((await db.query(`SELECT count(*)::int AS count FROM pg_policies
+      WHERE schemaname='public' AND tablename='user_locations' AND policyname LIKE 'Users can % their own locations'`)).rows[0].count, 4);
+    assert.equal((await db.query(`SELECT count(*)::int AS count FROM pg_policies
+      WHERE schemaname='public' AND tablename='user_locations' AND policyname='Deployment-specific address boundary'`)).rows[0].count, 1);
+    assert.equal((await db.query(`SELECT count(*)::int AS count FROM pg_trigger
+      WHERE tgrelid='public.user_locations'::regclass AND tgname='trigger_user_locations_updated_at'`)).rows[0].count, 1);
+    await asRole(db, 'authenticated', alice, async () => {
+      assert.deepEqual((await db.query('SELECT id FROM public.user_locations')).rows, [{ id: aliceAddress }]);
+      assert.equal((await db.query(`UPDATE public.user_locations SET address='Changed' WHERE id=$1 RETURNING id`, [bobAddress])).rows.length, 0);
+      assert.equal((await db.query('DELETE FROM public.user_locations WHERE id=$1 RETURNING id', [bobAddress])).rows.length, 0);
+      await assert.rejects(db.query('UPDATE public.user_locations SET user_id=$1 WHERE id=$2', [bob,aliceAddress]), { code: '42501' });
+      await assert.rejects(db.query(`INSERT INTO public.user_locations(user_id,address,latitude,longitude) VALUES ($1,'Forged',0,0)`, [bob]), { code: '42501' });
+      const inserted = (await db.query(`INSERT INTO public.user_locations(user_id,address,latitude,longitude) VALUES ($1,'New',0,0) RETURNING id`, [alice])).rows[0].id;
+      assert.equal((await db.query(`UPDATE public.user_locations SET address='Updated' WHERE id=$1 RETURNING address`, [inserted])).rows[0].address, 'Updated');
+      assert.equal((await db.query('DELETE FROM public.user_locations WHERE id=$1 RETURNING id', [inserted])).rows.length, 1);
+    });
+    await asRole(db, 'anon', null, async () => {
+      assert.deepEqual((await db.query('SELECT id FROM public.user_locations')).rows, []);
+    });
+  } finally { await db.close(); }
+});
+
+test('GAAP migration tolerates existing policies and data before later containment disables legacy writes', async () => {
+  const actor = randomUUID(); const branch = randomUUID();
+  const migration = '20261001000000_gaap_integration.sql';
+  const tables = ['gaap_sync_log','gaap_customer_links','gaap_config'];
+  const original = {};
+  const db = await createTestDatabase({ beforeMigration: async (database, name) => {
+    if (name !== migration) return;
+    const sql = await readFile(new URL(`../supabase/migrations/${migration}`, import.meta.url), 'utf8');
+    await database.exec(sql);
+    await database.query('INSERT INTO auth.users(id,email) VALUES ($1,$2)', [actor,`${actor}@fixture.test`]);
+    await database.query(`INSERT INTO public.stores(id,name,address,distance_miles) VALUES ($1,'Existing fixture','Test only',0)`, [branch]);
+    await database.query(`INSERT INTO public.gaap_sync_log(gaap_transaction_id,user_id,store_id,transaction_amount,points_awarded) VALUES ('existing-fixture-sale',$1,$2,12.50,12)`, [actor,branch]);
+    await database.query(`INSERT INTO public.gaap_customer_links(user_id,gaap_customer_id,verified) VALUES ($1,'existing-fixture-customer',true)`, [actor]);
+    await database.query(`INSERT INTO public.gaap_config(store_id,api_key,webhook_secret) VALUES ($1,'fixture-only-key','fixture-only-secret')`, [branch]);
+    for (const table of tables) original[table] = (await database.query(`SELECT * FROM public.${table} ORDER BY id`)).rows;
+    await database.exec(sql);
+  }});
+  try {
+    for (const table of tables) assert.deepEqual((await db.query(`SELECT * FROM public.${table} ORDER BY id`)).rows, original[table]);
+    await asRole(db, 'authenticated', actor, async () => {
+      assert.deepEqual((await db.query('SELECT gaap_customer_id FROM public.gaap_customer_links')).rows, [{gaap_customer_id:'existing-fixture-customer'}]);
+      assert.deepEqual((await db.query('SELECT id FROM public.gaap_config')).rows, []);
+      assert.deepEqual((await db.query('SELECT id FROM public.gaap_sync_log')).rows, []);
+      await assert.rejects(db.query(`UPDATE public.gaap_customer_links SET verified=false WHERE user_id=$1`, [actor]), { code: '42501' });
+      await assert.rejects(db.query(`INSERT INTO public.gaap_sync_log(gaap_transaction_id) VALUES ('forged-fixture')`), { code: '42501' });
+    });
+    for (const role of ['anon','authenticated','service_role']) {
+      assert.equal((await db.query(`SELECT has_function_privilege($1,
+        'public.process_gaap_transaction(text,text,text,text,text,uuid,numeric,jsonb,jsonb)', 'EXECUTE') AS allowed`, [role])).rows[0].allowed, false);
+    }
+  } finally { await db.close(); }
+});
 
 test('reward upgrade preserves a previously paid cash order, its receipt and earned balance while backfilling fiscal identity', async () => {
   const customer = randomUUID(); const staff = randomUUID(); const store = randomUUID();

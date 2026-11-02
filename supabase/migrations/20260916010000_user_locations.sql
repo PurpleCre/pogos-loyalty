@@ -14,19 +14,24 @@ CREATE TABLE IF NOT EXISTS public.user_locations (
 -- Enable Row Level Security
 ALTER TABLE public.user_locations ENABLE ROW LEVEL SECURITY;
 
--- Policies
+-- The table/policies may predate the migration-history entry (manual setup).
+-- Replace only these named policies; preserve addresses and unrelated policies.
+DROP POLICY IF EXISTS "Users can view their own locations" ON public.user_locations;
 CREATE POLICY "Users can view their own locations" 
 ON public.user_locations FOR SELECT 
 USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert their own locations" ON public.user_locations;
 CREATE POLICY "Users can insert their own locations" 
 ON public.user_locations FOR INSERT 
 WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update their own locations" ON public.user_locations;
 CREATE POLICY "Users can update their own locations" 
 ON public.user_locations FOR UPDATE 
 USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can delete their own locations" ON public.user_locations;
 CREATE POLICY "Users can delete their own locations" 
 ON public.user_locations FOR DELETE 
 USING (auth.uid() = user_id);
