@@ -2,12 +2,10 @@ import { Drawer } from 'expo-router/drawer';
 import { useAuth } from '@/hooks/useAuth';
 import { View, ActivityIndicator } from 'react-native';
 import { Home, Gift, User, History, ShoppingBag, Truck, ShoppingCart, Shield, Store } from 'lucide-react-native';
-import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { Redirect } from 'expo-router';
 
 export default function AppLayout() {
   const { session, loading, userRole, requiresMfa, recoveryRequired } = useAuth();
-  usePushNotifications();
 
   if (loading) {
     return (
@@ -19,7 +17,7 @@ export default function AppLayout() {
 
   if (session && recoveryRequired) return <Redirect href="/auth/reset-password" />;
   if (session && requiresMfa) return <Redirect href="/auth/security" />;
-  const isStaff = userRole === 'staff';
+  const isStaff = userRole === 'staff' || userRole === 'manager';
   const isAdmin = userRole === 'admin';
   const isLoggedIn = !!session;
 

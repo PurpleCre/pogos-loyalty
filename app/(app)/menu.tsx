@@ -11,7 +11,7 @@ import { useOrder } from '@/contexts/OrderContext';
 
 export default function MenuScreen() {
   const { selectedStore } = useOrder();
-  const { categories, items, isLoading, refetch } = useMenu(false, selectedStore?.id);
+  const { categories, items, isLoading, refetch, error: menuError } = useMenu(false, selectedStore?.id);
   const { items: cartItems, addToCart, removeFromCart, updateQuantity, itemCount, cartTotal } = useCart();
   const { user } = useAuth();
   const { activeOrders, refetch: refetchOrders } = useOrders();
@@ -27,14 +27,14 @@ export default function MenuScreen() {
     useCallback(() => {
       refetch();
       refetchOrders();
-    }, [])
+    }, [refetch, refetchOrders])
   );
 
   useEffect(() => {
-    if (categories.length > 0 && !activeCategory) {
-      setActiveCategory(categories[0].id);
-    }
-  }, [categories]);
+    if (!categories.some(category => category.id === activeCategory)) setActiveCategory(categories[0]?.id ?? null);
+  }, [categories, activeCategory]);
+
+  useEffect(() => { setCustomizationItem(null); setSelectedOptions({}); }, [selectedStore?.id]);
 
   if (isLoading && categories.length === 0 && items.length === 0) {
     return (
@@ -214,6 +214,10 @@ export default function MenuScreen() {
       </View>
 
       <ScrollView className="flex-1 px-4 pt-4">
+        {menuError ? <View className="bg-amber-50 border border-amber-300 p-4 rounded-xl mb-4">
+          <Text accessibilityRole="alert">{menuError}</Text>
+          <TouchableOpacity accessibilityRole="button" onPress={() => { void refetch(); }} className="py-3"><Text>Refresh menu</Text></TouchableOpacity>
+        </View> : null}
         {/* Active Orders */}
         {activeOrders.length > 0 && (
           <View className="mb-6">

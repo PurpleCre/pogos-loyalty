@@ -49,12 +49,14 @@ test('ordinary logout clears the departing address cache without dropping financ
   const {clearAccountLocalData}=await import('../lib/account-cleanup.ts');const {createLocationCache}=await import('../lib/location-cache.ts');
   const data=new Map();const storage={async getItem(key){return data.get(key)??null;},async setItem(key,value){data.set(key,value);},async removeItem(key){data.delete(key);}};
   await createLocationCache(storage).write('alice',[{id:'fixture',address:'Private address',latitude:0,longitude:0,tag:'Home'}]);
-  data.set('@pogos_pending_cash_order:alice','cash');data.set('@pogos_locations:bob','other account');
+  data.set('@pogos_pending_cash_order:alice','cash');data.set('@pogos_pending_branch_command:alice','branch');data.set('@pogos_pending_finance_command:alice','finance');data.set('@pogos_locations:bob','other account');
   await clearAccountLocalData(storage,'alice');assert.equal(data.has('@pogos_locations:alice'),false);assert.equal(data.get('@pogos_pending_cash_order:alice'),'cash');assert.equal(data.get('@pogos_locations:bob'),'other account');
-  await clearAccountLocalData(storage,'alice',true);assert.equal(data.has('@pogos_pending_cash_order:alice'),false);assert.equal(data.get('@pogos_locations:bob'),'other account');
+  assert.equal(data.get('@pogos_pending_branch_command:alice'),'branch');
+  assert.equal(data.get('@pogos_pending_finance_command:alice'),'finance');
+  await clearAccountLocalData(storage,'alice',true);assert.equal(data.has('@pogos_pending_cash_order:alice'),false);assert.equal(data.has('@pogos_pending_branch_command:alice'),false);assert.equal(data.has('@pogos_pending_finance_command:alice'),false);assert.equal(data.get('@pogos_locations:bob'),'other account');
 });
 test('cleanup attempts every account key and reports failures instead of claiming complete erasure',async()=>{
   const {clearAccountLocalData}=await import('../lib/account-cleanup.ts');const attempted=[];
   await assert.rejects(clearAccountLocalData({async removeItem(key){attempted.push(key);if(key.startsWith('@pogos_locations:'))throw Error('Storage unavailable');}},'alice',true),/could not be confirmed/);
-  assert.equal(attempted.length,5);
+  assert.equal(attempted.length,7);
 });

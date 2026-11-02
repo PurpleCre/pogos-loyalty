@@ -133,7 +133,7 @@ export function StaffRewards({ branchId, enabled, externalBlocked = false }: { b
     try { await recover(); if (alive.current) setMessage('Previous reward action checked. Review its current state below.'); }
     catch (err) { if (alive.current) setMessage(rewardError(err)); }
   };
-  if (!user || !['admin', 'staff'].includes(userRole)) return null;
+  if (!user || !['admin', 'staff', 'manager'].includes(userRole)) return null;
   return <View>
     <Text className="font-bold text-xl mb-4">Reward collection</Text>
     <RewardRecovery pending={pending} error={pendingError} busy={busy} onRecover={() => { void recoverPrevious(); }} />

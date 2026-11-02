@@ -8,6 +8,7 @@ import { CartProvider } from '@/contexts/CartContext';
 import { AuthProvider } from '@/hooks/useAuth';
 import { OrderProvider } from '@/contexts/OrderContext';
 import { PrivacyExportCleanup } from '@/components/auth/PrivacyExportCleanup';
+import { PushNotificationsProvider } from '@/hooks/usePushNotifications';
 import { sanitizeTelemetry } from '@/lib/privacy-logging';
 
 import * as Sentry from '@sentry/react-native';
@@ -29,12 +30,14 @@ function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}><SafeAreaProvider>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <PushNotificationsProvider>
         <PrivacyExportCleanup />
         <OrderProvider>
           <CartProvider>
             <Slot />
           </CartProvider>
         </OrderProvider>
+        </PushNotificationsProvider>
       </AuthProvider>
     </QueryClientProvider>
     </SafeAreaProvider></GestureHandlerRootView>

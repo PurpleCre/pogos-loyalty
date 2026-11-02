@@ -120,6 +120,96 @@ export type Database = {
         }
       ]
     }
+    "branch_menu_availability": {
+      Row: {
+        "store_id": string
+        "menu_item_id": string
+        "available": boolean
+        "version": number
+      }
+      Insert: {
+        "store_id": string
+        "menu_item_id": string
+        "available": boolean
+        "version": number
+      }
+      Update: {
+        "store_id"?: string
+        "menu_item_id"?: string
+        "available"?: boolean
+        "version"?: number
+      }
+      Relationships: [
+        {
+          foreignKeyName: "branch_menu_availability_menu_item_id_fkey"
+          columns: ["menu_item_id"]
+          isOneToOne: false
+          referencedRelation: "menu_items"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "branch_menu_availability_store_id_fkey"
+          columns: ["store_id"]
+          isOneToOne: false
+          referencedRelation: "stores"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
+    "branch_operation_commands": {
+      Row: {
+        "id": string
+        "actor_id": string
+        "store_id": string
+        "action": string
+        "menu_item_id": string | null
+        "expected_version": number
+        "request": Json
+        "result": Json
+        "reason": string
+        "created_at": string
+      }
+      Insert: {
+        "id": string
+        "actor_id": string
+        "store_id": string
+        "action": string
+        "menu_item_id"?: string | null
+        "expected_version": number
+        "request": Json
+        "result": Json
+        "reason": string
+        "created_at"?: string
+      }
+      Update: {
+        "id"?: string
+        "actor_id"?: string
+        "store_id"?: string
+        "action"?: string
+        "menu_item_id"?: string | null
+        "expected_version"?: number
+        "request"?: Json
+        "result"?: Json
+        "reason"?: string
+        "created_at"?: string
+      }
+      Relationships: [
+        {
+          foreignKeyName: "branch_operation_commands_menu_item_id_fkey"
+          columns: ["menu_item_id"]
+          isOneToOne: false
+          referencedRelation: "menu_items"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "branch_operation_commands_store_id_fkey"
+          columns: ["store_id"]
+          isOneToOne: false
+          referencedRelation: "stores"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
     "cash_branch_cashiers": {
       Row: {
         "store_id": string
@@ -415,6 +505,8 @@ export type Database = {
         "max_total_minor": number
         "fulfilment_enabled": boolean
         "acceptance_minutes": number | null
+        "intake_paused": boolean
+        "operations_version": number
       }
       Insert: {
         "store_id": string
@@ -427,6 +519,8 @@ export type Database = {
         "max_total_minor"?: number
         "fulfilment_enabled"?: boolean
         "acceptance_minutes"?: number | null
+        "intake_paused"?: boolean
+        "operations_version"?: number
       }
       Update: {
         "store_id"?: string
@@ -439,6 +533,8 @@ export type Database = {
         "max_total_minor"?: number
         "fulfilment_enabled"?: boolean
         "acceptance_minutes"?: number | null
+        "intake_paused"?: boolean
+        "operations_version"?: number
       }
       Relationships: [
         {
@@ -524,6 +620,148 @@ export type Database = {
         },
         {
           foreignKeyName: "cash_receipts_store_id_fkey"
+          columns: ["store_id"]
+          isOneToOne: false
+          referencedRelation: "stores"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
+    "finance_commands": {
+      Row: {
+        "id": string
+        "actor_id": string
+        "reconciliation_id": string
+        "request": Json
+        "result": Json
+        "created_at": string
+      }
+      Insert: {
+        "id": string
+        "actor_id": string
+        "reconciliation_id": string
+        "request": Json
+        "result": Json
+        "created_at"?: string
+      }
+      Update: {
+        "id"?: string
+        "actor_id"?: string
+        "reconciliation_id"?: string
+        "request"?: Json
+        "result"?: Json
+        "created_at"?: string
+      }
+      Relationships: [
+        {
+          foreignKeyName: "finance_commands_reconciliation_id_fkey"
+          columns: ["reconciliation_id"]
+          isOneToOne: false
+          referencedRelation: "finance_reconciliations"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
+    "finance_reconciliation_events": {
+      Row: {
+        "id": string
+        "reconciliation_id": string
+        "actor_id": string
+        "action": string
+        "details": Json
+        "created_at": string
+      }
+      Insert: {
+        "id"?: string
+        "reconciliation_id": string
+        "actor_id": string
+        "action": string
+        "details": Json
+        "created_at"?: string
+      }
+      Update: {
+        "id"?: string
+        "reconciliation_id"?: string
+        "actor_id"?: string
+        "action"?: string
+        "details"?: Json
+        "created_at"?: string
+      }
+      Relationships: [
+        {
+          foreignKeyName: "finance_reconciliation_events_reconciliation_id_fkey"
+          columns: ["reconciliation_id"]
+          isOneToOne: false
+          referencedRelation: "finance_reconciliations"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
+    "finance_reconciliations": {
+      Row: {
+        "id": string
+        "store_id": string
+        "business_day": string
+        "currency": string
+        "submitted_by": string
+        "observed": Json
+        "snapshot": Json
+        "signature": string
+        "evidence": string
+        "status": string
+        "version": number
+        "revision": number
+        "reviewed_by": string | null
+        "reviewed_at": string | null
+        "previous_id": string | null
+        "created_at": string
+      }
+      Insert: {
+        "id": string
+        "store_id": string
+        "business_day": string
+        "currency": string
+        "submitted_by": string
+        "observed": Json
+        "snapshot": Json
+        "signature": string
+        "evidence": string
+        "status": string
+        "version"?: number
+        "revision": number
+        "reviewed_by"?: string | null
+        "reviewed_at"?: string | null
+        "previous_id"?: string | null
+        "created_at"?: string
+      }
+      Update: {
+        "id"?: string
+        "store_id"?: string
+        "business_day"?: string
+        "currency"?: string
+        "submitted_by"?: string
+        "observed"?: Json
+        "snapshot"?: Json
+        "signature"?: string
+        "evidence"?: string
+        "status"?: string
+        "version"?: number
+        "revision"?: number
+        "reviewed_by"?: string | null
+        "reviewed_at"?: string | null
+        "previous_id"?: string | null
+        "created_at"?: string
+      }
+      Relationships: [
+        {
+          foreignKeyName: "finance_reconciliations_previous_id_fkey"
+          columns: ["previous_id"]
+          isOneToOne: false
+          referencedRelation: "finance_reconciliations"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "finance_reconciliations_store_id_fkey"
           columns: ["store_id"]
           isOneToOne: false
           referencedRelation: "stores"
@@ -1029,6 +1267,67 @@ export type Database = {
         },
         {
           foreignKeyName: "menu_items_store_id_fkey"
+          columns: ["store_id"]
+          isOneToOne: false
+          referencedRelation: "stores"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
+    "notification_events": {
+      Row: {
+        "id": string
+        "source_id": string
+        "kind": string
+        "recipient_id": string
+        "store_id": string
+        "order_id": string | null
+        "reservation_id": string | null
+        "created_at": string
+        "expires_at": string
+        "read_at": string | null
+      }
+      Insert: {
+        "id"?: string
+        "source_id": string
+        "kind": string
+        "recipient_id": string
+        "store_id": string
+        "order_id"?: string | null
+        "reservation_id"?: string | null
+        "created_at"?: string
+        "expires_at"?: string
+        "read_at"?: string | null
+      }
+      Update: {
+        "id"?: string
+        "source_id"?: string
+        "kind"?: string
+        "recipient_id"?: string
+        "store_id"?: string
+        "order_id"?: string | null
+        "reservation_id"?: string | null
+        "created_at"?: string
+        "expires_at"?: string
+        "read_at"?: string | null
+      }
+      Relationships: [
+        {
+          foreignKeyName: "notification_events_order_id_fkey"
+          columns: ["order_id"]
+          isOneToOne: false
+          referencedRelation: "orders"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "notification_events_reservation_id_fkey"
+          columns: ["reservation_id"]
+          isOneToOne: false
+          referencedRelation: "reward_reservations"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "notification_events_store_id_fkey"
           columns: ["store_id"]
           isOneToOne: false
           referencedRelation: "stores"
@@ -1701,6 +2000,198 @@ export type Database = {
         "created_at"?: string | null
         "updated_at"?: string | null
         "gaap_customer_id"?: string | null
+      }
+      Relationships: [
+
+      ]
+    }
+    "push_deliveries": {
+      Row: {
+        "id": string
+        "event_id": string
+        "device_id": string
+        "device_version": number
+        "state": string
+        "attempts": number
+        "receipt_attempts": number
+        "version": number
+        "available_at": string
+        "claim_id": string | null
+        "lease_until": string | null
+        "dispatch_started_at": string | null
+        "ticket_id": string | null
+        "ticket_at": string | null
+        "last_code": string | null
+        "created_at": string
+        "updated_at": string
+      }
+      Insert: {
+        "id"?: string
+        "event_id": string
+        "device_id": string
+        "device_version": number
+        "state"?: string
+        "attempts"?: number
+        "receipt_attempts"?: number
+        "version"?: number
+        "available_at"?: string
+        "claim_id"?: string | null
+        "lease_until"?: string | null
+        "dispatch_started_at"?: string | null
+        "ticket_id"?: string | null
+        "ticket_at"?: string | null
+        "last_code"?: string | null
+        "created_at"?: string
+        "updated_at"?: string
+      }
+      Update: {
+        "id"?: string
+        "event_id"?: string
+        "device_id"?: string
+        "device_version"?: number
+        "state"?: string
+        "attempts"?: number
+        "receipt_attempts"?: number
+        "version"?: number
+        "available_at"?: string
+        "claim_id"?: string | null
+        "lease_until"?: string | null
+        "dispatch_started_at"?: string | null
+        "ticket_id"?: string | null
+        "ticket_at"?: string | null
+        "last_code"?: string | null
+        "created_at"?: string
+        "updated_at"?: string
+      }
+      Relationships: [
+        {
+          foreignKeyName: "push_deliveries_device_id_fkey"
+          columns: ["device_id"]
+          isOneToOne: false
+          referencedRelation: "push_devices"
+          referencedColumns: ["id"]
+        },
+        {
+          foreignKeyName: "push_deliveries_event_id_fkey"
+          columns: ["event_id"]
+          isOneToOne: false
+          referencedRelation: "notification_events"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
+    "push_delivery_results": {
+      Row: {
+        "id": string
+        "delivery_id": string
+        "stage": string
+        "outcome": string
+        "provider_reference": string | null
+        "actor_id": string | null
+        "reason": string | null
+        "created_at": string
+      }
+      Insert: {
+        "id": string
+        "delivery_id": string
+        "stage": string
+        "outcome": string
+        "provider_reference"?: string | null
+        "actor_id"?: string | null
+        "reason"?: string | null
+        "created_at"?: string
+      }
+      Update: {
+        "id"?: string
+        "delivery_id"?: string
+        "stage"?: string
+        "outcome"?: string
+        "provider_reference"?: string | null
+        "actor_id"?: string | null
+        "reason"?: string | null
+        "created_at"?: string
+      }
+      Relationships: [
+        {
+          foreignKeyName: "push_delivery_results_delivery_id_fkey"
+          columns: ["delivery_id"]
+          isOneToOne: false
+          referencedRelation: "push_deliveries"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
+    "push_devices": {
+      Row: {
+        "id": string
+        "secret_hash": string
+        "user_id": string
+        "expo_token": string | null
+        "project_id": string
+        "platform": string
+        "active": boolean
+        "version": number
+        "aal2": boolean
+        "verified_at": string
+        "bound_at": string
+        "expires_at": string
+        "created_at": string
+        "updated_at": string
+      }
+      Insert: {
+        "id": string
+        "secret_hash": string
+        "user_id": string
+        "expo_token"?: string | null
+        "project_id": string
+        "platform": string
+        "active"?: boolean
+        "version"?: number
+        "aal2": boolean
+        "verified_at"?: string
+        "bound_at"?: string
+        "expires_at": string
+        "created_at"?: string
+        "updated_at"?: string
+      }
+      Update: {
+        "id"?: string
+        "secret_hash"?: string
+        "user_id"?: string
+        "expo_token"?: string | null
+        "project_id"?: string
+        "platform"?: string
+        "active"?: boolean
+        "version"?: number
+        "aal2"?: boolean
+        "verified_at"?: string
+        "bound_at"?: string
+        "expires_at"?: string
+        "created_at"?: string
+        "updated_at"?: string
+      }
+      Relationships: [
+
+      ]
+    }
+    "push_settings": {
+      Row: {
+        "singleton": boolean
+        "enabled": boolean
+        "expo_project_id": string | null
+        "enabled_since": string | null
+      }
+      Insert: {
+        "singleton"?: boolean
+        "enabled"?: boolean
+        "expo_project_id"?: string | null
+        "enabled_since"?: string | null
+      }
+      Update: {
+        "singleton"?: boolean
+        "enabled"?: boolean
+        "expo_project_id"?: string | null
+        "enabled_since"?: string | null
       }
       Relationships: [
 
@@ -2558,6 +3049,14 @@ export type Database = {
       }
       Returns: Json
     }
+    "branch_operations_history": {
+      Args: {
+        "p_store_id": string
+        "p_before"?: string
+        "p_before_id"?: string
+      }
+      Returns: Json
+    }
     "cancel_privacy_request": {
       Args: {
         "p_id": string
@@ -2591,6 +3090,12 @@ export type Database = {
       }
       Returns: boolean
     }
+    "claim_push_deliveries": {
+      Args: {
+        "p_limit"?: number
+      }
+      Returns: Json
+    }
     "complete_privacy_deletion": {
       Args: {
         "p_id": string
@@ -2620,6 +3125,52 @@ export type Database = {
       }
       Returns: Json
     }
+    "finance_branch_access": {
+      Args: {
+        "p_store": string
+        "p_review"?: boolean
+      }
+      Returns: boolean
+    }
+    "finance_branch_report": {
+      Args: {
+        "p_store": string
+        "p_day": string
+        "p_currency": string
+      }
+      Returns: Json
+    }
+    "finance_chain_points": {
+      Args: Record<PropertyKey, never>
+      Returns: Json
+    }
+    "finance_entries": {
+      Args: {
+        "p_store": string
+        "p_day": string
+        "p_currency": string
+        "p_signature": string
+        "p_after"?: string
+        "p_limit"?: number
+      }
+      Returns: Json
+    }
+    "finance_period_key": {
+      Args: {
+        "p_store": string
+        "p_day": string
+        "p_currency": string
+      }
+      Returns: number
+    }
+    "finance_period_snapshot": {
+      Args: {
+        "p_store": string
+        "p_day": string
+        "p_currency": string
+      }
+      Returns: Json
+    }
     "finish_privacy_export": {
       Args: {
         "p_id": string
@@ -2629,6 +3180,12 @@ export type Database = {
     "generate_referral_code": {
       Args: Record<PropertyKey, never>
       Returns: string
+    }
+    "get_branch_operations": {
+      Args: {
+        "p_store_id": string
+      }
+      Returns: Json
     }
     "get_current_user_role": {
       Args: Record<PropertyKey, never>
@@ -2660,9 +3217,25 @@ export type Database = {
       }
       Returns: string
     }
+    "list_branch_menu": {
+      Args: {
+        "p_store_id": string
+        "p_after"?: string
+        "p_limit"?: number
+      }
+      Returns: Json
+    }
     "list_cash_branch_staff": {
       Args: {
         "p_store_id": string
+      }
+      Returns: Json
+    }
+    "list_finance_reconciliations": {
+      Args: {
+        "p_store": string
+        "p_before"?: string
+        "p_before_id"?: string
       }
       Returns: Json
     }
@@ -2683,6 +3256,13 @@ export type Database = {
       Args: Record<PropertyKey, never>
       Returns: Json
     }
+    "my_notification_inbox": {
+      Args: {
+        "p_before"?: string
+        "p_before_id"?: string
+      }
+      Returns: Json
+    }
     "my_privacy_request_events": {
       Args: {
         "p_id": string
@@ -2691,6 +3271,18 @@ export type Database = {
     }
     "my_staff_invitations": {
       Args: Record<PropertyKey, never>
+      Returns: Json
+    }
+    "operate_branch": {
+      Args: {
+        "p_id": string
+        "p_store_id": string
+        "p_expected_version": number
+        "p_action": string
+        "p_value": boolean
+        "p_reason": string
+        "p_menu_item_id"?: string
+      }
       Returns: Json
     }
     "operate_cash_order": {
@@ -2717,6 +3309,13 @@ export type Database = {
       Args: {
         "p_quote_id": string
         "p_submission_key": string
+      }
+      Returns: Json
+    }
+    "prepare_push_dispatch": {
+      Args: {
+        "p_id": string
+        "p_claim": string
       }
       Returns: Json
     }
@@ -2795,6 +3394,29 @@ export type Database = {
       }
       Returns: Json
     }
+    "push_device_eligible": {
+      Args: {
+        "p_delivery": string
+      }
+      Returns: boolean
+    }
+    "push_event_allowed": {
+      Args: {
+        "p_event": string
+        "p_user": string
+      }
+      Returns: boolean
+    }
+    "push_operations_summary": {
+      Args: Record<PropertyKey, never>
+      Returns: Json
+    }
+    "push_recipient_available": {
+      Args: {
+        "p_user": string
+      }
+      Returns: boolean
+    }
     "quote_cash_order": {
       Args: {
         "p_request": Json
@@ -2817,6 +3439,25 @@ export type Database = {
       }
       Returns: undefined
     }
+    "record_push_result": {
+      Args: {
+        "p_id": string
+        "p_claim": string
+        "p_outcome": string
+        "p_reference"?: string
+      }
+      Returns: boolean
+    }
+    "register_push_device": {
+      Args: {
+        "p_id": string
+        "p_secret": string
+        "p_token": string
+        "p_project": string
+        "p_platform": string
+      }
+      Returns: Json
+    }
     "release_reward_hold": {
       Args: {
         "p_reservation": string
@@ -2833,11 +3474,27 @@ export type Database = {
       }
       Returns: Json
     }
+    "resolve_transaction_notification": {
+      Args: {
+        "p_id": string
+      }
+      Returns: Json
+    }
     "restart_privacy_export": {
       Args: {
         "p_id": string
       }
       Returns: undefined
+    }
+    "review_finance_reconciliation": {
+      Args: {
+        "p_id": string
+        "p_command": string
+        "p_expected_version": number
+        "p_accept": boolean
+        "p_reason": string
+      }
+      Returns: Json
     }
     "review_privacy_deletion": {
       Args: {
@@ -2845,6 +3502,16 @@ export type Database = {
         "p_expected_version": number
         "p_action": string
         "p_reason": string
+      }
+      Returns: Json
+    }
+    "review_unknown_push": {
+      Args: {
+        "p_id": string
+        "p_expected_version": number
+        "p_retry": boolean
+        "p_reason": string
+        "p_allow_duplicate"?: boolean
       }
       Returns: Json
     }
@@ -2900,6 +3567,17 @@ export type Database = {
       }
       Returns: boolean
     }
+    "submit_finance_reconciliation": {
+      Args: {
+        "p_id": string
+        "p_store": string
+        "p_day": string
+        "p_currency": string
+        "p_observed": Json
+        "p_evidence": string
+      }
+      Returns: Json
+    }
     "submit_privacy_request": {
       Args: {
         "p_id": string
@@ -2907,9 +3585,16 @@ export type Database = {
       }
       Returns: Json
     }
+    "unregister_push_device": {
+      Args: {
+        "p_id": string
+        "p_secret": string
+      }
+      Returns: boolean
+    }
     }
     Enums: {
-    "app_role": "admin" | "user" | "staff"
+    "app_role": "admin" | "user" | "staff" | "manager" | "finance"
     }
     CompositeTypes: { [_ in never]: never }
   }
@@ -3038,7 +3723,9 @@ export const Constants = {
       "app_role": [
         "admin",
         "user",
-        "staff"
+        "staff",
+        "manager",
+        "finance"
       ]
     }
   }

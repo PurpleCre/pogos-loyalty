@@ -17,6 +17,8 @@ import { AdminMenu } from '@/components/admin/AdminMenu';
 import { AdminAchievements } from '@/components/admin/AdminAchievements';
 import { AdminGaap } from '@/components/admin/AdminGaap';
 import { useIsFocused } from 'expo-router/react-navigation';
+import { router } from 'expo-router';
+import { branchScopedRole } from '@/lib/identity';
 
 export default function AdminScreen() {
   const isFocused = useIsFocused();
@@ -78,7 +80,7 @@ export default function AdminScreen() {
   if (!isAdmin) return null;
 
   const handleRoleChange = async () => {
-    if ((selectedRole === 'staff' && !selectedStoreIds.length) || accessReason.trim().length < 3) {
+    if ((branchScopedRole(selectedRole) && !selectedStoreIds.length) || accessReason.trim().length < 3) {
       Alert.alert('Check access details', 'Select staff branches and provide a reason for this change.'); return;
     }
     setSavingAccess(true);
@@ -196,6 +198,8 @@ export default function AdminScreen() {
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
       case 'admin': return { bg: 'bg-red-100', text: 'text-red-700' };
+      case 'manager': return { bg: 'bg-amber-100', text: 'text-amber-800' };
+      case 'finance': return { bg: 'bg-purple-100', text: 'text-purple-700' };
       case 'staff': return { bg: 'bg-blue-100', text: 'text-blue-700' };
       default: return { bg: 'bg-gray-100', text: 'text-gray-600' };
     }
@@ -261,9 +265,9 @@ export default function AdminScreen() {
               <View className="flex-1 bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
                 <View className="flex-row items-center gap-2 mb-2">
                   <DollarSign size={16} color="#16a34a" />
-                  <Text className="text-gray-500 text-xs font-medium uppercase">Revenue Today</Text>
+                  <Text className="text-gray-500 text-xs font-medium uppercase">Cash and till reports</Text>
                 </View>
-                <Text className="text-2xl font-bold text-green-600">${dashboardStats.revenueToday.toFixed(2)}</Text>
+                <TouchableOpacity accessibilityRole="button" onPress={()=>router.push('/finance')} className="py-2"><Text className="font-bold text-green-700">By branch and currency →</Text></TouchableOpacity>
               </View>
               <View className="flex-1 bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
                 <View className="flex-row items-center gap-2 mb-2">
@@ -314,7 +318,7 @@ export default function AdminScreen() {
                     <View className="bg-red-50 px-2 py-1 rounded">
                       <Text className="text-xs font-semibold text-red-700">{u.current_points} pts</Text>
                     </View>
-                    {u.role === 'staff' && u.staff_store_ids.length > 0 && (
+                    {branchScopedRole(u.role) && u.staff_store_ids.length > 0 && (
                       <Text className="text-xs text-gray-400">
                         Branches: {u.staff_store_ids.map(id => stores.find(s => s.id === id)?.name ?? 'Unknown').join(', ')}
                       </Text>
@@ -453,12 +457,12 @@ export default function AdminScreen() {
             </View>
             <View className="mb-4">
               <Text className="text-sm font-medium text-gray-700 mb-2">Select Role</Text>
-              <View className="flex-row gap-2">
-                {(['user', 'staff', 'admin'] as const).map(role => (
+              <View className="flex-row flex-wrap gap-2">
+                {(['user', 'staff', 'manager', 'finance', 'admin'] as const).map(role => (
                   <TouchableOpacity
                     key={role}
                     onPress={() => setSelectedRole(role)}
-                    className={`flex-1 py-2.5 rounded-xl items-center border ${
+                    className={`px-3 py-2.5 rounded-xl items-center border ${
                       selectedRole === role 
                         ? 'bg-red-600 border-red-600' 
                         : 'bg-white border-gray-200'
@@ -469,7 +473,7 @@ export default function AdminScreen() {
                 ))}
               </View>
             </View>
-            {selectedRole === 'staff' && (
+            {branchScopedRole(selectedRole) && (
               <View className="mb-4">
                 <Text className="text-sm font-medium text-gray-700 mb-2">Assign Store</Text>
                 {stores.map(store => (

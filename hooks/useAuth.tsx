@@ -11,8 +11,10 @@ import { normaliseEmail, validatePassword, roleSnapshot } from '@/lib/identity';
 import bindings from '@/config/environments.json';
 import { createAuthCallback } from '@/lib/auth-callback';
 import { runtimeEnvironment } from '@/lib/environment';
+import { disablePushForLogout } from '@/lib/device-push';
+import { setPushRecipient } from '@/lib/notification-handler';
 
-export type AppRole = 'user' | 'staff' | 'admin';
+export type AppRole = 'user' | 'staff' | 'manager' | 'finance' | 'admin';
 interface AuthContextType {
   user: User | null; session: Session | null; loading: boolean;
   userRole: AppRole; staffStoreId: string | null; staffStoreIds: string[];
@@ -60,8 +62,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (version !== revision.current || currentSession.current?.user.id !== userId) return;
       if (roles.error || memberships.error || assurance.error || privacy.error) throw new Error('Unable to verify account access.');
       if (privacy.data && typeof privacy.data==='object' && !Array.isArray(privacy.data) && privacy.data.deleted === true) {
+        const previousToken=currentSession.current?.access_token;setPushRecipient(null);
         signingOut.current=true; ++revision.current; currentSession.current=null; setSession(null); setAccess(emptyAccess); setLoading(false); queryClient.clear();
         await authStorage.setItem(logoutStorageKey,'1');
+        if(previousToken)await disablePushForLogout(userId,previousToken).catch(()=>undefined);
         await clearAccountLocalData(AsyncStorage,userId,true).catch(()=>undefined);
         await supabase.auth.signOut({scope:'local'}); await authStorage.removeItem(authStorageKey); return;
       }
@@ -88,10 +92,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (next && signingOut.current) return;
       const version = ++revision.current;
       const previous = currentSession.current?.user.id;
+      const previousToken = currentSession.current?.access_token;
       const owner = next?.user.id;
       if (previous !== owner) {
         queryClient.clear(); setAccess(emptyAccess); setRecoveryRequired(false);
-        if (previous) void clearAccountLocalData(AsyncStorage,previous).catch(() => undefined);
+        if (previous) {
+          void clearAccountLocalData(AsyncStorage,previous).catch(() => undefined);
+          if(previousToken)void disablePushForLogout(previous,previousToken).catch(()=>undefined);
+        }
       }
       currentSession.current = next; setSession(next); setLoading(!!next);
       if (recovery) setRecoveryRequired(true);
@@ -133,17 +141,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Hide private state immediately. Local sign-out works without network and
     // deletes stored refresh credentials; server-side role revocation is separate.
     signingOut.current = true;
-    const previousOwner=currentSession.current?.user.id;
+    const previousSession=currentSession.current;
+    const previousOwner=previousSession?.user.id;
+    setPushRecipient(null);
     ++revision.current; currentSession.current = null; setSession(null); setAccess(emptyAccess); setRecoveryRequired(false); setLoading(false); queryClient.clear();
     const operation = (async () => {
       try {
         // Persist intent before any network request: a kill/offline logout may
         // not restore this session on restart, even if refresh revocation fails.
         await authStorage.setItem(logoutStorageKey, '1');
+        const pushError=previousSession?await disablePushForLogout(previousSession.user.id,previousSession.access_token).then(()=>null).catch(()=>new Error('Push removal needs checking. Retry on this account when online.')):null;
         const cleanupError=previousOwner?await clearAccountLocalData(AsyncStorage,previousOwner).then(()=>null).catch(()=>new Error('Account cache cleanup could not be confirmed.')):null;
         const { error } = await supabase.auth.signOut({ scope: 'local' });
         await authStorage.removeItem(authStorageKey); await authStorage.removeItem(recoveryStorageKey);
-        return { error: error??cleanupError };
+        return { error: error??cleanupError??pushError };
       } catch { return { error: new Error('Unable to clear this device session. Try signing out again.') }; }
     })().finally(() => { logoutInFlight.current = null; });
     logoutInFlight.current = operation; return operation;

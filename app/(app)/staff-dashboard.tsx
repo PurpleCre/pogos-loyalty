@@ -9,13 +9,15 @@ import { useLocalSearchParams } from 'expo-router';
 import { useStores } from '@/hooks/useStores';
 import { formatMoney } from '@/lib/cash-orders';
 import { staffError } from '@/lib/staff-orders';
+import { BranchOperations } from '@/components/staff/BranchOperations';
+import { QueueAttention } from '@/components/staff/QueueAttention';
 
 export default function StaffDashboard() {
   const isFocused = useIsFocused();
   const { user, userRole, staffStoreIds } = useAuth();
   const { stores } = useStores();
   const { storeId } = useLocalSearchParams<{ storeId?: string }>();
-  const [tab, setTab] = useState<'orders' | 'rewards'>('orders');
+  const [tab, setTab] = useState<'orders' | 'rewards' | 'availability'>('orders');
   const [selectedBranch, setSelectedBranch] = useState<string | null>(storeId ?? null);
   const [lookupState, setLookup] = useState<{ scope: string; value: string }>({ scope: '', value: '' });
   const [messageState, setMessage] = useState<{ scope: string; value: string }>({ scope: '', value: '' });
@@ -29,8 +31,8 @@ export default function StaffDashboard() {
   const showMessage = (value: string) => { if (current.current === scope) setMessage({ scope, value }); };
   useEffect(() => { if (storeId) setSelectedBranch(storeId); }, [storeId]);
   const { orders, roster, summary, error, isLoading, hasMore, loadMore, fetchStoreOrders, operate, recover,
-    pending, pendingError, busy, findOrder } = useStaff(branchId, isFocused && tab === 'orders');
-  const permitted = isAdmin || userRole === 'staff';
+    pending, pendingError, pendingReady, busy, findOrder, operations, fresh, foreground, lastSuccess } = useStaff(branchId, isFocused);
+  const permitted = isAdmin || userRole === 'staff' || userRole === 'manager';
   const checkPrevious = async () => {
     showMessage('');
     try { await recover(); showMessage('Previous action checked. Refresh the branch to see its current state.'); }
@@ -53,9 +55,20 @@ export default function StaffDashboard() {
     </View>
     <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 48 }} refreshControl={<RefreshControl refreshing={isLoading && orders.length > 0} onRefresh={() => { void fetchStoreOrders(); }} />}>
       <View className="flex-row mb-4">
-        {(['orders', 'rewards'] as const).map(value => <TouchableOpacity key={value} onPress={() => setTab(value)} className={`flex-1 p-3 rounded-lg mr-2 ${tab === value ? 'bg-red-600' : 'bg-slate-200'}`}><Text className={`text-center font-bold ${tab === value ? 'text-white' : 'text-slate-700'}`}>{value === 'orders' ? 'Cash orders' : 'Reward collection'}</Text></TouchableOpacity>)}
+        {(['orders', 'rewards', 'availability'] as const).map(value => <TouchableOpacity key={value} accessibilityRole="button" onPress={() => setTab(value)} className={`flex-1 p-3 rounded-lg mr-2 ${tab === value ? 'bg-red-600' : 'bg-slate-200'}`}><Text className={`text-center font-bold ${tab === value ? 'text-white' : 'text-slate-700'}`}>{value === 'orders' ? 'Cash orders' : value === 'rewards' ? 'Rewards' : 'Availability'}</Text></TouchableOpacity>)}
       </View>
       {!branchId ? <Text className="text-amber-800 mb-4">Ask an administrator to assign your branch.</Text> : null}
+      {branchId ? <>
+        <View className={`p-4 mb-4 rounded-xl ${fresh ? 'bg-green-50' : 'bg-amber-100'}`}>
+          <Text accessibilityRole="alert" className="font-bold">{fresh ? 'Branch queue current · refreshes every 15 seconds' : 'Branch queue needs verification'}</Text>
+          <Text>{lastSuccess ? `Last confirmed ${new Date(lastSuccess).toLocaleTimeString()}` : 'Waiting for a successful branch refresh.'}</Text>
+          {!fresh ? <Text>Cached details may be out of date. New changes are blocked until refresh succeeds. Saved actions can still be checked.</Text> : null}
+          <TouchableOpacity accessibilityRole="button" onPress={() => { void fetchStoreOrders(); }} className="py-3"><Text>Refresh branch now</Text></TouchableOpacity>
+        </View>
+        <QueueAttention key={`attention:${scope}`} snapshot={operations} fresh={fresh} active={isFocused && foreground} />
+        <BranchOperations key={`operations:${scope}`} owner={user.id} branchId={branchId} snapshot={operations} fresh={fresh}
+          blocked={busy || !pendingReady || !!pending || !!pendingError} showMenu={tab === 'availability'} active={isFocused && foreground} onRefresh={fetchStoreOrders} />
+      </> : null}
       {pending || pendingError ? <View className="bg-amber-50 border border-amber-300 p-4 rounded-xl mb-4">
         <Text className="font-bold">Previous staff action needs checking</Text>
         <Text>{pending ? `${pending.action.replaceAll('_', ' ')} · order ${pending.orderId}` : pendingError}</Text>
@@ -79,9 +92,9 @@ export default function StaffDashboard() {
         <TouchableOpacity disabled={busy || !lookup.trim()} onPress={() => { void locate(); }} className="p-3"><Text className="text-red-600 font-bold">Find order</Text></TouchableOpacity>
       </View>
       <StaffOrders orders={orders} roster={roster} actor={user.id} isAdmin={isAdmin} isLoading={isLoading}
-        blocked={busy || !!pending || !!pendingError} onCommand={operate} />
+        blocked={!fresh || !pendingReady || busy || !!pending || !!pendingError} onCommand={operate} />
       {hasMore ? <TouchableOpacity onPress={loadMore} className="p-4"><Text className="text-red-600 text-center font-bold">Load more outstanding orders</Text></TouchableOpacity> : null}
-      </> : <StaffRewards key={`${user.id}:${branchId}`} branchId={branchId} enabled={isFocused} externalBlocked={busy || !!pending || !!pendingError} />}
+      </> : tab === 'rewards' ? <StaffRewards key={`${user.id}:${branchId}`} branchId={branchId} enabled={isFocused && foreground} externalBlocked={!fresh || !pendingReady || busy || !!pending || !!pendingError} /> : null}
     </ScrollView>
   </View>;
 }

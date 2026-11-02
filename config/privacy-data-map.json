@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-31",
+  "updated": "2026-11-02",
   "scope": "Local migration inventory only; live systems, buckets, logs, backups and vendors must be reconciled before activation.",
   "controllerLegalIdentity": null,
   "privacyOwner": null,
@@ -58,6 +58,42 @@
       "retentionApproval": "unconfirmed",
       "legalBasisApproval": "unconfirmed",
       "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "branch_menu_availability",
+      "fields": [
+        "store_id",
+        "menu_item_id",
+        "available",
+        "version"
+      ],
+      "classification": "public_catalogue",
+      "exportSection": null,
+      "exportScope": "Public branch/item availability flags; no actor or reason",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; preserve governed operational audit under approved retention"
+    },
+    {
+      "table": "branch_operation_commands",
+      "fields": [
+        "id",
+        "actor_id",
+        "store_id",
+        "action",
+        "menu_item_id",
+        "expected_version",
+        "request",
+        "result",
+        "reason",
+        "created_at"
+      ],
+      "classification": "staff_operations_audit",
+      "exportSection": "branch_operations",
+      "exportScope": "Own actor summary only; internal reasons and request/result payloads excluded",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Requires the approved dataset-specific runbook; preserve governed operational audit under approved retention"
     },
     {
       "table": "cash_branch_cashiers",
@@ -181,7 +217,9 @@
         "minimum_subtotal_minor",
         "max_total_minor",
         "fulfilment_enabled",
-        "acceptance_minutes"
+        "acceptance_minutes",
+        "intake_paused",
+        "operations_version"
       ],
       "classification": "configuration",
       "exportSection": null,
@@ -212,6 +250,67 @@
       "retentionApproval": "unconfirmed",
       "legalBasisApproval": "unconfirmed",
       "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "finance_commands",
+      "fields": [
+        "id",
+        "actor_id",
+        "reconciliation_id",
+        "request",
+        "result",
+        "created_at"
+      ],
+      "classification": "private_finance_evidence",
+      "exportSection": null,
+      "exportScope": "Assigned branch financial reviewers only; own-account export does not disclose branch statements or other operators",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Approved employee/fiscal evidence retention and minimisation required; immutable audit is not permission to retain personal data indefinitely. No automatic erasure or cascade is inferred."
+    },
+    {
+      "table": "finance_reconciliation_events",
+      "fields": [
+        "id",
+        "reconciliation_id",
+        "actor_id",
+        "action",
+        "details",
+        "created_at"
+      ],
+      "classification": "private_finance_evidence",
+      "exportSection": "finance_activity",
+      "exportScope": "Own actor action/id/time only; internal notes and branch financial data need reviewer assessment",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Approved employee/fiscal evidence retention and minimisation required; immutable audit is not permission to retain personal data indefinitely. No automatic erasure or cascade is inferred."
+    },
+    {
+      "table": "finance_reconciliations",
+      "fields": [
+        "id",
+        "store_id",
+        "business_day",
+        "currency",
+        "submitted_by",
+        "observed",
+        "snapshot",
+        "signature",
+        "evidence",
+        "status",
+        "version",
+        "revision",
+        "reviewed_by",
+        "reviewed_at",
+        "previous_id",
+        "created_at"
+      ],
+      "classification": "private_finance_evidence",
+      "exportSection": null,
+      "exportScope": "Assigned branch financial reviewers only; own-account export does not disclose branch statements or other operators",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Approved employee/fiscal evidence retention and minimisation required; immutable audit is not permission to retain personal data indefinitely. No automatic erasure or cascade is inferred."
     },
     {
       "table": "gaap_config",
@@ -419,6 +518,27 @@
       "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
     },
     {
+      "table": "notification_events",
+      "fields": [
+        "id",
+        "source_id",
+        "kind",
+        "recipient_id",
+        "store_id",
+        "order_id",
+        "reservation_id",
+        "created_at",
+        "expires_at",
+        "read_at"
+      ],
+      "classification": "private_transactional_updates",
+      "exportSection": "transaction_updates",
+      "exportScope": "Owned kind/read/timestamp metadata only; no other recipient identities",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Approved per-dataset erasure required; remove recipient/device bindings and dependent processing/evidence under the reviewed retention procedure. Never infer cascade deletion or retain credentials under a financial-record exception."
+    },
+    {
       "table": "notifications",
       "fields": [
         "id",
@@ -434,9 +554,9 @@
         "delivery_status",
         "created_at"
       ],
-      "classification": "account",
+      "classification": "legacy_notification_history_unverified",
       "exportSection": "notifications",
-      "exportScope": "Caller-owned fields only; counterparties and privileged details omitted",
+      "exportScope": "Caller-owned historical fields only; legacy delivery labels are not proven provider or device delivery",
       "retentionApproval": "unconfirmed",
       "legalBasisApproval": "unconfirmed",
       "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
@@ -719,6 +839,93 @@
       "retentionApproval": "unconfirmed",
       "legalBasisApproval": "unconfirmed",
       "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "push_deliveries",
+      "fields": [
+        "id",
+        "event_id",
+        "device_id",
+        "device_version",
+        "state",
+        "attempts",
+        "receipt_attempts",
+        "version",
+        "available_at",
+        "claim_id",
+        "lease_until",
+        "dispatch_started_at",
+        "ticket_id",
+        "ticket_at",
+        "last_code",
+        "created_at",
+        "updated_at"
+      ],
+      "classification": "private_delivery_processing",
+      "exportSection": null,
+      "exportScope": "Reviewer assessment of recipient-linked worker state; no raw provider payloads or tokens",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Approved per-dataset erasure required; remove recipient/device bindings and dependent processing/evidence under the reviewed retention procedure. Never infer cascade deletion or retain credentials under a financial-record exception."
+    },
+    {
+      "table": "push_delivery_results",
+      "fields": [
+        "id",
+        "delivery_id",
+        "stage",
+        "outcome",
+        "provider_reference",
+        "actor_id",
+        "reason",
+        "created_at"
+      ],
+      "classification": "private_delivery_evidence",
+      "exportSection": null,
+      "exportScope": "Reviewer assessment of recipient-linked delivery evidence; no general API access",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Approved per-dataset erasure required; remove recipient/device bindings and dependent processing/evidence under the reviewed retention procedure. Never infer cascade deletion or retain credentials under a financial-record exception."
+    },
+    {
+      "table": "push_devices",
+      "fields": [
+        "id",
+        "secret_hash",
+        "user_id",
+        "expo_token",
+        "project_id",
+        "platform",
+        "active",
+        "version",
+        "aal2",
+        "verified_at",
+        "bound_at",
+        "expires_at",
+        "created_at",
+        "updated_at"
+      ],
+      "classification": "private_device_registration",
+      "exportSection": "push_devices",
+      "exportScope": "Owned platform/activity/expiry metadata only; no token, proof hash, project or MFA evidence",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Approved per-dataset erasure required; remove recipient/device bindings and dependent processing/evidence under the reviewed retention procedure. Never infer cascade deletion or retain credentials under a financial-record exception."
+    },
+    {
+      "table": "push_settings",
+      "fields": [
+        "singleton",
+        "enabled",
+        "expo_project_id",
+        "enabled_since"
+      ],
+      "classification": "private_service_configuration",
+      "exportSection": null,
+      "exportScope": "No personal self-service fields",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Approved per-dataset erasure required; remove recipient/device bindings and dependent processing/evidence under the reviewed retention procedure. Never infer cascade deletion or retain credentials under a financial-record exception."
     },
     {
       "table": "push_subscriptions",
@@ -1093,7 +1300,7 @@
     },
     {
       "system": "Device storage",
-      "data": "Secure sessions/PKCE, saved-address cache, durable cash/staff/reward recovery identities and temporary export files",
+      "data": "Secure sessions/PKCE and per-environment push installation proof/preferences/revocation intent; saved-address cache; durable cash/staff/reward/branch recovery identities; temporary export files; owned finance recovery commands and temporary shared financial-report exports",
       "retentionApproval": "unconfirmed"
     },
     {
@@ -1103,7 +1310,12 @@
     },
     {
       "system": "Expo/EAS",
-      "data": "Build/update metadata; push lifecycle not yet a production service",
+      "data": "Build/update metadata; default-disabled push service receives Expo tokens and generic text with pseudonymous recipient/event IDs when activated; ownership/processor/region review pending",
+      "retentionApproval": "unconfirmed"
+    },
+    {
+      "system": "FCM / APNs",
+      "data": "Native notification delivery via Expo after approved activation; submitted messages may remain in flight after local withdrawal; processor/retention and physical-device acceptance pending",
       "retentionApproval": "unconfirmed"
     },
     {

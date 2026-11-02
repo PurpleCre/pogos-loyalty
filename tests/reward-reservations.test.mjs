@@ -74,6 +74,8 @@ test('reservation atomically holds authoritative points and stock without a rede
   assert.equal(after.reserved_points, before.reserved_points + 80); assert.equal(after.total_redeemed, before.total_redeemed);
   assert.equal(await stock(), units - 1);
   assert.equal((await db.query('SELECT id FROM public.transactions WHERE reservation_id = $1', [r.reservation_id])).rows.length, 0);
+  const notice=(await db.query(`SELECT kind,recipient_id FROM public.notification_events WHERE reservation_id=$1`,[r.reservation_id])).rows;
+  assert.deepEqual(notice,[{kind:'reward',recipient_id:customer}]);
   assert.deepEqual(await rpc('loyalty_reconciliation', [], admin), []);
 });
 test('reserve command replays the same reservation after intake closes and rejects changed requests', async () => {

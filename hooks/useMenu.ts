@@ -1,7 +1,10 @@
 import { logPrivateError } from '@/lib/privacy-logging';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { AppState } from 'react-native';
 import { supabase } from '@/lib/supabase';
 import type { Tables } from '@/lib/types';
+import { useAuth } from './useAuth';
+import { accessTokenFor } from '@/lib/cash-orders';
 
 export interface MenuCategory {
   id: string;
@@ -66,16 +69,19 @@ function toMenuItem(row: MenuResult): MenuItem {
 }
 
 export function useMenu(isAdmin = false, storeId?: string) {
+  const { user } = useAuth();
+  const owner = user?.id;
+  const scope = `${owner ?? 'guest'}:${isAdmin}:${storeId ?? 'all'}`;
+  const current = useRef(scope); current.current = scope;
+  const request = useRef(0);
+  const [loadedScope, setLoadedScope] = useState('');
   const [categories, setCategories] = useState<MenuCategory[]>([]);
   const [items, setItems] = useState<MenuItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  // Re-fetch when storeId changes
-  useEffect(() => {
-    fetchMenu();
-  }, [storeId]);
-
-  const fetchMenu = async () => {
+  const fetchMenu = useCallback(async () => {
+    const revision = ++request.current;
     setIsLoading(true);
     try {
       // Admins see all items, customers only see available items
@@ -92,23 +98,38 @@ export function useMenu(isAdmin = false, storeId?: string) {
       if (!isAdmin) {
         categoriesQuery = categoriesQuery.eq('is_active', true);
       }
+      const token = owner ? await accessTokenFor(owner) : null;
+      if (token) {
+        itemsQuery = itemsQuery.setHeader('Authorization', `Bearer ${token}`);
+        categoriesQuery = categoriesQuery.setHeader('Authorization', `Bearer ${token}`);
+      }
 
-      const [categoriesRes, itemsRes] = await Promise.all([
+      const [categoriesRes, itemsRes, availability] = await Promise.all([
         categoriesQuery,
-        itemsQuery
+        itemsQuery,
+        storeId && !isAdmin ? supabase.from('branch_menu_availability').select('menu_item_id,available').eq('store_id', storeId)
+          : Promise.resolve({ data: [], error: null }),
       ]);
 
       if (categoriesRes.error) throw categoriesRes.error;
       if (itemsRes.error) throw itemsRes.error;
+      if (availability.error) throw availability.error;
+      if (current.current !== scope || request.current !== revision) return;
+      const unavailable = new Set(availability.data?.filter(row => !row.available).map(row => row.menu_item_id));
 
       setCategories(categoriesRes.data || []);
-      setItems((itemsRes.data || []).map(toMenuItem));
+      setItems((itemsRes.data || []).filter(row => !unavailable.has(row.id)).map(toMenuItem));
+      setLoadedScope(scope); setError('');
     } catch (error) {
       logPrivateError('Error fetching menu:', error);
+      if (current.current === scope && request.current === revision) {
+        setItems([]); setCategories([]); setLoadedScope(scope);
+        setError('Menu availability could not be confirmed. Refresh before ordering.');
+      }
     } finally {
-      setIsLoading(false);
+      if (current.current === scope && request.current === revision) setIsLoading(false);
     }
-  };
+  }, [isAdmin, storeId, owner, scope]);
 
   const addMenuItem = async (item: Omit<MenuItem, 'id'>) => {
     try {
@@ -223,13 +244,17 @@ export function useMenu(isAdmin = false, storeId?: string) {
   };
 
   useEffect(() => {
-    fetchMenu();
-  }, [isAdmin]);
+    void fetchMenu();
+    const subscription = AppState.addEventListener('change', next => { if (next === 'active') void fetchMenu(); });
+    const timer = setInterval(() => { if (AppState.currentState === 'active') void fetchMenu(); }, 30000);
+    return () => { subscription.remove(); clearInterval(timer); request.current++; };
+  }, [fetchMenu]);
 
   return {
-    categories,
-    items,
-    isLoading,
+    categories: loadedScope === scope ? categories : [],
+    items: loadedScope === scope ? items : [],
+    isLoading: isLoading || loadedScope !== scope,
+    error: loadedScope === scope ? error : '',
     refetch: fetchMenu,
     addMenuItem,
     updateMenuItem,

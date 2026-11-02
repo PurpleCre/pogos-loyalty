@@ -12,7 +12,7 @@ import { User, Save, Trophy, Share2, Shield, Bell, ChevronRight, Menu, LogIn, Ed
 const EMOJI_AVATARS = ['🍔', '🍕', '🍟', '🍦', '☕️', '🦊', '🐼', '🦁', '🚀', '👑', '💎', '👻', '👽'];
 
 export default function Profile() {
-  const { user, signOut } = useAuth();
+  const { user, userRole, signOut } = useAuth();
   const { isAdmin } = useAdmin();
   const [fullName, setFullName] = useState(user?.user_metadata?.full_name || '');
   const [avatar, setAvatar] = useState(user?.user_metadata?.avatar || '');
@@ -133,6 +133,8 @@ export default function Profile() {
       {/* Account Details Card */}
       <Button className="mb-5" onPress={() => router.push('/auth/security')}>Account security and branch invitations</Button>
       <Button className="mb-5" variant="outline" onPress={() => router.push('/privacy')}>Privacy, account export and deletion</Button>
+      <Button className="mb-5" variant="outline" onPress={() => router.push('/notifications')}>Order updates and device notifications</Button>
+      {['admin','manager','finance'].includes(userRole)?<Button className="mb-5" variant="outline" onPress={()=>router.push('/finance')}>Cash reports and till reconciliation</Button>:null}
       <View className="bg-white rounded-3xl border border-slate-100 shadow-sm mb-5 overflow-hidden">
         <View className="px-5 pt-5 pb-2">
           <Text className="text-lg font-bold text-slate-800 mb-2">Account Details</Text>

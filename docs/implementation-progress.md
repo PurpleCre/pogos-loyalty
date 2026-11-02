@@ -1,6 +1,24 @@
 # Implementation progress
 
-Updated: 31 October 2026. Scope: local implementation increments for the cash-first release at Msasa, Kamfinsa and Westgate. GAAP is the confirmed POS vendor. Digital payments remain Release 2.
+Updated: 2 November 2026. Scope: local implementation increments for the cash-first release at Msasa, Kamfinsa and Westgate. GAAP is the confirmed POS vendor. Digital payments remain Release 2.
+
+## Manager/finance permissions and reconciliation increment
+
+The 265-test notification checkpoint was reverified before adding branch-scoped manager/finance roles, current-row MFA/privacy/push checks, governed role assignment, masked exact-money reports and immutable two-person reconciliation cases. Variances cannot be accepted as matching, changed snapshots become stale and external evidence revisions retain their prior case. Reports distinguish daily sales/refunds/deposits from all-date custody and preserve currencies and integer precision. The administrator's mixed/unpaid revenue card now links to currency-specific reports. Durable command recovery and complete scoped JSON exports are included. The combined suite has **292 passing tests**; see [finance implementation and activation](finance-permissions-milestone.md).
+
+No role, cashier, business rule, cloud migration, financial statement, publication or OTA was activated. Pogo’s authority matrix, actual GAAP/till/opening evidence, full PostgreSQL concurrency and hosted/device acceptance remain open. The current inventory has 67 public tables and exports have 29 sections. Earlier sections preserve their checkpoint counts and boundaries; production ownership, actual erasure/retention, platform security, recovery/training and pilot gates still apply.
+
+## Transactional notifications increment
+
+The branch-operations checkpoint was reverified at 239 passing tests, including type/lint/schema/SDK/peer checks, Android/iOS exports and native generation, before advancing. The notification increment replaces the fake legacy sender with a default-disabled transactional outbox, installation proof/project binding, scoped native opt-in/withdrawal, event-triggered inbox, bounded worker leases/dispatch fences, separate Expo tickets/receipts, retry/invalid-token handling and governed unknown-result review. Notification taps revalidate current ownership and permissions before a closed app route opens. The full suite now has **265 passing tests** with type/lint/schema/SDK/peer checks passing. The inventory now covers 64 public tables; exports have 28 sections and actual deletion completion rejects retained push bindings/events. See [notification implementation and activation](transactional-notifications-milestone.md).
+
+Both Android/iOS exports and temporary native generation pass; the native graphs include the native push adapter and exclude server worker code. No real push, migration, deployment, schedule or publication was performed. Owned project/provider configuration, Deno/gateway tests, real PostgreSQL concurrency, signed binaries and physical-device delivery/lifecycle acceptance remain open. Production privacy/erasure, fiscal/finance, granular permissions, hardening/recovery/training and pilot gates are still required. Earlier sections preserve their checkpoint counts and acceptance boundaries.
+
+## Branch operations sprint
+
+The 216-test checkpoint was reverified before adding scoped cash-intake pause/resume, branch-specific stock availability, immutable/recoverable commands, pending/overdue attention and opt-in foreground sound. Staff refreshes now expose stale data and block new changes until the queue is current; background/foreground, branch/account switching and late responses are guarded. The complete suite has **239 passing tests** with type/lint/schema/SDK/peer checks, Android/iOS Hermes exports and temporary native generation passing. The current inventory has 59 public tables and exports have 26 sections, including owned operational summaries. See [branch operations acceptance](branch-operations-milestone.md).
+
+No live data/configuration, migration, OTA or app publication was changed. Real PostgreSQL concurrency, Supabase API/realtime, native sound/device and busy-shift acceptance remain required. Production branch data and staff-control approval are still client inputs. Next: transactional notifications/outbox/token lifecycle and delivery acceptance (P6-04); broader offline UX, reporting and all prior release gates remain open. The following sections retain their checkpoint-specific test counts and original boundaries.
 
 ## Historical migration replay correction
 
@@ -98,7 +116,7 @@ No cloud deployment or native app release was performed. Hosted CI execution, li
 3. Deploy and validate the implemented server quotations and atomic idempotent cash orders in staging, import verified business data and complete device/concurrent-session tests before activating a branch.
 4. Stage the implemented earning/refund and reward reservation/fulfilment commands, complete opening-balance reconciliation, approve real benefits and configure/test reward expiry. Run concurrent-session and device acceptance before activating redemption.
 5. Stage and exercise the implemented branch fulfilment/cash workflow, configure the expiry worker, and reconcile it against real tills. Obtain the GAAP contract or approve/rehearse the documented manual bridge; automation remains disabled.
-6. Stage and accept identity/invitation/MFA and privacy request/export controls; approve and rehearse actual erasure/retention, complete granular manager/finance permissions and fiscal responsibilities, transaction notifications, offline/reconnect handling, reports, monitoring, recovery rehearsal and branch training.
+6. Stage and accept identity/invitation/MFA, manager/finance scope, privacy request/export, transactional notification and reporting controls; approve Pogo’s authority matrix, fiscal responsibilities and actual erasure/retention procedure. Complete broader offline/reconnect and customer launch UX, monitoring, recovery rehearsal and branch training.
 7. Run release acceptance and an observed one-branch pilot before enabling the remaining two branches. Retain the product/security/finance/privacy gates in the production plan.
 
 The backlog records partial work explicitly. Local containment is not marked as deployed, and broader phases are not marked complete by these changes.

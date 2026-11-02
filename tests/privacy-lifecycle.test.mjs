@@ -131,6 +131,11 @@ test('simulated approved erasure completes without cascading financial records a
   await db.query('UPDATE public.profiles SET email=NULL,full_name=NULL,gaap_customer_id=NULL WHERE id=$1',[alice]);await db.query(`UPDATE auth.users SET email=NULL,email_confirmed_at=NULL,raw_user_meta_data='{}',deleted_at=now() WHERE id=$1`,[alice]);
   await db.query(`UPDATE public.reward_reservations SET customer_name='[Deleted]' WHERE user_id=$1`,[alice]);
   const original=(await db.query('SELECT current_points FROM public.user_points WHERE user_id=$1',[alice])).rows[0].current_points;
+  // Even an inactive/no-token binding must be handled by actual erasure.
+  await db.query(`INSERT INTO public.push_devices(id,secret_hash,user_id,project_id,platform,active,aal2,expires_at)
+    VALUES($1,'retained-fixture-hash',$2,$3,'android',false,false,now())`,[randomUUID(),alice,randomUUID()]);
+  await assert.rejects(rpc(null,'complete_privacy_deletion',[deletionRequest.id,deletionRequest.version,'Fixture completion approval'],{},'service_role'),{code:'22023'});
+  await db.query('DELETE FROM public.push_devices WHERE user_id=$1',[alice]);
   await rpc(null,'complete_privacy_deletion',[deletionRequest.id,deletionRequest.version,'Fixture completion approval'],{},'service_role');
   assert.equal((await rpc(alice,'account_privacy_state')).deleted,true);
   assert.equal((await asRole(db,'authenticated',alice,()=>db.query('SELECT id FROM public.profiles'),claims())).rows.length,0);

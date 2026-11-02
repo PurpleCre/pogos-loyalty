@@ -18,7 +18,7 @@ function SecretQr({ uri }: { uri: string }) {
   }, [uri]);
   return <Svg accessibilityLabel="Private authenticator setup QR" width={240} height={240} viewBox={`0 0 ${qr.size} ${qr.size}`}><Rect width={qr.size} height={qr.size} fill="white" /><Path d={qr.path} fill="black" /></Svg>;
 }
-function SecurityContent({ owner, destination }: { owner: string; destination: '/privacy' | '/(app)/dashboard' }) {
+function SecurityContent({ owner, destination }: { owner: string; destination: '/privacy' | '/notifications' | '/(app)/dashboard' }) {
   const { refetchRole, signOut } = useAuth();
   const [factor, setFactor] = useState<string | null>(null);
   const [factors, setFactors] = useState<{ id: string; friendly_name?: string }[]>([]);
@@ -121,5 +121,5 @@ export default function Security() {
   if (loading) return <View />;
   if (!user) return <Redirect href="/(auth)/login" />;
   if (recoveryRequired) return <Redirect href="/auth/reset-password" />;
-  return <SecurityContent key={user.id} owner={user.id} destination={returnTo==='/privacy'?'/privacy':'/(app)/dashboard'} />;
+  return <SecurityContent key={user.id} owner={user.id} destination={returnTo==='/privacy'?'/privacy':returnTo==='/notifications'?'/notifications':'/(app)/dashboard'} />;
 }

@@ -18,6 +18,11 @@ verify_enabled = true
 [functions.send-push-notification]
 verify_jwt = true
 
+# Internal scheduler key is checked inside the handler. No customer JWT grants
+# send authority. Keep both database and server switches off until accepted.
+[functions.dispatch-transactional-push]
+verify_jwt = false
+
 [functions.customer-support-chat]
 verify_jwt = true
 

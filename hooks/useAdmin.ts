@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import type { Store } from '@/hooks/useStores';
 import { accessTokenFor } from '@/lib/cash-orders';
 import type { AppRole } from '@/hooks/useAuth';
+import { branchScopedRole } from '@/lib/identity';
 
 interface AdminUser {
   id: string;
@@ -47,7 +48,6 @@ type AdminStore = Store;
 interface DashboardStats {
   totalUsers: number;
   totalOrdersToday: number;
-  revenueToday: number;
   activeStaff: number;
   totalStores: number;
   pendingOrders: number;
@@ -68,7 +68,7 @@ export const useAdmin = () => {
   const setTransactions = (rows: AdminTransaction[]) => setTransactionState({ scope, rows });
   const [stores, setStores] = useState<AdminStore[]>([]);
   const [dashboardStats, setDashboardStats] = useState<DashboardStats>({
-    totalUsers: 0, totalOrdersToday: 0, revenueToday: 0, activeStaff: 0, totalStores: 0, pendingOrders: 0
+    totalUsers: 0, totalOrdersToday: 0, activeStaff: 0, totalStores: 0, pendingOrders: 0
   });
   useEffect(() => {
     setUsers([]); setTransactions([]); setRewards([]); setAchievements([]); setStores([]);
@@ -115,7 +115,7 @@ export const useAdmin = () => {
     // 3. Map roles by user_id
     const rolesMap = new Map();
     rolesData.forEach(r => {
-      const priority = { admin: 3, staff: 2, user: 1 };
+      const priority = { admin: 5, finance: 4, manager: 3, staff: 2, user: 1 };
       if (priority[r.role] > (priority[rolesMap.get(r.user_id)?.role as AppRole] ?? 0)) rolesMap.set(r.user_id, r);
     });
 
@@ -267,7 +267,7 @@ export const useAdmin = () => {
     const { count: activeStaff } = await supabase
       .from('user_roles')
       .select('id', { count: 'exact', head: true })
-      .eq('role', 'staff');
+      .in('role', ['staff','manager']);
 
     // Total stores
     const { count: totalStores } = await supabase
@@ -277,7 +277,6 @@ export const useAdmin = () => {
     setDashboardStats({
       totalUsers: totalUsers || 0,
       totalOrdersToday: todayOrders?.length || 0,
-      revenueToday: todayOrders?.reduce((sum, o) => sum + (o.total_amount || 0), 0) || 0,
       activeStaff: activeStaff || 0,
       totalStores: totalStores || 0,
       pendingOrders: todayOrders?.filter(o => o.status === 'pending').length || 0,
@@ -322,7 +321,7 @@ export const useAdmin = () => {
   const setUserRole = async (userId: string, role: AppRole, storeIds: string[], reason: string) => {
     if (!user || !isAdmin) return { error: new Error('Administrator access required.') };
     const token = await accessTokenFor(user.id);
-    const { error } = await supabase.rpc('set_identity_access', { p_user_id: userId, p_role: role, p_store_ids: role === 'staff' ? storeIds : [], p_reason: reason })
+    const { error } = await supabase.rpc('set_identity_access', { p_user_id: userId, p_role: role, p_store_ids: branchScopedRole(role) ? storeIds : [], p_reason: reason })
       .setHeader('Authorization', `Bearer ${token}`);
     if (!error && currentScope.current === scope) await fetchUsers();
     return { error };
