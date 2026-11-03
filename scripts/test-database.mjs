@@ -1,13 +1,8 @@
 import { PGlite } from '@electric-sql/pglite';
 import { readdir, readFile } from 'node:fs/promises';
 
-// Local PostgreSQL only. No .env loading, network connections or live credentials.
-// Supabase supplies auth.users/auth.uid and roles; these minimal equivalents let
-// us run the real migrations and exercise privileges/RLS as untrusted callers.
-export async function createTestDatabase({ beforeContainment, beforeMigration } = {}) {
-  const db = new PGlite();
-  try {
-    await db.exec(`
+// Shared synthetic Supabase bootstrap for disposable engines only.
+export const testDatabaseBootstrap = `
       CREATE ROLE anon NOLOGIN;
       CREATE ROLE authenticated NOLOGIN;
       CREATE ROLE service_role NOLOGIN BYPASSRLS;
@@ -29,7 +24,15 @@ export async function createTestDatabase({ beforeContainment, beforeMigration } 
       GRANT EXECUTE ON FUNCTION auth.uid() TO anon, authenticated, service_role;
       GRANT EXECUTE ON FUNCTION auth.jwt() TO anon, authenticated, service_role;
       ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO anon, authenticated, service_role;
-    `);
+`;
+
+// Local PostgreSQL only. No .env loading, network connections or live credentials.
+// Supabase supplies auth.users/auth.uid and roles; these minimal equivalents let
+// us run the real migrations and exercise privileges/RLS as untrusted callers.
+export async function createTestDatabase({ beforeContainment, beforeMigration } = {}) {
+  const db = new PGlite();
+  try {
+    await db.exec(testDatabaseBootstrap);
     const directory = new URL('../supabase/migrations/', import.meta.url);
     for (const filename of (await readdir(directory)).filter(f => f.endsWith('.sql')).sort()) {
       if (beforeMigration) await beforeMigration(db, filename);

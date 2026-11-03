@@ -10,6 +10,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint app components contexts hooks lib",
     "test": "node --experimental-strip-types --experimental-default-type=module --test tests/*.test.mjs",
+    "test:postgres": "node scripts/postgres-acceptance.mjs",
+    "test:postgres:pull": "node scripts/postgres-image.mjs",
     "db:types": "node scripts/generate-db-types.mjs",
     "db:types:check": "node scripts/generate-db-types.mjs --check",
     "check": "npm run typecheck && npm run lint && npm test && npm run db:types:check && npm run sdk:check && npm run deps:check && npm run client:template:check",
@@ -82,6 +84,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "expo-doctor": "1.21.5",
     "globals": "^17.13.0",
+    "pg": "^8.23.1",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.72.1"
   },

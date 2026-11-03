@@ -137,6 +137,10 @@ Supply one branch sheet for **Msasa**, one for **Kamfinsa** and one for **Westga
 
 **Priority: Start now. Suggested respondent: GAAP contact, operations and finance.**
 
+Use the [GAAP meeting pack](gaap-integration-meeting-pack.md) for the pre-read, agenda, priority questions, required samples and action log.
+
+Confirmed direction: connect the app’s existing ordering system and its own authoritative loyalty ledger to GAAP. The vendor discussion must establish external-loyalty support alongside ordering; replacement with GAAP’s loyalty product is outside the requested scope.
+
 | Ref | Information or decision needed |
 | --- | --- |
 | G01 | Vendor/reseller contact, installation/version per branch, support agreement and written confirmation of available integration capabilities and charges. |
@@ -145,6 +149,7 @@ Supply one branch sheet for **Msasa**, one for **Kamfinsa** and one for **Westga
 | G04 | Can staff record the app order reference in GAAP and capture a unique GAAP sale/credit-note reference in the app? Explain limitations across tills, branches and business days. |
 | G05 | Approve either a rehearsed manual till bridge for launch or verified automation. For a manual bridge, specify staff steps, reward-item entry, customer/account matching, duplicate-sale prevention, daily reconciliation, workload limits and outage procedure. |
 | G06 | Name operations/finance/vendor participants for rehearsal and approval. Identify any requirement for automatic in-store earning at launch; this remains disabled until a verified integration is accepted. |
+| G07 | Confirm supported integration with our app-owned loyalty ledger: external member identification, paid-sale/refund events, app-authorised reward reservation/redemption and fulfilment/correction results. Document how app orders avoid duplicate earning when GAAP reports the same sale. Identify routes that require replacing our ledger as gaps rather than approved scope. |
 
 ## 8. Loyalty programme and existing balances
 
