@@ -4,6 +4,10 @@ Updated: 3 November 2026. Engineering inventory and activation procedure; this i
 
 The user confirmed **pgonese6@gmail.com** as the temporary privacy contact. Pogo’s legal controller, privacy approver, retention rules, approved hosting/transfers, mailbox ownership/recovery and public website are unconfirmed. `config/privacy-contact.json` contains the contact; `config/privacy-data-map.json` classifies all **70** local public tables and records other device/vendor stores. A regression test fails when local tables/fields drift from that inventory. It does not inventory the live deployment.
 
+## Service-only operational aggregates
+
+The [queue-health snapshot](../backend-health-sprint.md) reads existing order, reward, push, cash-receipt and finance observations and returns only capped global counts/ages plus UTC observation metadata. It adds no personal-data table and exposes no identity, money, currency, token or fiscal reference. Customer/staff/admin execution is denied. Business aggregates still need restricted server/monitoring access, approved retention and environment isolation before hosting; the synthetic dashboard contains fixture data only. Actual collector/alert/provider storage is not configured. These observations are not erasure, worker execution or financial reconciliation evidence.
+
 ## Error reporting and incident records
 
 Client JS reporting is disabled until an isolated environment destination and exact public opt-in are configured. The new [reporting policy](../monitoring-safety-sprint.md) replaces recursive field-name redaction with a bounded error allowlist and an outgoing-envelope filter. Native crash capture, screenshots/hierarchy, replay, logs, sessions and tracing are disabled. Current checks use an injected transport; actual native/provider/network metadata and retained records still require review. New filtering does not erase historical Sentry/native data or change installed older clients. Approve provider access/region/retention/deletion and restricted incident-record handling through the [operational runbook](../operations-monitoring-runbook.md) before activation.

@@ -53,6 +53,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check
+      - run: npm run health:demo
       - run: npm run privacy:pages
       - run: npm run native:preflight
       - run: npm run build:check
@@ -62,6 +63,12 @@ jobs:
           path: |
             dist/android/
             dist/ios/
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: synthetic-operational-health
+          path: dist/operational-health/
           retention-days: 7
       - uses: actions/upload-artifact@v4
         with:

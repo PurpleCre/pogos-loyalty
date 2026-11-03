@@ -44,7 +44,15 @@ These are required monitoring responsibilities, not implemented alerts. Choose t
 | Runtime and capacity | Hosted API/function/database error rates/latency, connections, saturation, collector freshness and resource limits; representative load/soak | Technical owner with approved performance targets |
 | Recovery and budgets | Backup completion, retention, last verified restore, RPO/RTO evidence, database/mail/maps/push/monitoring spend and quota | Technical/finance owners; sponsor approves budget and recovery objectives |
 
-Use existing branch attention/inbox and finance screens as operational evidence, with their freshness and scope limits. No telemetry code in this sprint collects these backend metrics. No approved numeric thresholds, dashboard, heartbeat, scheduler, paging integration, budget or escalation roster is supplied.
+Use existing branch attention/inbox and finance screens as operational evidence, with their freshness and scope limits. The [queue-health foundation](backend-health-sprint.md) now supplies a service-only aggregate snapshot, strict evaluator and synthetic dashboard for eight queue/custody/variance gauges. It supplies no deployed collector, heartbeat, production dashboard, approved thresholds, scheduler, paging integration, budget or escalation roster. Ledger/capacity/backup monitoring and actual alert delivery are explicitly outside that snapshot’s coverage.
+
+## Queue-health collection acceptance
+
+1. Inventory the authorised environment and rehearse `20261103030000_operational_health.sql` on a representative isolated copy. Review four supporting index builds and actual query cost/timeout behavior; the 1,000-count cap does not bound every possible scan/sort. Verify service-only execution and customer/staff/admin denial through actual signed JWT/PostgREST calls.
+2. Keep the committed `config/operational-health.json` rules/freshness null until approved values are available. Run `npm run health:check`; configure ordered count and/or age pairs only against measured demand and response coverage. Each gauge’s age has a specific origin in the sprint report. Unknown observations must never be coerced to zero/clear.
+3. Run the fixed `collectOperationalHealth` adapter from an approved server job with the correct environment, stored service credential, HTTPS/redirect controls and verified database/API/client timeouts. Keep raw errors and credentials out of incident/alert payloads. The existing offline demo cannot connect to a remote target.
+4. Implement and verify collector/worker heartbeats, external missed-run detection, publication of current samples, alert deduplication, destinations/deputies and acknowledgement/escalation. Keep snapshot observation time distinct from collector run time, last actual worker success and actual provider delivery. Test a stopped scheduler with empty queues as well as a growing backlog.
+5. Prove queue gauges, clipped counts and unknown outcomes against actual records without dispatching or altering financial work merely to clear an alert. Add separate governed ledger, capacity and backup checks; rehearse the incident paths below. A demo dashboard and service RPC alone do not close monitoring acceptance.
 
 ## Incident procedure
 

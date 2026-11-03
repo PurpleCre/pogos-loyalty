@@ -1,0 +1,13 @@
+{
+  "max_snapshot_age_seconds": null,
+  "rules": {
+    "cash_expiry_due": null,
+    "reward_expiry_due": null,
+    "push_send_due": null,
+    "push_receipt_due": null,
+    "push_lease_overdue": null,
+    "push_unknown": null,
+    "cash_custody_open": null,
+    "finance_variance_open": null
+  }
+}

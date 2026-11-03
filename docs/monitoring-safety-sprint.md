@@ -2,6 +2,25 @@
 
 3 November 2026. **Local implementation slice of milestone 5; production monitoring, broader security/performance/recovery acceptance and the milestone remain open. Six delivery groups remain.** Client approvals and the GAAP ordering/external-loyalty contract are still pending. The app’s ordering system and loyalty ledger remain authoritative.
 
+Follow-on: the [backend queue-health sprint](backend-health-sprint.md) subsequently adds a local service-only aggregate snapshot, evaluator and synthetic dashboard. The audit below records the earlier reporting-only checkpoint; deployed collectors, worker heartbeats, real dashboards/alerts and the broader milestone remain open.
+
+## Completion audit — 3 November 2026
+
+**Milestone 5 is not complete. The local JS error-reporting safety work and draft runbook preparation are complete and reverified.** No additional implementation defect was found within that bounded scope. The remaining milestone includes engineering work as well as client/provider approval and real operational acceptance.
+
+| Requirement | Verification | Verdict |
+| --- | --- | --- |
+| Local regression and configuration gates | Fresh `npm run check`: 407 passed, zero failures/skips/cancellations; type/lint/schema/SDK/peer/template/monitoring checks pass | Pass |
+| Error payload and SDK transport safeguards | The full run includes all 19 reporting cases, including late-added private fields/attachments and disabled/mismatched destinations through the installed core SDK | Pass locally |
+| Native bundle inclusion | Existing successful Android/iOS Hermes export source maps match the current reporting module and app entrypoint | Pass; exports revalidated, not rebuilt |
+| CI and inactive configuration | YAML parses; monitoring validation is required by `check`; OTA requires reusable checks and defaults reporting off; all three bindings remain null | Pass locally; hosted execution pending |
+| Runbook preparation | Activation, required-signal matrix, assignment, containment, financial recovery/reconciliation and resumption procedures present; local links resolve | Draft complete; approval/drill pending |
+| Backend metrics, dashboards and worker monitoring | Requirements documented; collector/heartbeat, dashboards and operational alert integration not implemented by this sprint | Open engineering work |
+| Actual alerts, ownership, response targets and budgets | No provider activation or delivered/acknowledged/escalated incident evidence; owners and approvals remain unconfirmed | Open |
+| Broader security, performance and recovery | Independent security/dependency review, representative load/soak/accessibility, hosted protection and backup/restore/cutover/incident exercises still required | Open |
+
+The audit finished at **2026-11-03 17:34:55 UTC**. Ignored `dist/monitoring-acceptance/report.json` records the tested-source SHA-256 `3dfa0fb39e7c8a6f26c94b581d9a22fa77d758e382f2ab3b99d8836736eda8d5`, installed SDK versions and explicit `milestoneComplete: false` / `hostedAcceptance: false`. This is a local audit snapshot, not an installed monitoring service or a reusable live acceptance runner. `git diff --check` and the 49-task/12-column backlog structure pass. No code, deployment, provider or publication change was needed for this verification.
+
 ## Problem and resulting behavior
 
 The earlier recursive telemetry scrubber removed known sensitive keys but retained arbitrary keys and URL paths. An address, customer/order identifier or unstructured contact text could survive under an unexpected field. Supplying a Sentry DSN also enabled reporting without an environment-specific destination binding. `sendDefaultPii=false` alone does not strip every application-supplied field or control every SDK payload type.
@@ -47,7 +66,7 @@ Android/iOS Hermes bundle exports and current-source-map identity checks verify 
 
 The [monitoring and incident runbook](operations-monitoring-runbook.md) supplies activation steps, a required-signal matrix and procedures for assignment, intake containment, durable command recovery, finance/GAAP reconciliation, isolated restore, resumption and review. It distinguishes missing observations from healthy service and keeps financial/customer evidence out of broad alert payloads.
 
-**Local implementation complete; milestone 5 remains in progress.** Still required:
+**Local JS reporting safety and draft runbook preparation complete; milestone 5 remains in progress.** Still required:
 
 1. Owned monitoring projects, privacy/region/retention/vendor approval, source-map/native startup acceptance and historical-record handling.
 2. Named responders/deputies, coverage, approved thresholds/performance/recovery targets and budgets. No operating target is invented by this sprint.

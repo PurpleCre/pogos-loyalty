@@ -3473,6 +3473,10 @@ export type Database = {
       }
       Returns: Json
     }
+    "operational_health_snapshot": {
+      Args: Record<PropertyKey, never>
+      Returns: Json
+    }
     "place_cash_order": {
       Args: {
         "p_quote_id": string

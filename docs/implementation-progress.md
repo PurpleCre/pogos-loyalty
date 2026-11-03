@@ -2,11 +2,17 @@
 
 Updated: 3 November 2026. Scope: local implementation increments for the cash-first release at Msasa, Kamfinsa and Westgate. GAAP is the confirmed POS vendor. Digital payments remain Release 2.
 
+## Backend queue-health monitoring foundation
+
+**Milestone 5 remains in progress; a further local monitoring slice is complete.** A service-only, read-only SQL snapshot exposes eight bounded queue/custody/variance count-and-age gauges without customer identifiers, monetary values or fiscal references. A strict evaluator marks missing, stale, future, malformed and failed observations unknown; count clipping and missing scheduler/ledger/runtime/backup/alert coverage are explicit. All real thresholds/freshness remain unconfigured.
+
+The full `npm run check` passes **432 tests**, including 25 new SQL/access/invariant/evaluator/SDK/report/CLI cases. A synthetic PGlite rehearsal produces clear/critical/stale-unknown/failed-unknown dashboard evidence; the reusable CI workflow includes it before OTA. One forward migration and generated types were added, with no new public table or dependency. No hosted migration, connected dashboard, scheduler, alert delivery, native build or publication occurred. The [sprint report](backend-health-sprint.md) distinguishes these local observations from a deployed collector, worker heartbeats and broader milestone acceptance. **Six delivery groups remain.**
+
 ## Error-reporting safety and incident-response foundation
 
 **Milestone 5 — in progress; local reporting safety slice implemented and verified.** The previous telemetry denylist could retain private URL paths and text under unexpected keys. A fixed JS error allowlist and last-envelope filter now remove those fields, attachments and secondary payload types. Native crash capture, replay, logs, sessions and tracing remain disabled. Reporting needs exact opt-in and an isolated environment/project binding; all three bindings remain null. No provider is activated.
 
-The full `npm run check` passes **407 tests**, including 19 new reporting cases with the installed core SDK and an injected transport. Android/iOS bundle exports and source-map identity checks pass; these are not signed builds or device acceptance. Configuration validation joins the CI gate and OTA defaults the optional reporting switch off. The [sprint report](monitoring-safety-sprint.md) and [incident runbook](operations-monitoring-runbook.md) record scope and activation/rehearsal requirements. Actual monitoring/alerts/responders, provider/privacy approval, security review, load/soak/accessibility, hosted CI and restore/cutover acceptance remain open; **six delivery groups remain**.
+At the reporting checkpoint the full `npm run check` passed **407 tests**, including 19 new reporting cases with the installed core SDK and an injected transport. Android/iOS bundle exports and source-map identity checks pass; these are not signed builds or device acceptance. Configuration validation joins the CI gate and OTA defaults the optional reporting switch off. The [sprint report](monitoring-safety-sprint.md) and [incident runbook](operations-monitoring-runbook.md) record scope and activation/rehearsal requirements. Actual monitoring/alerts/responders, provider/privacy approval, security review, load/soak/accessibility, hosted CI and restore/cutover acceptance remain open; **six delivery groups remain**.
 
 ## Edge runtime and protected workers sprint
 
