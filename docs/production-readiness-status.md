@@ -14,9 +14,15 @@ This is preparation for closing milestone 2, not evidence that ownership or busi
 
 Client ownership/business approval remains open alongside this engineering work. Actual controller/notice/retention/vendor approval, provider revocation, residual/manual minimisation, hosted/device rehearsal and owned public hosting are still required. No real erasure, hosted migration or publication occurred; **six delivery groups remain**.
 
+## Edge runtime and protected workers sprint
+
+**Milestone 4 remains in progress; the local Deno sprint is complete.** All seven function entrypoints pass strict native Deno checking. The runtime suite passes **22 tests**, using actual SDK HTTP to a loopback fake backend and simulated provider responses. Protected cash/reward expiry entrypoints join the hardened push worker; separate secrets, exact default-off switches, fixed operations, input limits, database redirect rejection and explicit retry control are verified. Speculative GAAP/marketing/AI handlers remain closed even if old enable flags are set; GAAP must connect the app’s own ordering and loyalty ledger through an approved contract.
+
+The full `npm run check` passes **388 tests** with type/lint/schema/SDK/peer/template checks. A separate Edge CI job now joins the reusable gate used by OTA. No hosted workflow, deployment, provider send, schedule, live data change or publication occurred. This proves native Deno handler behavior, not hosted Supabase Edge Runtime/gateway/Auth/PostgREST or real provider/device delivery. See [the sprint evidence and required activation checks](edge-runtime-sprint.md). Client approvals and the broader milestone remain open; **six delivery groups remain**.
+
 ## Hosted integration and concurrency sprint
 
-**Milestone 4 — in progress; local PostgreSQL concurrency sprint verified.** A fresh transactional migration replay and **13 concurrent integration scenarios pass on PostgreSQL 17.11**. These cover checkout/cash idempotency, reward balance/stock, finance posting/review, privacy/trading races, expiry workers and push claim/dispatch fencing. A reproduced push materialisation wait is corrected by a forward migration. The ordinary suite now passes **385 tests** with all check gates.
+**Milestone 4 — in progress; local PostgreSQL concurrency sprint verified.** A fresh transactional migration replay and **13 concurrent integration scenarios pass on PostgreSQL 17.11**. These cover checkout/cash idempotency, reward balance/stock, finance posting/review, privacy/trading races, expiry workers and push claim/dispatch fencing. A reproduced push materialisation wait is corrected by a forward migration. At that checkpoint the ordinary suite passed **385 tests** with all check gates.
 
 The isolated runner refuses remote targets, uses synthetic data and removes its own temporary server; its evidence report records version/image/source identity and cleanup. A PostgreSQL job is added to the reusable CI gate used by OTA. No hosted CI run or publication was performed. See [the sprint evidence and remaining acceptance](postgres-integration-sprint.md). Hosted Auth/JWT/PostgREST/Deno, representative existing-data upgrades, real tills/devices and client approvals remain outstanding; six delivery groups remain.
 

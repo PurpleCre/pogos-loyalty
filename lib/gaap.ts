@@ -5,8 +5,9 @@ import { logPrivateError } from '@/lib/privacy-logging';
  * Client-side service layer for GAAP integration features.
  * Handles customer linking, sync status, and GAAP config management.
  * 
- * API calls to GAAP Unity will be added once GAAP provides documentation.
- * For now, all GAAP data flows through the webhook → Supabase pipeline.
+ * Ordering and external-loyalty adapters await GAAP's approved contract.
+ * The legacy webhook is held closed and its transaction processor is revoked.
+ * Historical/configuration screens do not establish an active integration.
  */
 
 import { supabase } from '@/lib/supabase';

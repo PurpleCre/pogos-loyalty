@@ -1,5 +1,7 @@
 # Cash fulfilment and loyalty ledger milestone
 
+Follow-on verified 3 November: [the Edge runtime sprint](edge-runtime-sprint.md) supplies the default-disabled `expire-cash-orders` HTTP entrypoint with a dedicated worker key and fixed SQL batch of 100. No hosted schedule is installed; deployment, gateway, measured capacity and monitoring acceptance remain required.
+
 Updated: 31 October 2026. Status: implemented and verified locally. Pogo’s confirmed branches remain Msasa, Kamfinsa and Westgate. Nothing was deployed or activated.
 
 The previous [cash checkout increment](cash-checkout-milestone.md) was verified before this work. This increment connects its pending/unpaid orders to branch operations, cash receipts, till acknowledgement, full refunds and auditable earning. It does not complete every task in the production roadmap.

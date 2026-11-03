@@ -1,5 +1,7 @@
 # Transactional notifications milestone
 
+Follow-on verified 3 November: the [Edge runtime sprint](edge-runtime-sprint.md) adds 22 native Deno handler cases, hardened shared authentication/input/transport handling and a CI job. This supersedes the original no-Deno limitation below for local handler testing only; hosted gateway/runtime and actual provider/device acceptance remain open.
+
 Updated: 2 November 2026. **Local implementation; hosted deployment, scheduler, provider credentials and physical-device delivery acceptance remain required. Push dispatch is disabled by default.** This is not production activation.
 
 ## Previous milestone verification

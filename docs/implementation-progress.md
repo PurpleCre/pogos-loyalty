@@ -2,11 +2,17 @@
 
 Updated: 3 November 2026. Scope: local implementation increments for the cash-first release at Msasa, Kamfinsa and Westgate. GAAP is the confirmed POS vendor. Digital payments remain Release 2.
 
+## Edge runtime and protected workers sprint
+
+**Milestone 4 remains in progress; the local Deno sprint is complete.** All seven function entrypoints pass strict native Deno checking. The runtime suite passes **22 tests**, using actual SDK HTTP to a loopback fake backend and simulated provider responses. Protected cash/reward expiry entrypoints join the hardened push worker; separate secrets, exact default-off switches, fixed operations, input limits, database redirect rejection and explicit retry control are verified. Speculative GAAP/marketing/AI handlers remain closed even if old enable flags are set; GAAP must connect the app’s own ordering and loyalty ledger through an approved contract.
+
+The full `npm run check` passes **388 tests** with type/lint/schema/SDK/peer/template checks. A separate Edge CI job now joins the reusable gate used by OTA. No hosted workflow, deployment, provider send, schedule, live data change or publication occurred. This proves native Deno handler behavior, not hosted Supabase Edge Runtime/gateway/Auth/PostgREST or real provider/device delivery. See [the sprint evidence and required activation checks](edge-runtime-sprint.md). Client approvals and the broader milestone remain open; **six delivery groups remain**.
+
 ## PostgreSQL concurrency sprint
 
 Milestone 4 now includes an isolated real PostgreSQL runner, transactional migration replay and **13 passing concurrent integration cases** on PostgreSQL 17.11. An observer confirms actual lock waits for competing checkout/cash/reward/finance/privacy commands; worker cases exercise expiry and push claim/dispatch fencing. The suite reproduced a push materialisation wait before `SKIP LOCKED`; a forward migration skips existing pairs and uses a nonblocking pair lock. The corrected scenarios pass.
 
-The default `npm run check` passes **385 tests**, adding five runner-boundary cases, with type/lint/schema/SDK/peer/template checks. A development-only PostgreSQL driver, explicit local image preparation, bounded ephemeral server, identity-scoped cleanup and redacted evidence report are included. The reusable CI workflow now includes PostgreSQL acceptance before its dependent OTA job can proceed. No hosted CI run, cloud migration, real data/role/branch activation or publication occurred. See [the sprint report](postgres-integration-sprint.md). Hosted Auth/API/Deno, representative upgrade, actual GAAP/till/device and client/privacy gates remain open; six delivery groups remain.
+At that checkpoint the default `npm run check` passed **385 tests**, adding five runner-boundary cases, with type/lint/schema/SDK/peer/template checks. A development-only PostgreSQL driver, explicit local image preparation, bounded ephemeral server, identity-scoped cleanup and redacted evidence report are included. The reusable CI workflow now includes PostgreSQL acceptance before its dependent OTA job can proceed. No hosted CI run, cloud migration, real data/role/branch activation or publication occurred. See [the sprint report](postgres-integration-sprint.md). Hosted Auth/API/Deno, representative upgrade, actual GAAP/till/device and client/privacy gates remain open; six delivery groups remain.
 
 ## Privacy core minimisation and review preparation
 

@@ -1,5 +1,7 @@
 # Reward reservation and fulfilment milestone
 
+Follow-on verified 3 November: [the Edge runtime sprint](edge-runtime-sprint.md) supplies the default-disabled `expire-reward-reservations` HTTP entrypoint with a dedicated worker key and fixed SQL batch of 100. No hosted schedule is installed; deployment, gateway, capacity and released-points/allocation acceptance remain required.
+
 Updated: 31 October 2026. Status: implemented and verified locally for the cash-first Pogo’s release. No hosted migration, branch activation or publication was performed.
 
 The preceding cash/ledger milestone was rechecked with its 100-test suite before implementation. This increment implements standalone, fixed-benefit rewards collected at one selected branch. It uses the existing audited loyalty account rather than direct client balance updates.

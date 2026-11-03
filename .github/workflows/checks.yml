@@ -7,6 +7,24 @@ on:
 permissions:
   contents: read
 jobs:
+  edge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run edge:check
+      - run: npm run test:edge
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: local-edge-runtime-acceptance
+          path: dist/edge-runtime/
+          retention-days: 7
   postgres:
     runs-on: ubuntu-latest
     timeout-minutes: 10
