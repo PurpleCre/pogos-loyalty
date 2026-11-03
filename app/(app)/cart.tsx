@@ -154,6 +154,10 @@ function CashCart() {
           </View>
         ) : null}
         {error ? <Text accessibilityRole="alert" className="text-red-700 bg-red-50 p-4 rounded-xl mb-4">{error}</Text> : null}
+        {recoveryBlocked && !loadingRecovery ? <View className="mb-4">
+          <TouchableOpacity accessibilityRole="button" disabled={busy} onPress={() => { setError(''); void recoveryReader.read(); }} className="p-4 bg-amber-100 rounded-xl"><Text className="font-bold">Retry reading saved order reference</Text></TouchableOpacity>
+          <TouchableOpacity accessibilityRole="button" onPress={() => router.push('/support')} className="p-4"><Text className="text-red-700 font-bold">Get help with this order reference</Text></TouchableOpacity>
+        </View> : null}
         {!loadingRecovery && !pending && !recoveryBlocked && items.length === 0 ? (
           <View className="items-center py-12"><Text className="text-xl font-bold">Your cart is empty</Text>
             <TouchableOpacity onPress={() => router.push('/store-picker')} className="mt-5 p-4 bg-red-600 rounded-xl"><Text className="text-white font-bold">Choose a branch</Text></TouchableOpacity>

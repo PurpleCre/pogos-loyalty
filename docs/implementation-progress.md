@@ -1,12 +1,12 @@
 # Implementation progress
 
-Updated: 2 November 2026. Scope: local implementation increments for the cash-first release at Msasa, Kamfinsa and Westgate. GAAP is the confirmed POS vendor. Digital payments remain Release 2.
+Updated: 3 November 2026. Scope: local implementation increments for the cash-first release at Msasa, Kamfinsa and Westgate. GAAP is the confirmed POS vendor. Digital payments remain Release 2.
 
 ## Offline/lifecycle and launch experience increment
 
 The 292-test finance checkpoint was reverified before advancing. Account/environment-scoped cart persistence, validated public menu/branch snapshots, explicit private-read freshness, foreground/late-response guards and quote expiry are implemented locally. Confirmed checkout now retires matching branch selections durably before removing its recovery key. Logout fences old cart/address writers while preserving financial journals; unknown legacy offline actions are preserved for investigation rather than cleared or replayed. Launch screens remove stock/disabled-feature promotions and guessed delivery promises, use Harare map defaults and require a written address, and provide a public help/recovery route. Manager reward worklist access now matches server permission.
 
-The combined suite has **315 passing tests**, including 23 new storage/interruption/freshness cases; type/lint/schema/SDK/peer checks and Android/iOS Hermes exports pass. See the [offline implementation and physical acceptance checklist](offline-launch-ux-milestone.md). Pogo’s artwork/product approval, actual devices/process kills, hosted acceptance and all earlier release gates remain open. No dependency, migration, cloud change, branch activation or publication was added. The [readiness checkpoint](production-readiness-status.md) now carries **six remaining delivery groups**, beginning with client ownership/data/business approval; current device/product acceptance is included in those groups.
+The increment first passed 315 tests. Reverification on 3 November corrected guest-copy ordering, reward-screen reactivation and overlapping recovery loading; the combined suite now has **322 passing tests**, including 30 lifecycle cases; type/lint/schema/SDK/peer checks and Android/iOS Hermes exports pass. See the [offline implementation and physical acceptance checklist](offline-launch-ux-milestone.md). Pogo’s artwork/product approval, actual devices/process kills, hosted acceptance and all earlier release gates remain open. No dependency, migration, cloud change, branch activation or publication was added. The [readiness checkpoint](production-readiness-status.md) now carries **six remaining delivery groups**, beginning with client ownership/data/business approval; current device/product acceptance is included in those groups.
 
 ## Reverification and remaining delivery milestones
 

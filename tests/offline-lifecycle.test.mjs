@@ -206,6 +206,7 @@ test('foreground recovery replaces a pending initial read and always settles loa
  requests[1].resolve(pending);await foreground;requests[0].resolve(null);await initial;
  assert.deepEqual(states.at(-1),{pending,loading:false,blocked:false});
  const failed=reader.read();requests[2].reject(Error('unreadable'));await failed;assert.deepEqual(states.at(-1),{pending:null,loading:false,blocked:true});
+ const retry=reader.read();requests[3].resolve(pending);await retry;assert.deepEqual(states.at(-1),{pending,loading:false,blocked:false});
 });
 test('disposed recovery reads cannot update another account or override an in-flight command',async()=>{
  const {createRecoveryReader}=await import('../lib/checkout-lifecycle.ts');const requests=[],states=[];

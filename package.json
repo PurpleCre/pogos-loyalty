@@ -12,14 +12,20 @@
     "test": "node --experimental-strip-types --experimental-default-type=module --test tests/*.test.mjs",
     "db:types": "node scripts/generate-db-types.mjs",
     "db:types:check": "node scripts/generate-db-types.mjs --check",
-    "check": "npm run typecheck && npm run lint && npm test && npm run db:types:check && npm run sdk:check && npm run deps:check",
+    "check": "npm run typecheck && npm run lint && npm test && npm run db:types:check && npm run sdk:check && npm run deps:check && npm run client:template:check",
     "build:check": "node scripts/build-check.mjs",
     "config:check": "node scripts/config-check.mjs",
     "sdk:check": "node scripts/sdk-check.mjs",
     "doctor": "node scripts/doctor-check.mjs",
     "native:preflight": "node scripts/native-preflight.mjs",
     "deps:check": "node scripts/dependency-check.mjs",
-    "privacy:pages": "node scripts/build-privacy-pages.mjs"
+    "privacy:pages": "node scripts/build-privacy-pages.mjs",
+    "client:init": "node scripts/client-data.mjs init",
+    "client:status": "node scripts/client-data.mjs status",
+    "client:check": "node scripts/client-data.mjs check",
+    "client:plan": "node scripts/client-data.mjs plan",
+    "client:digest": "node scripts/client-data.mjs digest",
+    "client:template:check": "node scripts/client-data.mjs template-check"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",

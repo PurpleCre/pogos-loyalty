@@ -1,10 +1,10 @@
 # Production readiness checkpoint
 
-Verified: 2 November 2026. Release 1 is loyalty and cash ordering/collection/delivery for Msasa, Kamfinsa and Westgate. Digital payments remain Release 2.
+Verified: 3 November 2026. Release 1 is loyalty and cash ordering/collection/delivery for Msasa, Kamfinsa and Westgate. Digital payments remain Release 2.
 
 ## Current milestone verdict
 
-**Offline/lifecycle and launch experience: implemented locally; physical-device and Pogo’s product acceptance remain open.** The full suite passes 315 tests, including 23 new storage/recovery/freshness cases; type/lint/schema/SDK/peer checks and Android/iOS Hermes exports pass. Saved carts, public browsing snapshots, truthful private-read freshness, background/quote guards, durable matching-cart retirement before journal cleanup and preserved legacy action evidence are included. Unsupported promotions, stock hero imagery and fabricated delivery estimates are removed; Harare map/address defaults and a public help path are included. See the [milestone evidence and acceptance checklist](offline-launch-ux-milestone.md).
+**Offline/lifecycle and launch experience: implemented locally; physical-device and Pogo’s product acceptance remain open.** The full suite passes 322 tests, including 30 storage/recovery/lifecycle cases; type/lint/schema/SDK/peer checks and Android/iOS Hermes exports pass. Saved carts, public browsing snapshots, truthful private-read freshness, background/quote guards, durable matching-cart retirement before journal cleanup and preserved legacy action evidence are included. Unsupported promotions, stock hero imagery and fabricated delivery estimates are removed; Harare map/address defaults and a public help path are included. See the [milestone evidence and acceptance checklist](offline-launch-ux-milestone.md).
 
 This completes local delivery group 1. Its brand/product approval and actual process-kill/network/storage/accessibility acceptance are carried into groups 2, 4 and 6. No hosted configuration, migration, live activation or publication was performed.
 

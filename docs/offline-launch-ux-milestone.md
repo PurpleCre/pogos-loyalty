@@ -1,6 +1,6 @@
 # Offline/lifecycle and launch experience milestone
 
-Updated: 2 November 2026. Local implementation checkpoint for the cash-first release. Pogo’s visual/product approval and physical-device, hosted and busy-shift acceptance remain required before production.
+Updated: 3 November 2026. Local implementation checkpoint for the cash-first release. Pogo’s visual/product approval and physical-device, hosted and busy-shift acceptance remain required before production.
 
 ## Starting evidence and scope
 
@@ -10,7 +10,7 @@ The finance checkpoint was reverified at 292 passing tests before this increment
 
 ### Saved selections and interrupted checkout
 
-Cart selections persist by account and environment, including the branch and modifier variant IDs. Saved records are validated and derived line IDs/subtotals are rebuilt. The stored prices are estimates; the server still resolves actual meals, options, availability, currency, fees and total in a fresh quotation. Existing signed-in selections take precedence over an in-memory visitor cart at sign-in. Another customer’s cart is never promoted; ordinary logout removes the departing account’s stored selections while preserving financial command recovery.
+Cart selections persist by account and environment, including the branch and modifier variant IDs. Saved records are validated and derived line IDs/subtotals are rebuilt. The stored prices are estimates; the server still resolves actual meals, options, availability, currency, fees and total in a fresh quotation. Existing signed-in selections take precedence over an in-memory visitor cart at sign-in. Visitor selections are removed only after any adopted copy has been durably saved; a failed handoff preserves the original for retry. Another customer’s cart is never promoted; ordinary logout removes the departing account’s stored selections while preserving financial command recovery.
 
 Cart storage uses account leases and serialized writes. Switching accounts invalidates old work; cleanup waits behind an already-running save and then removes it. A queued old save cannot recreate the cart after cleanup. Corrupt/unreadable saved selections block editing/checkout until explicit replacement; failed saves expose a retry and block new quotation/placement. Replacing selections never clears a submitted order’s journal. Browser storage and native AsyncStorage are ordinary device data stores, not encrypted credential storage; no contact, delivery address, token or reward bearer claim is added to the cart record.
 
@@ -49,14 +49,20 @@ Before enabling affected existing installations, an authorised operator must inv
 
 ## Local verification
 
-The complete regression suite has **315 passing tests**, including **23 new offline/lifecycle cases**. Coverage includes persisted variants, environment/owner isolation, corrupt records, queued writes and logout, late reads, storage retries, order response loss, cart retirement/journal ordering, changed branch selections, simultaneous checkout, stale UI checkpoints, read timeout/disposal/auth failures, late cache hydration, cache whitelisting/age, legacy preservation, quote expiry and address-cache resurrection prevention.
+The complete regression suite has **322 passing tests**, including **30 offline/lifecycle cases**. Coverage includes persisted variants, environment/owner isolation, corrupt records, queued writes and logout, late reads, storage retries, order response loss, cart retirement/journal ordering, changed branch selections, simultaneous checkout, stale UI checkpoints, read timeout/disposal/auth failures, late cache hydration, cache whitelisting/age, legacy preservation, quote expiry and address-cache resurrection prevention.
 
-TypeScript, lint, generated-type drift, SDK and installed peer checks pass. Android/iOS Hermes bundle exports pass; all 24 checked runtime source files match both exported source maps. These test pure controllers/storage failures and the local SQL fixture; they do not execute React Native interactions, real OS process kills, signed builds, actual networks/GPS/sharing or true concurrent hosted PostgreSQL. The prior native project-generation check still applies to unchanged native dependencies/configuration; bundle export is not native compilation.
+TypeScript, lint, generated-type drift, SDK and installed peer checks pass. Android/iOS Hermes bundle exports pass; all 25 checked runtime source files match both exported source maps. These test pure controllers/storage failures and the local SQL fixture; they do not execute React Native interactions, real OS process kills, signed builds, actual networks/GPS/sharing or true concurrent hosted PostgreSQL. The prior native project-generation check still applies to unchanged native dependencies/configuration; bundle export is not native compilation.
 
 ```sh
 npm run check
 npm run build:check
 ```
+
+## Reverification — 3 November 2026
+
+The review found and corrected three additional gaps: guest-cart cleanup ran before its owned replacement was durably saved; returning to a reward screen after an unsubscribed background/foreground cycle could leave refresh paused; and overlapping initial/foreground recovery reads could leave checkout loading. Cart restore now supports an explicit retry and copies before cleanup. Reward activation reads the current AppState and invalidates old freshness before refreshing. Recovery reads share a versioned loader that settles loading only for the latest live request.
+
+Seven additional regressions cover failed/interrupted guest handoff, owned-cart priority/account changes, overlapping/stopped recovery reads and actual reward-hook callbacks under mocked AppState/API/effect scheduling. These hook tests do not replace React Native renderer or physical-device acceptance. The combined suite is now 322 tests, with 30 cases across the two lifecycle test files. No hosted state, role or publication changed during verification.
 
 ## Acceptance carried into the remaining milestones
 

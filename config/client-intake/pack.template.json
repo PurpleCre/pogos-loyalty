@@ -1,0 +1,181 @@
+{
+  "schemaVersion": 1,
+  "customer": {
+    "country": "ZW",
+    "tradingName": "Pogo’s",
+    "legalEntity": null
+  },
+  "release": "cash-ordering-and-loyalty",
+  "pilotBranch": null,
+  "platforms": [],
+  "owners": {
+    "sponsor": null,
+    "operations": null,
+    "finance": null,
+    "brand": null,
+    "it": null,
+    "privacy": null,
+    "support": null
+  },
+  "environments": {
+    "staging": {
+      "expoOwner": null,
+      "expoProjectId": null,
+      "supabaseProjectRef": null,
+      "androidApplicationId": null,
+      "iosBundleIdentifier": null,
+      "scheme": null
+    },
+    "production": {
+      "expoOwner": null,
+      "expoProjectId": null,
+      "supabaseProjectRef": null,
+      "androidApplicationId": null,
+      "iosBundleIdentifier": null,
+      "scheme": null
+    }
+  },
+  "ownershipSource": null,
+  "inventorySource": null,
+  "brandSource": null,
+  "supportSource": null,
+  "sources": [],
+  "finance": {
+    "source": null,
+    "inclusivePrices": null,
+    "exchangeConversionRequired": null,
+    "refundMode": null,
+    "businessTimezone": null,
+    "businessDayCutoff": null,
+    "workedExamplesSource": null
+  },
+  "programme": {
+    "source": null,
+    "termsSource": null,
+    "pointsExpiry": null,
+    "refundDebtAccepted": null
+  },
+  "access": {
+    "matrixSource": null,
+    "restrictedRosterSource": null,
+    "administratorRecoverySource": null,
+    "administratorRefs": [],
+    "cashierSeparationAccepted": null,
+    "independentFinanceReviewAccepted": null
+  },
+  "gaap": {
+    "vendor": "GAAP",
+    "source": null,
+    "launchMode": null,
+    "saleRewardRefundSource": null,
+    "bridgeProcedureSource": null
+  },
+  "openings": {
+    "source": null,
+    "classificationSource": null,
+    "cutoff": null,
+    "freezeProcedureSource": null,
+    "accountCount": null,
+    "sourceSpendablePoints": null,
+    "preservedSpendablePoints": null,
+    "sourceHeldPoints": null,
+    "preservedHeldPoints": null,
+    "unresolvedExceptions": null
+  },
+  "branches": [
+    {
+      "code": "msasa",
+      "name": "Msasa",
+      "mapping": {
+        "id": null,
+        "mode": null
+      },
+      "address": null,
+      "latitude": null,
+      "longitude": null,
+      "publicPhone": null,
+      "hours": [],
+      "operationsSource": null,
+      "menuSource": null,
+      "gaapBranchCode": null,
+      "cashierRefs": [],
+      "financeSubmitterRef": null,
+      "financeReviewerRef": null,
+      "currency": null,
+      "collection": null,
+      "delivery": null,
+      "minimumSubtotalMinor": null,
+      "maxTotalMinor": null,
+      "acceptanceMinutes": null,
+      "deliveryZones": [],
+      "categories": [],
+      "menu": [],
+      "earnRule": null,
+      "maxActiveRewardsPerCustomer": null,
+      "rewardOffers": []
+    },
+    {
+      "code": "kamfinsa",
+      "name": "Kamfinsa",
+      "mapping": {
+        "id": null,
+        "mode": null
+      },
+      "address": null,
+      "latitude": null,
+      "longitude": null,
+      "publicPhone": null,
+      "hours": [],
+      "operationsSource": null,
+      "menuSource": null,
+      "gaapBranchCode": null,
+      "cashierRefs": [],
+      "financeSubmitterRef": null,
+      "financeReviewerRef": null,
+      "currency": null,
+      "collection": null,
+      "delivery": null,
+      "minimumSubtotalMinor": null,
+      "maxTotalMinor": null,
+      "acceptanceMinutes": null,
+      "deliveryZones": [],
+      "categories": [],
+      "menu": [],
+      "earnRule": null,
+      "maxActiveRewardsPerCustomer": null,
+      "rewardOffers": []
+    },
+    {
+      "code": "westgate",
+      "name": "Westgate",
+      "mapping": {
+        "id": null,
+        "mode": null
+      },
+      "address": null,
+      "latitude": null,
+      "longitude": null,
+      "publicPhone": null,
+      "hours": [],
+      "operationsSource": null,
+      "menuSource": null,
+      "gaapBranchCode": null,
+      "cashierRefs": [],
+      "financeSubmitterRef": null,
+      "financeReviewerRef": null,
+      "currency": null,
+      "collection": null,
+      "delivery": null,
+      "minimumSubtotalMinor": null,
+      "maxTotalMinor": null,
+      "acceptanceMinutes": null,
+      "deliveryZones": [],
+      "categories": [],
+      "menu": [],
+      "earnRule": null,
+      "maxActiveRewardsPerCustomer": null,
+      "rewardOffers": []
+    }
+  ],
+  "approvals": []
+}
