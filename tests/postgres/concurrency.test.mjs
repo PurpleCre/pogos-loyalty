@@ -7,7 +7,7 @@ let db;
 before(async()=>{db=await connect();await initialise(db);});
 after(async()=>{await db?.end();});
 test('transactional migration replay reaches the expected inventory with all activations off',async()=>{
-  assert.equal((await db.query(`SELECT count(*)::int AS n FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE'`)).rows[0].n,70);
+  assert.equal((await db.query(`SELECT count(*)::int AS n FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE'`)).rows[0].n,71);
   assert.deepEqual((await db.query(`SELECT deletion_processing_enabled,application_erasure_enabled FROM public.privacy_settings`)).rows[0],{deletion_processing_enabled:false,application_erasure_enabled:false});
   assert.equal((await db.query(`SELECT enabled FROM public.push_settings`)).rows[0].enabled,false);
 });

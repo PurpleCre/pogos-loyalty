@@ -1,0 +1,7 @@
+{
+  "max_snapshot_age_seconds": null,
+  "rules": {
+    "loyalty_mismatches": null,
+    "push_materialisation_due": null
+  }
+}

@@ -2,11 +2,27 @@
 
 Updated: 3 November 2026. Scope: local implementation increments for the cash-first release at Msasa, Kamfinsa and Westgate. GAAP is the confirmed POS vendor. Digital payments remain Release 2.
 
+## Loyalty and notification integrity monitoring
+
+**Milestone 5 remains in progress; the local ledger/backlog work package is complete.** A separate service-only, read-only integrity RPC now counts accounts with ledger/account/display/opening/gross/hold discrepancies and eligible notification/device pairs without a delivery row. It exposes no identities, balances, tokens or fiscal references. Counts clip at 1,000; mismatch age is deliberately absent. Configured ledger monitoring makes the first mismatch critical; disabled push remains unknown. Both committed rules/freshness remain null.
+
+The combined collector and durable local alert engine now include the two integrity signals and their collector status. All samples are checked again for freshness under the state lock, preventing a slow integrity query from clearing incidents with expired fast samples. The synthetic dashboard demonstrates discrepancy/backlog detection, deduplication, SQL materialisation and unknown outcomes without repairing points or sending a provider message.
+
+Verification passes **479 regression tests**, including 26 new local cases, and **13 real PostgreSQL concurrency plus eight real PostgreSQL load/recovery/integrity cases**. The inventory remains 71 public tables with 29 account-export sections. One forward function/index migration and generated types were added; no dependency or mobile runtime code changed. See [the implementation and acceptance report](loyalty-notification-integrity-sprint.md). Whole-ledger cost/hosted access checks, production monitoring integration/approvals, existing dependency blockers and independent/live acceptance remain open. **Six delivery groups remain.**
+
+## Worker monitoring, collector/alerts and recovery/security engineering
+
+**Milestone 5 remains in progress; further locally executable engineering is complete.** Three service-only worker observation rows and fenced start/outcome RPCs now back the instrumented cash/reward/push handlers. A collector cycle, generation fences, private durable local outbox, deduplication, separate acknowledgement/recovery and bounded uncertain-delivery handling are implemented. Cadence/freshness/thresholds remain unconfigured; no schedule, production store or real recipient is activated. The inventory is now **71 public tables**, with 29 account-export sections.
+
+Verification passes **453 ordinary tests, 28 Deno runtime cases, 13 real PostgreSQL concurrency cases and five real PostgreSQL load/restore cases**. A 24-order/three-branch/four-client rehearsal restored 73 synthetic public/Auth tables with matching data, detected post-backup cash/points/privacy gaps and kept resumption blocked. Both local monitoring rehearsals pass; current migration replay, generated types and CI configuration are checked. These are local fixtures, not representative production targets or actual vendor/device acceptance.
+
+The fresh registry gate is **blocked: 2 high, 20 moderate, 1 low, 0 critical package findings**. A dry-run remediation plan retained the high findings; no incompatible override or lockfile change was applied. The [local engineering report](milestone-5-local-engineering.md) records evidence, security details and deployment order. Compatible dependency remediation/independent review, owned production monitoring and timed escalation, representative hosted performance/accessibility/recovery and real incident/provider acceptance remain open. **Six delivery groups remain.** No cloud change, real message, native signing or publication occurred.
+
 ## Backend queue-health monitoring foundation
 
 **Milestone 5 remains in progress; a further local monitoring slice is complete.** A service-only, read-only SQL snapshot exposes eight bounded queue/custody/variance count-and-age gauges without customer identifiers, monetary values or fiscal references. A strict evaluator marks missing, stale, future, malformed and failed observations unknown; count clipping and missing scheduler/ledger/runtime/backup/alert coverage are explicit. All real thresholds/freshness remain unconfigured.
 
-The full `npm run check` passes **432 tests**, including 25 new SQL/access/invariant/evaluator/SDK/report/CLI cases. A synthetic PGlite rehearsal produces clear/critical/stale-unknown/failed-unknown dashboard evidence; the reusable CI workflow includes it before OTA. One forward migration and generated types were added, with no new public table or dependency. No hosted migration, connected dashboard, scheduler, alert delivery, native build or publication occurred. The [sprint report](backend-health-sprint.md) distinguishes these local observations from a deployed collector, worker heartbeats and broader milestone acceptance. **Six delivery groups remain.**
+At the queue-health checkpoint `npm run check` passed **432 tests**, including 25 new SQL/access/invariant/evaluator/SDK/report/CLI cases. A synthetic PGlite rehearsal produces clear/critical/stale-unknown/failed-unknown dashboard evidence; the reusable CI workflow includes it before OTA. One forward migration and generated types were added, with no new public table or dependency. No hosted migration, connected dashboard, scheduler, alert delivery, native build or publication occurred. The [sprint report](backend-health-sprint.md) distinguishes these local observations from a deployed collector, worker heartbeats and broader milestone acceptance. **Six delivery groups remain.**
 
 ## Error-reporting safety and incident-response foundation
 

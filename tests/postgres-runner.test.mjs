@@ -1,8 +1,12 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {acceptanceImage,assertLocalDocker,localBinding,validateAcceptanceConfig,assertOwnedContainer,containerArguments} from '../scripts/postgres-acceptance-safety.mjs';
+import {acceptanceImage,assertLocalDocker,localBinding,validateAcceptanceConfig,assertOwnedContainer,containerArguments,acceptanceMode} from '../scripts/postgres-acceptance-safety.mjs';
 const runId='a'.repeat(32),id='b'.repeat(64);
 const config=()=>({runId,host:'127.0.0.1',port:32123,database:`pogos_acceptance_${runId}`,user:'pogos_acceptance',password:'c'.repeat(48)});
+test('recovery/load mode never accepts a caller-selected target or arbitrary test path',()=>{
+  assert.equal(acceptanceMode([]),'concurrency');assert.equal(acceptanceMode(['--resilience']),'resilience');
+  for(const args of [['https://remote'],['--resilience','--target=remote'],['tests/other.mjs'],['--all']])assert.throws(()=>acceptanceMode(args));
+});
 test('acceptance cannot redirect Docker operations to a remote daemon',()=>{
   assert.doesNotThrow(()=>assertLocalDocker('unix:///var/run/docker.sock'));
   for(const endpoint of [undefined,'','tcp://127.0.0.1:2375','ssh://remote','https://docker.example'])assert.throws(()=>assertLocalDocker(endpoint));

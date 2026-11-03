@@ -3,7 +3,7 @@ import {randomBytes,createHash} from 'node:crypto';
 import {readFile,readdir,mkdir,writeFile} from 'node:fs/promises';
 import {setTimeout as delay} from 'node:timers/promises';
 import pg from 'pg';
-import {acceptanceImage,acceptanceLabel,assertLocalDocker,localBinding,assertOwnedContainer,containerArguments} from './postgres-acceptance-safety.mjs';
+import {acceptanceImage,acceptanceLabel,assertLocalDocker,localBinding,assertOwnedContainer,containerArguments,acceptanceMode} from './postgres-acceptance-safety.mjs';
 
 // Own a new, ephemeral local server. No URL, existing DB, hosted credentials,
 // .env loading, volume mount, implicit image pull or existing-container reuse.
@@ -41,8 +41,9 @@ async function cleanup(){
 for(const signal of ['SIGINT','SIGTERM'])process.once(signal,()=>{interrupted=true;activeTest?.kill('SIGTERM');});
 let report={kind:'local-postgres-concurrency',runId,node:process.version,startedAt:new Date().toISOString(),hostedAcceptance:false,
   authEvidence:'Synthetic SQL roles and claims; no Auth/JWT/PostgREST/device/vendor acceptance',status:'failed'};
+let mode='concurrency';
 try{
-  if(process.argv.length!==2)throw Error('No target arguments are accepted. Run npm run test:postgres.');
+  mode=acceptanceMode(process.argv.slice(2));report.kind=`local-postgres-${mode}`;
   const context=await docker(['context','inspect','--format','{{.Endpoints.docker.Host}}']);
   if(context.code!==0)throw Error('Local Docker context unavailable.');
   assertLocalDocker(context.stdout,process.env.DOCKER_HOST);
@@ -69,8 +70,14 @@ try{
   const files=['package.json','package-lock.json','scripts/test-database.mjs','scripts/postgres-acceptance.mjs','scripts/postgres-acceptance-safety.mjs','scripts/postgres-image.mjs'];
   for(const dir of ['supabase/migrations','tests/postgres'])for(const f of (await readdir(dir)).sort())if(/\.(sql|mjs)$/.test(f))files.push(`${dir}/${f}`);
   const hash=createHash('sha256');for(const file of files){hash.update(file);hash.update('\0');hash.update(await readFile(file));hash.update('\0');}report.sourceSha256=hash.digest('hex');
-  const result=await command(process.execPath,['--test','--test-reporter=tap','tests/postgres/concurrency.test.mjs'],
-    {env:{...process.env,POGOS_ACCEPTANCE_CONFIG:JSON.stringify(config)},timeout:180000,output:true,trackTest:true});
+  const result=await command(process.execPath,['--test','--test-reporter=tap',`tests/postgres/${mode==='resilience'?'resilience':'concurrency'}.test.mjs`],
+    {env:{...process.env,POGOS_ACCEPTANCE_CONFIG:JSON.stringify(config),POGOS_ACCEPTANCE_CONTAINER:container},timeout:180000,output:true,trackTest:true});
+  if(mode==='resilience'){
+    const metrics=result.stdout.match(/^# RESILIENCE_METRICS (.+)$/m);
+    if(!metrics)throw Error('A complete resilience measurement report is required.');
+    report.rehearsal=JSON.parse(metrics[1]);
+    report.performanceAccepted=false;report.recoveryTargetsApproved=false;
+  }
   report.tests=Number(result.stdout.match(/^# tests (\d+)$/m)?.[1]??0);
   report.passed=Number(result.stdout.match(/^# pass (\d+)$/m)?.[1]??0);
   report.failed=Number(result.stdout.match(/^# fail (\d+)$/m)?.[1]??0);
@@ -80,7 +87,8 @@ try{
 finally{
   try{await cleanup();report.cleanup='complete';}catch(error){report.cleanup='needs_review';report.status='failed';process.exitCode=1;console.error(error.message);}
   report.finishedAt=new Date().toISOString();
-  await mkdir('dist/postgres-acceptance',{recursive:true});
-  await writeFile('dist/postgres-acceptance/report.json',`${JSON.stringify(report,null,2)}\n`);
-  console.log(`Local PostgreSQL acceptance: ${report.status}. Evidence: dist/postgres-acceptance/report.json`);
+  const directory=mode==='resilience'?'dist/resilience-acceptance':'dist/postgres-acceptance';
+  await mkdir(directory,{recursive:true});
+  await writeFile(`${directory}/report.json`,`${JSON.stringify(report,null,2)}\n`);
+  console.log(`Local PostgreSQL ${mode}: ${report.status}. Evidence: ${directory}/report.json`);
 }

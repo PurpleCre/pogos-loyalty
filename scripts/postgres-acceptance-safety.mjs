@@ -1,5 +1,10 @@
 export const acceptanceImage='postgres:17-alpine';
 export const acceptanceLabel='org.pogos.acceptance.run';
+export function acceptanceMode(args){
+  if(args.length===0)return 'concurrency';
+  if(args.length===1&&args[0]==='--resilience')return 'resilience';
+  throw Error('Only the fixed concurrency or resilience rehearsal is accepted; no targets are allowed.');
+}
 export function assertLocalDocker(endpoint,override) {
   if(typeof endpoint!=='string'||!endpoint.trim())throw Error('Acceptance requires a local Unix-socket Docker daemon.');
   for(const target of [endpoint,override].filter(value=>value!==undefined)){

@@ -3167,6 +3167,35 @@ export type Database = {
         }
       ]
     }
+    "worker_observations": {
+      Row: {
+        "worker": string
+        "run_id": string | null
+        "outcome": string
+        "started_at": string | null
+        "completed_at": string | null
+        "last_success_at": string | null
+      }
+      Insert: {
+        "worker": string
+        "run_id"?: string | null
+        "outcome"?: string
+        "started_at"?: string | null
+        "completed_at"?: string | null
+        "last_success_at"?: string | null
+      }
+      Update: {
+        "worker"?: string
+        "run_id"?: string | null
+        "outcome"?: string
+        "started_at"?: string | null
+        "completed_at"?: string | null
+        "last_success_at"?: string | null
+      }
+      Relationships: [
+
+      ]
+    }
     }
     Views: { [_ in never]: never }
     Functions: {
@@ -3477,6 +3506,10 @@ export type Database = {
       Args: Record<PropertyKey, never>
       Returns: Json
     }
+    "operational_integrity_snapshot": {
+      Args: Record<PropertyKey, never>
+      Returns: Json
+    }
     "place_cash_order": {
       Args: {
         "p_quote_id": string
@@ -3654,6 +3687,14 @@ export type Database = {
       }
       Returns: boolean
     }
+    "record_worker_observation": {
+      Args: {
+        "p_worker": string
+        "p_run": string
+        "p_outcome": string
+      }
+      Returns: boolean
+    }
     "register_push_device": {
       Args: {
         "p_id": string
@@ -3803,6 +3844,10 @@ export type Database = {
         "p_version": string
       }
       Returns: string
+    }
+    "worker_health_snapshot": {
+      Args: Record<PropertyKey, never>
+      Returns: Json
     }
     }
     Enums: {

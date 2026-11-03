@@ -4,6 +4,8 @@ Verified locally: **3 November 2026**. This sprint completes the local Deno hand
 
 Pogo’s own ordering system and loyalty ledger remain authoritative. GAAP integration must connect both using a vendor-approved contract; this sprint does not introduce GAAP Rewards or another spendable balance.
 
+Follow-on: the [worker/collector, recovery and security report](milestone-5-local-engineering.md) records the latest 453/28/13/5 local checks, 71-table inventory and remaining security/production blockers. Earlier counts and audit snapshots below describe their original checkpoints. Instrumented workers now require `20261103040000_worker_observations.sql` before function deployment; flags remain off until accepted.
+
 ## Completion audit — 3 November 2026
 
 **Verdict: local Edge runtime sprint complete; milestone 4 and production activation remain open.** A fresh verification reran all three commands below successfully. No implementation correction was needed.

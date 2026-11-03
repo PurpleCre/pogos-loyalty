@@ -2,6 +2,10 @@
 
 3 November 2026. **Implemented and verified locally as a further slice of milestone 5. Milestone 5 remains in progress; six delivery groups remain.** No client approval, production target, threshold, scheduler or actual alert is assumed.
 
+Follow-on: the [worker/collector, recovery and security report](milestone-5-local-engineering.md) records the latest 453/28/13/5 local checks, 71-table inventory and remaining security/production blockers. Earlier counts and audit snapshots below describe their original checkpoints. Instrumented workers now require `20261103040000_worker_observations.sql` before function deployment; flags remain off until accepted.
+
+Follow-on: [ledger and notification integrity monitoring](loyalty-notification-integrity-sprint.md) now supplies the separate mismatch and missing-pair snapshot. The eight queue gauges below retain their own limited coverage; earlier counts describe their original checkpoint.
+
 ## Delivered
 
 `20261103030000_operational_health.sql` adds the service-only `operational_health_snapshot()` RPC. It uses a stable, read-only SQL query with an empty search path, explicit grants and four supporting partial indexes. Anonymous users and all authenticated customer/staff/manager/finance/admin identities cannot execute it; a customer claim naming the service role cannot override database grants.

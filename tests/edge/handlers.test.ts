@@ -21,14 +21,17 @@ const closingFetch: typeof fetch = (input, init) => {
 };
 interface FixtureOptions {
   backend?: (call: Call) => Response | Promise<Response>;
+  observation?: (call: Call) => Response | Promise<Response>;
   provider?: (url: string, init?: RequestInit) => Promise<Response>;
 }
 async function fixture(kind: WorkerKind, options: FixtureOptions, work: (f: {
-  calls: Call[]; env: Record<string, string>; request: (options?: RequestInit) => Promise<{ status: number; body: Record<string, unknown>; headers: Headers }>;
+  calls: Call[]; observations: Call[]; env: Record<string, string>; request: (options?: RequestInit) => Promise<{ status: number; body: Record<string, unknown>; headers: Headers }>;
 }) => Promise<void>) {
   const calls: Call[] = [];
+  const observations: Call[] = [];
   const backend = serve(async request => {
     const call = { path: new URL(request.url).pathname, body: await request.json(), authorization: request.headers.get('Authorization'), apikey: request.headers.get('apikey') };
+    if (call.path.endsWith('record_worker_observation')) { observations.push(call); return options.observation ? options.observation(call) : json(true); }
     calls.push(call);
     return options.backend ? options.backend(call) : json(0);
   });
@@ -43,7 +46,7 @@ async function fixture(kind: WorkerKind, options: FixtureOptions, work: (f: {
   });
   const server = serve(handler);
   try {
-    await work({ calls, env, request: async (options = {}) => {
+    await work({ calls, observations, env, request: async (options = {}) => {
       const headers = new Headers({ 'X-Worker-Key': secrets[kind], Connection: 'close' });
       new Headers(options.headers).forEach((value, key) => headers.set(key, value));
       const response = await fetch(server.url, { ...options, method: options.method ?? 'POST', headers });
@@ -125,6 +128,7 @@ Deno.test('an unfinished authenticated body times out and is cancelled before a 
 Deno.test('the production environment adapter uses the fixed server credentials and default SDK fetch', async () => {
   const calls: Call[] = [];
   const backend = serve(async request => {
+    if (new URL(request.url).pathname.endsWith('record_worker_observation')) { await request.text(); return json(true); }
     calls.push({ path: new URL(request.url).pathname, body: await request.json(), authorization: request.headers.get('Authorization'), apikey: request.headers.get('apikey') });
     return json(2);
   });
@@ -196,6 +200,7 @@ Deno.test('ambiguous provider transport is recorded as unknown and returns an ac
   }, async f => {
     const result = await f.request(); assert.equal(result.status, 503); assert.equal(result.body.unresolved, 1);
     assert.equal(f.calls.at(-1)?.body.p_outcome, 'unknown');
+    assert.equal(f.observations.at(-1)?.body.p_outcome,'unresolved');
   });
 });
 Deno.test('lost acknowledgement retries only the result record rather than dispatching twice', async () => {
@@ -226,4 +231,42 @@ Deno.test('unapproved endpoints remain closed and harmless even if old enable fl
       const wrongMethod = await fetch(server.url, { headers: { Connection: 'close' } }); assert.equal(wrongMethod.status, 405); await wrongMethod.text();
     } finally { await server.close(); Deno.env.delete(flag); }
   }
+});
+
+Deno.test('successful internal work records a matched start and completion without accepting caller metadata', async () => {
+  await fixture('cash-expiry', {backend:()=>json(0)}, async f => {
+    assert.equal((await f.request()).status,200);
+    assert.deepEqual(f.observations.map(x=>x.body.p_outcome),['running','success']);
+    assert.equal(f.observations[0].body.p_run,f.observations[1].body.p_run);
+    assert.equal(f.observations[0].body.p_worker,'cash-expiry');
+    assert.match(String(f.observations[0].body.p_run),/^[0-9a-f-]{36}$/);
+  });
+});
+Deno.test('unrecorded start prevents database work and provider dispatch', async () => {
+  await fixture('cash-expiry', {observation:()=>json({message:'private'},503)}, async f => {
+    assert.equal((await f.request()).status,503);assert.equal(f.calls.length,0);assert.equal(f.observations.length,1);
+  });
+});
+Deno.test('failed database work records failure without treating it as a rollback receipt', async () => {
+  await fixture('cash-expiry', {backend:()=>json({message:'private'},500)}, async f => {
+    assert.equal((await f.request()).status,503);assert.deepEqual(f.observations.map(x=>x.body.p_outcome),['running','failed']);
+  });
+});
+Deno.test('completion acknowledgement retries never execute the business operation again', async () => {
+  let terminals=0;
+  await fixture('reward-expiry', {backend:()=>json(1),observation:call=>call.body.p_outcome==='running'||++terminals===2?json(true):json({message:'lost reply'},503)},async f=>{
+    assert.equal((await f.request()).status,200);assert.equal(f.calls.length,1);assert.equal(f.observations.length,3);
+    assert.equal(f.observations[1].body.p_run,f.observations[2].body.p_run);
+  });
+});
+Deno.test('unacknowledged or superseded completion is actionable without a duplicate job', async () => {
+  await fixture('cash-expiry',{backend:()=>json(1),observation:call=>json(call.body.p_outcome==='running')},async f=>{
+    assert.equal((await f.request()).status,503);assert.equal(f.calls.length,1);assert.equal(f.observations.length,3);
+  });
+});
+Deno.test('disabled or unauthorised worker calls cannot create misleading heartbeat evidence',async()=>{
+  await fixture('cash-expiry',{},async f=>{
+    assert.equal((await f.request({headers:{'X-Worker-Key':'wrong'}})).status,401);
+    f.env.CASH_ORDER_EXPIRY_ENABLED='false';assert.equal((await f.request()).status,503);assert.equal(f.observations.length,0);
+  });
 });

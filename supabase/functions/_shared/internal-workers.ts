@@ -82,18 +82,37 @@ export function createInternalWorker(kind: WorkerKind, dependencies: WorkerDepen
         if (error) throw Error('Worker database operation failed');
         return data;
       };
-      if (kind !== 'push') {
-        const processed: unknown = await rpc(kind === 'cash-expiry' ? 'expire_pending_cash_orders' : 'expire_reward_reservations', { p_limit: 100 });
-        if (typeof processed !== 'number' || !Number.isInteger(processed) || processed < 0 || processed > 100) throw Error('Invalid expiry result');
-        return reply(200, { worker: kind, processed, limit: 100 });
-      }
-      const summary = await runTransactionalPushBatch({
+      const runId = crypto.randomUUID();
+      const observe = async (outcome: string) => {
+        if (await rpc('record_worker_observation', { p_worker: kind, p_run: runId, p_outcome: outcome }) !== true) throw Error('Observation not accepted');
+      };
+      // Do not perform work when its start cannot be observed. Never retry a
+      // begin implicitly. Terminal retries acknowledge the same result only.
+      await observe('running');
+      let response: Response, outcome = 'success';
+      try {
+        if (kind !== 'push') {
+          const processed: unknown = await rpc(kind === 'cash-expiry' ? 'expire_pending_cash_orders' : 'expire_reward_reservations', { p_limit: 100 });
+          if (typeof processed !== 'number' || !Number.isInteger(processed) || processed < 0 || processed > 100) throw Error('Invalid expiry result');
+          response = reply(200, { worker: kind, processed, limit: 100 });
+        } else {
+          const summary = await runTransactionalPushBatch({
         accessToken: env('EXPO_PUSH_ACCESS_TOKEN')!, fetch: dependencies.providerFetch ?? fetch,
         claim: () => rpc('claim_push_deliveries', { p_limit: 10 }),
         prepare: job => rpc('prepare_push_dispatch', { p_id: job.id, p_claim: job.claim_id }),
         record: async (job, outcome, reference) => { await rpc('record_push_result', { p_id: job.id, p_claim: job.claim_id, p_outcome: outcome, p_reference: reference }); },
-      });
-      return reply(summary.unresolved ? 503 : 200, summary);
+          });
+          outcome = summary.unresolved ? 'unresolved' : 'success';
+          response = reply(summary.unresolved ? 503 : 200, summary);
+        }
+      } catch (error) {
+        try { await observe('failed'); } catch { /* Missing terminal observation remains actionable. */ }
+        throw error;
+      }
+      for (let attempt = 0; ; attempt++) {
+        try { await observe(outcome); break; } catch (error) { if (attempt === 1) throw error; }
+      }
+      return response;
     } catch (error) {
       return error instanceof InputError ? reply(error.status, { error: 'Invalid worker request' }) : reply(503, { error: 'Worker unavailable' });
     }

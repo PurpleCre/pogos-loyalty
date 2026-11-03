@@ -2,6 +2,8 @@
 
 Verified: 3 November 2026. **The local concurrency sprint is implemented and tested. Delivery milestone 4 remains in progress; hosted, device and real-till acceptance is outstanding.** Client ownership/business approval and privacy activation remain open. Six delivery groups remain.
 
+Follow-on: the [worker/collector, recovery and security report](milestone-5-local-engineering.md) records the latest 453/28/13/5 local checks, 71-table inventory and remaining security/production blockers. Earlier counts and audit snapshots below describe their original checkpoints. Instrumented workers now require `20261103040000_worker_observations.sql` before function deployment; flags remain off until accepted.
+
 ## Result
 
 The existing regression suite was previously verified at 380 cases. The new harness adds five runner-boundary cases to `npm run check`, bringing that suite to **385 passing tests** with TypeScript, lint, database-type drift, SDK, dependency-peer and client-template checks passing. A separate `npm run test:postgres` now passes **13 real PostgreSQL integration cases**, with zero failures. These are separate suites, not additional PGlite claims.

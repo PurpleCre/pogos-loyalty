@@ -1349,6 +1349,23 @@
       "retentionApproval": "unconfirmed",
       "legalBasisApproval": "unconfirmed",
       "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "worker_observations",
+      "fields": [
+        "worker",
+        "run_id",
+        "outcome",
+        "started_at",
+        "completed_at",
+        "last_success_at"
+      ],
+      "classification": "service_operations",
+      "exportSection": null,
+      "exportScope": "Fixed internal worker metadata; no account identity or customer payload",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Three bounded operational rows without account links; operator review of technical evidence/retention remains required"
     }
   ],
   "otherStores": [

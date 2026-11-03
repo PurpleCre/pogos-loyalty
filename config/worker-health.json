@@ -1,0 +1,8 @@
+{
+  "max_snapshot_age_seconds": null,
+  "workers": {
+    "push": null,
+    "cash-expiry": null,
+    "reward-expiry": null
+  }
+}

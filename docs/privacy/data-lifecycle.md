@@ -4,6 +4,16 @@ Updated: 3 November 2026. Engineering inventory and activation procedure; this i
 
 The user confirmed **pgonese6@gmail.com** as the temporary privacy contact. Pogo’s legal controller, privacy approver, retention rules, approved hosting/transfers, mailbox ownership/recovery and public website are unconfirmed. `config/privacy-contact.json` contains the contact; `config/privacy-data-map.json` classifies all **70** local public tables and records other device/vendor stores. A regression test fails when local tables/fields drift from that inventory. It does not inventory the live deployment.
 
+## Worker observations and local monitoring state
+
+The worker-observation migration adds one bounded technical row for each of three internal jobs, with run UUID/outcome/timestamps and no account link or customer/provider payload. Only service RPCs can record/read observations; customers and administrators cannot directly read or write them. The inventory is now 71 public tables and exports remain 29 sections. Include these fields in the current policy/schema review; old field-coverage evidence is not approval for the new schema.
+
+The collector’s private local file adapter stores fixed signal/severity/acknowledgement/outbox states without contacts or monetary payloads. Rehearsals use exclusively created temporary directories and simulated delivery. Production storage, access/actor audit, retention/archive, provider metadata and actual alert delivery still require review. Corrupt state, abandoned locks and uncertain sends must be preserved for controlled recovery. Synthetic restore tombstone replay demonstrates an app access fence only; it is not an actual erasure receipt or authority to mark deletion complete.
+
+## Integrity aggregates
+
+The [service-only integrity snapshot](../loyalty-notification-integrity-sprint.md) uses existing loyalty/projection/hold and notification/device records to return only clipped discrepancy/pair counts, push-enabled state, UTC time and backlog age. It adds no table or export section, exposes no customer IDs/point totals/tokens and performs no repair or dispatch. Source investigation remains restricted to authorised operational tools. The collector’s local rehearsal now stores two additional fixed signal codes and a collector status; production access, retention/archive and real provider handling remain subject to review.
+
 ## Service-only operational aggregates
 
 The [queue-health snapshot](../backend-health-sprint.md) reads existing order, reward, push, cash-receipt and finance observations and returns only capped global counts/ages plus UTC observation metadata. It adds no personal-data table and exposes no identity, money, currency, token or fiscal reference. Customer/staff/admin execution is denied. Business aggregates still need restricted server/monitoring access, approved retention and environment isolation before hosting; the synthetic dashboard contains fixture data only. Actual collector/alert/provider storage is not configured. These observations are not erasure, worker execution or financial reconciliation evidence.
