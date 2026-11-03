@@ -4,7 +4,7 @@ import {readFile,writeFile,mkdtemp,stat} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {spawnSync} from 'node:child_process';
-import {assessPack,contentDigest,canonical,moneyDecimal,validPolygon} from '../scripts/client-onboarding/validate.mjs';
+import {assessPack,contentDigest,canonical,moneyDecimal,validPolygon,isUnconfirmedDraft} from '../scripts/client-onboarding/validate.mjs';
 import {buildConfigurationPlan} from '../scripts/client-onboarding/plan.mjs';
 import {packSchema,jsonSchema} from '../scripts/client-onboarding/schema.mjs';
 import {clientFixture,signFixture} from './helpers/client-pack-fixture.mjs';
@@ -113,4 +113,28 @@ test('CLI creates restricted drafts exclusively, refuses overwrites and never mu
 test('CLI review artifact is digest-bound, restricted, non-overwriting and contains no activation',async()=>{
  const directory=await mkdtemp(join(tmpdir(),'pogos-client-plan-')),input=join(directory,'pack.json'),output=join(directory,'review.json');const p=clientFixture();await writeFile(input,JSON.stringify(p));
  const result=cli('plan',input,'--out',output);assert.equal(result.status,0,result.stderr+result.stdout);const plan=JSON.parse(await readFile(output,'utf8'));assert.equal(plan.contentSha256,contentDigest(p));assert.equal(plan.activationAllowed,false);assert.equal((await stat(output)).mode&0o777,0o600);assert.equal(cli('plan',input,'--out',output).status,2);
+});
+
+test('the proposed bindings meet the current native build identity requirements even for an Android-first launch',()=>{
+ const p=clientFixture();p.platforms=['android'];signFixture(p);assert.equal(assess(p).configurationReviewReady,true);
+ p.environments.production.iosBundleIdentifier=null;assert.equal(assess(p).configurationReviewReady,false);
+});
+
+test('vendor codes remain opaque strings; spaces and punctuation are not replaced with an invented GAAP contract',()=>{
+ const p=clientFixture();p.branches[0].gaapBranchCode='GAAP branch # 1';p.branches[0].rewardOffers[0].gaapProductReference="GAAP reward / staff's code";signFixture(p);
+ assert.equal(assess(p).configurationReviewReady,true);assert.equal(buildConfigurationPlan(p,opts).rows.find(r=>r.table==='reward_branch_offers').data.gaap_product_reference,"GAAP reward / staff's code");
+});
+
+test('the committed-template guard rejects unapproved defaults even if a partially filled draft remains blocked',async()=>{
+ const draft=JSON.parse(await readFile('config/client-intake/pack.template.json','utf8'));assert.equal(isUnconfirmedDraft(draft),true);
+ for(const mutate of [p=>p.branches[0].currency='USD',p=>p.branches[0].address='An assumed address',p=>p.finance.businessDayCutoff='00:00',p=>p.environments.production.expoOwner='unconfirmed-owner']){
+  const changed=structuredClone(draft);mutate(changed);assert.equal(assess(changed).configurationReviewReady,false);assert.equal(isUnconfirmedDraft(changed),false);
+ }
+});
+
+test('intake constraints also respect persisted-cart and actual database limits before proposing configuration',()=>{
+ for(const mutate of [p=>p.branches[0].menu[0].name='x'.repeat(501),p=>p.branches[0].rewardOffers[0].name='x'.repeat(161),p=>p.branches[0].rewardOffers[0].terms='a',p=>p.branches[0].deliveryZones[0].priority=2147483648]){const p=clientFixture();mutate(p);assert.equal(assess(p).schemaValid,false);}
+ const p=clientFixture();const option=p.branches[0].menu[0].options[0];option.maxChoices=50;option.choices=Array.from({length:50},(_,i)=>({...option.choices[0],code:'choice'+i,mapping:{id:`00000000-0000-4000-8000-${String(i+1).padStart(12,'0')}`,mode:'new'},isDefault:i===0}));
+ p.branches[0].menu[0].options.push({...option,code:'second',mapping:{id:'00000000-0000-4000-8000-000000000099',mode:'new'},maxChoices:1,choices:[{...option.choices[0],mapping:{id:'00000000-0000-4000-8000-000000000098',mode:'new'}}]});
+ assert.ok(codes(p).includes('invalid_choice_limits'));
 });

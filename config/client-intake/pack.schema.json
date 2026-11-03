@@ -416,8 +416,7 @@
           "version": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 100,
-            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$"
+            "maxLength": 100
           },
           "sha256": {
             "type": "string",
@@ -1048,8 +1047,7 @@
               {
                 "type": "string",
                 "minLength": 1,
-                "maxLength": 100,
-                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$"
+                "maxLength": 160
               },
               {
                 "type": "null"
@@ -1203,7 +1201,7 @@
                 "name": {
                   "type": "string",
                   "minLength": 1,
-                  "maxLength": 2000
+                  "maxLength": 160
                 },
                 "feeMinor": {
                   "type": "string",
@@ -1211,8 +1209,8 @@
                 },
                 "priority": {
                   "type": "integer",
-                  "minimum": -9007199254740991,
-                  "maximum": 9007199254740991
+                  "minimum": -2147483648,
+                  "maximum": 2147483647
                 },
                 "polygon": {
                   "minItems": 3,
@@ -1300,7 +1298,7 @@
                 "name": {
                   "type": "string",
                   "minLength": 1,
-                  "maxLength": 2000
+                  "maxLength": 160
                 },
                 "sortOrder": {
                   "type": "integer",
@@ -1374,7 +1372,7 @@
                 "name": {
                   "type": "string",
                   "minLength": 1,
-                  "maxLength": 2000
+                  "maxLength": 160
                 },
                 "description": {
                   "type": "string",
@@ -1424,8 +1422,7 @@
                 "gaapProductReference": {
                   "type": "string",
                   "minLength": 1,
-                  "maxLength": 100,
-                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$"
+                  "maxLength": 160
                 },
                 "options": {
                   "maxItems": 30,
@@ -1478,7 +1475,7 @@
                       "name": {
                         "type": "string",
                         "minLength": 1,
-                        "maxLength": 2000
+                        "maxLength": 160
                       },
                       "minChoices": {
                         "type": "integer",
@@ -1541,7 +1538,7 @@
                             "name": {
                               "type": "string",
                               "minLength": 1,
-                              "maxLength": 2000
+                              "maxLength": 160
                             },
                             "priceAdjustmentMinor": {
                               "type": "string",
@@ -1772,7 +1769,7 @@
                 "name": {
                   "type": "string",
                   "minLength": 1,
-                  "maxLength": 2000
+                  "maxLength": 160
                 },
                 "description": {
                   "type": "string",
@@ -1788,14 +1785,13 @@
                 },
                 "terms": {
                   "type": "string",
-                  "minLength": 1,
+                  "minLength": 3,
                   "maxLength": 2000
                 },
                 "gaapProductReference": {
                   "type": "string",
                   "minLength": 1,
-                  "maxLength": 100,
-                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$"
+                  "maxLength": 160
                 },
                 "pointsCost": {
                   "type": "integer",
@@ -1908,8 +1904,7 @@
               "version": {
                 "type": "string",
                 "minLength": 1,
-                "maxLength": 100,
-                "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]*$"
+                "maxLength": 100
               },
               "sha256": {
                 "type": "string",

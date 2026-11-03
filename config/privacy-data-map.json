@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-02",
+  "updated": "2026-11-03",
   "scope": "Local migration inventory only; live systems, buckets, logs, backups and vendors must be reconciled before activation.",
   "controllerLegalIdentity": null,
   "privacyOwner": null,
@@ -1347,6 +1347,13 @@
       "system": "Backups, storage buckets, logs and external exports",
       "data": "Inventory unknown; retention, expiry, restore suppression and erasure receipts required",
       "retentionApproval": "unconfirmed"
+    },
+    {
+      "system": "Restricted engineering client-intake workspace",
+      "data": "Business configuration, public account/project identifiers, opaque owner/staff references, source hashes/versions and claimed written approval references; real rosters/customer data and credentials are excluded from the typed pack; source documents require approved restricted handling",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Ignored .local drafts and proposals are engineering records, not an approved production store. Review actual access, retention and downstream copies with the named client owner before real data transfer."
     }
   ]
 }

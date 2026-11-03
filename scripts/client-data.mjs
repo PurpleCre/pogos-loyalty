@@ -1,10 +1,11 @@
 import {readFile,writeFile,mkdir,lstat} from 'node:fs/promises';
 import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
-import {packSchema,jsonSchema} from './client-onboarding/schema.mjs';
-import {assessPack,contentDigest,canonical} from './client-onboarding/validate.mjs';
+import {packSchema,jsonSchema,createDraftPack} from './client-onboarding/schema.mjs';
+import {assessPack,contentDigest,canonical,isUnconfirmedDraft} from './client-onboarding/validate.mjs';
 import {buildConfigurationPlan} from './client-onboarding/plan.mjs';
-const root=resolve(new URL('..',import.meta.url).pathname);
+const root=fileURLToPath(new URL('..',import.meta.url));
 const templatePath=resolve(root,'config/client-intake/pack.template.json');
 const bindings=JSON.parse(await readFile(resolve(root,'config/environments.json'),'utf8'));
 const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Africa/Harare',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
@@ -18,7 +19,7 @@ try{
  const scope=flags['--scope']??'chain';if(!['chain','pilot'].includes(scope))throw Error('Scope must be chain or pilot.');
  if(command==='init'){
   if(positional.length>1||flags['--out']||flags['--scope'])throw Error('Use init [new-private-pack.json].');
-  const path=resolve(positional[0]??'.local/client-data/pack.json');await writeNew(path,await json(templatePath));console.log('Created a new private draft. Existing files are never overwritten.');
+  const path=resolve(positional[0]??'.local/client-data/pack.json');await writeNew(path,createDraftPack());console.log('Created a new private draft. Existing files are never overwritten.');
  }else if(command==='schema'){
   if(positional.length||flags['--scope']||!flags['--out'])throw Error('Use schema --out new-schema.json.');await writeNew(resolve(flags['--out']),jsonSchema);console.log('Created schema.');
  }else if(command==='hash'){
@@ -28,7 +29,7 @@ try{
   if(positional.length||Object.keys(flags).length)throw Error('Template check accepts no options.');
   const input=await json(templatePath),report=assessPack(input,{scope:'chain',asOf:today,bindings});
   const checkedSchema=await json(resolve(root,'config/client-intake/pack.schema.json'));
-  if(!report.schemaValid||report.configurationReviewReady||input.approvals.length||input.sources.length||input.branches.some(b=>b.menu.length||b.mapping.id)||canonical(checkedSchema)!==canonical(jsonSchema))throw Error('Draft template/schema drift or unreviewed sample data.');
+  if(!report.schemaValid||report.configurationReviewReady||!isUnconfirmedDraft(input)||canonical(checkedSchema)!==canonical(jsonSchema))throw Error('Draft template/schema drift or unreviewed sample data.');
   console.log('Draft template is structurally valid, contains no approvals or trading data, and correctly blocks configuration review.');
  }else{
   if(positional.length>1)throw Error('Supply at most one client pack.');

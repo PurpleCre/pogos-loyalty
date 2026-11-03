@@ -1,5 +1,5 @@
 import {createHash} from 'node:crypto';
-import {packSchema,branchCodes,approvalAreas} from './schema.mjs';
+import {packSchema,branchCodes,createDraftPack} from './schema.mjs';
 export function canonical(value){
  if(value===null||typeof value==='boolean'||typeof value==='string')return JSON.stringify(value);
  if(typeof value==='number'){if(!Number.isFinite(value))throw Error('Nonfinite value');return JSON.stringify(value);}
@@ -59,7 +59,7 @@ export function assessPack(input,{scope='chain',asOf=new Intl.DateTimeFormat('en
  for(const [field,reference]of [['ownershipSource','T01–T11'],['inventorySource','T09–T10'],['brandSource','M05–M07'],['supportSource','A06/B08']])source(pack[field],field,reference);
  for(const [name,binding]of Object.entries(pack.environments)){
   for(const [field,value]of Object.entries(binding)){
-   if(field!=='iosBundleIdentifier'||pack.platforms.includes('ios'))if(field!=='androidApplicationId'||pack.platforms.includes('android'))required(value,`environments.${name}.${field}`,'T02–T04');
+   required(value,`environments.${name}.${field}`,'T02–T04');
    if(value!==null&&field!=='expoOwner')for(const [other,existing]of Object.entries({...bindings,...pack.environments}))if(other!==name&&existing?.[field]===value)add('environment_collision',`environments.${name}.${field}`,'T02–T04');
   }
  }
@@ -97,6 +97,7 @@ export function assessPack(input,{scope='chain',asOf=new Intl.DateTimeFormat('en
    const p=path+`.menu.${i}`;mapping(item.mapping,p+'.mapping');if(skus.has(item.sku))add('duplicate_sku',p+'.sku','M01');skus.add(item.sku);
    if(!categories.has(item.categoryCode))add('unknown_category',p+'.categoryCode','M01');
    source(item.allergenSource,p+'.allergenSource','M05');if(item.imageUrl)source(item.imageRightsSource,p+'.imageRightsSource','M06');
+   if(item.options.reduce((sum,o)=>sum+o.maxChoices,0)>50)add('invalid_choice_limits',p+'.options','M03');
    let min=BigInt(item.priceMinor),max=min;const optionCodes=new Set();
    for(const [j,o]of item.options.entries()){
     const op=p+`.options.${j}`;mapping(o.mapping,op+'.mapping');
@@ -142,4 +143,8 @@ export function assessPack(input,{scope='chain',asOf=new Intl.DateTimeFormat('en
  return {schemaValid:true,configurationReviewReady:issues.length===0,productionReady:false,scope,targetBranches:targets,contentSha256:digest,issues,
   counts:{branches:targets.length,items:pack.branches.filter(b=>targets.includes(b.code)).reduce((n,b)=>n+b.menu.length,0),approvals:pack.approvals.length},
   limitations:['Approval records are claims requiring independent verification; digests do not authenticate people.','No database writes, live activation, account transfers, historical balance imports or release acceptance are performed.']};
+}
+
+export function isUnconfirmedDraft(input){
+ const parsed=packSchema.safeParse(input);return parsed.success&&canonical(parsed.data)===canonical(createDraftPack());
 }

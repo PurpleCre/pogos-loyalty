@@ -2,6 +2,10 @@
 
 Updated: 3 November 2026. Scope: local implementation increments for the cash-first release at Msasa, Kamfinsa and Westgate. GAAP is the confirmed POS vendor. Digital payments remain Release 2.
 
+## Client ownership/data onboarding preparation
+
+The user reconfirmed on 3 November that there are no new client approvals. Milestone 2 is **in progress awaiting client evidence**. A private draft, strict schema, redacted completeness/capability reports, canonical approval digests and disabled configuration-review proposals are implemented, together with a read-only inventory and mapping/clone procedure. No source facts, production ownership, real balances or permissions are invented or applied. The complete local suite has **353 passing tests**, including 31 new intake/CLI/database cases, and `npm run check` checks that the committed template remains an unapproved draft. See [the milestone report and outstanding client inputs](client-data-milestone.md). Six delivery groups remain; actual ownership/data/business approval is not closed by engineering tooling.
+
 ## Offline/lifecycle and launch experience increment
 
 The 292-test finance checkpoint was reverified before advancing. Account/environment-scoped cart persistence, validated public menu/branch snapshots, explicit private-read freshness, foreground/late-response guards and quote expiry are implemented locally. Confirmed checkout now retires matching branch selections durably before removing its recovery key. Logout fences old cart/address writers while preserving financial journals; unknown legacy offline actions are preserved for investigation rather than cleared or replayed. Launch screens remove stock/disabled-feature promotions and guessed delivery promises, use Harare map defaults and require a written address, and provide a public help/recovery route. Manager reward worklist access now matches server permission.
