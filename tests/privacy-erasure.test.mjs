@@ -105,10 +105,17 @@ test('complete exact field coverage rejects missing, malformed and unsupported d
 });
 test('expired retention deadlines and schema drift invalidate reviewed policy',async()=>{
   const overdue=`overdue-${randomUUID()}`;
-  await installPrivacyPolicy(db,overdue,p=>{p.decisions['profiles.id'].retain_until='2000-01-01';return p;});
+  await installPrivacyPolicy(db,overdue,p=>{p.decisions['profiles.id'].retain_until='2000-01-01T00:00:00Z';return p;});
   await assert.rejects(db.query(`SELECT public.validate_privacy_application_policy($1)`,[overdue]),{code:'42501'});
   await db.exec(`ALTER TABLE public.profiles ADD COLUMN synthetic_unreviewed TEXT`);
   try{await assert.rejects(db.query(`SELECT public.validate_privacy_application_policy($1)`,[policy]),{code:'42501'});}finally{await db.exec(`ALTER TABLE public.profiles DROP COLUMN synthetic_unreviewed`);}
+});
+test('retention deadlines must be absolute UTC instants rather than moving or session-local dates',async()=>{
+  for(const deadline of ['tomorrow','2099-01-01','2099-01-01T00:00:00+02:00']){
+    const v=`ambiguous-time-${randomUUID()}`;
+    await installPrivacyPolicy(db,v,p=>{p.decisions['profiles.id'].retain_until=deadline;return p;});
+    await assert.rejects(db.query(`SELECT public.validate_privacy_application_policy($1)`,[v]),{code:'22023'});
+  }
 });
 test('future or expired approval cannot authorise minimisation',async()=>{
   for(const [start,end] of [['2098-01-01','2099-01-01'],['1999-01-01','2000-01-01']]){
@@ -183,6 +190,12 @@ test('lost responses recover the same immutable run and reject changed identitie
   for(const overrides of [{3:randomUUID()},{4:'Different operator'},{5:9999}])await assert.rejects(minimize(c,overrides),{code:'22023'});
   await assert.rejects(db.query(`UPDATE public.privacy_application_runs SET result='{}' WHERE id=$1`,[c.run]),{code:'42501'});
   await assert.rejects(db.query(`DELETE FROM public.privacy_application_runs WHERE id=$1`,[c.run]),{code:'42501'});
+});
+test('financial receipts recover across sessions with different database time zones',async()=>{
+  const c=await processing(),result=await minimize(c);
+  await db.exec(`SET TIME ZONE 'Africa/Harare'`);
+  try{assert.deepEqual(await minimize(c),result);}
+  finally{await db.exec(`SET TIME ZONE 'UTC'`);}
 });
 test('application completion needs current manual review evidence matching the physical run',async()=>{
   const c=await processing();await minimize(c);

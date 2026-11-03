@@ -6,7 +6,7 @@ The user confirmed **pgonese6@gmail.com** as the temporary privacy contact. Pogo
 
 ## Core minimisation follow-on
 
-Milestone 3 now includes a **default-disabled, service-only core minimisation operation**, field/policy validation, financial invariants, immutable recovery receipts and separate retained/unstructured-record review. The full local suite passes **378 tests**. See [the exact scope, policy format and operator sequence](../privacy-core-minimisation-milestone.md). `npm run privacy:policy:draft` creates a private unapproved review for every local public field; it does not register an approval or activate processing. The operation is a subset of the required erasure procedure: provider, residual/manual, vendor, backup, deadline follow-up and actual hosted/device work remain required.
+Milestone 3 now includes a **default-disabled, service-only core minimisation operation**, field/policy validation, financial invariants, immutable recovery receipts and separate retained/unstructured-record review. The full local suite passes **380 tests**. See [the exact scope, policy format and operator sequence](../privacy-core-minimisation-milestone.md). `npm run privacy:policy:draft` creates a private unapproved review for every local public field; it does not register an approval or activate processing. The operation is a subset of the required erasure procedure: provider, residual/manual, vendor, backup, deadline follow-up and actual hosted/device work remain required.
 
 ## What is ready locally
 

@@ -27,7 +27,7 @@ The draft includes an ordered field-list fingerprint, the fixed operation versio
 An accountable reviewer must supply a version, matching immutable retention approval, actual approval reference/person/time and approval expiry, together with each field decision. The private database validator requires exact field coverage and three keys per decision: `action`, `reason_reference`, `retain_until`.
 
 - `core` is mandatory for the operation’s defined fields, with a reason and null deadline because the operation removes/minimises its defined account-scoped subset immediately.
-- `retain` or `manual` is required for other subject/audit fields, with an actual finite future deadline and reason/reference from the approved retention plan.
+- `retain` or `manual` is required for other subject/audit fields, with an actual finite future deadline and reason/reference from the approved retention plan. Deadlines must use absolute UTC `YYYY-MM-DDTHH:MM:SS[.ffffff]Z` timestamps (optional fraction, up to six digits); relative dates, date-only values and other offsets are rejected.
 - `not_subject` with a reason and null deadline is permitted only for the listed business catalogue/configuration tables. It must be justified against actual content.
 
 **The field list is not a complete schema compatibility check or a JSON/free-text identity scanner.** Core scope is narrower than every occurrence of a person’s information in a field: other recipients’ messages, actor references, historical aliases, quote item text, command snapshots, append-only audit notes and vendor evidence may remain. The companion approved retention/runbook must explicitly govern these residual categories, reasons, access and deadlines, including residual content in a core field. Neither a `core` label nor a pseudonymous UUID establishes that a record has ceased to be personal data.
@@ -38,13 +38,36 @@ After a successful run, an authorised operator must actually complete the retain
 
 ## Verification
 
-`npm run check` passes **378 tests, zero failures**, TypeScript, lint, migration-derived type drift, SDK compatibility, installed dependency peers and the unapproved client-template check. This adds **25 tests** to the client-data checkpoint: 24 core/policy/draft cases and one public-preview regression. Existing lifecycle tests now execute actual core minimisation before completion rather than manually simulating application scrubbing; external Auth/manual/vendor receipts remain synthetic.
+`npm run check` passes **380 tests, zero failures**, TypeScript, lint, migration-derived type drift, SDK compatibility, installed dependency peers and the unapproved client-template check. This adds **27 tests** to the client-data checkpoint: 26 core/policy/draft cases and one public-preview regression. Existing lifecycle tests now execute actual core minimisation before completion rather than manually simulating application scrubbing; external Auth/manual/vendor receipts remain synthetic.
 
 Tests cover service-only access, approval/context/receipt forgery denial, disabled operation, provider prerequisite, malformed/null field decisions, schema/approval/deadline drift, account isolation, quote/order/GAAP/gift minimisation, invitation matching after provider contact removal, terminal/uncertain push handling, immutable audit controls, transactional row-limit rollback, lost responses, stale identities, policy changes, pause/resume, manual attestation, remaining vendor tasks, financial drift and contact reintroduction. A synthetic database trigger that changes points forces rollback. The completion fixture retains its cash receipt, fiscal reference, order amount and points while stale JWT application access is denied.
 
 The private draft generator and standalone privacy/deletion preview builder both run locally. Preview pages now remain `noindex` even when a notice is supplied, unless explicit release mode is selected. Release mode still needs the reviewed notice record; metadata validation cannot establish the truth of an approval or control of the future origin. The operator must verify those before publication.
 
 Database cases use disposable PGlite and simulated roles/claims. They do not prove actual Auth-admin behavior, signed JWTs, full PostgreSQL concurrency, PostgREST, provider delivery/erasure or device cleanup. No app runtime/dependency changed; new native compilation/device acceptance remains in its existing release groups. No hosted migration, real account/vendor deletion, push dispatch, website/app/OTA publication or production activation was performed.
+
+## Completion audit — 3 November
+
+**Verdict: the local core implementation passes verification after two corrections; the full milestone is not complete.** The initial 378-test suite passed again, but new regression cases exposed two gaps that the existing cases did not cover:
+
+1. PostgreSQL accepted JSON deadlines such as `tomorrow`, which move with subsequent validations instead of defining a fixed approved instant. The validator now requires the absolute UTC format above.
+2. Financial fingerprints serialized timestamps in the SQL session's time zone. Retrying the same run in a Harare-time session incorrectly reported financial drift. Fingerprint serialization is now pinned to UTC.
+
+Both new cases failed against the previous code and pass with `20261103010000_privacy_validation_hardening.sql`. The focused privacy suite passes **51 cases**. The full project check passes **380 cases**; the draft CLI and public-page preview builder also run successfully. The changes preserve the original migration and function permissions, add no tables or approval records, and leave activation off. New native exports were not needed for this SQL/test/documentation correction.
+
+| Required element | Audit evidence | Verdict |
+| --- | --- | --- |
+| Fixed account-scoped core operation and access controls | Actual local SQL execution, role/forgery denials, unresolved-push blocking, rollback and core-data reintroduction tests | Verified locally |
+| Financial preservation and retry recovery | Receipt/fiscal/order/points retention, deliberate mutation rollback, immutable run recovery and cross-time-zone regression | Verified locally |
+| Field inventory and approval preparation | Exact 70-table field map and private CLI draft; no fabricated approvals or deadlines | Tooling verified; actual policy approval outstanding |
+| Reviewer/manual/completion safeguards | Version/policy changes, separate matching attestation, six-system evidence and stale-token completion boundary tested with fixtures | Verified locally; genuine execution evidence outstanding |
+| Real provider, residual/manual, vendor and backup treatment | Auth deletion flag and external receipts are simulated; no real-system erasure or backup rehearsal was performed | Outstanding |
+| Representative hosted migration, signed JWT and concurrent access acceptance | Disposable PGlite only; development account access does not establish production ownership | Outstanding |
+| Approved public policy/deletion/support resources | Standalone draft generation, escaping, unindexed previews and missing-notice release rejection pass; no owned origin or publication evidence supplied | Outstanding |
+
+No new client approvals were supplied during this audit. Milestones 2 and 3 remain open and the remaining delivery count stays at six. The table records completion evidence, rather than treating a passing local suite as production acceptance.
+
+For an upgrade, existing immutable policies containing noncanonical deadlines need a newly approved policy version; do not edit their history. If a previous run was fingerprinted under a non-UTC session, preserve its receipt and use the reviewed pause/resume procedure with a new case version and run ID to reassess it. This migration does not rewrite old evidence or claim that a previous run changed money. Rehearse any existing-case upgrade on an isolated representative clone before deployment.
 
 ## Work required to close milestone 3
 
