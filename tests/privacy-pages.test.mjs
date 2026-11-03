@@ -12,8 +12,14 @@ test('standalone deletion resource offers the confirmed mailbox without requirin
   assert.ok(pages.privacy.includes('being prepared'));assert.ok(pages.privacy.includes('noindex,nofollow'));
 });
 test('approved notice text is escaped and cannot introduce markup or script execution',()=>{
-  const pages=renderPrivacyPages(contact,{version:'fixture-v1',controller_name:'Fixture <controller>',body:'Approved fixture text only. <script>steal()</script> Privacy instructions here.',support_email:contact.supportEmail,approval_reference:'fixture-approval',approved_by:'Fixture reviewer',approved_at:'2026-10-31T10:00:00Z'});
+  const pages=renderPrivacyPages(contact,{version:'fixture-v1',controller_name:'Fixture <controller>',body:'Approved fixture text only. <script>steal()</script> Privacy instructions here.',support_email:contact.supportEmail,approval_reference:'fixture-approval',approved_by:'Fixture reviewer',approved_at:'2026-10-31T10:00:00Z'},{release:true});
   assert.ok(!pages.privacy.includes('<script>'));assert.ok(pages.privacy.includes('&lt;script&gt;'));assert.ok(pages.privacy.includes('index,follow'));
+});
+test('review previews stay unindexed even when a notice record is supplied',()=>{
+  const notice={version:'fixture-v1',controller_name:'Fixture controller',body:'Synthetic reviewed notice text for local testing only.',support_email:contact.supportEmail,approval_reference:'fixture-approval',approved_by:'Fixture reviewer',approved_at:'2026-10-31T10:00:00Z'};
+  const draft=renderPrivacyPages(contact,notice);
+  assert.ok(draft.privacy.includes('noindex,nofollow'));assert.ok(draft.deletion.includes('noindex,nofollow'));
+  assert.throws(()=>renderPrivacyPages(contact,null,{release:true}),/approved notice/);
 });
 test('release page generation refuses an unapproved missing notice before creating output files',async()=>{
   const directory=await mkdtemp(join(tmpdir(),'pogos-privacy-pages-test-'));const output=join(directory,'release');

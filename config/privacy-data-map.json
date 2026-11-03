@@ -657,6 +657,64 @@
       "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
     },
     {
+      "table": "privacy_application_context",
+      "classification": "restricted_privacy_processing",
+      "exportSection": null,
+      "exportScope": "Named privacy operator/reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Immutable processing policy/run evidence or transaction-local capability; review explicit field decisions and approved deadlines; never infer cascade deletion",
+      "fields": [
+        "transaction_id",
+        "backend_id",
+        "request_id"
+      ]
+    },
+    {
+      "table": "privacy_application_policies",
+      "classification": "restricted_privacy_processing",
+      "exportSection": null,
+      "exportScope": "Named privacy operator/reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Immutable processing policy/run evidence or transaction-local capability; review explicit field decisions and approved deadlines; never infer cascade deletion",
+      "fields": [
+        "version",
+        "retention_version",
+        "schema_fingerprint",
+        "operation_version",
+        "field_decisions",
+        "approval_reference",
+        "approved_by",
+        "approved_at",
+        "expires_at"
+      ]
+    },
+    {
+      "table": "privacy_application_runs",
+      "classification": "restricted_privacy_processing",
+      "exportSection": null,
+      "exportScope": "Named privacy operator/reviewer assessment; not a general self-service export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Immutable processing policy/run evidence or transaction-local capability; review explicit field decisions and approved deadlines; never infer cascade deletion",
+      "fields": [
+        "id",
+        "request_id",
+        "request_version",
+        "policy_version",
+        "policy_fingerprint",
+        "financial_fingerprint",
+        "operator_reference",
+        "row_limit",
+        "result",
+        "created_at",
+        "manual_reference",
+        "manual_operator",
+        "manual_at"
+      ]
+    },
+    {
       "table": "privacy_consent_events",
       "fields": [
         "id",
@@ -814,7 +872,9 @@
         "support_email",
         "active_notice_version",
         "retention_policy_version",
-        "deletion_processing_enabled"
+        "deletion_processing_enabled",
+        "application_erasure_enabled",
+        "application_policy_version"
       ],
       "classification": "configuration",
       "exportSection": null,

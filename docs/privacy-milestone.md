@@ -2,6 +2,9 @@
 
 Updated: 31 October 2026. **Implemented and verified locally; policy/retention approval, actual erasure execution and hosted/native acceptance remain open.** This is not a completed production privacy gate.
 
+
+Follow-on verified 3 November: [core minimisation and review preparation](privacy-core-minimisation-milestone.md) now implements a default-disabled scoped operation and brings the combined suite to 378 tests and the inventory to 70 tables/29 export sections. Policy/provider/residual/vendor/backup/hosting acceptance remains open. The sections below retain the original orchestration checkpoint and its evidence.
+
 ## Previous milestone verification
 
 The identity increment was rechecked before advancing: all **181** existing tests, TypeScript, lint, generated schema types, SDK compatibility and strict installed-peer checks passed. Both native exports and temporary project generation passed. Its hosted Auth/PostgREST/Deno, physical-device, owner and granular manager/finance gates remain open.

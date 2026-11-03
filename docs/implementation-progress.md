@@ -2,6 +2,12 @@
 
 Updated: 3 November 2026. Scope: local implementation increments for the cash-first release at Msasa, Kamfinsa and Westgate. GAAP is the confirmed POS vendor. Digital payments remain Release 2.
 
+## Privacy core minimisation and review preparation
+
+The 353-test client-data checkpoint was reverified before independent milestone 3 engineering. Client approvals remain unconfirmed, so milestone 2 stays open. A default-disabled, service-only core minimisation operation now checks current case/policy/field coverage and provider deletion, removes scoped contact/device data, preserves financial state with rollback checks and records immutable retry receipts. Unresolved notification dispatch blocks erasure. Separate retained/unstructured-record review and matching application evidence are required for completion. A private unapproved field-review generator and corrected unindexed public previews are included.
+
+The complete `npm run check` passes **378 tests**, including 25 new core/policy/draft/preview cases; inventory covers **70 public tables**, with 29 export sections. The [implementation report](privacy-core-minimisation-milestone.md) records exact scope and limitations. Policy/retention/vendor approval, actual provider/manual/downstream/backup work, hosted/device acceptance and owned public hosting remain open. No real erasure, migration, activation or publication occurred. Six delivery groups remain.
+
 ## Client ownership/data onboarding preparation
 
 The user reconfirmed on 3 November that there are no new client approvals. Milestone 2 is **in progress awaiting client evidence**. A private draft, strict schema, redacted completeness/capability reports, canonical approval digests and disabled configuration-review proposals are implemented, together with a read-only inventory and mapping/clone procedure. No source facts, production ownership, real balances or permissions are invented or applied. The complete local suite has **353 passing tests**, including 31 new intake/CLI/database cases, and `npm run check` checks that the committed template remains an unapproved draft. See [the milestone report and outstanding client inputs](client-data-milestone.md). Six delivery groups remain; actual ownership/data/business approval is not closed by engineering tooling.

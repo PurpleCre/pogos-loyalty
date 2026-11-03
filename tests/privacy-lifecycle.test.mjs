@@ -3,6 +3,7 @@ import { before,after,test } from 'node:test';
 import { randomUUID } from 'node:crypto';
 import { createTestDatabase,asRole } from '../scripts/test-database.mjs';
 import { privacySections } from '../lib/privacy.ts';
+import { installPrivacyPolicy } from './helpers/privacy-policy-fixture.mjs';
 const alice=randomUUID(),bob=randomUUID(),admin=randomUUID(),reviewer=randomUUID(),staff=randomUUID(),branch=randomUUID();
 const retainedOrder=randomUUID(),claimCode=randomUUID();
 let db;let exportRequest;let deletionRequest;
@@ -14,6 +15,8 @@ async function notice() {
   await db.exec(`INSERT INTO public.privacy_notices(version,controller_name,body,support_email,approval_reference,approved_by,approved_at) VALUES('fixture-v1','Fixture controller','This fixture notice is approved only inside a disposable test database.','privacy@fixture.test','test-approval','Fixture reviewer',now()) ON CONFLICT DO NOTHING`);
   await db.exec(`INSERT INTO public.privacy_retention_approvals(version,policy_reference,approved_by,approved_at) VALUES('fixture-retention','fixture-record-only-retention','Fixture counsel',now()) ON CONFLICT DO NOTHING`);
   await db.exec(`UPDATE public.privacy_settings SET active_notice_version='fixture-v1',retention_policy_version='fixture-retention',deletion_processing_enabled=true`);
+  await installPrivacyPolicy(db);
+  await db.exec(`UPDATE public.privacy_settings SET application_erasure_enabled=true,application_policy_version='fixture-core-v1'`);
 }
 before(async()=>{
   db=await createTestDatabase();
@@ -122,20 +125,23 @@ test('completion is server-only and needs every task, approvals and actual erasu
   await assert.rejects(rpc(reviewer,'complete_privacy_deletion',[deletionRequest.id,deletionRequest.version,'Not allowed'],claims('aal2')),{code:'42501'});
   await assert.rejects(rpc(null,'complete_privacy_deletion',[deletionRequest.id,deletionRequest.version,'Fixture completion'],{},'service_role'),{code:'22023'});
   await assert.rejects(rpc(null,'record_privacy_task',[deletionRequest.id,'application','not_applicable','fixture-evidence','Fixture operator'],{},'service_role'),{code:'22023'});
-  for(const system of ['application','authentication','gaap','email','monitoring','backups'])await rpc(null,'record_privacy_task',[deletionRequest.id,system,system==='application'||system==='authentication'?'completed':'not_applicable',`fixture-${system}-receipt`,'Fixture operator'],{},'service_role');
+  await assert.rejects(rpc(null,'record_privacy_task',[deletionRequest.id,'application','completed','fixture-application-receipt','Fixture operator'],{},'service_role'),{code:'22023'});
+  for(const system of ['authentication','gaap','email','monitoring','backups'])await rpc(null,'record_privacy_task',[deletionRequest.id,system,system==='authentication'?'completed':'not_applicable',`fixture-${system}-receipt`,'Fixture operator'],{},'service_role');
   await assert.rejects(rpc(null,'complete_privacy_deletion',[deletionRequest.id,deletionRequest.version,'Fixture completion'],{},'service_role'),{code:'22023'});
 });
-test('simulated approved erasure completes without cascading financial records and stale JWTs lose access',async()=>{
-  // Test-only manual simulation, not the production erasure implementation.
-  await db.query('DELETE FROM public.user_locations WHERE user_id=$1',[alice]);await db.query('DELETE FROM public.push_subscriptions WHERE user_id=$1',[alice]);
-  await db.query('UPDATE public.profiles SET email=NULL,full_name=NULL,gaap_customer_id=NULL WHERE id=$1',[alice]);await db.query(`UPDATE auth.users SET email=NULL,email_confirmed_at=NULL,raw_user_meta_data='{}',deleted_at=now() WHERE id=$1`,[alice]);
-  await db.query(`UPDATE public.reward_reservations SET customer_name='[Deleted]' WHERE user_id=$1`,[alice]);
+test('actual core minimisation plus simulated provider/manual receipts retains finance and blocks stale JWTs',async()=>{
+  // Only external Auth work and the retained-record review are simulated here.
+  await db.query(`UPDATE auth.users SET email=NULL,email_confirmed_at=NULL,raw_user_meta_data='{}',deleted_at=now() WHERE id=$1`,[alice]);
   const original=(await db.query('SELECT current_points FROM public.user_points WHERE user_id=$1',[alice])).rows[0].current_points;
   // Even an inactive/no-token binding must be handled by actual erasure.
   await db.query(`INSERT INTO public.push_devices(id,secret_hash,user_id,project_id,platform,active,aal2,expires_at)
     VALUES($1,'retained-fixture-hash',$2,$3,'android',false,false,now())`,[randomUUID(),alice,randomUUID()]);
   await assert.rejects(rpc(null,'complete_privacy_deletion',[deletionRequest.id,deletionRequest.version,'Fixture completion approval'],{},'service_role'),{code:'22023'});
-  await db.query('DELETE FROM public.push_devices WHERE user_id=$1',[alice]);
+  const run=randomUUID();
+  await rpc(null,'minimize_privacy_application',[deletionRequest.id,deletionRequest.version,'fixture-core-v1',run,'Fixture operator',10000],{},'service_role');
+  await assert.rejects(rpc(null,'record_privacy_task',[deletionRequest.id,'application','completed','fixture-application-receipt','Fixture operator'],{},'service_role'),{code:'22023'});
+  await rpc(null,'attest_privacy_application_review',[deletionRequest.id,deletionRequest.version,'fixture-core-v1',run,'fixture-application-receipt','Fixture operator'],{},'service_role');
+  await rpc(null,'record_privacy_task',[deletionRequest.id,'application','completed','fixture-application-receipt','Fixture operator'],{},'service_role');
   await rpc(null,'complete_privacy_deletion',[deletionRequest.id,deletionRequest.version,'Fixture completion approval'],{},'service_role');
   assert.equal((await rpc(alice,'account_privacy_state')).deleted,true);
   assert.equal((await asRole(db,'authenticated',alice,()=>db.query('SELECT id FROM public.profiles'),claims())).rows.length,0);
@@ -169,12 +175,12 @@ test('active orders and staff obligations block processing without losing the de
 test('paused deletion can resume, while changed approvals invalidate older task evidence',async()=>{
   let request=await rpc(bob,'submit_privacy_request',[randomUUID(),'deletion'],claims('aal2'));
   request=await rpc(reviewer,'review_privacy_deletion',[request.id,request.version,'start','Approved fixture review'],claims('aal2'));
-  await rpc(null,'record_privacy_task',[request.id,'application','completed','fixture-before-policy-change','Fixture operator'],{},'service_role');
+  await rpc(null,'record_privacy_task',[request.id,'email','completed','fixture-before-policy-change','Fixture operator'],{},'service_role');
   request=await rpc(reviewer,'review_privacy_deletion',[request.id,request.version,'pause','Recheck operator evidence'],claims('aal2'));assert.equal(request.blocker,'operator_review');
   await assert.rejects(rpc(null,'record_privacy_task',[request.id,'email','not_applicable','fixture-no-email','Fixture operator'],{},'service_role'),{code:'22023'});
   await db.exec(`INSERT INTO public.privacy_retention_approvals(version,policy_reference,approved_by,approved_at) VALUES('fixture-retention-v2','fixture-policy-revision','Fixture counsel',now());UPDATE public.privacy_settings SET retention_policy_version='fixture-retention-v2'`);
   request=await rpc(reviewer,'review_privacy_deletion',[request.id,request.version,'resume','Review revised retention scope'],claims('aal2'));assert.equal(request.blocker,null);
-  const evidence=(await db.query(`SELECT status,evidence_reference FROM public.privacy_request_tasks WHERE request_id=$1 AND system='application'`,[request.id])).rows[0];assert.deepEqual(evidence,{status:'pending',evidence_reference:null});
+  const evidence=(await db.query(`SELECT status,evidence_reference FROM public.privacy_request_tasks WHERE request_id=$1 AND system='email'`,[request.id])).rows[0];assert.deepEqual(evidence,{status:'pending',evidence_reference:null});
 });
 test('review queue pagination preserves cases that have equal timestamps',async()=>{
   const requests=[];

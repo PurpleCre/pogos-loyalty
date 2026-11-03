@@ -20,6 +20,7 @@
     "native:preflight": "node scripts/native-preflight.mjs",
     "deps:check": "node scripts/dependency-check.mjs",
     "privacy:pages": "node scripts/build-privacy-pages.mjs",
+    "privacy:policy:draft": "node scripts/privacy-policy-draft.mjs",
     "client:init": "node scripts/client-data.mjs init",
     "client:status": "node scripts/client-data.mjs status",
     "client:check": "node scripts/client-data.mjs check",

@@ -1639,6 +1639,139 @@ export type Database = {
 
       ]
     }
+    "privacy_application_context": {
+      Row: {
+        "transaction_id": number
+        "backend_id": number
+        "request_id": string
+      }
+      Insert: {
+        "transaction_id": number
+        "backend_id": number
+        "request_id": string
+      }
+      Update: {
+        "transaction_id"?: number
+        "backend_id"?: number
+        "request_id"?: string
+      }
+      Relationships: [
+        {
+          foreignKeyName: "privacy_application_context_request_id_fkey"
+          columns: ["request_id"]
+          isOneToOne: false
+          referencedRelation: "privacy_requests"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
+    "privacy_application_policies": {
+      Row: {
+        "version": string
+        "retention_version": string
+        "schema_fingerprint": string
+        "operation_version": string
+        "field_decisions": Json
+        "approval_reference": string
+        "approved_by": string
+        "approved_at": string
+        "expires_at": string
+      }
+      Insert: {
+        "version": string
+        "retention_version": string
+        "schema_fingerprint": string
+        "operation_version": string
+        "field_decisions": Json
+        "approval_reference": string
+        "approved_by": string
+        "approved_at": string
+        "expires_at": string
+      }
+      Update: {
+        "version"?: string
+        "retention_version"?: string
+        "schema_fingerprint"?: string
+        "operation_version"?: string
+        "field_decisions"?: Json
+        "approval_reference"?: string
+        "approved_by"?: string
+        "approved_at"?: string
+        "expires_at"?: string
+      }
+      Relationships: [
+        {
+          foreignKeyName: "privacy_application_policies_retention_version_fkey"
+          columns: ["retention_version"]
+          isOneToOne: false
+          referencedRelation: "privacy_retention_approvals"
+          referencedColumns: ["version"]
+        }
+      ]
+    }
+    "privacy_application_runs": {
+      Row: {
+        "id": string
+        "request_id": string
+        "request_version": number
+        "policy_version": string
+        "policy_fingerprint": string
+        "financial_fingerprint": string
+        "operator_reference": string
+        "row_limit": number
+        "result": Json
+        "created_at": string
+        "manual_reference": string | null
+        "manual_operator": string | null
+        "manual_at": string | null
+      }
+      Insert: {
+        "id": string
+        "request_id": string
+        "request_version": number
+        "policy_version": string
+        "policy_fingerprint": string
+        "financial_fingerprint": string
+        "operator_reference": string
+        "row_limit": number
+        "result": Json
+        "created_at"?: string
+        "manual_reference"?: string | null
+        "manual_operator"?: string | null
+        "manual_at"?: string | null
+      }
+      Update: {
+        "id"?: string
+        "request_id"?: string
+        "request_version"?: number
+        "policy_version"?: string
+        "policy_fingerprint"?: string
+        "financial_fingerprint"?: string
+        "operator_reference"?: string
+        "row_limit"?: number
+        "result"?: Json
+        "created_at"?: string
+        "manual_reference"?: string | null
+        "manual_operator"?: string | null
+        "manual_at"?: string | null
+      }
+      Relationships: [
+        {
+          foreignKeyName: "privacy_application_runs_policy_version_fkey"
+          columns: ["policy_version"]
+          isOneToOne: false
+          referencedRelation: "privacy_application_policies"
+          referencedColumns: ["version"]
+        },
+        {
+          foreignKeyName: "privacy_application_runs_request_id_fkey"
+          columns: ["request_id"]
+          isOneToOne: false
+          referencedRelation: "privacy_requests"
+          referencedColumns: ["id"]
+        }
+      ]
+    }
     "privacy_consent_events": {
       Row: {
         "id": string
@@ -1944,6 +2077,8 @@ export type Database = {
         "active_notice_version": string | null
         "retention_policy_version": string | null
         "deletion_processing_enabled": boolean
+        "application_erasure_enabled": boolean
+        "application_policy_version": string | null
       }
       Insert: {
         "singleton"?: boolean
@@ -1951,6 +2086,8 @@ export type Database = {
         "active_notice_version"?: string | null
         "retention_policy_version"?: string | null
         "deletion_processing_enabled"?: boolean
+        "application_erasure_enabled"?: boolean
+        "application_policy_version"?: string | null
       }
       Update: {
         "singleton"?: boolean
@@ -1958,6 +2095,8 @@ export type Database = {
         "active_notice_version"?: string | null
         "retention_policy_version"?: string | null
         "deletion_processing_enabled"?: boolean
+        "application_erasure_enabled"?: boolean
+        "application_policy_version"?: string | null
       }
       Relationships: [
         {
@@ -1965,6 +2104,13 @@ export type Database = {
           columns: ["active_notice_version"]
           isOneToOne: false
           referencedRelation: "privacy_notices"
+          referencedColumns: ["version"]
+        },
+        {
+          foreignKeyName: "privacy_settings_application_policy_version_fkey"
+          columns: ["application_policy_version"]
+          isOneToOne: false
+          referencedRelation: "privacy_application_policies"
           referencedColumns: ["version"]
         },
         {
@@ -3049,6 +3195,17 @@ export type Database = {
       }
       Returns: Json
     }
+    "attest_privacy_application_review": {
+      Args: {
+        "p_request": string
+        "p_expected_version": number
+        "p_policy": string
+        "p_run": string
+        "p_evidence": string
+        "p_operator": string
+      }
+      Returns: undefined
+    }
     "branch_operations_history": {
       Args: {
         "p_store_id": string
@@ -3256,6 +3413,17 @@ export type Database = {
       Args: Record<PropertyKey, never>
       Returns: Json
     }
+    "minimize_privacy_application": {
+      Args: {
+        "p_request": string
+        "p_expected_version": number
+        "p_policy": string
+        "p_run": string
+        "p_operator": string
+        "p_row_limit"?: number
+      }
+      Returns: Json
+    }
     "my_notification_inbox": {
       Args: {
         "p_before"?: string
@@ -3327,6 +3495,10 @@ export type Database = {
       Args: Record<PropertyKey, never>
       Returns: boolean
     }
+    "privacy_application_schema": {
+      Args: Record<PropertyKey, never>
+      Returns: string
+    }
     "privacy_assert_account_available": {
       Args: Record<PropertyKey, never>
       Returns: undefined
@@ -3336,6 +3508,24 @@ export type Database = {
         "p_user": string
       }
       Returns: undefined
+    }
+    "privacy_core_clean": {
+      Args: {
+        "p_user": string
+      }
+      Returns: boolean
+    }
+    "privacy_core_fields": {
+      Args: Record<PropertyKey, never>
+      Returns: Json
+    }
+    "privacy_core_request": {
+      Args: {
+        "p_request": string
+        "p_expected": number
+        "p_policy": string
+      }
+      Returns: Json
     }
     "privacy_deletion_blocker": {
       Args: {
@@ -3357,6 +3547,12 @@ export type Database = {
       Args: Record<PropertyKey, never>
       Returns: (string)[]
     }
+    "privacy_financial_fingerprint": {
+      Args: {
+        "p_user": string
+      }
+      Returns: string
+    }
     "privacy_is_reviewer": {
       Args: Record<PropertyKey, never>
       Returns: boolean
@@ -3367,6 +3563,12 @@ export type Database = {
         "p_limit"?: number
       }
       Returns: Json
+    }
+    "privacy_push_purge_allowed": {
+      Args: {
+        "p_delivery": string
+      }
+      Returns: boolean
     }
     "privacy_recent_identity": {
       Args: Record<PropertyKey, never>
@@ -3591,6 +3793,12 @@ export type Database = {
         "p_secret": string
       }
       Returns: boolean
+    }
+    "validate_privacy_application_policy": {
+      Args: {
+        "p_version": string
+      }
+      Returns: string
     }
     }
     Enums: {
