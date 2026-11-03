@@ -10,19 +10,20 @@ import { OrderProvider } from '@/contexts/OrderContext';
 import { LegacyOfflineNotice } from '@/components/LegacyOfflineNotice';
 import { PrivacyExportCleanup } from '@/components/auth/PrivacyExportCleanup';
 import { PushNotificationsProvider } from '@/hooks/usePushNotifications';
-import { sanitizeTelemetry } from '@/lib/privacy-logging';
+import Constants from 'expo-constants';
+import * as Updates from 'expo-updates';
+import { errorReportingOptions } from '@/lib/error-reporting';
+import reportingBindings from '@/config/error-reporting.json';
 
 import * as Sentry from '@sentry/react-native';
 
-Sentry.init({
+Sentry.init(errorReportingOptions({
   dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
-  enabled: !!process.env.EXPO_PUBLIC_SENTRY_DSN,
-  debug: false,
+  enabled: process.env.EXPO_PUBLIC_ERROR_REPORTING_ENABLED,
   environment: runtimeEnvironment.name,
-  sendDefaultPii: false,
-  beforeSend: event => sanitizeTelemetry(event),
-  beforeBreadcrumb: breadcrumb => sanitizeTelemetry(breadcrumb),
-});
+  version: Constants.expoConfig?.version,
+  updateId: Updates.updateId,
+}, reportingBindings));
 
 const queryClient = new QueryClient();
 

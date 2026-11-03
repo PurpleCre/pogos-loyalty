@@ -4,6 +4,10 @@ Updated: 3 November 2026. Engineering inventory and activation procedure; this i
 
 The user confirmed **pgonese6@gmail.com** as the temporary privacy contact. Pogo’s legal controller, privacy approver, retention rules, approved hosting/transfers, mailbox ownership/recovery and public website are unconfirmed. `config/privacy-contact.json` contains the contact; `config/privacy-data-map.json` classifies all **70** local public tables and records other device/vendor stores. A regression test fails when local tables/fields drift from that inventory. It does not inventory the live deployment.
 
+## Error reporting and incident records
+
+Client JS reporting is disabled until an isolated environment destination and exact public opt-in are configured. The new [reporting policy](../monitoring-safety-sprint.md) replaces recursive field-name redaction with a bounded error allowlist and an outgoing-envelope filter. Native crash capture, screenshots/hierarchy, replay, logs, sessions and tracing are disabled. Current checks use an injected transport; actual native/provider/network metadata and retained records still require review. New filtering does not erase historical Sentry/native data or change installed older clients. Approve provider access/region/retention/deletion and restricted incident-record handling through the [operational runbook](../operations-monitoring-runbook.md) before activation.
+
 ## Core minimisation follow-on
 
 Milestone 3 now includes a **default-disabled, service-only core minimisation operation**, field/policy validation, financial invariants, immutable recovery receipts and separate retained/unstructured-record review. The full local suite passes **380 tests**. See [the exact scope, policy format and operator sequence](../privacy-core-minimisation-milestone.md). `npm run privacy:policy:draft` creates a private unapproved review for every local public field; it does not register an approval or activate processing. The operation is a subset of the required erasure procedure: provider, residual/manual, vendor, backup, deadline follow-up and actual hosted/device work remain required.

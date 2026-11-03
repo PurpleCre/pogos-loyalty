@@ -6,4 +6,5 @@ export const verificationEnvironment = {
   EXPO_PUBLIC_SUPABASE_URL: 'http://127.0.0.1:54321', EXPO_PUBLIC_SUPABASE_ANON_KEY: `eyJhbGciOiJIUzI1NiJ9.${payload}.offlineVerificationOnly`,
   EXPO_PUBLIC_GOOGLE_MAPS_API_KEY: '', ANDROID_MAPS_API_KEY: 'offline-android-map-key', IOS_MAPS_API_KEY: 'offline-ios-map-key', EXPO_PUBLIC_SENTRY_DSN: '',
   SENTRY_DISABLE_AUTO_UPLOAD: 'true',
+  EXPO_PUBLIC_ERROR_REPORTING_ENABLED: 'false',
 };

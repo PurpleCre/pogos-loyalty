@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { collectPrivacyExport,privacySections } from '../lib/privacy.ts';
-import { logPrivateError,sanitizeTelemetry } from '../lib/privacy-logging.ts';
+import { logPrivateError } from '../lib/privacy-logging.ts';
+import { sanitizeTelemetry } from '../lib/error-reporting.ts';
 const id='d0000000-0000-4000-8000-000000000001';
 const cursor='d0000000-0000-4000-8000-000000000002';
 const page=(section,rows=[],next_cursor=null)=>({section,rows,next_cursor,generated_at:'2026-10-31T10:00:00Z',created_before:'2026-10-31T09:00:00Z'});
@@ -38,11 +39,11 @@ test('private error logging emits only fixed context and a bounded machine code'
   finally{console.error=original;}
   assert.deepEqual(output,[['Save address failed',{code:'23505'}],['Authentication failed',{code:'unknown'}]]);
 });
-test('telemetry removes personal payloads, URL credentials and auth query/fragment values while keeping stack locations',()=>{
+test('telemetry removes personal payloads and entire breadcrumb URLs while keeping bounded stack locations',()=>{
   const event={event_id:'fixture',user:{email:'person@example.test'},request:{data:{address:'private'}},extra:{password:'secret'},contexts:{private:'data'},exception:{values:[{type:'Error',value:'Private error',stacktrace:{frames:[{filename:'app.tsx',lineno:10,vars:{email:'hidden'}}]}}]},breadcrumbs:[{message:'raw personal text',data:{url:'pogos-dev://auth/callback?code=secret#access_token=token',Authorization:'Bearer secret'}}]};
   const result=sanitizeTelemetry(event);const text=JSON.stringify(result);
   for(const forbidden of ['person@example.test','private','secret','hidden','Private error','raw personal text','Bearer'])assert.ok(!text.includes(forbidden),forbidden);
-  assert.equal(result.exception.values[0].stacktrace.frames[0].filename,'app.tsx');assert.ok(text.includes('pogos-dev://auth/callback'));
+  assert.equal(result.exception.values[0].stacktrace.frames[0].filename,'app.tsx');assert.equal(result.breadcrumbs,undefined);
 });
 
 test('ordinary logout clears the departing address cache without dropping financial recovery or another account',async()=>{

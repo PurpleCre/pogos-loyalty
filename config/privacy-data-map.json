@@ -1385,7 +1385,7 @@
     },
     {
       "system": "Sentry",
-      "data": "Optional crash reports with client redaction; provider/account/region review pending",
+      "data": "Default-off client JS errors only after isolated project binding and exact opt-in; bounded error/stack/build identifiers with event/envelope filtering; native crash capture/replay/logs/tracing disabled; actual provider/network metadata, historical records, region and retention review pending",
       "retentionApproval": "unconfirmed"
     },
     {

@@ -211,7 +211,7 @@ For each service, identify the owner, existing organisation/project, administrat
 | T04 | Google Play / Apple developer organisations, app listings, package/bundle IDs, signing ownership, transfer/upgrade constraints and any installed customer/staff versions. |
 | T05 | Domain/DNS/website ownership, public support/privacy/deletion URLs and the person who can publish approved pages. |
 | T06 | Transactional email service, sending domain/address, DNS/SMTP administrator, billing and recovery-link delivery requirements. Credentials follow secure handover. |
-| T07 | Google Maps/cloud account and billing owner; monitoring/error-reporting organisation; push-service ownership and platform permissions. |
+| T07 | Google Maps/cloud account and billing owner; monitoring/error-reporting organisation, separate project/region per environment, access/recovery and retention owner; push-service ownership and platform permissions. Approve named alert responders/deputies and budget/escalation coverage alongside A07/R04; see the monitoring/incident runbook. |
 | T08 | Current integrations, deployed functions, scheduled jobs, storage/media, backups and third-party exports. Identify existing production incidents, known limitations and previous suppliers. |
 | T09 | Authorised contact for a read-only inventory and representative-data migration rehearsal; who approves real-data access, backup, maintenance window and cutover? |
 | T10 | Data classification: real versus demo users/orders/balances/assets, volumes, active sessions/orders/rewards and any records that cannot be moved or deleted. Share counts/redacted samples first. |

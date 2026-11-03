@@ -6,7 +6,7 @@ Verified: 3 November 2026. Release 1 is loyalty and cash ordering/collection/del
 
 **Milestone 2 — client ownership, production data and business approval: in progress, awaiting client evidence.** The user reconfirmed on 3 November that no new approvals have been supplied. Engineering preparation now includes a private intake template/schema, redacted checks, approval/content hashes, disabled configuration proposals and a read-only inventory procedure. At the client-data checkpoint the full suite passed **353 tests**, including 31 intake/CLI/database cases; type/lint/schema/SDK/peer/template checks pass. No account, real data, role or branch configuration was changed. See the [milestone report and exact outstanding inputs](client-data-milestone.md).
 
-This is preparation for closing milestone 2, not evidence that ownership or business policy has been approved. **Six delivery milestones still remain**. Milestone 2 awaits client evidence while independent engineering proceeds in milestone 4. Actual configuration/financial correctness must be established against named client evidence and a representative hosted clone.
+This is preparation for closing milestone 2, not evidence that ownership or business policy has been approved. **Six delivery milestones still remain**. Milestone 2 awaits client evidence while independent engineering proceeds in milestones 4 and 5. Actual configuration/financial correctness must be established against named client evidence and a representative hosted clone.
 
 ## Privacy completion engineering increment
 
@@ -14,11 +14,17 @@ This is preparation for closing milestone 2, not evidence that ownership or busi
 
 Client ownership/business approval remains open alongside this engineering work. Actual controller/notice/retention/vendor approval, provider revocation, residual/manual minimisation, hosted/device rehearsal and owned public hosting are still required. No real erasure, hosted migration or publication occurred; **six delivery groups remain**.
 
+## Error-reporting safety and incident-response foundation
+
+**Milestone 5 — in progress; local reporting safety slice implemented and verified.** The previous telemetry denylist could retain private URL paths and text under unexpected keys. A fixed JS error allowlist and last-envelope filter now remove those fields, attachments and secondary payload types. Native crash capture, replay, logs, sessions and tracing remain disabled. Reporting needs exact opt-in and an isolated environment/project binding; all three bindings remain null. No provider is activated.
+
+The full `npm run check` passes **407 tests**, including 19 new reporting cases with the installed core SDK and an injected transport. Android/iOS bundle exports and source-map identity checks pass; these are not signed builds or device acceptance. Configuration validation joins the CI gate and OTA defaults the optional reporting switch off. The [sprint report](monitoring-safety-sprint.md) and [incident runbook](operations-monitoring-runbook.md) record scope and activation/rehearsal requirements. Actual monitoring/alerts/responders, provider/privacy approval, security review, load/soak/accessibility, hosted CI and restore/cutover acceptance remain open; **six delivery groups remain**.
+
 ## Edge runtime and protected workers sprint
 
 **Milestone 4 remains in progress; the local Deno sprint is complete.** All seven function entrypoints pass strict native Deno checking. The runtime suite passes **22 tests**, using actual SDK HTTP to a loopback fake backend and simulated provider responses. Protected cash/reward expiry entrypoints join the hardened push worker; separate secrets, exact default-off switches, fixed operations, input limits, database redirect rejection and explicit retry control are verified. Speculative GAAP/marketing/AI handlers remain closed even if old enable flags are set; GAAP must connect the app’s own ordering and loyalty ledger through an approved contract.
 
-The full `npm run check` passes **388 tests** with type/lint/schema/SDK/peer/template checks. A separate Edge CI job now joins the reusable gate used by OTA. No hosted workflow, deployment, provider send, schedule, live data change or publication occurred. This proves native Deno handler behavior, not hosted Supabase Edge Runtime/gateway/Auth/PostgREST or real provider/device delivery. See [the sprint evidence and required activation checks](edge-runtime-sprint.md). Client approvals and the broader milestone remain open; **six delivery groups remain**.
+At the Edge checkpoint the full `npm run check` passed **388 tests** with type/lint/schema/SDK/peer/template checks. A separate Edge CI job now joins the reusable gate used by OTA. No hosted workflow, deployment, provider send, schedule, live data change or publication occurred. This proves native Deno handler behavior, not hosted Supabase Edge Runtime/gateway/Auth/PostgREST or real provider/device delivery. See [the sprint evidence and required activation checks](edge-runtime-sprint.md). Client approvals and the broader milestone remain open; **six delivery groups remain**.
 
 ## Hosted integration and concurrency sprint
 

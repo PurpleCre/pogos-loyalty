@@ -2,11 +2,17 @@
 
 Updated: 3 November 2026. Scope: local implementation increments for the cash-first release at Msasa, Kamfinsa and Westgate. GAAP is the confirmed POS vendor. Digital payments remain Release 2.
 
+## Error-reporting safety and incident-response foundation
+
+**Milestone 5 — in progress; local reporting safety slice implemented and verified.** The previous telemetry denylist could retain private URL paths and text under unexpected keys. A fixed JS error allowlist and last-envelope filter now remove those fields, attachments and secondary payload types. Native crash capture, replay, logs, sessions and tracing remain disabled. Reporting needs exact opt-in and an isolated environment/project binding; all three bindings remain null. No provider is activated.
+
+The full `npm run check` passes **407 tests**, including 19 new reporting cases with the installed core SDK and an injected transport. Android/iOS bundle exports and source-map identity checks pass; these are not signed builds or device acceptance. Configuration validation joins the CI gate and OTA defaults the optional reporting switch off. The [sprint report](monitoring-safety-sprint.md) and [incident runbook](operations-monitoring-runbook.md) record scope and activation/rehearsal requirements. Actual monitoring/alerts/responders, provider/privacy approval, security review, load/soak/accessibility, hosted CI and restore/cutover acceptance remain open; **six delivery groups remain**.
+
 ## Edge runtime and protected workers sprint
 
 **Milestone 4 remains in progress; the local Deno sprint is complete.** All seven function entrypoints pass strict native Deno checking. The runtime suite passes **22 tests**, using actual SDK HTTP to a loopback fake backend and simulated provider responses. Protected cash/reward expiry entrypoints join the hardened push worker; separate secrets, exact default-off switches, fixed operations, input limits, database redirect rejection and explicit retry control are verified. Speculative GAAP/marketing/AI handlers remain closed even if old enable flags are set; GAAP must connect the app’s own ordering and loyalty ledger through an approved contract.
 
-The full `npm run check` passes **388 tests** with type/lint/schema/SDK/peer/template checks. A separate Edge CI job now joins the reusable gate used by OTA. No hosted workflow, deployment, provider send, schedule, live data change or publication occurred. This proves native Deno handler behavior, not hosted Supabase Edge Runtime/gateway/Auth/PostgREST or real provider/device delivery. See [the sprint evidence and required activation checks](edge-runtime-sprint.md). Client approvals and the broader milestone remain open; **six delivery groups remain**.
+At the Edge checkpoint the full `npm run check` passed **388 tests** with type/lint/schema/SDK/peer/template checks. A separate Edge CI job now joins the reusable gate used by OTA. No hosted workflow, deployment, provider send, schedule, live data change or publication occurred. This proves native Deno handler behavior, not hosted Supabase Edge Runtime/gateway/Auth/PostgREST or real provider/device delivery. See [the sprint evidence and required activation checks](edge-runtime-sprint.md). Client approvals and the broader milestone remain open; **six delivery groups remain**.
 
 ## PostgreSQL concurrency sprint
 
