@@ -13,6 +13,19 @@
         "EXPO_PUBLIC_APP_ENV": "development"
       }
     },
+    "development-apk": {
+      "extends": "development",
+      "developmentClient": false,
+      "node": "22.19.0",
+      "env": {
+        "EXPO_PUBLIC_APP_ENV": "development",
+        "EXPO_PUBLIC_ERROR_REPORTING_ENABLED": "false",
+        "SENTRY_DISABLE_AUTO_UPLOAD": "true"
+      },
+      "android": {
+        "buildType": "apk"
+      }
+    },
     "preview": {
       "distribution": "internal",
       "channel": "staging",

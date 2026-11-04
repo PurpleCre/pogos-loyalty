@@ -1,0 +1,71 @@
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro
+.metro-health-check*
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+*.pem
+
+# local env files
+.env
+.env*.local
+.env.*
+*.env
+!.env.example
+
+
+# typescript
+*.tsbuildinfo
+
+# generated native folders
+/ios
+/android
+
+# Restricted client inputs, approval evidence and generated review artifacts
+.local/
+
+# Native cloud builds need app source, not database metadata or client evidence.
+/client-materials/
+/supabase/
+/docs/
+/tests/
+/.github/
+/.agents/
+/.codex/
+/.aws/
+credentials.json
+*.keystore
+/key
+/check-schema.js
+/create-trigger.js
+/migrate-*.js
+/query_db.js
+/test-*.js
+/update-*.js
+/*.sql
+/.vscode/
+/.git

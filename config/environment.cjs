@@ -10,7 +10,7 @@ function appEnvironment(values) {
   const updateTarget = values.POGOS_UPDATE_TARGET;
   if (updateTarget && (!['development', 'staging'].includes(updateTarget) || updateTarget !== name)) throw new Error('OTA target and app environment do not match.');
   const profile = values.EAS_BUILD_PROFILE;
-  const expected = { development: 'development', preview: 'staging', production: 'production' }[profile];
+  const expected = { development: 'development', 'development-apk': 'development', preview: 'staging', production: 'production' }[profile];
   if (profile && expected !== name) throw new Error('Build profile and app environment do not match.');
   return name;
 }

@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { readFileSync } from 'node:fs';
 import validation from '../config/environment.cjs';
 const dev = 'developmentfixture'; const stage = 'stagingfixture'; const prod = 'productionfixture';
 const binding = (ref, id, suffix) => ({ supabaseProjectRef: ref, expoOwner: 'fixture', expoProjectId: id,
@@ -44,6 +45,21 @@ test('release builds require approved identifiers and separate platform maps inp
   assert.doesNotThrow(() => validation.validateBuildBinding(values('production', prod), bindings));
   assert.throws(() => validation.validateBuildBinding({ ...values('staging', stage), ANDROID_MAPS_API_KEY: '' }, bindings), /ANDROID_MAPS/);
   assert.throws(() => validation.validateBuildBinding(values('staging', stage), { ...bindings, staging: { ...bindings.staging, scheme: null } }), /approval/);
+});
+test('installable development APK retains the development binding and rejects release or unknown targets', () => {
+  const profiles = JSON.parse(readFileSync(new URL('../eas.json', import.meta.url), 'utf8')).build;
+  const apk = { ...profiles[profiles['development-apk'].extends], ...profiles['development-apk'] };
+  assert.equal(apk.developmentClient, false);
+  assert.equal(apk.distribution, 'internal');
+  assert.equal(apk.channel, 'development');
+  assert.equal(apk.environment, 'development');
+  assert.equal(apk.android.buildType, 'apk');
+  assert.equal(apk.env.EXPO_PUBLIC_APP_ENV, 'development');
+  assert.equal(validation.validateBuildBinding({ ...values(), EAS_BUILD_PROFILE: 'development-apk', EAS_BUILD: 'true' }, bindings).name, 'development');
+  for (const [name, ref] of [['staging', stage], ['production', prod]]) {
+    assert.throws(() => validation.validateBuildBinding({ ...values(name, ref), EAS_BUILD_PROFILE: 'development-apk' }, bindings), /do not match/);
+  }
+  assert.throws(() => validation.validateBuildBinding({ ...values(), EAS_BUILD_PROFILE: 'unapproved-apk' }, bindings), /do not match/);
 });
 test('offline verification is explicitly local and cannot masquerade as an EAS build', () => {
   const local = { ...values(), POGOS_BUILD_CHECK: '1', EXPO_PUBLIC_SUPABASE_PROJECT_REF: 'local', EXPO_PUBLIC_SUPABASE_URL: 'http://127.0.0.1:54321', EXPO_PUBLIC_SUPABASE_ANON_KEY: jwt('anon', 'local') };
