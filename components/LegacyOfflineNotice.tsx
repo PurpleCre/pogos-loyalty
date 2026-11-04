@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { AppState, Text, TouchableOpacity, View } from 'react-native';
+import { AppState, Text, View } from 'react-native';
+import { TouchTarget as TouchableOpacity } from '@/components/ui/touch-target';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { legacyQueueNeedsReview } from '@/lib/legacy-offline';

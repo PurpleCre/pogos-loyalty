@@ -1,5 +1,8 @@
+import { Screen, PageHeading, EmptyState } from '@/components/ui/screen';
+import { ShoppingBag } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, ActivityIndicator } from 'react-native';
+import { TouchTarget as TouchableOpacity } from '@/components/ui/touch-target';
 import { useLocalSearchParams, router } from 'expo-router';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabase';
@@ -39,26 +42,23 @@ export default function OrderSuccessScreen() {
     return () => { cancelled = true; };
   }, [orderId, user?.id, focused]);
 
-  return <View className="flex-1 bg-slate-50">
-    <View className="bg-red-600 pt-14 pb-5 px-5"><Text className="text-white text-xl font-bold">Pogo’s</Text></View>
-    <ScrollView contentContainerStyle={{ padding: 24 }}>
-      {loading ? <ActivityIndicator color="#dc2626" /> : error ? <Text className="text-red-700">{error}</Text> : order ? <>
-        <Text className="text-2xl font-bold text-slate-900">Order received</Text>
-        <Text className="mt-3 text-slate-600">Order #{order.id.slice(0, 8).toUpperCase()}</Text>
-        <Text className="mt-2 text-slate-600">{order.status === 'pending' ? 'Awaiting confirmation from your branch.' : `Status: ${order.status}`}</Text>
-        <View className="p-5 bg-white rounded-xl border border-slate-200 my-5">
+  return <Screen title="Order details">
+      {loading ? <ActivityIndicator color="#174d45" /> : error ? <Text className="text-red-700">{error}</Text> : order ? <>
+        <PageHeading eyebrow="YOUR ORDER" title={order.status === 'cancelled' ? 'Order cancelled' : order.status === 'completed' ? 'Order completed' : 'Order received'} subtitle="Your branch, meals and payment details." />
+        <Text className="mt-3 text-subtle">Order #{order.id.slice(0, 8).toUpperCase()}</Text>
+        <Text className="mt-2 text-subtle">{order.status === 'pending' ? 'Awaiting confirmation from your branch.' : `Status: ${order.status}`}</Text>
+        <View className="p-5 bg-white rounded-xl border border-line my-5">
           <Text className="font-bold text-lg">{textField(order.branch_snapshot, 'name') || 'Your selected branch'}</Text>
           <Text className="mt-2">{order.fulfilment_mode === 'delivery' ? 'Cash on delivery' : 'Cash on collection'}</Text>
           {order.fulfilment_mode === 'delivery' ? <Text className="mt-2">{textField(order.delivery_snapshot, 'address')}</Text> : null}
           <Text className="mt-2">{textField(order.contact_snapshot, 'name')} · {textField(order.contact_snapshot, 'phone')}</Text>
-          {record?.items.map(item => <View key={item.id} className="mt-4"><Text>{item.quantity} × {item.item_name ?? 'Meal'}</Text><Text className="text-slate-500 text-sm">{Array.isArray(item.modifiers_snapshot) ? item.modifiers_snapshot.map(choice => textField(choice, 'name')).join(', ') : ''}</Text></View>)}
+          {record?.items.map(item => <View key={item.id} className="mt-4"><Text>{item.quantity} × {item.item_name ?? 'Meal'}</Text><Text className="text-subtle text-sm">{Array.isArray(item.modifiers_snapshot) ? item.modifiers_snapshot.map(choice => textField(choice, 'name')).join(', ') : ''}</Text></View>)}
           {order.total_minor !== null && order.currency ? <Text className="font-bold text-xl mt-5">{order.payment_status === 'paid' ? 'Paid' : order.payment_status === 'refunded' ? 'Refunded' : order.status === 'cancelled' ? 'Cancelled total' : 'Cash due'}: {formatMoney(order.total_minor, order.currency)}</Text> : null}
-          <Text className="mt-2 text-slate-500">Payment status: {order.payment_status ?? 'Check with branch'}</Text>
+          <Text className="mt-2 text-subtle">Payment status: {order.payment_status ?? 'Check with branch'}</Text>
         </View>
-        <Text className="text-slate-600">{order.loyalty_status === 'awarded' ? `${order.points_earned} points earned.` : order.loyalty_status === 'awaiting_review' ? 'Payment is recorded. Your points await an opening-balance review by the branch.' : order.loyalty_status === 'reversed' ? `${order.points_reversed} points reversed after the refund.` : order.loyalty_status === 'no_rule' ? 'Points earning was not configured for this order.' : 'Your branch will confirm preparation and handover. Unpaid orders do not earn points.'}</Text>
+        <Text className="text-subtle">{order.loyalty_status === 'awarded' ? `${order.points_earned} points earned.` : order.loyalty_status === 'awaiting_review' ? 'Payment is recorded. Your points await an opening-balance review by the branch.' : order.loyalty_status === 'reversed' ? `${order.points_reversed} points reversed after the refund.` : order.loyalty_status === 'no_rule' ? 'Points earning was not configured for this order.' : 'Your branch will confirm preparation and handover. Unpaid orders do not earn points.'}</Text>
       </> : null}
-      <TouchableOpacity onPress={() => router.push('/(app)/order-tracking')} className="bg-red-600 p-4 rounded-xl items-center mt-6"><Text className="text-white font-bold">View orders</Text></TouchableOpacity>
-      <TouchableOpacity onPress={() => router.push('/store-picker')} className="p-4 items-center mt-3"><Text className="text-red-600 font-bold">Back to branches</Text></TouchableOpacity>
-    </ScrollView>
-  </View>;
+      <TouchableOpacity onPress={() => router.push('/(app)/order-tracking')} className="bg-brand-800 p-4 rounded-xl items-center mt-6"><Text className="text-white font-bold">View orders</Text></TouchableOpacity>
+      <TouchableOpacity onPress={() => router.push('/store-picker')} className="p-4 items-center mt-3"><Text className="text-brand-800 font-bold">Back to branches</Text></TouchableOpacity>
+  </Screen>;
 }

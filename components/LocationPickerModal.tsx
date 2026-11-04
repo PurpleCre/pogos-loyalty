@@ -1,7 +1,9 @@
 import { logPrivateError } from '@/lib/privacy-logging';
 import React, { useState, useEffect } from 'react';
-import { View, Text, Modal, TouchableOpacity, TextInput, ScrollView, StyleSheet } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import { View, Text, Modal, ScrollView, StyleSheet, Platform } from 'react-native';
+import { Input as TextInput } from '@/components/ui/input';
+import { TouchTarget as TouchableOpacity } from '@/components/ui/touch-target';
+import MapView, { Marker } from '@/components/LocationMap';
 import { X, MapPin, Search, Star, Home, Briefcase, Plus } from 'lucide-react-native';
 import { useAuth } from '@/hooks/useAuth';
 import { useOrder, LocationData } from '@/contexts/OrderContext';
@@ -96,8 +98,8 @@ export function LocationPickerModal({ visible, onClose }: LocationPickerModalPro
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
       <SafeAreaView className="flex-1 bg-white" edges={['top']}>
         {/* Header */}
-        <View className="flex-row items-center justify-between px-5 py-4 border-b border-gray-100">
-          <Text className="text-xl font-bold text-gray-900">Set Delivery Location</Text>
+        <View className="flex-row items-center justify-between px-5 py-4 border-b border-line">
+          <Text className="text-xl font-bold text-ink">Set Delivery Location</Text>
           <TouchableOpacity onPress={onClose} className="p-2 -mr-2 bg-gray-100 rounded-full">
             <X size={20} color="#475569" />
           </TouchableOpacity>
@@ -105,11 +107,11 @@ export function LocationPickerModal({ visible, onClose }: LocationPickerModalPro
 
         <ScrollView className="flex-1" bounces={false}>
           {locationError ? <Text accessibilityRole="alert" className="p-4 text-amber-800">{locationError}</Text> : null}
-          <Text className="p-4 text-slate-600">Choose a pin and a written address. The branch confirms delivery coverage in your online quote.</Text>
+          <Text className="p-4 text-subtle">Choose a pin and a written address. The branch confirms delivery coverage in your online quote.</Text>
           {/* Saved Locations */}
           {savedLocations.length > 0 && (
             <View className="px-5 py-4">
-              <Text className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Saved Locations</Text>
+              <Text className="text-sm font-bold text-subtle uppercase tracking-wider mb-3">Saved Locations</Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} className="overflow-visible">
                 {savedLocations.map((loc) => {
                   let Icon = Star;
@@ -120,14 +122,14 @@ export function LocationPickerModal({ visible, onClose }: LocationPickerModalPro
                     <TouchableOpacity
                       key={loc.id}
                       onPress={() => handleSelectSavedLocation(loc)}
-                      className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 mr-3 items-center flex-row shadow-sm"
+                      className="bg-brand-50 border border-brand-100 rounded-xl px-4 py-3 mr-3 items-center flex-row shadow-sm"
                     >
-                      <View className="bg-red-100 p-2 rounded-full mr-3">
-                        <Icon size={18} color="#dc2626" />
+                      <View className="bg-brand-100 p-2 rounded-full mr-3">
+                        <Icon size={18} color="#174d45" />
                       </View>
                       <View>
-                        <Text className="font-bold text-gray-900">{loc.tag || 'Saved'}</Text>
-                        <Text className="text-xs text-gray-500 mt-0.5" numberOfLines={1}>{loc.address}</Text>
+                        <Text className="font-bold text-ink">{loc.tag || 'Saved'}</Text>
+                        <Text className="text-xs text-subtle mt-0.5" numberOfLines={1}>{loc.address}</Text>
                       </View>
                     </TouchableOpacity>
                   );
@@ -138,8 +140,8 @@ export function LocationPickerModal({ visible, onClose }: LocationPickerModalPro
 
           {/* Map Section */}
           <View className="px-5 py-2">
-            <Text className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Pick on Map</Text>
-            <View className="h-[250px] rounded-2xl overflow-hidden border border-gray-200 shadow-sm relative">
+            <Text className="text-sm font-bold text-subtle uppercase tracking-wider mb-3">{Platform.OS === 'web' ? 'Set your location pin' : 'Pick on map'}</Text>
+            <View className="h-[250px] rounded-2xl overflow-hidden border border-line shadow-sm relative">
               <MapView 
                 style={StyleSheet.absoluteFill}
                 region={region}
@@ -152,7 +154,7 @@ export function LocationPickerModal({ visible, onClose }: LocationPickerModalPro
                   <Marker coordinate={selectedCoordinate} pinColor="#dc2626" />
                 )}
               </MapView>
-              {!selectedCoordinate && (
+              {!selectedCoordinate && Platform.OS !== 'web' && (
                 <View className="absolute inset-0 items-center justify-center pointer-events-none">
                   <View className="bg-black/60 px-3 py-1.5 rounded-full">
                     <Text className="text-white text-xs font-medium">Tap map to set pin</Text>
@@ -165,31 +167,31 @@ export function LocationPickerModal({ visible, onClose }: LocationPickerModalPro
           {/* New Location Details */}
           {selectedCoordinate && (
             <View className="px-5 py-4">
-              <Text className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Location Details</Text>
+              <Text className="text-sm font-bold text-subtle uppercase tracking-wider mb-3">Location Details</Text>
               
-              <View className="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-4">
+              <View className="bg-canvas border border-line rounded-xl p-4 space-y-4">
                 <View>
-                  <Text className="text-xs text-gray-500 font-medium mb-1.5">Delivery Address</Text>
-                  <View className="flex-row items-center bg-white border border-gray-200 rounded-lg px-3 py-2.5">
-                    <MapPin size={16} color="#dc2626" className="mr-2" />
+                  <Text className="text-xs text-subtle font-medium mb-1.5">Delivery Address</Text>
+                  <View className="flex-row items-center bg-white border border-line rounded-lg px-3 py-2.5">
+                    <MapPin size={16} color="#174d45" className="mr-2" />
                     <TextInput 
                       value={addressInput}
                       onChangeText={setAddressInput}
                       accessibilityLabel="Written delivery address" maxLength={500} placeholder="Street, suburb and useful landmarks"
-                      className="flex-1 text-gray-900 font-medium"
+                      className="flex-1 text-ink font-medium"
                     />
                   </View>
                 </View>
 
                 <View>
-                  <Text className="text-xs text-gray-500 font-medium mb-1.5">Save as (Optional)</Text>
-                  <View className="flex-row items-center bg-white border border-gray-200 rounded-lg px-3 py-2.5">
+                  <Text className="text-xs text-subtle font-medium mb-1.5">Save as (Optional)</Text>
+                  <View className="flex-row items-center bg-white border border-line rounded-lg px-3 py-2.5">
                     <Star size={16} color="#eab308" className="mr-2" />
                     <TextInput 
                       value={tagInput}
                       onChangeText={setTagInput}
                       placeholder="e.g. Home, Work, Gym"
-                      className="flex-1 text-gray-900 font-medium"
+                      className="flex-1 text-ink font-medium"
                     />
                   </View>
                 </View>
@@ -197,7 +199,7 @@ export function LocationPickerModal({ visible, onClose }: LocationPickerModalPro
                 <TouchableOpacity 
                   accessibilityRole="button" disabled={saving}
                   onPress={handleConfirmNewLocation}
-                  className="bg-red-600 rounded-lg py-3.5 items-center shadow-sm mt-2"
+                  className="bg-brand-800 rounded-lg py-3.5 items-center shadow-sm mt-2"
                 >
                   <Text className="text-white font-bold text-lg">{saving ? 'Saving…' : 'Confirm Location'}</Text>
                 </TouchableOpacity>

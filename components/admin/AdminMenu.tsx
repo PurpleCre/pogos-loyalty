@@ -1,4 +1,6 @@
-import { View, Text, TouchableOpacity, Modal, TextInput, ScrollView, Switch, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, Modal, ScrollView, Switch, Alert, ActivityIndicator } from 'react-native';
+import { Input as TextInput } from '@/components/ui/input';
+import { TouchTarget as TouchableOpacity } from '@/components/ui/touch-target';
 import { useState } from 'react';
 import { useMenu, MenuItem, MenuCategory } from '@/hooks/useMenu';
 import { Plus, Edit2, Trash2, X, Store, Globe } from 'lucide-react-native';
@@ -9,17 +11,17 @@ interface AdminMenuProps {
 }
 
 export function AdminMenu({ stores }: AdminMenuProps) {
-  const { 
-    categories, 
-    items, 
-    addMenuItem, 
-    updateMenuItem, 
+  const {
+    categories,
+    items,
+    addMenuItem,
+    updateMenuItem,
     deleteMenuItem,
     addCategory,
     updateCategory,
     deleteCategory
   } = useMenu(true);
-  
+
   // Context Switcher State
   const [menuContext, setMenuContext] = useState<string | null>(null); // null = global
 
@@ -166,8 +168,8 @@ export function AdminMenu({ stores }: AdminMenuProps) {
       `Are you sure you want to delete ${item.name}?`,
       [
         { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Delete', 
+        {
+          text: 'Delete',
           style: 'destructive',
           onPress: async () => {
             const result = await deleteMenuItem(item.id);
@@ -186,8 +188,8 @@ export function AdminMenu({ stores }: AdminMenuProps) {
       `Are you sure you want to delete "${category.name}"?\n\nWARNING: This will also permanently delete ALL items within this category!`,
       [
         { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Delete All', 
+        {
+          text: 'Delete All',
           style: 'destructive',
           onPress: async () => {
             const result = await deleteCategory(category.id);
@@ -218,8 +220,8 @@ export function AdminMenu({ stores }: AdminMenuProps) {
           <TouchableOpacity
             onPress={() => setMenuContext(null)}
             className={`mr-2 px-4 py-2.5 rounded-xl border flex-row items-center gap-2 ${
-              menuContext === null 
-                ? 'bg-red-600 border-red-600' 
+              menuContext === null
+                ? 'bg-brand-800 border-brand-800'
                 : 'bg-white border-gray-300'
             }`}
           >
@@ -233,8 +235,8 @@ export function AdminMenu({ stores }: AdminMenuProps) {
               key={store.id}
               onPress={() => setMenuContext(store.id)}
               className={`mr-2 px-4 py-2.5 rounded-xl border flex-row items-center gap-2 ${
-                menuContext === store.id 
-                  ? 'bg-red-600 border-red-600' 
+                menuContext === store.id
+                  ? 'bg-brand-800 border-brand-800'
                   : 'bg-white border-gray-300'
               }`}
             >
@@ -248,32 +250,32 @@ export function AdminMenu({ stores }: AdminMenuProps) {
       </View>
 
       <View className="flex-row gap-2 mb-2">
-        <TouchableOpacity 
+        <TouchableOpacity
           onPress={openAddModal}
-          className="flex-1 flex-row items-center justify-center bg-red-600 rounded-xl py-3.5"
+          className="flex-1 flex-row items-center justify-center bg-brand-800 rounded-xl py-3.5"
         >
           <Plus size={18} color="white" className="mr-2" />
           <Text className="text-white font-bold">Add Item</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity 
+        <TouchableOpacity
           onPress={openAddCatModal}
-          className="flex-1 flex-row items-center justify-center bg-red-50 rounded-xl py-3.5 border border-red-200"
+          className="flex-1 flex-row items-center justify-center bg-brand-50 rounded-xl py-3.5 border border-brand-200"
         >
-          <Plus size={18} color="#e11d48" className="mr-2" />
-          <Text className="text-red-600 font-bold">Add Category</Text>
+          <Plus size={18} color="#174d45" className="mr-2" />
+          <Text className="text-brand-800 font-bold">Add category</Text>
         </TouchableOpacity>
       </View>
 
       {categories.length === 0 && (
-        <View className="bg-red-50 p-6 rounded-2xl items-center border border-red-100 mt-4">
-          <Text className="text-lg font-bold text-red-900 mb-2">No Categories Yet</Text>
-          <Text className="text-red-600 text-center mb-4">
+        <View className="bg-brand-50 p-6 rounded-2xl items-center border border-brand-100 mt-4">
+          <Text className="text-lg font-bold text-brand-900 mb-2">No Categories Yet</Text>
+          <Text className="text-brand-800 text-center mb-4">
             You need to create at least one category before you can add menu items.
           </Text>
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={openAddCatModal}
-            className="bg-red-600 px-6 py-3 rounded-xl"
+            className="bg-brand-800 px-6 py-3 rounded-xl"
           >
             <Text className="text-white font-bold">Create Category</Text>
           </TouchableOpacity>
@@ -284,62 +286,62 @@ export function AdminMenu({ stores }: AdminMenuProps) {
         <View key={category.id} className="mb-4">
           <View className="flex-row justify-between items-center mb-3">
             <View className="flex-row items-center">
-              <Text className="text-lg font-bold text-gray-900">{category.name}</Text>
+              <Text className="text-lg font-bold text-ink">{category.name}</Text>
               {category.is_active === false && (
                 <View className="bg-gray-200 px-2 py-0.5 rounded ml-2">
-                  <Text className="text-[10px] font-bold text-gray-600 uppercase">Hidden</Text>
+                  <Text className="text-[10px] font-bold text-subtle uppercase">Hidden</Text>
                 </View>
               )}
             </View>
-            
+
             <View className="flex-row gap-2">
-              <TouchableOpacity 
-                onPress={() => openEditCatModal(category)}
+              <TouchableOpacity
+                accessibilityLabel={`Edit ${category.name} category`} onPress={() => openEditCatModal(category)}
                 className="w-8 h-8 bg-gray-100 rounded-full items-center justify-center"
               >
                 <Edit2 size={14} color="#6b7280" />
               </TouchableOpacity>
-              <TouchableOpacity 
-                onPress={() => handleDeleteCategory(category)}
-                className="w-8 h-8 bg-red-50 rounded-full items-center justify-center"
+              <TouchableOpacity
+                accessibilityLabel={`Delete ${category.name} category`} onPress={() => handleDeleteCategory(category)}
+                className="w-8 h-8 bg-brand-50 rounded-full items-center justify-center"
               >
                 <Trash2 size={14} color="#ef4444" />
               </TouchableOpacity>
             </View>
           </View>
-          
+
           <View className="gap-2">
             {filteredItems.filter(i => i.category_id === category.id).map(item => (
-              <View key={item.id} className={`bg-white p-3 rounded-xl border border-gray-100 flex-row items-center ${!item.is_available ? 'opacity-60' : ''}`}>
+              <View key={item.id} className={`bg-white p-3 rounded-xl border border-line flex-row items-center ${!item.is_available ? 'opacity-60' : ''}`}>
                 {item.image_url ? (
                   <CatalogueImage uri={item.image_url} label={item.name} className="w-12 h-12 rounded-lg mr-3" />
                 ) : (
                   <View className="w-12 h-12 rounded-lg bg-gray-100 mr-3 items-center justify-center">
-                    <Text className="text-gray-400 text-xs">No img</Text>
+                    <Text className="text-subtle text-xs">No img</Text>
                   </View>
                 )}
-                
+
                 <View className="flex-1">
-                  <View className="flex-row items-center">
-                    <Text className="font-bold text-gray-900">{item.name}</Text>
+                  <View className="flex-row flex-wrap items-center">
+                    <Text className="font-bold text-ink flex-shrink" numberOfLines={2}>{item.name}</Text>
                     {!item.is_available && (
                       <View className="bg-gray-200 px-2 py-0.5 rounded ml-2">
-                        <Text className="text-[10px] font-bold text-gray-600 uppercase">Hidden</Text>
+                        <Text className="text-[10px] font-bold text-subtle uppercase">Hidden</Text>
                       </View>
                     )}
                   </View>
-                  <Text className="text-red-600 font-semibold">${item.price.toFixed(2)}</Text>
+                  <Text className="text-brand-800 font-semibold mt-1">USD {item.price.toFixed(2)}</Text>
                 </View>
-                
+
                 <View className="flex-row gap-2">
-                  <TouchableOpacity 
-                    onPress={() => openEditModal(item)}
-                    className="w-8 h-8 bg-red-50 rounded-full items-center justify-center"
+                  <TouchableOpacity
+                    accessibilityLabel={`Edit ${item.name}`} onPress={() => openEditModal(item)}
+                    className="w-8 h-8 bg-brand-50 rounded-full items-center justify-center"
                   >
-                    <Edit2 size={14} color="#e11d48" />
+                    <Edit2 size={14} color="#174d45" />
                   </TouchableOpacity>
-                  <TouchableOpacity 
-                    onPress={() => handleDelete(item)}
+                  <TouchableOpacity
+                    accessibilityLabel={`Delete ${item.name}`} onPress={() => handleDelete(item)}
                     className="w-8 h-8 bg-gray-100 rounded-full items-center justify-center"
                   >
                     <Trash2 size={14} color="#ef4444" />
@@ -348,7 +350,7 @@ export function AdminMenu({ stores }: AdminMenuProps) {
               </View>
             ))}
             {filteredItems.filter(i => i.category_id === category.id).length === 0 && (
-              <Text className="text-gray-500 italic py-2">
+              <Text className="text-subtle italic py-2">
                 No items in this category for {menuContext === null ? 'the Global Menu' : stores.find(s => s.id === menuContext)?.name}
               </Text>
             )}
@@ -364,13 +366,13 @@ export function AdminMenu({ stores }: AdminMenuProps) {
         onRequestClose={() => setModalVisible(false)}
       >
         <View className="flex-1 justify-end bg-black/50">
-          <View className="bg-white rounded-t-3xl h-[85%]">
-            <View className="flex-row justify-between items-center p-4 border-b border-gray-100">
+          <View className="bg-white rounded-t-3xl h-[85%] w-full max-w-2xl self-center">
+            <View className="flex-row justify-between items-center p-4 border-b border-line">
               <View>
-                <Text className="text-xl font-bold text-gray-900">
+                <Text className="text-xl font-bold text-ink">
                   {editingItem ? 'Edit Menu Item' : 'Add Menu Item'}
                 </Text>
-                <Text className="text-xs font-semibold text-red-600">
+                <Text className="text-xs font-semibold text-brand-800">
                   {menuContext === null ? 'Global Menu' : stores.find(s => s.id === menuContext)?.name}
                 </Text>
               </View>
@@ -386,7 +388,7 @@ export function AdminMenu({ stores }: AdminMenuProps) {
                   <TextInput
                     value={name}
                     onChangeText={setName}
-                    className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900"
+                    className="bg-canvas border border-line rounded-xl px-4 py-3 text-ink"
                     placeholder="E.g., Double Cheeseburger"
                   />
                 </View>
@@ -396,7 +398,7 @@ export function AdminMenu({ stores }: AdminMenuProps) {
                   <TextInput
                     value={description}
                     onChangeText={setDescription}
-                    className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 min-h-[80px]"
+                    className="bg-canvas border border-line rounded-xl px-4 py-3 text-ink min-h-[80px]"
                     placeholder="Short description of the item"
                     multiline
                     textAlignVertical="top"
@@ -404,11 +406,11 @@ export function AdminMenu({ stores }: AdminMenuProps) {
                 </View>
 
                 <View>
-                  <Text className="text-sm font-bold text-gray-700 mb-1">Price ($) *</Text>
+                  <Text className="text-sm font-bold text-gray-700 mb-1">Price (USD) *</Text>
                   <TextInput
                     value={price}
                     onChangeText={setPrice}
-                    className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900"
+                    className="bg-canvas border border-line rounded-xl px-4 py-3 text-ink"
                     placeholder="0.00"
                     keyboardType="decimal-pad"
                   />
@@ -425,8 +427,8 @@ export function AdminMenu({ stores }: AdminMenuProps) {
                           key={cat.id}
                           onPress={() => setCategoryId(cat.id)}
                           className={`mr-2 px-4 py-2 rounded-full border ${
-                            categoryId === cat.id 
-                              ? 'bg-red-600 border-red-600' 
+                            categoryId === cat.id
+                              ? 'bg-brand-800 border-brand-800'
                               : 'bg-white border-gray-300'
                           }`}
                         >
@@ -444,29 +446,29 @@ export function AdminMenu({ stores }: AdminMenuProps) {
                   <TextInput
                     value={imageUrl}
                     onChangeText={setImageUrl}
-                    className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900"
+                    className="bg-canvas border border-line rounded-xl px-4 py-3 text-ink"
                     placeholder="https://example.com/image.jpg"
                     autoCapitalize="none"
                   />
                 </View>
 
-                <View className="flex-row justify-between items-center bg-gray-50 p-4 rounded-xl border border-gray-200">
+                <View className="flex-row justify-between items-center bg-canvas p-4 rounded-xl border border-line">
                   <View>
-                    <Text className="font-bold text-gray-900">Available</Text>
-                    <Text className="text-xs text-gray-500">Show to customers</Text>
+                    <Text className="font-bold text-ink">Catalogue availability</Text>
+                    <Text className="text-xs text-subtle">{menuContext === null ? 'Applies to all branches' : 'Show at this branch'}</Text>
                   </View>
                   <Switch
                     value={isAvailable}
                     onValueChange={setIsAvailable}
-                    trackColor={{ false: '#d1d5db', true: '#fca5a5' }}
-                    thumbColor={isAvailable ? '#e11d48' : '#f3f4f6'}
+                    trackColor={{ false: '#d1d5db', true: '#b7ded2' }}
+                    thumbColor={isAvailable ? '#174d45' : '#f3f4f6'}
                   />
                 </View>
 
-                <TouchableOpacity 
+                <TouchableOpacity
                   onPress={handleSave}
                   disabled={isSubmitting || categories.length === 0}
-                  className={`bg-red-600 py-4 rounded-xl items-center mt-4 mb-20 ${(isSubmitting || categories.length === 0) ? 'opacity-70' : ''}`}
+                  className={`bg-brand-800 py-4 rounded-xl items-center mt-4 mb-20 ${(isSubmitting || categories.length === 0) ? 'opacity-70' : ''}`}
                 >
                   {isSubmitting ? (
                     <ActivityIndicator color="white" />
@@ -490,9 +492,9 @@ export function AdminMenu({ stores }: AdminMenuProps) {
         onRequestClose={() => setCatModalVisible(false)}
       >
         <View className="flex-1 justify-center bg-black/50 p-4">
-          <View className="bg-white rounded-3xl overflow-hidden">
-            <View className="flex-row justify-between items-center p-4 border-b border-gray-100">
-              <Text className="text-xl font-bold text-gray-900">
+          <View className="bg-white rounded-3xl overflow-hidden w-full max-w-2xl self-center">
+            <View className="flex-row justify-between items-center p-4 border-b border-line">
+              <Text className="text-xl font-bold text-ink">
                 {editingCategory ? 'Edit Category' : 'Add Category'}
               </Text>
               <TouchableOpacity onPress={() => setCatModalVisible(false)} className="p-2">
@@ -506,7 +508,7 @@ export function AdminMenu({ stores }: AdminMenuProps) {
                 <TextInput
                   value={catName}
                   onChangeText={setCatName}
-                  className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900"
+                  className="bg-canvas border border-line rounded-xl px-4 py-3 text-ink"
                   placeholder="E.g., Burgers, Drinks, Sides"
                 />
               </View>
@@ -516,30 +518,30 @@ export function AdminMenu({ stores }: AdminMenuProps) {
                 <TextInput
                   value={catSortOrder}
                   onChangeText={setCatSortOrder}
-                  className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900"
+                  className="bg-canvas border border-line rounded-xl px-4 py-3 text-ink"
                   placeholder="0"
                   keyboardType="number-pad"
                 />
-                <Text className="text-xs text-gray-500 mt-1">Lower numbers appear first (0, 1, 2...)</Text>
+                <Text className="text-xs text-subtle mt-1">Lower numbers appear first (0, 1, 2...)</Text>
               </View>
 
-              <View className="flex-row justify-between items-center bg-gray-50 p-4 rounded-xl border border-gray-200">
+              <View className="flex-row justify-between items-center bg-canvas p-4 rounded-xl border border-line">
                 <View>
-                  <Text className="font-bold text-gray-900">Active</Text>
-                  <Text className="text-xs text-gray-500">Show category to customers</Text>
+                  <Text className="font-bold text-ink">Active</Text>
+                  <Text className="text-xs text-subtle">Show category to customers</Text>
                 </View>
                 <Switch
                   value={catIsActive}
                   onValueChange={setCatIsActive}
-                  trackColor={{ false: '#d1d5db', true: '#fca5a5' }}
+                  trackColor={{ false: '#d1d5db', true: '#b7ded2' }}
                   thumbColor={catIsActive ? '#e11d48' : '#f3f4f6'}
                 />
               </View>
 
-              <TouchableOpacity 
+              <TouchableOpacity
                 onPress={handleSaveCategory}
                 disabled={isCatSubmitting}
-                className={`bg-red-600 py-4 rounded-xl items-center mt-2 ${isCatSubmitting ? 'opacity-70' : ''}`}
+                className={`bg-brand-800 py-4 rounded-xl items-center mt-2 ${isCatSubmitting ? 'opacity-70' : ''}`}
               >
                 {isCatSubmitting ? (
                   <ActivityIndicator color="white" />

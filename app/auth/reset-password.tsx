@@ -1,3 +1,4 @@
+import { AuthScreen } from '@/components/ui/screen';
 import { useState } from 'react';
 import { View, Text } from 'react-native';
 import { Redirect, router } from 'expo-router';
@@ -18,8 +19,7 @@ export default function ResetPassword() {
   };
   if (loading && !finished) return <View />;
   if (!finished && (!user || !recoveryRequired)) return <Redirect href="/auth/forgot-password" />;
-  return <View className="flex-1 justify-center p-6 bg-white gap-4">
-    <Text className="text-2xl font-bold">{finished ? 'Password updated' : 'Choose a new password'}</Text>
+  return <AuthScreen title={finished ? 'Password updated' : 'Choose a new password'} subtitle="Keep your Pogo’s account secure with a password you use nowhere else.">
     {finished ? <><Text>Sign in again with your new password.</Text>{!otherSessionsRevoked ? <Text accessibilityRole="alert">We could not confirm sign-out on other devices. Contact support if you suspect someone else has access.</Text> : null}<Button onPress={() => router.replace('/(auth)/login')}>Sign in</Button></> : <>
       <Input accessibilityLabel="New password" placeholder="12–128 characters" value={password} onChangeText={setPassword} secureTextEntry autoComplete="new-password" />
       <Input accessibilityLabel="Confirm new password" placeholder="Confirm password" value={confirmation} onChangeText={setConfirmation} secureTextEntry autoComplete="new-password" />
@@ -27,5 +27,5 @@ export default function ResetPassword() {
       <Button isLoading={busy} onPress={() => { void save(); }}>Update password</Button>
       <Button variant="ghost" disabled={busy} onPress={() => { void signOut().then(result => { if (result.error) setMessage('Unable to confirm session cleanup. Please retry.'); else router.replace('/(auth)/login'); }); }}>Cancel and sign out</Button>
     </>}
-  </View>;
+  </AuthScreen>;
 }

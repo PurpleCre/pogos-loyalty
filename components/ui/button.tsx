@@ -1,5 +1,4 @@
 import { TouchableOpacity, Text, TouchableOpacityProps, ActivityIndicator } from 'react-native';
-import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 interface ButtonProps extends TouchableOpacityProps {
@@ -20,43 +19,46 @@ export function Button({
   disabled,
   ...props 
 }: ButtonProps) {
-  const baseStyles = "flex-row items-center justify-center rounded-md font-medium px-4";
+  const baseStyles = "flex-row items-center justify-center rounded-2xl px-5";
   
   const variants = {
-    default: "bg-slate-900",
-    outline: "border border-slate-200 bg-transparent",
+    default: "bg-brand-800",
+    outline: "border border-line bg-white",
     ghost: "bg-transparent",
   };
 
   const sizes = {
-    default: "h-10 py-2",
-    sm: "h-9 px-3",
-    lg: "h-11 px-8",
+    default: "min-h-[52px] py-3",
+    sm: "min-h-[44px] px-4 py-2",
+    lg: "min-h-[56px] px-6 py-4",
   };
 
   const textVariants = {
     default: "text-white",
-    outline: "text-slate-900",
-    ghost: "text-slate-900",
+    outline: "text-ink",
+    ghost: "text-brand-800",
   };
 
   return (
     <TouchableOpacity
+      accessibilityRole="button"
+      accessibilityState={{ disabled: !!disabled || !!isLoading, busy: !!isLoading }}
+      activeOpacity={0.75}
       className={twMerge(
         baseStyles,
         variants[variant],
         sizes[size],
-        disabled && "opacity-50",
+        (disabled || isLoading) && "opacity-50",
         className
       )}
       disabled={disabled || isLoading}
       {...props}
     >
       {isLoading ? (
-        <ActivityIndicator color={variant === 'default' ? 'white' : 'black'} />
+        <ActivityIndicator accessibilityLabel="Please wait" color={variant === 'default' ? 'white' : '#174d45'} />
       ) : (
         typeof children === 'string' ? (
-          <Text className={twMerge("font-semibold", textVariants[variant], textClassName)}>
+          <Text className={twMerge("font-bold text-base text-center leading-6", textVariants[variant], textClassName)}>
             {children}
           </Text>
         ) : (

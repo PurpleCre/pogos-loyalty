@@ -1,35 +1,36 @@
-import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, RefreshControl } from 'react-native';
+import { TouchTarget as TouchableOpacity } from '@/components/ui/touch-target';
 import { Redirect, router } from 'expo-router';
 import { useAuth } from '@/hooks/useAuth';
 import { useRewards } from '@/hooks/useRewards';
 import { ReadStatus } from '@/components/ReadStatus';
-import { BrandLogo } from '@/components/BrandLogo';
+import { Screen, PageHeading, Card, ActionRow, EmptyState, SectionHeading } from '@/components/ui/screen';
+import { Button } from '@/components/ui/button';
+import { colors } from '@/lib/theme';
+import { Gift, ShoppingBag, Truck, History, ShieldCheck, LifeBuoy } from 'lucide-react-native';
 export default function Dashboard() {
   const { user, loading: authLoading } = useAuth();
   const { userPoints, transactions, loading, fresh, refreshedAt, error, refetch } = useRewards();
   if (!user && !authLoading) return <Redirect href="/(auth)/login" />;
-  return <ScrollView className="flex-1 bg-slate-50" contentContainerStyle={{ padding: 20, paddingTop: 64 }}
-    refreshControl={<RefreshControl refreshing={loading} onRefresh={() => { void refetch(); }} />}>
-    <View className="flex-row items-center mb-3"><BrandLogo size={64} /><Text className="text-red-600 font-bold text-2xl ml-3">Pogo’s loyalty</Text></View>
-    <ReadStatus label="Points and recent activity" fresh={fresh} at={refreshedAt} error={error} loading={loading} onRefresh={() => { void refetch(); }} />
-    <View className="bg-white border border-slate-200 rounded-xl p-5 my-3">
-      <Text className="font-bold">{fresh ? 'Available points' : 'Last known available points'}</Text>
-      <Text className="text-4xl font-bold my-3">{userPoints?.current_points?.toLocaleString() ?? 'Unconfirmed'}</Text>
-      <Text>Held for rewards: {userPoints?.reserved_points?.toLocaleString() ?? 'Unconfirmed'}</Text>
-      <Text className="mt-3 text-slate-600">Points settle after eligible payment and handover under your branch’s configured earning rules. Reservation and collection status must be checked online.</Text>
+  return <Screen title="Your loyalty account" refreshControl={<RefreshControl refreshing={loading} onRefresh={() => { void refetch(); }} tintColor={colors.primary} />}>
+    <PageHeading eyebrow="A LITTLE MORE POGO’S" title="Good to have you back." subtitle="Your points, rewards and recent visits, together." />
+    <View className="bg-brand-950 rounded-3xl p-6">
+      <View className="flex-row items-center justify-between"><Text className="text-brand-100 text-sm font-semibold flex-1">{fresh ? 'Available points' : 'Last known available points'}</Text><Gift size={24} color={colors.accent} /></View>
+      <Text className="text-white text-5xl font-extrabold tracking-tight my-4">{userPoints?.current_points?.toLocaleString() ?? 'Unconfirmed'}</Text>
+      <Text className="text-brand-100 text-sm">Held for rewards: {userPoints?.reserved_points?.toLocaleString() ?? 'Unconfirmed'}</Text>
+      <Button onPress={() => router.push('/(app)/rewards')} className="bg-white mt-6" textClassName="text-brand-900">Explore branch rewards</Button>
     </View>
-    <TouchableOpacity accessibilityRole="button" onPress={() => router.push('/(app)/rewards')} className="p-4 bg-red-600 rounded-xl my-2"><Text className="text-white font-bold">View branch rewards and reservations</Text></TouchableOpacity>
-    <TouchableOpacity accessibilityRole="button" onPress={() => router.push('/store-picker')} className="p-4 bg-white rounded-xl my-2"><Text className="text-red-700 font-bold">Browse a branch menu</Text></TouchableOpacity>
-    <TouchableOpacity accessibilityRole="button" onPress={() => router.push('/(app)/order-tracking')} className="p-4 bg-white rounded-xl my-2"><Text className="text-red-700 font-bold">Track orders</Text></TouchableOpacity>
-    <Text className="font-bold text-xl mt-5 mb-3">Recent points activity (latest 10)</Text>
-    {transactions.map(row => <View key={row.id} className="p-4 bg-white rounded-xl mb-3">
-      <Text className="font-bold">{row.transaction_type.replaceAll('_', ' ')}</Text>
-      <Text>{row.points_earned} points credited · {row.points_redeemed} points debited</Text>
-      <Text>{new Date(row.created_at).toLocaleString()}</Text>
-    </View>)}
-    {!transactions.length && fresh ? <Text className="my-4">No recent points activity was returned for this account.</Text> : null}
-    <TouchableOpacity accessibilityRole="button" onPress={() => router.push('/(app)/transactions')} className="py-4"><Text className="text-red-700 font-bold">View recent history</Text></TouchableOpacity>
-    <TouchableOpacity accessibilityRole="button" onPress={() => router.push('/support')} className="py-4"><Text className="text-red-700 font-bold">Help with an order or account</Text></TouchableOpacity>
-    <TouchableOpacity accessibilityRole="button" onPress={() => router.push('/(app)/profile')} className="py-4"><Text className="text-red-700 font-bold">Account and security</Text></TouchableOpacity>
-  </ScrollView>;
+    <ReadStatus label="Points and recent activity" fresh={fresh} at={refreshedAt} error={error} loading={loading} onRefresh={() => { void refetch(); }} />
+    <Text className="text-subtle text-sm leading-6 mb-5">Points settle after eligible payment and handover under your branch’s configured earning rules. Check reservations and collection status online.</Text>
+    <Card><ActionRow icon={ShoppingBag} title="Find your next favourite" detail="Browse a branch menu." onPress={() => router.push('/store-picker')} /><ActionRow icon={Truck} title="Your orders" detail="Check current status and order references." onPress={() => router.push('/(app)/order-tracking')} /></Card>
+    <SectionHeading title="Recent points activity" detail="Your latest 10 entries" />
+    {transactions.map(row => <Card key={row.id}>
+      <Text className="font-bold text-ink capitalize">{row.transaction_type.replaceAll('_', ' ')}</Text>
+      <Text className="text-brand-800 font-semibold mt-2">+{row.points_earned} credited · −{row.points_redeemed} debited</Text>
+      <Text className="text-subtle text-xs mt-2">{new Date(row.created_at).toLocaleString()}</Text>
+    </Card>)}
+    {!transactions.length && fresh ? <EmptyState icon={History} title="Your story starts here" description="There’s no recent points activity for this account yet. Eligible visits will appear here once confirmed." /> : null}
+    <Button variant="outline" onPress={() => router.push('/(app)/transactions')}>View recent history</Button>
+    <Card style={{ marginTop: 24 }}><ActionRow icon={ShieldCheck} title="Account and security" onPress={() => router.push('/(app)/profile')} /><ActionRow icon={LifeBuoy} title="Help with an order or account" onPress={() => router.push('/support')} /></Card>
+  </Screen>;
 }

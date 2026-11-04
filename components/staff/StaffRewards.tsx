@@ -1,6 +1,10 @@
+import { Button as AppButton } from '@/components/ui/button';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { ReadStatus } from '@/components/ReadStatus';
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Modal, ActivityIndicator, AppState } from 'react-native';
+import { View, Text, Modal, ActivityIndicator, AppState } from 'react-native';
+import { Input as TextInput } from '@/components/ui/input';
+import { TouchTarget as TouchableOpacity } from '@/components/ui/touch-target';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useAuth } from '@/hooks/useAuth';
 import { useRewardReservations, type RewardReservation } from '@/hooks/useRewardReservations';
@@ -9,7 +13,8 @@ import { parseRewardClaim, type RewardLookup, type RewardRequest } from '@/lib/r
 import { snapshotText } from '@/lib/cash-checkout';
 import { RewardRecovery } from '@/components/rewards/RewardRecovery';
 function Action({ label, disabled, onPress }: { label: string; disabled?: boolean; onPress(): void }) {
-  return <TouchableOpacity disabled={disabled} onPress={onPress} className={`p-3 my-1 rounded-lg ${disabled ? 'bg-slate-300' : 'bg-red-600'}`}><Text className="text-white text-center font-bold">{label}</Text></TouchableOpacity>;
+  const caution = /correct mistaken|no item provided|release unused/i.test(label);
+  return <AppButton disabled={disabled} onPress={onPress} variant={caution ? 'outline' : 'default'} textClassName={caution ? 'text-amber-900' : undefined} className="my-1">{label}</AppButton>;
 }
 function ReservationCard({ row, actor, admin, blocked, execute }: { row: RewardReservation; actor: string; admin: boolean; blocked: boolean; execute(request: RewardRequest): Promise<unknown> }) {
   const [panel, setPanel] = useState<'fulfil' | 'release' | 'void' | null>(null);
@@ -36,15 +41,15 @@ function ReservationCard({ row, actor, admin, blocked, execute }: { row: RewardR
   const open = (value: typeof panel) => { setPanel(value); setReason(''); setReference(''); setConfirmed(false); setError(''); };
   const requiresReason = panel === 'release' || panel === 'void' || (panel === 'fulfil' && !responsible);
   const requiresConfirm = panel === 'fulfil' || panel === 'void' || (panel === 'release' && row.status === 'claiming');
-  return <View className="bg-white border border-slate-200 p-4 rounded-xl mb-4">
+  return <View className="bg-white border border-line p-4 rounded-xl mb-4">
     <Text className="font-bold text-lg">{snapshotText(row.snapshot, 'name')} · {row.status}</Text>
     <Text>{row.customer_name} · {row.points_cost} points</Text>
-    <Text className="text-slate-500 mt-2">{snapshotText(row.snapshot, 'terms')}</Text>
+    <Text className="text-subtle mt-2">{snapshotText(row.snapshot, 'terms')}</Text>
     <Text className="mt-2">GAAP item: {snapshotText(row.snapshot, 'gaap_product_reference')}</Text>
-    <Text className="text-xs text-slate-500 mt-2" selectable>{row.id}</Text>
-    <Text className="text-slate-500 mt-2">Reservation expiry: {new Date(row.expires_at).toLocaleString()}</Text>
+    <Text className="text-xs text-subtle mt-2" selectable>{row.id}</Text>
+    <Text className="text-subtle mt-2">Reservation expiry: {new Date(row.expires_at).toLocaleString()}</Text>
     {row.status === 'reserved' ? <>
-      <Text className="text-slate-600 my-2">Scan the customer’s ticket above and start handover before giving out the item.</Text>
+      <Text className="text-subtle my-2">Scan the customer’s ticket above and start handover before giving out the item.</Text>
       <Action label="Release unused reservation…" disabled={blocked || busy} onPress={() => open('release')} />
     </> : null}
     {row.status === 'claiming' ? <View className="bg-amber-50 p-3 rounded-lg my-3">
@@ -55,10 +60,10 @@ function ReservationCard({ row, actor, admin, blocked, execute }: { row: RewardR
         <Action label="No item provided: release points…" disabled={blocked || busy} onPress={() => open('release')} />
       </> : null}
     </View> : null}
-    {row.fulfilments.map(entry => <Text selectable key={entry.reservation_id} className="text-slate-600 mt-2">GAAP sale: {entry.gaap_reference}</Text>)}
-    {row.voids.map(entry => <Text selectable key={entry.reservation_id} className="text-slate-600 mt-2">GAAP credit note: {entry.credit_note_reference}</Text>)}
+    {row.fulfilments.map(entry => <Text selectable key={entry.reservation_id} className="text-subtle mt-2">GAAP sale: {entry.gaap_reference}</Text>)}
+    {row.voids.map(entry => <Text selectable key={entry.reservation_id} className="text-subtle mt-2">GAAP credit note: {entry.credit_note_reference}</Text>)}
     {admin && row.status === 'fulfilled' ? <Action label="Correct mistaken fulfilment…" disabled={blocked || busy} onPress={() => open('void')} /> : null}
-    {panel ? <View className="bg-slate-50 p-3 rounded-lg my-3">
+    {panel ? <View className="bg-canvas p-3 rounded-lg my-3">
       <Text className="font-bold mb-3">{panel === 'void' ? 'Correction: no benefit was provided' : panel === 'fulfil' ? 'Confirm actual handover' : 'Release points and reserved item'}</Text>
       {panel === 'fulfil' || panel === 'void' ? <>
         <Text>{panel === 'fulfil' ? 'Full GAAP sale reference (date / till / sale)' : 'GAAP credit note reference (date / till / note)'}</Text>
@@ -72,10 +77,10 @@ function ReservationCard({ row, actor, admin, blocked, execute }: { row: RewardR
       <Action label={busy ? 'Checking…' : 'Confirm action'} disabled={blocked || busy || (requiresReason && reason.trim().length < 3) || (requiresConfirm && !confirmed)} onPress={() => { void submit(); }} />
       <TouchableOpacity disabled={busy} onPress={() => setPanel(null)} className="p-3"><Text className="text-center">Close form</Text></TouchableOpacity>
     </View> : null}
-    <TouchableOpacity onPress={() => setHistory(value => !value)} className="py-3"><Text className="text-slate-600 font-bold">{history ? 'Hide' : 'Show'} reward audit history</Text></TouchableOpacity>
-    {history ? [...row.events].sort((a, b) => a.version - b.version).map(event => <View key={event.id} className="py-2 border-t border-slate-100">
+    <TouchableOpacity onPress={() => setHistory(value => !value)} className="py-3"><Text className="text-subtle font-bold">{history ? 'Hide' : 'Show'} reward audit history</Text></TouchableOpacity>
+    {history ? [...row.events].sort((a, b) => a.version - b.version).map(event => <View key={event.id} className="py-2 border-t border-line">
       <Text>{event.event_type} · {new Date(event.created_at).toLocaleString()}</Text>
-      <Text className="text-slate-500">{event.actor_id === row.user_id ? 'Customer' : event.actor_id === actor ? 'You' : event.actor_id ? 'Branch operator / administrator' : 'Expiry worker'}</Text>
+      <Text className="text-subtle">{event.actor_id === row.user_id ? 'Customer' : event.actor_id === actor ? 'You' : event.actor_id ? 'Branch operator / administrator' : 'Expiry worker'}</Text>
       {snapshotText(event.details, 'reason') ? <Text>{snapshotText(event.details, 'reason')}</Text> : null}
     </View>) : null}
     {error ? <Text accessibilityRole="alert" className="text-red-700 mt-3">{error}</Text> : null}
@@ -139,14 +144,14 @@ export function StaffRewards({ branchId, enabled, externalBlocked = false }: { b
     <Text className="font-bold text-xl mb-4">Reward collection</Text>
     <RewardRecovery pending={pending} error={pendingError} busy={busy} onRecover={() => { void recoverPrevious(); }} />
     {message || error ? <Text accessibilityRole="alert" className="text-red-700 mb-4">{message || error}</Text> : null}
-    <View className="bg-white border border-slate-200 p-4 rounded-xl mb-4">
+    <View className="bg-white border border-line p-4 rounded-xl mb-4">
       <Text className="font-bold mb-2">Check the customer’s ticket</Text>
       <Text>Start handover here before giving out an item. Only the assigned operator can finish it, unless an administrator records an override.</Text>
       <Action label="Scan reward QR" disabled={blocked || looking || !branchId} onPress={() => { void openCamera(); }} />
       <TextInput accessibilityLabel="Customer reward claim code" secureTextEntry value={claim} onChangeText={value => { setClaim(value); setLookup(null); lookupRevision.current++; setLooking(false); }} maxLength={60}
         autoCapitalize="none" autoCorrect={false} placeholder="Or enter the complete claim code" className="border border-slate-300 p-3 rounded-lg mt-2" />
       <Action label={looking ? 'Checking…' : 'Check ticket'} disabled={blocked || looking || !claim.trim()} onPress={() => { void check(); }} />
-      {lookup ? <View className="bg-slate-50 p-3 rounded-lg mt-3">
+      {lookup ? <View className="bg-canvas p-3 rounded-lg mt-3">
         <Text className="font-bold">{lookup.value.snapshot.name}</Text><Text>{lookup.value.customer_name} · {lookup.value.points_cost} points</Text>
         <Text className="my-2">{lookup.value.snapshot.terms}</Text>
         <Text>GAAP item: {lookup.value.snapshot.gaap_product_reference}</Text>
@@ -154,19 +159,19 @@ export function StaffRewards({ branchId, enabled, externalBlocked = false }: { b
       </View> : null}
     </View>
     <TextInput accessibilityLabel="Reward reservation ID" value={locateId} onChangeText={setLocateId} autoCapitalize="none" placeholder="Find an older reservation by full ID" className="bg-white border border-slate-300 rounded-lg p-3" />
-    <TouchableOpacity disabled={busy || !locateId.trim()} onPress={() => { void findReservation(locateId).catch(err => { if (alive.current) setMessage(rewardError(err)); }); }} className="p-3 mb-3"><Text className="text-red-600 font-bold">Find reservation</Text></TouchableOpacity>
+    <TouchableOpacity disabled={busy || !locateId.trim()} onPress={() => { void findReservation(locateId).catch(err => { if (alive.current) setMessage(rewardError(err)); }); }} className="p-3 mb-3"><Text className="text-brand-800 font-bold">Find reservation</Text></TouchableOpacity>
     <ReadStatus label="Reward worklist" fresh={fresh} at={refreshedAt} error={error} loading={loading} onRefresh={() => { void refresh(); }} />
-    <TouchableOpacity onPress={() => { void refresh(); }} className="p-3"><Text className="text-red-600">Refresh worklist</Text></TouchableOpacity>
+    <TouchableOpacity onPress={() => { void refresh(); }} className="p-3"><Text className="text-brand-800">Refresh worklist</Text></TouchableOpacity>
     {loading && !reservations.length ? <ActivityIndicator color="#dc2626" /> : null}
-    {!loading && !reservations.length ? <Text className="text-slate-500 py-5">No outstanding reward reservations at this branch.</Text> : null}
+    {!loading && !reservations.length ? <Text className="text-subtle py-5">No outstanding reward reservations at this branch.</Text> : null}
     {reservations.map(row => <ReservationCard key={`${user.id}:${row.id}:${row.version}`} row={row} actor={user.id} admin={userRole === 'admin'} blocked={blocked} execute={execute} />)}
-    {more ? <TouchableOpacity onPress={loadMore} className="p-3"><Text className="text-red-600">Load more reservations</Text></TouchableOpacity> : null}
+    {more ? <TouchableOpacity onPress={loadMore} className="p-3"><Text className="text-brand-800">Load more reservations</Text></TouchableOpacity> : null}
     <Modal visible={scanning && enabled} onRequestClose={() => setScanning(false)} animationType="slide">
-      <View className="flex-1 bg-black">
-        <Text className="text-white font-bold text-xl px-5 pt-14 pb-5">Scan customer reward ticket</Text>
+      <SafeAreaView className="flex-1 bg-brand-950" edges={['top', 'bottom']}>
+        <Text className="text-white font-bold text-xl px-5 py-5">Scan customer reward ticket</Text>
         {scanning && permission?.granted ? <CameraView style={{ flex: 1 }} barcodeScannerSettings={{ barcodeTypes: ['qr'] }} onBarcodeScanned={({ data }) => { setScanning(false); void check(data); }} /> : null}
         <TouchableOpacity onPress={() => setScanning(false)} className="p-6"><Text className="text-white text-center font-bold">Close scanner</Text></TouchableOpacity>
-      </View>
+      </SafeAreaView>
     </Modal>
   </View>;
 }

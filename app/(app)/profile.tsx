@@ -1,4 +1,9 @@
-import { View, Text, Alert, ScrollView, TouchableOpacity, Modal, TextInput, ActivityIndicator } from 'react-native';
+import { Screen, PageHeading, Card, ActionRow, EmptyState, SectionHeading } from '@/components/ui/screen';
+import { colors } from '@/lib/theme';
+import { FileLock2, LifeBuoy, ReceiptText, Store } from 'lucide-react-native';
+import { View, Text, Alert, ScrollView, Modal, ActivityIndicator } from 'react-native';
+import { Input as TextInput } from '@/components/ui/input';
+import { TouchTarget as TouchableOpacity } from '@/components/ui/touch-target';
 import { useAuth } from '@/hooks/useAuth';
 import { useAdmin } from '@/hooks/useAdmin';
 import { Button } from '@/components/ui/button';
@@ -18,17 +23,20 @@ export default function Profile() {
   const [avatar, setAvatar] = useState(user?.user_metadata?.avatar || '');
   const [loading, setLoading] = useState(false);
   const [showAvatarPicker, setShowAvatarPicker] = useState(false);
+  const [profileMessage, setProfileMessage] = useState('');
 
   const handleUpdate = async () => {
-    setLoading(true);
+    setLoading(true); setProfileMessage('');
     try {
       const { error } = await supabase.auth.updateUser({
         data: { full_name: fullName, avatar: avatar }
       });
       
       if (error) throw error;
+      setProfileMessage('Your profile changes are saved.');
       Alert.alert("Success", "Profile updated successfully");
     } catch (error: any) {
+      setProfileMessage('We couldn’t save your profile. Check your connection and try again.');
       Alert.alert("Error", error.message);
     } finally {
       setLoading(false);
@@ -43,206 +51,39 @@ export default function Profile() {
 
   const navigation = useNavigation();
 
-  if (!user) {
-    return (
-      <View className="flex-1 bg-slate-50 items-center justify-center p-6">
-        <View className="absolute top-12 left-4">
-          <TouchableOpacity 
-            onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
-            className="p-2 bg-white rounded-full shadow-sm"
-          >
-            <Menu size={24} color="#1f2937" />
-          </TouchableOpacity>
-        </View>
-        <View className="w-20 h-20 bg-red-100 rounded-full items-center justify-center mb-6">
-          <User size={32} color="#dc2626" />
-        </View>
-        <Text className="text-2xl font-bold text-slate-800 mb-2">Welcome to Pogo's</Text>
-        <Text className="text-slate-500 text-center mb-8">Sign in or create an account to manage your profile and view your rewards.</Text>
-        <TouchableOpacity 
-          onPress={() => router.push('/(auth)/login')}
-          className="bg-red-600 w-full py-4 rounded-xl flex-row items-center justify-center shadow-md"
-        >
-          <LogIn size={20} color="white" className="mr-2" />
-          <Text className="text-white font-bold text-lg">Sign In</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
-  return (
-    <View className="flex-1 bg-slate-50">
-      {/* Sleek Header */}
-      <View className="bg-red-600 pt-14 pb-6 px-4 rounded-b-3xl flex-row items-center">
-        <TouchableOpacity 
-          onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
-          className="w-10 h-10 items-center justify-center -ml-2"
-        >
-          <Menu size={28} color="#fff" />
-        </TouchableOpacity>
-        <Text className="text-white text-xl font-bold flex-1 ml-2">My Profile</Text>
-      </View>
-
-      <ScrollView className="flex-1" contentContainerStyle={{ padding: 20, paddingBottom: 40, flexGrow: 1 }}>
-      {/* Profile Avatar */}
-      <View className="items-center -mt-12 mb-6 z-20">
-        <TouchableOpacity 
-          onPress={() => setShowAvatarPicker(true)}
-          activeOpacity={0.8}
-        >
-          <View className="w-24 h-24 bg-white rounded-full items-center justify-center shadow-md border-4 border-slate-50 relative">
-            <View className="w-full h-full bg-red-50 rounded-full items-center justify-center">
-              {avatar ? (
-                <Text style={{ fontSize: 40 }}>{avatar}</Text>
-              ) : (
-                <User size={36} color="#dc2626" />
-              )}
-            </View>
-            <View className="absolute bottom-0 right-0 bg-red-600 rounded-full p-1.5 border-2 border-white shadow-sm">
-              <Edit2 size={12} color="#fff" />
-            </View>
-          </View>
-        </TouchableOpacity>
-        <Text className="text-xl font-bold text-slate-800 mt-3">{fullName || 'Loyal Customer'}</Text>
-        <Text className="text-slate-500 font-medium">{user?.email}</Text>
-      </View>
-
-      {/* Profile Information Card */}
-      <View className="bg-white rounded-3xl border border-slate-100 shadow-sm mb-5 overflow-hidden">
-        <View className="px-5 pt-5 pb-3">
-          <Text className="text-lg font-bold text-slate-800">Profile Information</Text>
-        </View>
-        <View className="px-5 pb-5">
-          <View className="mb-4">
-            <Text className="text-sm font-semibold text-slate-700 mb-1.5">Full Name</Text>
-            <Input 
-              value={fullName}
-              onChangeText={setFullName}
-              placeholder="Enter your full name"
-              className="bg-slate-50 border border-slate-200"
-            />
-          </View>
-
-          <Button onPress={handleUpdate} isLoading={loading} className="bg-red-600 rounded-xl h-12 flex-row justify-center items-center">
-            {!loading && <Save size={18} color="white" className="mr-2" />}
-            <Text className="text-white font-bold text-base">{loading ? 'Saving...' : 'Save Changes'}</Text>
-          </Button>
-        </View>
-      </View>
-
-      {/* Account Details Card */}
-      <Button className="mb-5" onPress={() => router.push('/auth/security')}>Account security and branch invitations</Button>
-      <Button className="mb-5" variant="outline" onPress={() => router.push('/privacy')}>Privacy, account export and deletion</Button>
-      <Button className="mb-5" variant="outline" onPress={() => router.push('/notifications')}>Order updates and device notifications</Button>
-      {['admin','manager','finance'].includes(userRole)?<Button className="mb-5" variant="outline" onPress={()=>router.push('/finance')}>Cash reports and till reconciliation</Button>:null}
-      <View className="bg-white rounded-3xl border border-slate-100 shadow-sm mb-5 overflow-hidden">
-        <View className="px-5 pt-5 pb-2">
-          <Text className="text-lg font-bold text-slate-800 mb-2">Account Details</Text>
-        </View>
-        <View className="px-5 pb-5">
-          <View className="flex-row justify-between items-center py-3 border-b border-slate-50">
-            <Text className="text-sm font-semibold text-slate-600">User ID</Text>
-            <Text className="text-sm text-slate-400 font-mono bg-slate-50 px-2 py-1 rounded-md" numberOfLines={1} style={{ maxWidth: 140 }}>
-              {user?.id?.slice(0, 8)}...
-            </Text>
-          </View>
-          <View className="flex-row justify-between items-center py-3 border-b border-slate-50">
-            <Text className="text-sm font-semibold text-slate-600">Account Created</Text>
-            <Text className="text-sm text-slate-500 font-medium">
-              {user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
-            </Text>
-          </View>
-          <View className="flex-row justify-between items-center py-3">
-            <Text className="text-sm font-semibold text-slate-600">Last Sign In</Text>
-            <Text className="text-sm text-slate-500 font-medium">
-              {user?.last_sign_in_at 
-                ? new Date(user.last_sign_in_at).toLocaleDateString() 
-                : 'Never'}
-            </Text>
-          </View>
-        </View>
-      </View>
-
-      <View className="bg-white rounded-3xl border border-slate-100 p-5 mb-5">
-        <Text className="text-lg font-bold text-slate-800">In-Store Points</Text>
-        <Text className="text-slate-500 text-sm mt-2">
-          In-store account linking is not available yet. Please check with your Pogo’s branch about your loyalty account.
-        </Text>
-      </View>
-
-      {/* Features Card */}
-      <View className="bg-white rounded-3xl border border-slate-100 shadow-sm mb-5 overflow-hidden">
-        <View className="px-5 pt-5 pb-3">
-          <Text className="text-lg font-bold text-slate-800">Features</Text>
-        </View>
-        <View className="px-5 pb-5 space-y-3">
-          <Button variant="outline" onPress={() => router.push('/support')}>Order help and account support</Button>
-          {isAdmin && (
-            <TouchableOpacity 
-              onPress={() => router.push('/(app)/admin')}
-              className="flex-row items-center p-4 bg-red-50 rounded-2xl border border-red-100"
-              activeOpacity={0.7}
-            >
-              <View className="w-10 h-10 bg-red-100 rounded-full items-center justify-center mr-3">
-                <Shield size={20} color="#dc2626" />
-              </View>
-              <Text className="flex-1 font-bold text-red-700">Admin Panel</Text>
-              <ChevronRight size={20} color="#fca5a5" />
-            </TouchableOpacity>
-          )}
-        </View>
-      </View>
-
-      {/* Sign Out */}
-      <View className="mt-2 mb-8">
-        <TouchableOpacity 
-          onPress={handleSignOut} 
-          className="border border-red-200 bg-white rounded-xl py-3.5 items-center"
-          activeOpacity={0.7}
-        >
-          <Text className="text-red-500 font-semibold">Sign Out</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
-
-    {/* Avatar Picker Modal */}
-    <Modal visible={showAvatarPicker} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setShowAvatarPicker(false)}>
-      <View className="flex-1 bg-slate-50 pt-6 px-5">
-        <View className="flex-row items-center justify-between mb-8">
-          <Text className="text-2xl font-bold text-slate-800">Choose Avatar</Text>
-          <TouchableOpacity onPress={() => setShowAvatarPicker(false)} className="p-2 bg-slate-200 rounded-full">
-            <X size={20} color="#475569" />
-          </TouchableOpacity>
-        </View>
-        
-        <View className="flex-row flex-wrap justify-center gap-4">
-          {EMOJI_AVATARS.map((emoji) => (
-            <TouchableOpacity 
-              key={emoji}
-              onPress={() => {
-                setAvatar(emoji);
-                setShowAvatarPicker(false);
-              }}
-              className={`w-20 h-20 items-center justify-center rounded-2xl border-2 ${avatar === emoji ? 'border-red-500 bg-red-50' : 'border-slate-200 bg-white'}`}
-            >
-              <Text style={{ fontSize: 36 }}>{emoji}</Text>
-            </TouchableOpacity>
-          ))}
-          
-          {/* Option to clear avatar */}
-          <TouchableOpacity 
-            onPress={() => {
-              setAvatar('');
-              setShowAvatarPicker(false);
-            }}
-            className={`w-20 h-20 items-center justify-center rounded-2xl border-2 ${!avatar ? 'border-red-500 bg-red-50' : 'border-slate-200 bg-white'}`}
-          >
-            <User size={36} color={!avatar ? "#dc2626" : "#94a3b8"} />
-          </TouchableOpacity>
-        </View>
-      </View>
+  if (!user) return <Screen title="Your account" centered><EmptyState icon={User} title="Make yourself at home." description="Sign in to keep your orders, points and rewards together." action="Sign in or create an account" onAction={() => router.push('/(auth)/login')} /><Button variant="ghost" onPress={() => router.push('/store-picker')}>Browse the menu</Button></Screen>;
+  return <Screen title="Your account">
+    <PageHeading eyebrow="YOUR POGO’S" title="A place for your favourites." subtitle="Manage your profile, account and preferences." />
+    <Card><View className="flex-row items-center gap-4 mb-6"><TouchableOpacity accessibilityRole="button" accessibilityLabel="Choose profile avatar" onPress={() => setShowAvatarPicker(true)} className="w-20 h-20 bg-brand-50 border border-brand-100 rounded-3xl items-center justify-center">
+      {avatar ? <Text style={{ fontSize: 36 }}>{avatar}</Text> : <User size={32} color={colors.primary} />}
+    </TouchableOpacity><View className="flex-1"><Text className="text-xl text-ink font-bold">{fullName || 'Your Pogo’s account'}</Text><Text className="text-subtle text-sm mt-2" selectable>{user.email}</Text><Text className="text-brand-800 text-xs mt-2">Tap your avatar to change it</Text></View></View>
+      <Text className="text-sm font-semibold text-ink mb-2">Full name</Text><Input accessibilityLabel="Full name" value={fullName} onChangeText={setFullName} placeholder="Your name" autoCapitalize="words" />
+      <Button onPress={handleUpdate} isLoading={loading} className="mt-4">Save profile changes</Button>
+      {profileMessage ? <Text accessibilityRole="alert" className="text-subtle text-sm leading-6 mt-3">{profileMessage}</Text> : null}
+    </Card>
+    <SectionHeading title="Your account, your way" />
+    <Card>
+      <ActionRow icon={Shield} title="Account security" detail="Password, authenticator and branch invitations." onPress={() => router.push('/auth/security')} />
+      <ActionRow icon={Bell} title="Order and loyalty updates" detail="Your inbox and device notification preferences." onPress={() => router.push('/notifications')} />
+      <ActionRow icon={FileLock2} title="Privacy and account data" detail="Preferences, exports and deletion requests." onPress={() => router.push('/privacy')} />
+      <ActionRow icon={LifeBuoy} title="Help and support" detail="Get help with an order or your account." onPress={() => router.push('/support')} />
+    </Card>
+    {['admin', 'manager', 'finance', 'staff'].includes(userRole) || isAdmin ? <><SectionHeading title="Your workspace" /><Card>
+      {['admin', 'manager', 'finance'].includes(userRole) ? <ActionRow icon={ReceiptText} title="Cash and till reports" detail="Branch reports and reconciliation." onPress={() => router.push('/finance')} /> : null}
+      {['admin', 'manager', 'staff'].includes(userRole) ? <ActionRow icon={Store} title="Branch workspace" onPress={() => router.push('/(app)/staff-dashboard')} /> : null}
+      {isAdmin ? <ActionRow icon={Shield} title="Administration" detail="Catalogue, branch and access management." onPress={() => router.push('/(app)/admin')} /> : null}
+    </Card></> : null}
+    <SectionHeading title="Account details" />
+    <Card><Text className="text-subtle text-xs mb-1">ACCOUNT REFERENCE</Text><Text selectable className="text-ink text-sm leading-6">{user.id}</Text>
+      <View className="flex-row justify-between flex-wrap gap-3 mt-4 border-t border-line pt-4"><View><Text className="text-subtle text-xs">Member since</Text><Text className="text-ink font-semibold mt-1">{user.created_at ? new Date(user.created_at).toLocaleDateString() : 'Unconfirmed'}</Text></View><View><Text className="text-subtle text-xs">Last sign-in</Text><Text className="text-ink font-semibold mt-1">{user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString() : 'Unconfirmed'}</Text></View></View>
+    </Card>
+    <Text className="text-subtle text-sm leading-6 mb-5">In-store account linking is not available yet. Check with your Pogo’s branch about your loyalty account.</Text>
+    <Button variant="outline" textClassName="text-red-700" onPress={handleSignOut}>Sign out</Button>
+    <Modal visible={showAvatarPicker} animationType="slide" onRequestClose={() => setShowAvatarPicker(false)}>
+      <Screen title="Choose your avatar" onBack={() => setShowAvatarPicker(false)}><PageHeading title="A little personality." subtitle="Pick an avatar, then save your profile to keep it." />
+        <View className="flex-row flex-wrap justify-center gap-3">{EMOJI_AVATARS.map(emoji => <TouchableOpacity key={emoji} accessibilityRole="button" accessibilityLabel={`Choose ${emoji} avatar`} accessibilityState={{ selected: avatar === emoji }} onPress={() => { setAvatar(emoji); setShowAvatarPicker(false); }} className={`w-20 h-20 items-center justify-center rounded-3xl border ${avatar === emoji ? 'border-brand-600 bg-brand-50' : 'border-line bg-white'}`}><Text style={{ fontSize: 34 }}>{emoji}</Text></TouchableOpacity>)}</View>
+        <Button variant="outline" className="mt-6" onPress={() => { setAvatar(''); setShowAvatarPicker(false); }}>Use the default avatar</Button>
+      </Screen>
     </Modal>
-
-    </View>
-  );
+  </Screen>;
 }

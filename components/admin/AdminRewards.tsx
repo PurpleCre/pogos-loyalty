@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Alert, Modal, Switch, ScrollView } from 'react-native';
+import { View, Text, Alert, Modal, Switch, ScrollView } from 'react-native';
+import { TouchTarget as TouchableOpacity } from '@/components/ui/touch-target';
 import { Edit2, Trash2, Plus, X } from 'lucide-react-native';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -120,7 +121,7 @@ export function AdminRewards({ rewards, createReward, updateReward, deleteReward
       </View>
       <TouchableOpacity 
         onPress={openCreateModal}
-        className="flex-row items-center justify-center bg-red-600 rounded-xl py-3.5 mb-2"
+        className="flex-row items-center justify-center bg-brand-800 rounded-xl py-3.5 mb-2"
         activeOpacity={0.8}
       >
         <Plus size={20} color="white" className="mr-2" />
@@ -128,21 +129,21 @@ export function AdminRewards({ rewards, createReward, updateReward, deleteReward
       </TouchableOpacity>
 
       {rewards.map(reward => (
-        <View key={reward.id} className="bg-white p-4 rounded-xl border border-gray-100">
+        <View key={reward.id} className="bg-white p-4 rounded-xl border border-line">
           <View className="flex-row justify-between items-start mb-2">
             <View className="flex-1 mr-4">
-              <Text className="font-bold text-gray-900 text-lg">{reward.name}</Text>
+              <Text className="font-bold text-ink text-lg">{reward.name}</Text>
               {reward.description ? (
-                <Text className="text-sm text-gray-500 mt-1">{reward.description}</Text>
+                <Text className="text-sm text-subtle mt-1">{reward.description}</Text>
               ) : null}
             </View>
-            <Text className="font-bold text-red-600 text-lg">{reward.points_cost} pts</Text>
+            <Text className="font-bold text-brand-800 text-lg">{reward.points_cost} pts</Text>
           </View>
           
           <View className="flex-row items-center justify-between mt-2 pt-3 border-t border-gray-50">
             <View className="flex-row items-center gap-2">
               <View className="bg-gray-100 px-2 py-1 rounded">
-                <Text className="text-xs text-gray-600 capitalize">{reward.category}</Text>
+                <Text className="text-xs text-subtle capitalize">{reward.category}</Text>
               </View>
               <Text className={`text-xs font-bold ${reward.available ? 'text-green-600' : 'text-red-600'}`}>
                 {reward.available ? 'Active' : 'Inactive'}
@@ -168,7 +169,7 @@ export function AdminRewards({ rewards, createReward, updateReward, deleteReward
 
       {rewards.length === 0 && (
         <View className="items-center justify-center py-12">
-          <Text className="text-gray-400 font-medium">No rewards created yet</Text>
+          <Text className="text-subtle font-medium">No rewards created yet</Text>
         </View>
       )}
 
@@ -178,9 +179,9 @@ export function AdminRewards({ rewards, createReward, updateReward, deleteReward
         presentationStyle="pageSheet"
         onRequestClose={() => setIsModalVisible(false)}
       >
-        <View className="flex-1 bg-gray-50">
-          <View className="flex-row items-center justify-between p-4 bg-white border-b border-gray-100">
-            <Text className="text-xl font-bold text-gray-900">
+        <View className="flex-1 bg-canvas">
+          <View className="flex-row items-center justify-between p-4 bg-white border-b border-line">
+            <Text className="text-xl font-bold text-ink">
               {editingReward ? 'Edit Reward' : 'Create Reward'}
             </Text>
             <TouchableOpacity onPress={() => setIsModalVisible(false)} className="p-2">
@@ -189,7 +190,7 @@ export function AdminRewards({ rewards, createReward, updateReward, deleteReward
           </View>
 
           <ScrollView className="flex-1 p-4" keyboardShouldPersistTaps="handled">
-            <View className="bg-white p-4 rounded-xl border border-gray-100 mb-6">
+            <View className="bg-white p-4 rounded-xl border border-line mb-6">
               <View className="mb-4">
                 <Text className="text-sm font-medium text-gray-700 mb-1.5">Name *</Text>
                 <Input value={name} onChangeText={setName} placeholder="Reward name" />
@@ -239,14 +240,14 @@ export function AdminRewards({ rewards, createReward, updateReward, deleteReward
 
               <View className="flex-row items-center justify-between py-2 border-t border-gray-50 mt-2 pt-4">
                 <View>
-                  <Text className="text-base font-medium text-gray-900">Available</Text>
-                  <Text className="text-xs text-gray-500">Include in new branch reward reservations?</Text>
+                  <Text className="text-base font-medium text-ink">Available</Text>
+                  <Text className="text-xs text-subtle">Include in new branch reward reservations?</Text>
                 </View>
                 <Switch 
                   value={available} 
                   onValueChange={setAvailable} 
-                  trackColor={{ false: '#d1d5db', true: '#fca5a5' }}
-                  thumbColor={available ? '#e11d48' : '#f3f4f6'}
+                  trackColor={{ false: '#d1d5db', true: '#b7ded2' }}
+                  thumbColor={available ? '#174d45' : '#f3f4f6'}
                 />
               </View>
             </View>
@@ -254,7 +255,7 @@ export function AdminRewards({ rewards, createReward, updateReward, deleteReward
             <Button 
               onPress={handleSave} 
               isLoading={loading}
-              className="bg-red-600 mb-8"
+              className="bg-brand-800 mb-8"
               textClassName="text-white font-bold"
             >
               {editingReward ? 'Save Changes' : 'Create Reward'}

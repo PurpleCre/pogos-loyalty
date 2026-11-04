@@ -1,3 +1,4 @@
+import { Screen, PageHeading } from '@/components/ui/screen';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AppState, ScrollView, Text, View } from 'react-native';
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
@@ -90,8 +91,7 @@ function SecurityContent({ owner, destination }: { owner: string; destination: '
     await refetchRole(); await load();
     if (active.current) setMessage('Branch invitation accepted.');
   };
-  return <ScrollView className="flex-1 bg-white" contentContainerStyle={{ padding: 24, paddingTop: 64, gap: 16 }} keyboardShouldPersistTaps="handled">
-    <Text className="text-2xl font-bold">Account security</Text>
+  return <Screen title="Account security" contentStyle={{ gap: 16 }}><PageHeading eyebrow="PEACE OF MIND" title="Account security" subtitle="Protect your account and manage branch invitations." />
     <Text>Staff and administrators must verify an authenticator code before opening branch or administration tools. Keep setup codes private.</Text>
     {ready ? <Text className="text-green-800 font-bold">Authenticator verified for this session.</Text> : setup ? <View className="gap-3">
       <Text>Scan with your authenticator, or enter this setup key there. Then enter the six-digit code below.</Text>
@@ -104,7 +104,7 @@ function SecurityContent({ owner, destination }: { owner: string; destination: '
     {ready ? <>
       <Text className="text-lg font-bold">Branch invitations</Text>
       <Text>Only invitations for your verified account email appear here. Ask your branch manager if you expected one.</Text>
-      {invitations.map(invitation => <View key={invitation.id} className="p-4 border border-slate-200 rounded-xl gap-3">
+      {invitations.map(invitation => <View key={invitation.id} className="p-4 border border-line rounded-xl gap-3">
         <Text className="font-bold">{invitation.store_name}</Text><Text>Expires {new Date(invitation.expires_at).toLocaleString()}</Text>
         <Button disabled={busy} onPress={() => { void run(() => accept(invitation.id)); }}>Accept branch invitation</Button>
       </View>)}
@@ -113,7 +113,7 @@ function SecurityContent({ owner, destination }: { owner: string; destination: '
     <Button variant="ghost" disabled={busy} onPress={() => { void run(load); }}>Refresh security settings</Button>
     <Text>If you lose your authenticator, contact the branch manager. Password recovery does not bypass staff MFA.</Text>
     <Button variant="ghost" disabled={busy} onPress={() => { void run(async () => { const result = await signOut(); if (result.error) throw result.error; router.replace('/(auth)/login'); }); }}>Sign out</Button>
-  </ScrollView>;
+  </Screen>;
 }
 export default function Security() {
   const { returnTo }=useLocalSearchParams<{returnTo?:string}>();

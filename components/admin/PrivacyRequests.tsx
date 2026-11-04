@@ -1,5 +1,5 @@
 import { useEffect,useRef,useState } from 'react';
-import { View,Text } from 'react-native';
+import { View, Text } from 'react-native';
 import { z } from 'zod';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabase';
@@ -33,7 +33,7 @@ export function PrivacyRequests() {
     {!permitted?<Text>An approved privacy reviewer with administrator MFA is required to view customer requests. Contact the release owner for access.</Text>:<>
       <Text>Review requests and operational blockers here. Erasure and vendor tasks follow the approved retention runbook. This screen cannot declare an account erased.</Text>
       <Input accessibilityLabel="Privacy review reason" value={reason} onChangeText={setReason} maxLength={500} placeholder="Internal review reason"/>
-      {queue.map(request=><View key={request.id} className="p-4 bg-white border border-slate-200 rounded-xl gap-3">
+      {queue.map(request=><View key={request.id} className="p-4 bg-white border border-line rounded-xl gap-3">
         <Text className="font-bold">Deletion · {request.status}</Text><Text selectable>Reference: {request.id}</Text><Text selectable>Account: {request.user_id}</Text>
         {request.blocker?<Text>{privacyBlockerMessage(request.blocker)}</Text>:null}
         {request.status==='processing'?<Button variant="outline" disabled={busy} onPress={()=>{void review(request.id,request.version,request.blocker?'resume':'pause');}}>{request.blocker?'Recheck and resume processing':'Flag for operator review'}</Button>:<>

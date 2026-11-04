@@ -53,7 +53,7 @@ export function StaffInvitations({ stores }: { stores: Store[] }) {
     if (error) throw error;
     await load();
   };
-  return <View className="p-4 bg-white rounded-xl border border-slate-200 gap-3 mb-4">
+  return <View className="p-4 bg-white rounded-xl border border-line gap-3 mb-4">
     <Text className="text-lg font-bold">Invite branch staff</Text>
     <Text>The recipient creates and verifies their own account. An invitation grants access only after they accept with MFA.</Text>
     <Input accessibilityLabel="Staff invitation email" placeholder="Staff email" value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" editable={!busy} />
@@ -62,7 +62,7 @@ export function StaffInvitations({ stores }: { stores: Store[] }) {
     <Button isLoading={busy} onPress={() => { void perform(invite); }}>Create branch invitation</Button>
     {message ? <Text accessibilityRole="alert">{message}</Text> : null}
     <Text className="font-bold">Pending invitations</Text>
-    {invitations.map(invitation => <View key={invitation.id} className="border-t border-slate-100 pt-3 gap-2">
+    {invitations.map(invitation => <View key={invitation.id} className="border-t border-line pt-3 gap-2">
       <Text>{invitation.email} · {stores.find(store => store.id === invitation.store_id)?.name ?? 'Branch'}</Text>
       <Button variant="outline" disabled={busy} onPress={() => { void perform(() => revoke(invitation.id)); }}>Revoke invitation using reason above</Button>
     </View>)}

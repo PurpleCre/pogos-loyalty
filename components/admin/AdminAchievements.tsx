@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Alert, Modal, Switch, ScrollView } from 'react-native';
+import { View, Text, Alert, Modal, Switch, ScrollView } from 'react-native';
+import { TouchTarget as TouchableOpacity } from '@/components/ui/touch-target';
 import { Edit2, Trash2, Plus, X, Trophy } from 'lucide-react-native';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -115,7 +116,7 @@ export function AdminAchievements({
     <View className="gap-3 pb-8">
       <TouchableOpacity 
         onPress={openCreateModal}
-        className="flex-row items-center justify-center bg-red-600 rounded-xl py-3.5 mb-2"
+        className="flex-row items-center justify-center bg-brand-800 rounded-xl py-3.5 mb-2"
         activeOpacity={0.8}
       >
         <Plus size={20} color="white" className="mr-2" />
@@ -123,17 +124,17 @@ export function AdminAchievements({
       </TouchableOpacity>
 
       {achievements.map(achievement => (
-        <View key={achievement.id} className="bg-white p-4 rounded-xl border border-gray-100">
+        <View key={achievement.id} className="bg-white p-4 rounded-xl border border-line">
           <View className="flex-row justify-between items-start mb-2">
             <View className="flex-1 mr-4">
               <View className="flex-row items-center gap-2">
                 <View className="w-8 h-8 bg-amber-100 rounded-full items-center justify-center">
                   <Trophy size={16} color="#f59e0b" />
                 </View>
-                <Text className="font-bold text-gray-900 text-lg flex-1">{achievement.name}</Text>
+                <Text className="font-bold text-ink text-lg flex-1">{achievement.name}</Text>
               </View>
               {achievement.description ? (
-                <Text className="text-sm text-gray-500 mt-2">{achievement.description}</Text>
+                <Text className="text-sm text-subtle mt-2">{achievement.description}</Text>
               ) : null}
             </View>
             <View className="items-end">
@@ -168,7 +169,7 @@ export function AdminAchievements({
       {achievements.length === 0 && (
         <View className="items-center justify-center py-12">
           <Trophy size={48} color="#9ca3af" className="mb-4 opacity-50" />
-          <Text className="text-gray-400 font-medium">No achievements created yet</Text>
+          <Text className="text-subtle font-medium">No achievements created yet</Text>
         </View>
       )}
 
@@ -178,9 +179,9 @@ export function AdminAchievements({
         presentationStyle="pageSheet"
         onRequestClose={() => setIsModalVisible(false)}
       >
-        <View className="flex-1 bg-gray-50">
-          <View className="flex-row items-center justify-between p-4 bg-white border-b border-gray-100">
-            <Text className="text-xl font-bold text-gray-900">
+        <View className="flex-1 bg-canvas">
+          <View className="flex-row items-center justify-between p-4 bg-white border-b border-line">
+            <Text className="text-xl font-bold text-ink">
               {editingAchievement ? 'Edit Achievement' : 'Create Achievement'}
             </Text>
             <TouchableOpacity onPress={() => setIsModalVisible(false)} className="p-2">
@@ -189,7 +190,7 @@ export function AdminAchievements({
           </View>
 
           <ScrollView className="flex-1 p-4" keyboardShouldPersistTaps="handled">
-            <View className="bg-white p-4 rounded-xl border border-gray-100 mb-6">
+            <View className="bg-white p-4 rounded-xl border border-line mb-6">
               <View className="mb-4">
                 <Text className="text-sm font-medium text-gray-700 mb-1.5">Name *</Text>
                 <Input value={name} onChangeText={setName} placeholder="Achievement name" />
@@ -228,14 +229,14 @@ export function AdminAchievements({
 
               <View className="flex-row items-center justify-between py-2 border-t border-gray-50 mt-2 pt-4">
                 <View>
-                  <Text className="text-base font-medium text-gray-900">Active</Text>
-                  <Text className="text-xs text-gray-500">Can users earn this achievement?</Text>
+                  <Text className="text-base font-medium text-ink">Active</Text>
+                  <Text className="text-xs text-subtle">Can users earn this achievement?</Text>
                 </View>
                 <Switch 
                   value={isActive} 
                   onValueChange={setIsActive}
-                  trackColor={{ false: '#d1d5db', true: '#fca5a5' }}
-                  thumbColor={isActive ? '#e11d48' : '#f3f4f6'}
+                  trackColor={{ false: '#d1d5db', true: '#b7ded2' }}
+                  thumbColor={isActive ? '#174d45' : '#f3f4f6'}
                 />
               </View>
             </View>
@@ -243,7 +244,7 @@ export function AdminAchievements({
             <Button 
               onPress={handleSave} 
               isLoading={loading}
-              className="bg-red-600 mb-8"
+              className="bg-brand-800 mb-8"
               textClassName="text-white font-bold"
             >
               {editingAchievement ? 'Save Changes' : 'Create Achievement'}

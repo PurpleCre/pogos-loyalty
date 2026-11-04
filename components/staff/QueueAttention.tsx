@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, AccessibilityInfo } from 'react-native';
+import { View, Text, AccessibilityInfo } from 'react-native';
+import { TouchTarget as TouchableOpacity } from '@/components/ui/touch-target';
 import { createQueueAttention, type BranchSnapshot } from '@/lib/branch-operations';
 import { prepareBranchSound, playBranchSound, clearBranchSounds } from '@/lib/branch-alert';
 
@@ -38,7 +39,7 @@ export function QueueAttention({ snapshot, fresh, active }: { snapshot: BranchSn
     } catch { if (mounted.current) { setSound(false); setMessage('Sound is unavailable or blocked. Use the visible queue and check device settings.'); } }
     finally { if (mounted.current) setBusy(false); }
   };
-  return <View className={`p-4 rounded-xl mb-4 border ${snapshot?.pending.count ? 'bg-amber-50 border-amber-400' : 'bg-white border-slate-200'}`}>
+  return <View className={`p-4 rounded-xl mb-4 border ${snapshot?.pending.count ? 'bg-amber-50 border-amber-400' : 'bg-white border-line'}`}>
     <Text accessibilityRole="header" className="font-bold text-lg">{snapshot ? `${snapshot.pending.count} cash orders awaiting acceptance` : 'Checking branch attention'}</Text>
     {snapshot?.pending.overdue_count ? <Text>{snapshot.pending.overdue_count} past the acceptance deadline. Close expired requests or contact support.</Text> : null}
     <Text className="mt-2">Foreground alerts work while this screen is open and current. Keep a staff device attended; background push delivery is not enabled by this control.</Text>
@@ -48,7 +49,7 @@ export function QueueAttention({ snapshot, fresh, active }: { snapshot: BranchSn
     {snapshot && snapshot.pending.count > 0 ? <TouchableOpacity accessibilityRole="button" disabled={silenced || !fresh} onPress={() => { attention.current.acknowledge(); setSilenced(true); }} className="py-3">
       <Text>{silenced ? 'Reminders silenced for this batch' : 'Silence reminders for this batch'}</Text>
     </TouchableOpacity> : null}
-    <Text className="text-slate-600">Silencing reminders does not accept an order. Use “Accept order” in its card.</Text>
+    <Text className="text-subtle">Silencing reminders does not accept an order. Use “Accept order” in its card.</Text>
     {message ? <Text accessibilityRole="alert" className="mt-2">{message}</Text> : null}
   </View>;
 }

@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text } from 'react-native';
+import { TouchTarget as TouchableOpacity } from '@/components/ui/touch-target';
 import type { PendingRewardCommand } from '@/lib/reward-redemption';
 export function RewardRecovery({ pending, error, busy, onRecover }: { pending: PendingRewardCommand | null; error: string; busy: boolean; onRecover(): void }) {
   if (!pending && !error) return null;

@@ -1,13 +1,16 @@
-import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity, Modal, TextInput, Alert, StyleSheet } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import { Screen, PageHeading, EmptyState } from '@/components/ui/screen';
+import { View, Text, ScrollView, ActivityIndicator, Modal, Alert, StyleSheet, Platform } from 'react-native';
+import { Input as TextInput } from '@/components/ui/input';
+import { TouchTarget as TouchableOpacity } from '@/components/ui/touch-target';
+import MapView, { Marker } from '@/components/LocationMap';
 import { useAdmin } from '@/hooks/useAdmin';
 import type { AppRole } from '@/hooks/useAuth';
 import { StaffInvitations } from '@/components/admin/StaffInvitations';
 import { PrivacyRequests } from '@/components/admin/PrivacyRequests';
-import { 
-  Shield, Users, Gift, Receipt, LayoutDashboard, Store, 
-  ClipboardList, UserPlus, X, TrendingUp, 
-  DollarSign, UserCheck, MapPin, Trophy, Plus, Pencil, Trash2, Image, Zap 
+import {
+  Shield, Users, Gift, Receipt, LayoutDashboard, Store,
+  ClipboardList, UserPlus, X, TrendingUp,
+  DollarSign, UserCheck, MapPin, Trophy, Plus, Pencil, Trash2, Image, Zap
 } from 'lucide-react-native';
 import { useState, useEffect } from 'react';
 import { AdminRewards } from '@/components/admin/AdminRewards';
@@ -22,7 +25,7 @@ import { branchScopedRole } from '@/lib/identity';
 
 export default function AdminScreen() {
   const isFocused = useIsFocused();
-  const { 
+  const {
     isAdmin, loading, users, rewards, achievements, transactions, stores, dashboardStats,
     fetchUsers, fetchRewards, fetchAchievements, fetchTransactions, fetchStores, fetchDashboardStats,
     createReward, updateReward, deleteReward,
@@ -71,13 +74,13 @@ export default function AdminScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center bg-gray-50">
-        <ActivityIndicator size="large" color="#e11d48" />
+      <View className="flex-1 items-center justify-center bg-canvas">
+        <ActivityIndicator size="large" color="#174d45" />
       </View>
     );
   }
 
-  if (!isAdmin) return null;
+  if (!isAdmin) return <Screen title="Administration" centered><EmptyState icon={Shield} title="Administrator access required" description="Verify your assigned administrator account to open this workspace." action="Account security" onAction={() => router.push('/auth/security')} /></Screen>;
 
   const handleRoleChange = async () => {
     if ((branchScopedRole(selectedRole) && !selectedStoreIds.length) || accessReason.trim().length < 3) {
@@ -197,98 +200,86 @@ export default function AdminScreen() {
 
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
-      case 'admin': return { bg: 'bg-red-100', text: 'text-red-700' };
+      case 'admin': return { bg: 'bg-brand-100', text: 'text-brand-800' };
       case 'manager': return { bg: 'bg-amber-100', text: 'text-amber-800' };
       case 'finance': return { bg: 'bg-purple-100', text: 'text-purple-700' };
       case 'staff': return { bg: 'bg-blue-100', text: 'text-blue-700' };
-      default: return { bg: 'bg-gray-100', text: 'text-gray-600' };
+      default: return { bg: 'bg-gray-100', text: 'text-subtle' };
     }
   };
 
   return (
-    <View className="flex-1 bg-gray-50">
-      {/* Header */}
-      <View className="bg-[#18181b] pt-14 pb-4 px-5">
-        <View className="flex-row items-center gap-3">
-          <View className="w-10 h-10 bg-red-600 rounded-xl items-center justify-center">
-            <Shield size={20} color="white" />
-          </View>
-          <View>
-            <Text className="text-white text-lg font-bold">Pogo's Global Admin</Text>
-            <Text className="text-gray-400 text-sm">Manage stores, orders & loyalty</Text>
-          </View>
-        </View>
-      </View>
-
+    <Screen title="Administration" wide>
+      <PageHeading eyebrow="POGO’S WORKSPACE" title="The bigger picture." subtitle="Manage your catalogue, branches and team. Operational and financial approvals still apply to every change." />
       {/* Tab Bar */}
       <View className="px-4 pt-3 pb-1">
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row bg-gray-200 p-1 rounded-xl">
+        <ScrollView testID="admin-sections" horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingBottom: 8 }}>
           {tabs.map(tab => {
             const TabIcon = tab.icon;
             return (
               <TouchableOpacity
                 key={tab.key}
                 onPress={() => setActiveTab(tab.key as any)}
-                className={`px-3 py-2 rounded-lg items-center flex-row gap-1 ${activeTab === tab.key ? 'bg-white shadow-sm' : ''}`}
+                accessibilityState={{ selected: activeTab === tab.key }} className={`px-4 py-3 rounded-2xl border items-center flex-row gap-2 ${activeTab === tab.key ? 'bg-brand-800 border-brand-800' : 'bg-white border-line'}`}
               >
-                <TabIcon size={14} color={activeTab === tab.key ? '#e11d48' : '#6b7280'} />
-                <Text className={`font-semibold text-xs ${activeTab === tab.key ? 'text-gray-900' : 'text-gray-500'}`}>{tab.label}</Text>
+                <TabIcon size={14} color={activeTab === tab.key ? '#ffffff' : '#596c63'} />
+                <Text className={`font-semibold text-xs ${activeTab === tab.key ? 'text-white' : 'text-subtle'}`}>{tab.label}</Text>
               </TouchableOpacity>
             );
           })}
         </ScrollView>
       </View>
 
-      <ScrollView className="flex-1" contentContainerStyle={{ padding: 16, paddingBottom: 40 }}>
+      <View className="mt-5">
         {activeTab === 'loyalty' && <AdminLoyalty users={users} />}
         {activeTab === 'privacy' && <PrivacyRequests />}
         {/* Dashboard Tab */}
         {activeTab === 'dashboard' && (
           <View className="gap-4">
             <View className="flex-row gap-3">
-              <View className="flex-1 bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+              <View className="flex-1 bg-white rounded-2xl p-4 border border-line shadow-sm">
                 <View className="flex-row items-center gap-2 mb-2">
-                  <Users size={16} color="#e11d48" />
-                  <Text className="text-gray-500 text-xs font-medium uppercase">Total Users</Text>
+                  <Users size={16} color="#174d45" />
+                  <Text className="text-subtle text-xs font-medium uppercase">Total Users</Text>
                 </View>
-                <Text className="text-2xl font-bold text-gray-900">{dashboardStats.totalUsers}</Text>
+                <Text className="text-2xl font-bold text-ink">{dashboardStats.totalUsers}</Text>
               </View>
-              <View className="flex-1 bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+              <View className="flex-1 bg-white rounded-2xl p-4 border border-line shadow-sm">
                 <View className="flex-row items-center gap-2 mb-2">
-                  <ClipboardList size={16} color="#e11d48" />
-                  <Text className="text-gray-500 text-xs font-medium uppercase">Orders Today</Text>
+                  <ClipboardList size={16} color="#174d45" />
+                  <Text className="text-subtle text-xs font-medium uppercase">Orders Today</Text>
                 </View>
-                <Text className="text-2xl font-bold text-gray-900">{dashboardStats.totalOrdersToday}</Text>
+                <Text className="text-2xl font-bold text-ink">{dashboardStats.totalOrdersToday}</Text>
               </View>
             </View>
             <View className="flex-row gap-3">
-              <View className="flex-1 bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+              <View className="flex-1 bg-white rounded-2xl p-4 border border-line shadow-sm">
                 <View className="flex-row items-center gap-2 mb-2">
                   <DollarSign size={16} color="#16a34a" />
-                  <Text className="text-gray-500 text-xs font-medium uppercase">Cash and till reports</Text>
+                  <Text className="text-subtle text-xs font-medium uppercase">Cash and till reports</Text>
                 </View>
                 <TouchableOpacity accessibilityRole="button" onPress={()=>router.push('/finance')} className="py-2"><Text className="font-bold text-green-700">By branch and currency →</Text></TouchableOpacity>
               </View>
-              <View className="flex-1 bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+              <View className="flex-1 bg-white rounded-2xl p-4 border border-line shadow-sm">
                 <View className="flex-row items-center gap-2 mb-2">
                   <UserCheck size={16} color="#2563eb" />
-                  <Text className="text-gray-500 text-xs font-medium uppercase">Active Staff</Text>
+                  <Text className="text-subtle text-xs font-medium uppercase">Active Staff</Text>
                 </View>
-                <Text className="text-2xl font-bold text-gray-900">{dashboardStats.activeStaff}</Text>
+                <Text className="text-2xl font-bold text-ink">{dashboardStats.activeStaff}</Text>
               </View>
             </View>
             <View className="flex-row gap-3">
-              <View className="flex-1 bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+              <View className="flex-1 bg-white rounded-2xl p-4 border border-line shadow-sm">
                 <View className="flex-row items-center gap-2 mb-2">
                   <MapPin size={16} color="#ea580c" />
-                  <Text className="text-gray-500 text-xs font-medium uppercase">Stores</Text>
+                  <Text className="text-subtle text-xs font-medium uppercase">Stores</Text>
                 </View>
-                <Text className="text-2xl font-bold text-gray-900">{dashboardStats.totalStores}</Text>
+                <Text className="text-2xl font-bold text-ink">{dashboardStats.totalStores}</Text>
               </View>
-              <View className="flex-1 bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+              <View className="flex-1 bg-white rounded-2xl p-4 border border-line shadow-sm">
                 <View className="flex-row items-center gap-2 mb-2">
                   <TrendingUp size={16} color="#f59e0b" />
-                  <Text className="text-gray-500 text-xs font-medium uppercase">Pending</Text>
+                  <Text className="text-subtle text-xs font-medium uppercase">Pending</Text>
                 </View>
                 <Text className="text-2xl font-bold text-amber-500">{dashboardStats.pendingOrders}</Text>
               </View>
@@ -304,22 +295,22 @@ export default function AdminScreen() {
             {users.map(u => {
               const badge = getRoleBadgeColor(u.role);
               return (
-                <View key={u.id} className="bg-white p-4 rounded-xl border border-gray-100">
+                <View key={u.id} className="bg-white p-4 rounded-xl border border-line">
                   <View className="flex-row items-start justify-between mb-2">
                     <View className="flex-1">
-                      <Text className="font-bold text-gray-900">{u.full_name || 'No Name'}</Text>
-                      <Text className="text-xs text-gray-500 mt-0.5">{u.email}</Text>
+                      <Text className="font-bold text-ink">{u.full_name || 'No Name'}</Text>
+                      <Text className="text-xs text-subtle mt-0.5">{u.email}</Text>
                     </View>
                     <View className={`px-2 py-1 rounded-full ${badge.bg}`}>
                       <Text className={`text-xs font-bold capitalize ${badge.text}`}>{u.role}</Text>
                     </View>
                   </View>
                   <View className="flex-row items-center gap-2 mb-3">
-                    <View className="bg-red-50 px-2 py-1 rounded">
-                      <Text className="text-xs font-semibold text-red-700">{u.current_points} pts</Text>
+                    <View className="bg-brand-50 px-2 py-1 rounded">
+                      <Text className="text-xs font-semibold text-brand-800">{u.current_points} pts</Text>
                     </View>
                     {branchScopedRole(u.role) && u.staff_store_ids.length > 0 && (
-                      <Text className="text-xs text-gray-400">
+                      <Text className="text-xs text-subtle">
                         Branches: {u.staff_store_ids.map(id => stores.find(s => s.id === id)?.name ?? 'Unknown').join(', ')}
                       </Text>
                     )}
@@ -338,7 +329,7 @@ export default function AdminScreen() {
                 </View>
               );
             })}
-            {users.length === 0 && <Text className="text-center text-gray-500 py-8">No users found</Text>}
+            {users.length === 0 && <Text className="text-center text-subtle py-8">No users found</Text>}
           </View>
         )}
 
@@ -347,22 +338,22 @@ export default function AdminScreen() {
           <View className="gap-3">
             <TouchableOpacity
               onPress={() => setShowCreateStore(true)}
-              className="bg-red-600 rounded-xl py-3 px-4 flex-row items-center justify-center gap-2 mb-2"
+              className="bg-brand-800 rounded-xl py-3 px-4 flex-row items-center justify-center gap-2 mb-2"
             >
               <Plus size={18} color="white" />
               <Text className="text-white font-bold">Add New Store</Text>
             </TouchableOpacity>
 
             {stores.map(store => (
-              <View key={store.id} className="bg-white p-4 rounded-xl border border-gray-100">
+              <View key={store.id} className="bg-white p-4 rounded-xl border border-line">
                 <View className="flex-row items-start justify-between mb-2">
                   <View className="flex-1">
-                    <Text className="font-bold text-gray-900">{store.name}</Text>
-                    <Text className="text-sm text-gray-500 mt-1">{store.address}</Text>
+                    <Text className="font-bold text-ink">{store.name}</Text>
+                    <Text className="text-sm text-subtle mt-1">{store.address}</Text>
                     {store.image_url ? (
                       <Text className="text-xs text-green-600 mt-1">📷 Image set</Text>
                     ) : (
-                      <Text className="text-xs text-gray-400 mt-1">No image</Text>
+                      <Text className="text-xs text-subtle mt-1">No image</Text>
                     )}
                   </View>
                   <View className={`px-2 py-1 rounded-full ${store.is_open ? 'bg-green-100' : 'bg-red-100'}`}>
@@ -393,26 +384,26 @@ export default function AdminScreen() {
                     <Trash2 size={16} color="#dc2626" />
                   </TouchableOpacity>
                 </View>
-                <Text className="text-xs text-gray-400 mt-2">
+                <Text className="text-xs text-subtle mt-2">
                   Staff: {users.filter(u => u.role === 'staff' && u.staff_store_ids.includes(store.id)).length} assigned
                 </Text>
               </View>
             ))}
-            {stores.length === 0 && <Text className="text-center text-gray-500 py-8">No stores found</Text>}
+            {stores.length === 0 && <Text className="text-center text-subtle py-8">No stores found</Text>}
           </View>
         )}
 
         {activeTab === 'rewards' && (
-          <AdminRewards 
-            rewards={rewards} 
-            createReward={createReward} 
-            updateReward={updateReward} 
-            deleteReward={deleteReward} 
+          <AdminRewards
+            rewards={rewards}
+            createReward={createReward}
+            updateReward={updateReward}
+            deleteReward={deleteReward}
           />
         )}
 
         {activeTab === 'achievements' && (
-          <AdminAchievements 
+          <AdminAchievements
             achievements={achievements}
             createAchievement={createAchievement}
             updateAchievement={updateAchievement}
@@ -423,34 +414,34 @@ export default function AdminScreen() {
         {activeTab === 'transactions' && (
           <View className="gap-3">
             {transactions.map(t => (
-              <View key={t.id} className="bg-white p-4 rounded-xl border border-gray-100">
+              <View key={t.id} className="bg-white p-4 rounded-xl border border-line">
                 <View className="flex-row justify-between mb-1">
-                  <Text className="font-bold text-gray-900 capitalize">{t.transaction_type.replace('_', ' ')}</Text>
+                  <Text className="font-bold text-ink capitalize">{t.transaction_type.replace('_', ' ')}</Text>
                   <Text className={`font-bold ${t.points_earned > 0 ? 'text-green-600' : 'text-orange-600'}`}>
                     {t.points_earned > 0 ? `+${t.points_earned}` : `-${t.points_redeemed}`}
                   </Text>
                 </View>
-                <Text className="text-xs text-gray-500">{t.user_email}</Text>
-                <Text className="text-xs text-gray-400 mt-2">{new Date(t.created_at).toLocaleString()}</Text>
+                <Text className="text-xs text-subtle">{t.user_email}</Text>
+                <Text className="text-xs text-subtle mt-2">{new Date(t.created_at).toLocaleString()}</Text>
               </View>
             ))}
-            {transactions.length === 0 && <Text className="text-center text-gray-500 py-8">No transactions found</Text>}
+            {transactions.length === 0 && <Text className="text-center text-subtle py-8">No transactions found</Text>}
           </View>
         )}
 
         {activeTab === 'orders' && <AdminOrders stores={stores} />}
-        
+
         {activeTab === 'menu' && <AdminMenu stores={stores} />}
 
         {activeTab === 'gaap' && <AdminGaap stores={stores} />}
-      </ScrollView>
+      </View>
 
       {/* Role Change Modal */}
       <Modal visible={showRoleModal} transparent animationType="slide">
         <View className="flex-1 justify-end bg-black/50">
-          <View className="bg-white rounded-t-3xl p-6">
+          <View className="bg-white rounded-t-3xl p-6 w-full max-w-2xl self-center">
             <View className="flex-row justify-between items-center mb-6">
-              <Text className="text-xl font-bold text-gray-900">Change User Role</Text>
+              <Text className="text-xl font-bold text-ink">Change User Role</Text>
               <TouchableOpacity onPress={() => setShowRoleModal(false)}>
                 <X size={24} color="#6b7280" />
               </TouchableOpacity>
@@ -463,12 +454,12 @@ export default function AdminScreen() {
                     key={role}
                     onPress={() => setSelectedRole(role)}
                     className={`px-3 py-2.5 rounded-xl items-center border ${
-                      selectedRole === role 
-                        ? 'bg-red-600 border-red-600' 
-                        : 'bg-white border-gray-200'
+                      selectedRole === role
+                        ? 'bg-brand-800 border-brand-800'
+                        : 'bg-white border-line'
                     }`}
                   >
-                    <Text className={`font-medium capitalize ${selectedRole === role ? 'text-white' : 'text-gray-600'}`}>{role}</Text>
+                    <Text className={`font-medium capitalize ${selectedRole === role ? 'text-white' : 'text-subtle'}`}>{role}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -482,8 +473,8 @@ export default function AdminScreen() {
                     onPress={() => setSelectedStoreIds(ids => ids.includes(store.id) ? ids.filter(id => id !== store.id) : [...ids, store.id])}
                     className={`px-4 py-3 rounded-xl mb-2 border ${
                       selectedStoreIds.includes(store.id)
-                        ? 'bg-red-50 border-red-300' 
-                        : 'bg-gray-50 border-gray-200'
+                        ? 'bg-brand-50 border-brand-300'
+                        : 'bg-canvas border-line'
                     }`}
                   >
                     <Text className={`font-medium ${selectedStoreIds.includes(store.id) ? 'text-red-700' : 'text-gray-700'}`}>{store.name}</Text>
@@ -495,7 +486,7 @@ export default function AdminScreen() {
             <TouchableOpacity
               disabled={savingAccess}
               onPress={handleRoleChange}
-              className="bg-red-600 rounded-xl py-3.5 items-center mt-2 mb-4"
+              className="bg-brand-800 rounded-xl py-3.5 items-center mt-2 mb-4"
             >
               <Text className="text-white font-bold text-base">Save Changes</Text>
             </TouchableOpacity>
@@ -506,9 +497,9 @@ export default function AdminScreen() {
       {/* Create Store Modal */}
       <Modal visible={showCreateStore} transparent animationType="slide">
         <View className="flex-1 justify-end bg-black/50">
-          <View className="bg-white rounded-t-3xl p-6">
+          <View className="bg-white rounded-t-3xl p-6 w-full max-w-2xl self-center">
             <View className="flex-row justify-between items-center mb-6">
-              <Text className="text-xl font-bold text-gray-900">Add New Store</Text>
+              <Text className="text-xl font-bold text-ink">Add New Store</Text>
               <TouchableOpacity onPress={() => setShowCreateStore(false)}>
                 <X size={24} color="#6b7280" />
               </TouchableOpacity>
@@ -520,8 +511,8 @@ export default function AdminScreen() {
                   value={newStoreName}
                   onChangeText={setNewStoreName}
                   placeholder="e.g. Pogo's Downtown"
-                  className="bg-gray-100 rounded-xl px-4 py-3 text-gray-900"
-                  placeholderTextColor="#9ca3af"
+                  className="bg-gray-100 rounded-xl px-4 py-3 text-ink"
+                  placeholderTextColor="#71847a"
                 />
               </View>
               <View className="mb-4">
@@ -530,13 +521,13 @@ export default function AdminScreen() {
                   value={newStoreAddress}
                   onChangeText={setNewStoreAddress}
                   placeholder="123 Main St"
-                  className="bg-gray-100 rounded-xl px-4 py-3 text-gray-900"
-                  placeholderTextColor="#9ca3af"
+                  className="bg-gray-100 rounded-xl px-4 py-3 text-ink"
+                  placeholderTextColor="#71847a"
                 />
               </View>
               <View className="mb-4">
                 <Text className="text-sm font-medium text-gray-700 mb-1">Store Location *</Text>
-                <View className="h-48 rounded-xl overflow-hidden border border-gray-200">
+                <View className="h-48 rounded-xl overflow-hidden border border-line">
                   <MapView
                     style={{ flex: 1 }}
                     initialRegion={{
@@ -550,7 +541,7 @@ export default function AdminScreen() {
                     <Marker coordinate={newStoreLocation} pinColor="#dc2626" />
                   </MapView>
                 </View>
-                <Text className="text-xs text-gray-500 mt-1">Tap on the map to set the store pin</Text>
+                <Text className="text-xs text-subtle mt-1">{Platform.OS === 'web' ? 'Set the branch coordinates above.' : 'Tap on the map to set the store pin'}</Text>
               </View>
               <View className="mb-4">
                 <Text className="text-sm font-medium text-gray-700 mb-1">Image URL (optional)</Text>
@@ -559,14 +550,14 @@ export default function AdminScreen() {
                   onChangeText={setNewStoreImageUrl}
                   placeholder="https://example.com/store-photo.jpg"
                   autoCapitalize="none"
-                  className="bg-gray-100 rounded-xl px-4 py-3 text-gray-900"
-                  placeholderTextColor="#9ca3af"
+                  className="bg-gray-100 rounded-xl px-4 py-3 text-ink"
+                  placeholderTextColor="#71847a"
                 />
               </View>
               <TouchableOpacity
                 onPress={handleCreateStore}
                 disabled={isCreatingStore}
-                className="bg-red-600 rounded-xl py-3.5 items-center mt-2 mb-8"
+                className="bg-brand-800 rounded-xl py-3.5 items-center mt-2 mb-8"
               >
                 <Text className="text-white font-bold text-base">
                   {isCreatingStore ? 'Creating...' : 'Create Store'}
@@ -580,9 +571,9 @@ export default function AdminScreen() {
       {/* Edit Store Modal */}
       <Modal visible={showEditStore} transparent animationType="slide">
         <View className="flex-1 justify-end bg-black/50">
-          <View className="bg-white rounded-t-3xl p-6">
+          <View className="bg-white rounded-t-3xl p-6 w-full max-w-2xl self-center">
             <View className="flex-row justify-between items-center mb-6">
-              <Text className="text-xl font-bold text-gray-900">Edit Store</Text>
+              <Text className="text-xl font-bold text-ink">Edit Store</Text>
               <TouchableOpacity onPress={() => setShowEditStore(false)}>
                 <X size={24} color="#6b7280" />
               </TouchableOpacity>
@@ -594,8 +585,8 @@ export default function AdminScreen() {
                   value={editStoreName}
                   onChangeText={setEditStoreName}
                   placeholder="Store Name"
-                  className="bg-gray-100 rounded-xl px-4 py-3 text-gray-900"
-                  placeholderTextColor="#9ca3af"
+                  className="bg-gray-100 rounded-xl px-4 py-3 text-ink"
+                  placeholderTextColor="#71847a"
                 />
               </View>
               <View className="mb-4">
@@ -604,13 +595,13 @@ export default function AdminScreen() {
                   value={editStoreAddress}
                   onChangeText={setEditStoreAddress}
                   placeholder="Store Address"
-                  className="bg-gray-100 rounded-xl px-4 py-3 text-gray-900"
-                  placeholderTextColor="#9ca3af"
+                  className="bg-gray-100 rounded-xl px-4 py-3 text-ink"
+                  placeholderTextColor="#71847a"
                 />
               </View>
               <View className="mb-4">
                 <Text className="text-sm font-medium text-gray-700 mb-1">Store Location *</Text>
-                <View className="h-48 rounded-xl overflow-hidden border border-gray-200">
+                <View className="h-48 rounded-xl overflow-hidden border border-line">
                   <MapView
                     style={{ flex: 1 }}
                     initialRegion={{
@@ -624,7 +615,7 @@ export default function AdminScreen() {
                     <Marker coordinate={editStoreLocation} pinColor="#dc2626" />
                   </MapView>
                 </View>
-                <Text className="text-xs text-gray-500 mt-1">Tap on the map to move the store pin</Text>
+                <Text className="text-xs text-subtle mt-1">{Platform.OS === 'web' ? 'Set the branch coordinates above.' : 'Tap on the map to move the store pin'}</Text>
               </View>
               <View className="mb-4">
                 <View className="flex-row items-center gap-2 mb-1">
@@ -636,19 +627,19 @@ export default function AdminScreen() {
                   onChangeText={setEditStoreImageUrl}
                   placeholder="https://example.com/store-photo.jpg"
                   autoCapitalize="none"
-                  className="bg-gray-100 rounded-xl px-4 py-3 text-gray-900"
-                  placeholderTextColor="#9ca3af"
+                  className="bg-gray-100 rounded-xl px-4 py-3 text-ink"
+                  placeholderTextColor="#71847a"
                 />
                 {editStoreImageUrl ? (
                   <Text className="text-xs text-green-600 mt-1">✓ Image URL set</Text>
                 ) : (
-                  <Text className="text-xs text-gray-400 mt-1">Leave blank to remove image</Text>
+                  <Text className="text-xs text-subtle mt-1">Leave blank to remove image</Text>
                 )}
               </View>
               <TouchableOpacity
                 onPress={handleSaveStore}
                 disabled={isSavingStore}
-                className="bg-red-600 rounded-xl py-3.5 items-center mt-2 mb-8"
+                className="bg-brand-800 rounded-xl py-3.5 items-center mt-2 mb-8"
               >
                 <Text className="text-white font-bold text-base">
                   {isSavingStore ? 'Saving...' : 'Save Changes'}
@@ -658,6 +649,6 @@ export default function AdminScreen() {
           </View>
         </View>
       </Modal>
-    </View>
+    </Screen>
   );
 }

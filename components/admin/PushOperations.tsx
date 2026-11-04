@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text } from 'react-native';
+import { Input as TextInput } from '@/components/ui/input';
+import { TouchTarget as TouchableOpacity } from '@/components/ui/touch-target';
 import { z } from 'zod';
 import { router } from 'expo-router';
 import { supabase } from '@/lib/supabase';

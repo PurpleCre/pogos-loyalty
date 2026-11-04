@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, AppState, ActivityIndicator } from 'react-native';
+import { View, Text, AppState, ActivityIndicator } from 'react-native';
+import { TouchTarget as TouchableOpacity } from '@/components/ui/touch-target';
 import Svg, { Path, Rect } from 'react-native-svg';
 import qrcode from 'qrcode-generator';
 import * as Clipboard from 'expo-clipboard';
@@ -14,7 +15,7 @@ function TicketCode({ code }: { code: string }) {
   }, [code]);
   return <View accessibilityLabel="Single-use reward claim QR code" className="items-center my-4">
     <Svg width={240} height={240} viewBox={`0 0 ${qr.size} ${qr.size}`}><Rect width={qr.size} height={qr.size} fill="white" /><Path d={qr.path} fill="black" /></Svg>
-    <Text selectable className="text-xs text-center mt-3 text-slate-600">{code}</Text>
+    <Text selectable className="text-xs text-center mt-3 text-subtle">{code}</Text>
   </View>;
 }
 export function RewardTicket({ owner, reservationId }: { owner: string; reservationId: string }) {
@@ -50,11 +51,11 @@ export function RewardTicket({ owner, reservationId }: { owner: string; reservat
     if (value?.ticket.claim_code && remaining > 0) await Clipboard.setStringAsync(value.ticket.claim_code);
   };
   return <View className="my-3">
-    <Text className="text-slate-600">Show this single-use ticket only to staff at your collection branch. Keep it private.</Text>
+    <Text className="text-subtle">Show this single-use ticket only to staff at your collection branch. Keep it private.</Text>
     {value?.ticket.claim_code && remaining > 0 ? <>
       <TicketCode code={value.ticket.claim_code} />
-      <Text className="text-center text-slate-500">Code expires in {Math.ceil(remaining / 60000)} minutes</Text>
-      <TouchableOpacity onPress={() => { void copy().catch(() => setError('Unable to copy the code. Show the QR to staff.')); }} className="p-3"><Text className="text-red-600 text-center font-bold">Copy code</Text></TouchableOpacity>
+      <Text className="text-center text-subtle">Code expires in {Math.ceil(remaining / 60000)} minutes</Text>
+      <TouchableOpacity onPress={() => { void copy().catch(() => setError('Unable to copy the code. Show the QR to staff.')); }} className="p-3"><Text className="text-brand-800 text-center font-bold">Copy code</Text></TouchableOpacity>
     </> : value ? <Text className="text-amber-800 my-3">This ticket is no longer available. Refresh your reservation; an expired untouched hold can be released below.</Text> : null}
     <TouchableOpacity disabled={busy} onPress={() => { void show(); }} className="p-3 bg-slate-100 rounded-lg"><Text className="font-bold text-center">{busy ? 'Loading…' : value ? 'Refresh ticket' : 'Show collection ticket'}</Text></TouchableOpacity>
     {busy ? <ActivityIndicator color="#dc2626" /> : null}

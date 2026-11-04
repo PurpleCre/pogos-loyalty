@@ -1,4 +1,6 @@
-import { View, Text, Switch, TextInput, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, Switch, ActivityIndicator, ScrollView } from 'react-native';
+import { Input as TextInput } from '@/components/ui/input';
+import { TouchTarget as TouchableOpacity } from '@/components/ui/touch-target';
 import { StaffMenuItem } from '@/hooks/useStaff';
 import { Search, UtensilsCrossed, AlertTriangle } from 'lucide-react-native';
 import { useState, useMemo } from 'react';
@@ -55,14 +57,14 @@ export function StaffMenuAvailability({ items, isLoading, onToggleAvailability }
   return (
     <View className="gap-4">
       {/* Search Bar */}
-      <View className="bg-white rounded-xl border border-gray-200 px-4 py-3 flex-row items-center gap-3">
+      <View className="bg-white rounded-xl border border-line px-4 py-3 flex-row items-center gap-3">
         <Search size={18} color="#9ca3af" />
         <TextInput
           placeholder="Search menu items..."
           value={searchQuery}
           onChangeText={setSearchQuery}
-          className="flex-1 text-base text-gray-900"
-          placeholderTextColor="#9ca3af"
+          className="flex-1 text-base text-ink"
+          placeholderTextColor="#71847a"
         />
       </View>
 
@@ -81,20 +83,20 @@ export function StaffMenuAvailability({ items, isLoading, onToggleAvailability }
         <TouchableOpacity
           onPress={() => setActiveCategory('all')}
           className={`px-4 py-2 rounded-full mr-2 border ${
-            activeCategory === 'all' ? 'bg-red-600 border-red-600' : 'bg-white border-gray-200'
+            activeCategory === 'all' ? 'bg-brand-800 border-brand-800' : 'bg-white border-line'
           }`}
         >
-          <Text className={`font-medium ${activeCategory === 'all' ? 'text-white' : 'text-gray-600'}`}>All</Text>
+          <Text className={`font-medium ${activeCategory === 'all' ? 'text-white' : 'text-subtle'}`}>All</Text>
         </TouchableOpacity>
         {categories.map(([catId, catName]) => (
           <TouchableOpacity
             key={catId}
             onPress={() => setActiveCategory(catId)}
             className={`px-4 py-2 rounded-full mr-2 border ${
-              activeCategory === catId ? 'bg-red-600 border-red-600' : 'bg-white border-gray-200'
+              activeCategory === catId ? 'bg-brand-800 border-brand-800' : 'bg-white border-line'
             }`}
           >
-            <Text className={`font-medium ${activeCategory === catId ? 'text-white' : 'text-gray-600'}`}>{catName}</Text>
+            <Text className={`font-medium ${activeCategory === catId ? 'text-white' : 'text-subtle'}`}>{catName}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -104,7 +106,7 @@ export function StaffMenuAvailability({ items, isLoading, onToggleAvailability }
         <View 
           key={item.id} 
           className={`bg-white rounded-xl border overflow-hidden flex-row items-center ${
-            item.is_available ? 'border-gray-100' : 'border-amber-200 bg-amber-50/30'
+            item.is_available ? 'border-line' : 'border-amber-200 bg-amber-50/30'
           }`}
         >
           {item.image_url ? (
@@ -116,13 +118,13 @@ export function StaffMenuAvailability({ items, isLoading, onToggleAvailability }
           )}
           
           <View className="flex-1 px-3 py-2">
-            <Text className={`font-bold text-sm ${item.is_available ? 'text-gray-900' : 'text-gray-400 line-through'}`}>
+            <Text className={`font-bold text-sm ${item.is_available ? 'text-ink' : 'text-subtle line-through'}`}>
               {item.name}
             </Text>
             <View className="flex-row items-center gap-2 mt-1">
-              <Text className="text-xs text-gray-500">${item.price.toFixed(2)}</Text>
-              <Text className="text-xs text-gray-400">•</Text>
-              <Text className="text-xs text-gray-400">{(item.category as any)?.name}</Text>
+              <Text className="text-xs text-subtle">${item.price.toFixed(2)}</Text>
+              <Text className="text-xs text-subtle">•</Text>
+              <Text className="text-xs text-subtle">{(item.category as any)?.name}</Text>
             </View>
           </View>
 
@@ -133,7 +135,7 @@ export function StaffMenuAvailability({ items, isLoading, onToggleAvailability }
               trackColor={{ false: '#d1d5db', true: '#bbf7d0' }}
               thumbColor={item.is_available ? '#22c55e' : '#9ca3af'}
             />
-            <Text className={`text-[10px] mt-0.5 font-medium ${item.is_available ? 'text-green-600' : 'text-gray-400'}`}>
+            <Text className={`text-[10px] mt-0.5 font-medium ${item.is_available ? 'text-green-600' : 'text-subtle'}`}>
               {item.is_available ? 'Available' : '86\'d'}
             </Text>
           </View>
@@ -142,7 +144,7 @@ export function StaffMenuAvailability({ items, isLoading, onToggleAvailability }
 
       {filteredItems.length === 0 && (
         <View className="py-8 items-center">
-          <Text className="text-gray-500 text-sm">No menu items found.</Text>
+          <Text className="text-subtle text-sm">No menu items found.</Text>
         </View>
       )}
     </View>

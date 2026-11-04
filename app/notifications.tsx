@@ -1,5 +1,8 @@
+import { Screen, PageHeading, EmptyState } from '@/components/ui/screen';
+import { Bell } from 'lucide-react-native';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
+import { TouchTarget as TouchableOpacity } from '@/components/ui/touch-target';
 import { router, useFocusEffect } from 'expo-router';
 import { z } from 'zod';
 import { useAuth } from '@/hooks/useAuth';
@@ -38,10 +41,10 @@ export default function NotificationsScreen() {
       if(error)throw error;if(current.current===owner&&active.current)router.push(notificationDestination(data));
     }catch{if(current.current===owner)setState(previous=>({...previous,error:'This update is unavailable. Check your current orders or rewards.'}));}
   };
-  if(!permitted)return <View className="flex-1 justify-center p-6"><Text>Sign in and complete account verification to view updates.</Text><TouchableOpacity onPress={()=>router.push('/auth/security')} className="py-4"><Text>Account security</Text></TouchableOpacity></View>;
-  return <ScrollView className="flex-1 bg-slate-50" contentContainerStyle={{padding:24,paddingTop:60}}>
-    <TouchableOpacity accessibilityRole="button" onPress={()=>router.replace('/(app)/profile')} className="py-3"><Text>Back to profile</Text></TouchableOpacity>
-    <Text className="font-bold text-2xl mb-4">Order and loyalty updates</Text>
+  if(!permitted)return <Screen title="Your updates" centered><EmptyState icon={Bell} title="Your updates, kept together" description="Sign in and complete account verification to view your order and loyalty inbox." action="Account security" onAction={() => router.push('/auth/security')} /></Screen>;
+  return <Screen title="Your updates">
+
+    <PageHeading eyebrow="STAY IN THE KNOW" title="A little update from Pogo’s." subtitle="Your order and loyalty updates, in one place." />
     <Text>Updates are also available here when push is unavailable. Check the live order or reward for its current state.</Text>
     {push.supported?<View className="bg-white p-4 rounded-xl my-4"><Text>{push.enabled?'Device registration confirmed':'Device push is off or unconfirmed'}</Text>
       <TouchableOpacity accessibilityRole="button" disabled={push.busy} onPress={()=>{void push.enable();}} className="py-3"><Text>Enable / check device push</Text></TouchableOpacity>
@@ -55,7 +58,7 @@ export default function NotificationsScreen() {
       <Text className="font-bold">{row.kind==='branch'?'Branch order received':row.kind==='order'?'Order update':'Loyalty update'}{row.read_at?'':' · unread'}</Text>
       <Text>{new Date(row.created_at).toLocaleString()}</Text><Text>Open current details</Text>
     </TouchableOpacity>)}
-    {!visible.rows.length&&!visible.busy&&!visible.error?<Text>No updates yet.</Text>:null}
+    {!visible.rows.length&&!visible.busy&&!visible.error?<EmptyState icon={Bell} title="You’re all caught up" description="Order and loyalty updates will appear here. You can always check the live order or reward for its current status." />:null}
     {visible.more?<TouchableOpacity disabled={visible.busy} onPress={()=>{void load(true);}} className="py-4"><Text>Older updates</Text></TouchableOpacity>:null}
-  </ScrollView>;
+  </Screen>;
 }

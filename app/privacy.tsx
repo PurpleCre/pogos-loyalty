@@ -1,5 +1,6 @@
+import { Screen, PageHeading, AuthScreen } from '@/components/ui/screen';
 import { useEffect,useRef,useState } from 'react';
-import { ScrollView,Text,View,Switch,ActivityIndicator,Linking } from 'react-native';
+import { ScrollView, Text, View, Switch, ActivityIndicator, Linking } from 'react-native';
 import { Redirect,router } from 'expo-router';
 import { z } from 'zod';
 import { useAuth } from '@/hooks/useAuth';
@@ -59,10 +60,9 @@ function PrivacyControls({owner}:{owner:string}) {
   const showUpdates=async(id:string)=>{
     const token=await accessTokenFor(owner);const{data,error}=await supabase.rpc('my_privacy_request_events',{p_id:id}).setHeader('Authorization',`Bearer ${token}`);if(error)throw error;const parsed=updates.parse(data);if(active.current)setMessages(parsed);
   };
-  return <ScrollView className="flex-1 bg-white" contentContainerStyle={{padding:24,paddingTop:64,gap:16}}>
-    <Text className="text-2xl font-bold">Privacy and account data</Text>
+  return <Screen title="Privacy and account data" contentStyle={{ gap: 16 }}><PageHeading eyebrow="YOUR INFORMATION" title="Privacy and account data" subtitle="Manage your preferences, exports and account requests." />
     <Button variant="outline" onPress={()=>router.push('/privacy-policy')}>Read privacy information</Button>
-    <View className="gap-3 p-4 border border-slate-200 rounded-xl">
+    <View className="gap-3 p-4 border border-line rounded-xl">
       <Text className="text-lg font-bold">Marketing email</Text><Text>Offers are optional and separate from order service and loyalty. New accounts are opted out.</Text>
       {notice?<><View className="flex-row items-center gap-3"><Switch accessibilityLabel="I have read the current privacy notice" value={readNotice} onValueChange={setReadNotice} disabled={busy}/><Text className="flex-1">I have read the current privacy notice.</Text></View>
       <Button disabled={busy||!readNotice} onPress={()=>{void run(()=>consent(true));}}>Opt in to email offers</Button></>:<Text>Marketing opt-in is unavailable until the privacy notice is ready.</Text>}
@@ -77,7 +77,7 @@ function PrivacyControls({owner}:{owner:string}) {
     <Button variant="ghost" onPress={()=>router.push('/account-deletion')}>How account deletion works</Button>
     {message?<Text accessibilityRole="alert">{message}</Text>:null}
     <Text className="text-lg font-bold">Recent requests</Text>
-    {requests.map(request=><View key={request.id} className="p-4 border border-slate-200 rounded-xl gap-2">
+    {requests.map(request=><View key={request.id} className="p-4 border border-line rounded-xl gap-2">
       <Text className="font-bold">{request.kind==='export'?'Account export':'Account deletion'} · {request.kind==='export'&&request.status==='completed'?'prepared':request.status}</Text>
       <Text selectable>Reference: {request.id}</Text>{request.blocker?<Text>{privacyBlockerMessage(request.blocker)}</Text>:null}
       <Button variant="ghost" disabled={busy} onPress={()=>{void run(()=>showUpdates(request.id));}}>View updates</Button>
@@ -87,13 +87,13 @@ function PrivacyControls({owner}:{owner:string}) {
     <Button variant="ghost" disabled={busy} onPress={()=>{void run(load);}}>Refresh account controls</Button>
     <Text selectable>Privacy contact: {email}</Text><Button variant="ghost" onPress={()=>{void Linking.openURL(`mailto:${encodeURIComponent(email)}?subject=Pogo%27s%20privacy%20request`).catch(()=>setMessage('Open your email app and use the privacy address above.'));}}>Email the privacy team</Button>
     <Button variant="ghost" disabled={busy} onPress={()=>router.replace('/(app)/profile')}>Back to profile</Button>
-  </ScrollView>;
+  </Screen>;
 }
 export default function Privacy() {
   const {user,loading,requiresMfa,recoveryRequired}=useAuth();
   if(loading)return <View className="flex-1 justify-center"><ActivityIndicator/></View>;
   if(user&&recoveryRequired)return <Redirect href="/auth/reset-password"/>;
   if(user&&requiresMfa)return <Redirect href="/auth/security?returnTo=/privacy"/>;
-  if(!user)return <View className="flex-1 justify-center p-6 bg-white gap-4"><Text className="text-2xl font-bold">Manage your Pogo’s data</Text><Text>Sign in to export account data, manage marketing or request deletion. If you cannot sign in, use the email contact on our deletion information page.</Text><Button onPress={()=>router.push('/(auth)/login?redirect=/privacy')}>Sign in to manage my data</Button><Button variant="outline" onPress={()=>router.push('/account-deletion')}>Request deletion without signing in</Button><Button variant="ghost" onPress={()=>router.push('/privacy-policy')}>Privacy information</Button></View>;
+  if(!user)return <AuthScreen title="Your data, your choice." subtitle="Sign in for your account’s privacy controls."><Text>Sign in to export account data, manage marketing or request deletion. If you cannot sign in, use the email contact on our deletion information page.</Text><Button onPress={()=>router.push('/(auth)/login?redirect=/privacy')}>Sign in to manage my data</Button><Button variant="outline" onPress={()=>router.push('/account-deletion')}>Request deletion without signing in</Button><Button variant="ghost" onPress={()=>router.push('/privacy-policy')}>Privacy information</Button></AuthScreen>;
   return <PrivacyControls key={user.id} owner={user.id}/>;
 }

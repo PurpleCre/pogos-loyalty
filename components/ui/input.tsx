@@ -1,5 +1,4 @@
-import { TextInput, TextInputProps, View } from 'react-native';
-import { clsx } from 'clsx';
+import { TextInput, TextInputProps } from 'react-native';
 import { twMerge } from 'tailwind-merge';
 
 interface InputProps extends TextInputProps {
@@ -10,10 +9,11 @@ export function Input({ className, ...props }: InputProps) {
   return (
     <TextInput
       className={twMerge(
-        "flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm placeholder:text-slate-500",
+        "min-h-[52px] w-full rounded-2xl border border-line bg-white px-4 py-3 text-base text-ink",
         className
       )}
-      placeholderTextColor="#cbd5e1"
+      placeholderTextColor="#71847a"
+      selectionColor="#247266"
       {...props}
     />
   );

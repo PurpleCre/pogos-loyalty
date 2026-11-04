@@ -1,6 +1,8 @@
-import { Drawer } from 'expo-router/drawer';
+import { Drawer, DrawerContentScrollView, DrawerItemList } from 'expo-router/drawer';
+import { BrandLogo } from '@/components/BrandLogo';
+import { colors } from '@/lib/theme';
 import { useAuth } from '@/hooks/useAuth';
-import { View, ActivityIndicator } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { Home, Gift, User, History, ShoppingBag, Truck, ShoppingCart, Shield, Store } from 'lucide-react-native';
 import { Redirect } from 'expo-router';
 
@@ -9,8 +11,8 @@ export default function AppLayout() {
 
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center bg-slate-50">
-        <ActivityIndicator size="large" color="#e11d48" />
+      <View className="flex-1 items-center justify-center bg-canvas">
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
@@ -22,14 +24,23 @@ export default function AppLayout() {
   const isLoggedIn = !!session;
 
   return (
-    <Drawer 
+    <Drawer
+      drawerContent={props => <DrawerContentScrollView {...props} contentContainerStyle={{ paddingTop: 24, paddingBottom: 24 }}>
+        <View style={{ paddingHorizontal: 20, paddingBottom: 24, marginBottom: 16, borderBottomWidth: 1, borderBottomColor: colors.border }}><BrandLogo size={78} /><Text style={{ color: colors.ink, fontSize: 22, fontWeight: '800', marginTop: 12 }}>A little more Pogo’s.</Text><Text style={{ color: colors.muted, fontSize: 13, marginTop: 6 }}>Your food. Your branch. Your rewards.</Text></View>
+        <DrawerItemList {...props} />
+      </DrawerContentScrollView>}
       backBehavior="history"
       screenOptions={{
         headerShown: false,
-        drawerActiveTintColor: '#e11d48',
-        drawerInactiveTintColor: '#64748b',
+        drawerActiveTintColor: colors.primary,
+        drawerActiveBackgroundColor: colors.brand['50'],
+        drawerStyle: { backgroundColor: colors.surface, width: 300 },
+        drawerItemStyle: { borderRadius: 16, marginHorizontal: 12, minHeight: 48 },
+        drawerLabelStyle: { fontSize: 14, fontWeight: '600' },
+        sceneStyle: { backgroundColor: colors.canvas },
+        drawerInactiveTintColor: colors.muted,
         headerStyle: {
-          backgroundColor: '#e11d48',
+          backgroundColor: colors.primary,
         },
         headerTintColor: '#fff',
         headerTitleStyle: {

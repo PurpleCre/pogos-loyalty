@@ -1,3 +1,4 @@
+import { StatusBar } from 'expo-status-bar';
 import "../global.css";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -29,7 +30,7 @@ const queryClient = new QueryClient();
 
 function RootLayout() {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}><SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}><SafeAreaProvider><StatusBar style="dark" />
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <PushNotificationsProvider>

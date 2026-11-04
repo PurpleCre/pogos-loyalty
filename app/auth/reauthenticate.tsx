@@ -1,5 +1,6 @@
+import { AuthScreen } from '@/components/ui/screen';
 import { useEffect,useState } from 'react';
-import { AppState,Text,View } from 'react-native';
+import { AppState, Text, View } from 'react-native';
 import { Redirect,router,useLocalSearchParams } from 'expo-router';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -16,12 +17,11 @@ export default function Reauthenticate() {
   };
   if(loading&&!busy)return <View/>;
   if(!user)return <Redirect href={{pathname:'/(auth)/login',params:{redirect:destination}}}/>;
-  return <View className="flex-1 justify-center p-6 bg-white gap-4">
-    <Text className="text-2xl font-bold">Verify your identity</Text><Text>Enter your password again before continuing with this protected action. If you use an authenticator, verify that too.</Text>
+  return <AuthScreen title="Verify your identity" subtitle="Enter your password again to continue. If you use an authenticator, verify that too.">
     <Input accessibilityLabel="Current password" secureTextEntry autoComplete="current-password" value={password} onChangeText={setPassword} editable={!busy}/>
     {message?<Text accessibilityRole="alert">{message}</Text>:null}
     <Button isLoading={busy} onPress={()=>{void verify();}}>Verify password</Button>
     <Button variant="ghost" disabled={busy} onPress={()=>router.replace(destination)}>Cancel</Button>
     <Button variant="ghost" disabled={busy} onPress={()=>{void signOut().then(()=>router.replace('/auth/forgot-password'));}}>Forgot password?</Button>
-  </View>;
+  </AuthScreen>;
 }

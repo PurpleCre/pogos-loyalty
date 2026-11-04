@@ -1,4 +1,5 @@
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, View } from 'react-native';
+import { TouchTarget as TouchableOpacity } from '@/components/ui/touch-target';
 import { useCart } from '@/contexts/CartContext';
 export function CartStorageStatus() {
   const { hydrated, saving, storageError, retrySave, discardSavedCart } = useCart();

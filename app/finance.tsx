@@ -1,5 +1,10 @@
+import { ShieldCheck } from 'lucide-react-native';
+import { Screen, PageHeading, EmptyState, LoadingState } from '@/components/ui/screen';
+import { Button as AppButton } from '@/components/ui/button';
 import {useCallback,useEffect,useRef,useState} from 'react';
-import {View,Text,ScrollView,TouchableOpacity,TextInput,ActivityIndicator,AppState} from 'react-native';
+import { View, Text, ScrollView, ActivityIndicator, AppState } from 'react-native';
+import { Input as TextInput } from '@/components/ui/input';
+import { TouchTarget as TouchableOpacity } from '@/components/ui/touch-target';
 import {router} from 'expo-router';
 import {useAuth,type AppRole} from '@/hooks/useAuth';
 import {useStores} from '@/hooks/useStores';
@@ -10,19 +15,20 @@ import {collectFinanceReport,financeCasesSchema,harareDay,moneyText,parseObserve
 import {savePrivacyExport} from '@/lib/privacy-file';
 import {newSubmissionKey} from '@/lib/cash-checkout';
 import {z} from 'zod';
-function Button({label,disabled=false,onPress}:{label:string;disabled?:boolean;onPress():void}){return <TouchableOpacity accessibilityRole="button" disabled={disabled} onPress={onPress} className={`p-3 rounded-xl my-1 ${disabled?'bg-slate-200':'bg-red-600'}`}><Text className="text-white font-bold">{label}</Text></TouchableOpacity>;}
+function Button({label,disabled=false,onPress}:{label:string;disabled?:boolean;onPress():void}){return <AppButton disabled={disabled} onPress={onPress} className="my-2">{label}</AppButton>;}
+
 function Field({label,value,onChange}:{label:string;value:string;onChange(value:string):void}){return <View className="my-2"><Text>{label}</Text><TextInput accessibilityLabel={label} value={value} onChangeText={onChange} maxLength={500} autoCapitalize="none" className="bg-white border border-slate-300 rounded-lg p-3"/></View>;}
 function CaseCard({row,reviewer,blocked,onCommand,branch}:{row:FinanceCase;reviewer:boolean;blocked:boolean;onCommand(command:FinanceCommand):Promise<void>;branch:string}){
   const[reason,setReason]=useState('');const[error,setError]=useState('');
   const review=async(accept:boolean)=>{setError('');try{await onCommand({kind:'review',storeId:branch,caseId:row.id,expectedVersion:row.version,accept,reason});setReason('');}catch{setError('Review could not be confirmed. Check the saved action and refresh the case.');}};
   const open=['matched','variance'].includes(row.status);
-  return <View className="bg-white border border-slate-200 rounded-xl p-4 mb-4">
+  return <View className="bg-white border border-line rounded-xl p-4 mb-4">
     <Text className="font-bold">{row.business_day} · {row.currency} · observation {row.revision} · {row.status}</Text><Text selectable>{row.id}</Text>
     {!row.signature_current?<Text className="text-amber-800">Source records changed after this snapshot. Prior acceptance is not current.</Text>:null}
     <Text>Evidence: {row.evidence}</Text>
     {(['received_minor','refunded_minor','settled_minor'] as const).map(key=><Text key={key}>{key==='received_minor'?'App-linked sales':key==='refunded_minor'?'App-linked refunds':'Collector deposits'}: observed {moneyText(row.observed[key],row.currency)} / app {moneyText(row.snapshot[key],row.currency)}</Text>)}
-    {row.previous_id?<Text className="text-slate-500 mt-2">Revision of {row.previous_id}</Text>:null}
-    {row.history.map((item,index)=><Text key={index} className="text-slate-600 mt-2">{item.action} · {item.reason??'Original observation'} · {new Date(item.created_at).toLocaleString()}</Text>)}
+    {row.previous_id?<Text className="text-subtle mt-2">Revision of {row.previous_id}</Text>:null}
+    {row.history.map((item,index)=><Text key={index} className="text-subtle mt-2">{item.action} · {item.reason??'Original observation'} · {new Date(item.created_at).toLocaleString()}</Text>)}
     {open&&reviewer&&!row.submitted_by_me?<>
       <Field label="Review evidence and reason" value={reason} onChange={setReason}/>
       <Button label="Accept matching evidence" disabled={blocked||reason.trim().length<3||row.status!=='matched'||!row.signature_current} onPress={()=>{void review(true);}}/>
@@ -82,19 +88,18 @@ function FinanceContent({owner,role,branch,day,currency}:{owner:string;role:AppR
     {busy?<ActivityIndicator/>:null}{error||message?<Text accessibilityRole="alert" className="my-3 text-amber-900">{error||message}</Text>:null}
     {pending?<View className="bg-amber-50 p-4 rounded-xl my-3"><Text>A saved finance action needs checking ({pending.command.storeId===branch?'this branch':'another assigned branch'}). It may already have succeeded.</Text>
       <Button label="Check saved finance action" disabled={busy} onPress={()=>{void recover();}}/></View>:null}
-    {report?<View className="bg-white p-4 rounded-xl my-3"><Text className="font-bold text-lg">App records · {report.period.business_day} · {currency}</Text>
-      <Text>Verified as of {new Date(report.as_of).toLocaleString()}</Text>
-      <Text>Cash sales recorded: {moneyText(report.period.received_minor,currency)} ({report.period.sale_count})</Text>
-      <Text>Cash refunds: {moneyText(report.period.refunded_minor,currency)} ({report.period.refund_count})</Text>
-      <Text>Net recorded collections: {moneyText(report.period.net_received_minor,currency)}</Text>
-      <Text>Collector deposits acknowledged: {moneyText(report.period.settled_minor,currency)}</Text>
-      <Text>Net till movement (deposits less refunds): {moneyText(report.period.net_till_movement_minor,currency)}</Text>
-      <Text>Outstanding cash, all dates: {moneyText(report.outstanding_all_dates_minor,currency)}</Text>
-      <Text>Pending handovers, all dates: {report.pending_handovers_all_dates}</Text><Text>Missing receipts, all dates: {report.missing_receipts_all_dates}</Text>
-      <Text className="mt-3">Reward handovers / voids this day (all currencies): {report.reward_handovers_day} / {report.reward_voids_day}</Text>
-      <Text>Active reward holds, all dates: {report.held_reward_points_all_dates} points</Text>
-      <Text className="mt-3">Latest case: {report.latest_reconciliation?.status??'Not submitted'}{report.latest_reconciliation&&!report.latest_reconciliation.signature_current?' · source changed':''}</Text>
-      <Text className="text-slate-600 mt-3">These are app records. Reconcile the corresponding app-linked GAAP entries and collector deposits. This is not the whole till balance or a fiscal receipt. An accepted period does not settle outstanding cash.</Text>
+    {report?<View className="bg-white border border-line p-5 rounded-3xl my-4">
+      <Text className="text-xs text-brand-700 font-bold tracking-widest">APP-LINKED RECORDS</Text><Text className="font-bold text-xl text-ink mt-2">{report.period.business_day} · {currency}</Text>
+      <Text className="text-subtle text-xs mt-2 mb-5">Verified as of {new Date(report.as_of).toLocaleString()}</Text>
+      <View className="flex-row flex-wrap gap-3 mb-5">{[
+        ['Cash sales recorded', report.period.received_minor], ['Cash refunds', report.period.refunded_minor],
+        ['Net recorded collections', report.period.net_received_minor], ['Collector deposits acknowledged', report.period.settled_minor],
+      ].map(([label,value])=><View key={label} className="bg-canvas rounded-2xl p-4" style={{flexGrow:1,flexBasis:'44%'}}><Text className="text-subtle text-xs leading-5">{label}</Text><Text className="text-ink font-bold text-lg mt-2">{moneyText(value,currency)}</Text></View>)}</View>
+      <Text className="text-ink leading-6">{report.period.sale_count} recorded sales · {report.period.refund_count} refunds</Text>
+      <Text className="text-ink leading-6 mt-2">Net till movement (deposits less refunds): {moneyText(report.period.net_till_movement_minor,currency)}</Text>
+      <View className="border-t border-line mt-5 pt-5"><Text className="font-bold text-lg text-ink mb-2">Cash custody · all dates</Text><Text className="text-ink font-bold leading-6">Outstanding cash: {moneyText(report.outstanding_all_dates_minor,currency)}</Text><Text className="text-subtle leading-6">Pending handovers: {report.pending_handovers_all_dates} · Missing receipts: {report.missing_receipts_all_dates}</Text></View>
+      <View className="border-t border-line mt-5 pt-5"><Text className="font-bold text-lg text-ink mb-2">Rewards and review</Text><Text className="text-ink leading-6">Reward handovers / voids this day (all currencies): {report.reward_handovers_day} / {report.reward_voids_day}</Text><Text className="text-ink leading-6 mt-2">Active reward holds, all dates: {report.held_reward_points_all_dates} points</Text><Text className="text-ink leading-6 mt-2">Latest case: {report.latest_reconciliation?.status??'Not submitted'}{report.latest_reconciliation&&!report.latest_reconciliation.signature_current?' · source changed':''}</Text></View>
+      <Text className="text-subtle text-sm leading-6 mt-5 mb-3">These are app records. Reconcile the corresponding app-linked GAAP entries and collector deposits. This is not the whole till balance or a fiscal receipt. An accepted period does not settle outstanding cash.</Text>
       <Button label="Prepare complete JSON report" disabled={busy} onPress={()=>{void exportReport();}}/>
     </View>:null}
     {role==='admin'?<View className="bg-white p-4 rounded-xl my-3"><Button label="Check chain-wide points and projection" disabled={busy} onPress={()=>{void loadChain();}}/>
@@ -118,15 +123,15 @@ function FinanceContent({owner,role,branch,day,currency}:{owner:string;role:AppR
 export default function FinanceScreen(){const{user,userRole,staffStoreIds,loading,requiresMfa,recoveryRequired}=useAuth();const{stores}=useStores();
   const[selected,setSelected]=useState('');const[day,setDay]=useState(harareDay());const[currency,setCurrency]=useState('USD');
   const branches=userRole==='admin'?stores:stores.filter(row=>staffStoreIds.includes(row.id));const branch=branches.some(row=>row.id===selected)?selected:branches[0]?.id;
-  if(loading)return <ActivityIndicator/>;
-  if(!user||requiresMfa||recoveryRequired||!['admin','manager','finance'].includes(userRole))return <View className="flex-1 justify-center p-6"><Text>Assigned manager or finance access with MFA is required.</Text><Button label="Account security" onPress={()=>router.push('/auth/security')}/><Button label="Back to profile" onPress={()=>router.replace('/(app)/profile')}/></View>;
+  if(loading)return <Screen title="Cash and till reports"><LoadingState /></Screen>;
+  if(!user||requiresMfa||recoveryRequired||!['admin','manager','finance'].includes(userRole))return <Screen title="Cash and till reports" centered><EmptyState icon={ShieldCheck} title="Your finance workspace" description="Assigned manager or finance access with MFA is required to view cash reports." action="Account security" onAction={() => router.push('/auth/security')} /></Screen>;
   const scope=`${user.id}:${userRole}:${staffStoreIds.join(',')}:${branch}:${day}:${currency}`;
-  return <ScrollView className="flex-1 bg-slate-50" contentContainerStyle={{padding:20,paddingTop:60,paddingBottom:60}}>
-    <Button label="Back to profile" onPress={()=>router.replace('/(app)/profile')}/><Text className="font-bold text-2xl my-3">Cash and till reconciliation</Text>
-    <ScrollView horizontal>{branches.map(row=><TouchableOpacity key={row.id} onPress={()=>setSelected(row.id)} className={`p-3 rounded-lg mr-2 ${branch===row.id?'bg-red-100':'bg-white'}`}><Text>{row.name}</Text></TouchableOpacity>)}</ScrollView>
+  return <Screen title="Cash and till reports" wide>
+    <PageHeading eyebrow="FINANCE WORKSPACE" title="Every movement, accounted for." subtitle="Verify app-linked cash activity and reconcile by branch, Harare business day and currency." />
+    <ScrollView horizontal>{branches.map(row=><TouchableOpacity key={row.id} onPress={()=>setSelected(row.id)} className={`p-3 rounded-lg mr-2 ${branch===row.id?'bg-brand-100':'bg-white'}`}><Text>{row.name}</Text></TouchableOpacity>)}</ScrollView>
     <Field label="Harare business day (YYYY-MM-DD)" value={day} onChange={setDay}/>
-    <View className="flex-row">{['USD','ZWG'].map(value=><TouchableOpacity key={value} onPress={()=>setCurrency(value)} className={`p-3 rounded-lg mr-2 ${currency===value?'bg-red-100':'bg-white'}`}><Text>{value}</Text></TouchableOpacity>)}</View>
+    <View className="flex-row">{['USD','ZWG'].map(value=><TouchableOpacity key={value} onPress={()=>setCurrency(value)} className={`p-3 rounded-lg mr-2 ${currency===value?'bg-brand-100':'bg-white'}`}><Text>{value}</Text></TouchableOpacity>)}</View>
     {!branch?<Text className="my-4">No assigned branches are available. Ask an administrator to verify your assignment and branch data.</Text>:!validReportDay(day)?<Text>Enter a valid calendar date.</Text>:
       <FinanceContent key={scope} owner={user.id} role={userRole} branch={branch} day={day} currency={currency}/>}
-  </ScrollView>;
+  </Screen>;
 }
