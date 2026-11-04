@@ -1,0 +1,159 @@
+{
+  "captured_at": "2026-11-03T22:48:12.992Z",
+  "source_url": "https://api.delivery.sadiexpress.com/public/localities/harare/main-page/v2",
+  "status": 200,
+  "root_keys": [
+    "uiFlow",
+    "featureFlags",
+    "uiComponents",
+    "vendors",
+    "vendorGroups",
+    "banners",
+    "categories"
+  ],
+  "matching_vendors": [
+    {
+      "id": 1067,
+      "name": "Pogo's",
+      "street": "Kamfinsa Shopping Centre Harare",
+      "city": "Harare",
+      "country": "Zimbabwe",
+      "houseNumber": "Greendale",
+      "latitude": -17.8056838,
+      "longitude": 31.1256332,
+      "rating": 4.83,
+      "categories": [
+        {
+          "id": 264,
+          "name": "Pizza",
+          "nameI18n": {
+            "values": {
+              "en_ZW": "Pizza"
+            }
+          }
+        },
+        {
+          "id": 694,
+          "name": "Chicken",
+          "nameI18n": {
+            "values": {
+              "en_ZW": "Chicken"
+            }
+          }
+        },
+        {
+          "id": 873,
+          "name": "NEW",
+          "nameI18n": {
+            "values": {
+              "en": "NEW"
+            }
+          }
+        }
+      ],
+      "working": true,
+      "workingHours": {
+        "intervals": {
+          "FRIDAY": {
+            "from": "09:30:00",
+            "until": "19:00:00",
+            "isTurnIntoAnotherDay": false
+          },
+          "MONDAY": {
+            "from": "09:30:00",
+            "until": "19:00:00",
+            "isTurnIntoAnotherDay": false
+          },
+          "SUNDAY": {
+            "from": "09:30:00",
+            "until": "19:00:00",
+            "isTurnIntoAnotherDay": false
+          },
+          "TUESDAY": {
+            "from": "09:30:00",
+            "until": "19:00:00",
+            "isTurnIntoAnotherDay": false
+          },
+          "SATURDAY": {
+            "from": "09:30:00",
+            "until": "19:00:00",
+            "isTurnIntoAnotherDay": false
+          },
+          "THURSDAY": {
+            "from": "09:30:00",
+            "until": "19:00:00",
+            "isTurnIntoAnotherDay": false
+          },
+          "WEDNESDAY": {
+            "from": "09:30:00",
+            "until": "19:00:00",
+            "isTurnIntoAnotherDay": false
+          }
+        }
+      },
+      "popularProducts": [],
+      "timeAvailability": {
+        "available": false,
+        "closestPreorderDateTime": "2026-11-04T10:30:00",
+        "closestOpeningDateTime": "2026-11-04T09:30:00",
+        "preorderOutdated": false,
+        "radiusAvailable": true,
+        "timeAvailable": false
+      },
+      "avatar": {
+        "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/logo/2bc72a391bbf47949d6b7173e6c34c1d",
+        "variants": [
+          {
+            "n": "_w234h234",
+            "w": 234,
+            "h": 234
+          },
+          {
+            "n": "_w162h162",
+            "w": 162,
+            "h": 162
+          },
+          {
+            "n": "_w80h80",
+            "w": 80,
+            "h": 80
+          }
+        ]
+      },
+      "image": {
+        "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/vendor/2e86ef28cdc447ccbf469e9d24cb3d16",
+        "variants": [
+          {
+            "n": "_w1920h500",
+            "w": 1920,
+            "h": 500
+          },
+          {
+            "n": "_w1200h630",
+            "w": 1200,
+            "h": 630
+          },
+          {
+            "n": "_w768h275",
+            "w": 768,
+            "h": 275
+          },
+          {
+            "n": "_w400h150",
+            "w": 400,
+            "h": 150
+          },
+          {
+            "n": "_w120h120",
+            "w": 120,
+            "h": 120
+          }
+        ]
+      },
+      "vendorType": "FOOD_ESTABLISHMENT",
+      "receiptTypes": [
+        "DELIVERY"
+      ]
+    }
+  ]
+}

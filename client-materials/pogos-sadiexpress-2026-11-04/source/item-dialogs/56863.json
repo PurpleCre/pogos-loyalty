@@ -1,0 +1,26 @@
+{
+  "product_id": 56863,
+  "name": "Hawaiian Pizza",
+  "category": "PIZZAS",
+  "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56863",
+  "captured_at": "2026-11-03T22:41:03.666Z",
+  "dialog_opened": true,
+  "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56863",
+  "title": "Hawaiian Pizza",
+  "text": "Hawaiian Pizza\nGrilled Bacon, Pineapple Chunks & Mozzarella Cheese\nfrom US$8.96\nPizza Size\nRequired\n\nMedium\n\n +US$0.00\n\nLarge\n\n +US$3.36\nAdd a comment...\nHawaiian Pizza\nUS$8.96\n1\nAdd",
+  "images": [
+    {
+      "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/4c1ca9128a094de499473dbb9fd941ab_w600h400",
+      "alt": "",
+      "width": 600,
+      "height": 400
+    },
+    {
+      "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/4c1ca9128a094de499473dbb9fd941ab_w600h400",
+      "alt": "",
+      "width": 600,
+      "height": 400
+    }
+  ],
+  "heading": "SadieXpress: Pogo's"
+}

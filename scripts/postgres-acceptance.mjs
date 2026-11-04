@@ -11,11 +11,12 @@ function command(program,args,{env=process.env,timeout=30000,output=false,trackT
   return new Promise((resolve,reject)=>{
     const child=spawn(program,args,{env,stdio:['ignore','pipe','pipe']});let stdout='',stderr='';
     if(trackTest)activeTest=child;
-    const timer=setTimeout(()=>child.kill('SIGTERM'),timeout);
+    let forcedStop;
+    const timer=setTimeout(()=>{child.kill('SIGTERM');forcedStop=setTimeout(()=>child.kill('SIGKILL'),5000);},timeout);
     child.stdout.on('data',chunk=>{stdout+=chunk;if(output)process.stdout.write(chunk);});
     child.stderr.on('data',chunk=>{stderr+=chunk;if(output)process.stderr.write(chunk);});
-    child.on('error',error=>{clearTimeout(timer);reject(error);});
-    child.on('close',(code,signal)=>{clearTimeout(timer);if(trackTest)activeTest=null;resolve({code,signal,stdout,stderr});});
+    child.on('error',error=>{clearTimeout(timer);clearTimeout(forcedStop);reject(error);});
+    child.on('close',(code,signal)=>{clearTimeout(timer);clearTimeout(forcedStop);if(trackTest)activeTest=null;resolve({code,signal,stdout,stderr});});
   });
 }
 const docker=(args,options)=>command('docker',args,options);
@@ -67,27 +68,33 @@ try{
     if(ready)break;await delay(250);
   }
   if(!ready||interrupted)throw Error('Acceptance server did not become ready, or execution was interrupted.');
-  const files=['package.json','package-lock.json','scripts/test-database.mjs','scripts/postgres-acceptance.mjs','scripts/postgres-acceptance-safety.mjs','scripts/postgres-image.mjs'];
+  const files=['package.json','package-lock.json','scripts/test-database.mjs','scripts/postgres-acceptance.mjs','scripts/postgres-acceptance-safety.mjs','scripts/postgres-image.mjs','scripts/performance-evidence.mjs'];
   for(const dir of ['supabase/migrations','tests/postgres'])for(const f of (await readdir(dir)).sort())if(/\.(sql|mjs)$/.test(f))files.push(`${dir}/${f}`);
   const hash=createHash('sha256');for(const file of files){hash.update(file);hash.update('\0');hash.update(await readFile(file));hash.update('\0');}report.sourceSha256=hash.digest('hex');
-  const result=await command(process.execPath,['--test','--test-reporter=tap',`tests/postgres/${mode==='resilience'?'resilience':'concurrency'}.test.mjs`],
-    {env:{...process.env,POGOS_ACCEPTANCE_CONFIG:JSON.stringify(config),POGOS_ACCEPTANCE_CONTAINER:container},timeout:180000,output:true,trackTest:true});
+  const result=await command(process.execPath,['--test','--test-reporter=tap',`tests/postgres/${mode}.test.mjs`],
+    {env:{...process.env,POGOS_ACCEPTANCE_CONFIG:JSON.stringify(config),POGOS_ACCEPTANCE_CONTAINER:container},timeout:mode==='performance'?300000:180000,output:true,trackTest:true});
   if(mode==='resilience'){
     const metrics=result.stdout.match(/^# RESILIENCE_METRICS (.+)$/m);
     if(!metrics)throw Error('A complete resilience measurement report is required.');
     report.rehearsal=JSON.parse(metrics[1]);
     report.performanceAccepted=false;report.recoveryTargetsApproved=false;
   }
+  if(mode==='performance'){
+    const metrics=result.stdout.match(/^# PERFORMANCE_METRICS (.+)$/m);
+    if(!metrics)throw Error('A complete performance measurement report is required.');
+    report.measurements=JSON.parse(metrics[1]);report.performanceAccepted=false;report.targetsApproved=false;
+  }
   report.tests=Number(result.stdout.match(/^# tests (\d+)$/m)?.[1]??0);
   report.passed=Number(result.stdout.match(/^# pass (\d+)$/m)?.[1]??0);
   report.failed=Number(result.stdout.match(/^# fail (\d+)$/m)?.[1]??0);
   if(result.code!==0||interrupted||report.tests===0||report.tests!==report.passed)throw Error('PostgreSQL acceptance checks failed or were interrupted.');
+  if(mode==='performance'&&report.measurements.profile_complete!==true)throw Error('The fixed performance profile did not complete.');
   report.status='passed';
 }catch(error){process.exitCode=1;console.error(error.message);}
 finally{
   try{await cleanup();report.cleanup='complete';}catch(error){report.cleanup='needs_review';report.status='failed';process.exitCode=1;console.error(error.message);}
   report.finishedAt=new Date().toISOString();
-  const directory=mode==='resilience'?'dist/resilience-acceptance':'dist/postgres-acceptance';
+  const directory=mode==='performance'?'dist/performance-acceptance':mode==='resilience'?'dist/resilience-acceptance':'dist/postgres-acceptance';
   await mkdir(directory,{recursive:true});
   await writeFile(`${directory}/report.json`,`${JSON.stringify(report,null,2)}\n`);
   console.log(`Local PostgreSQL ${mode}: ${report.status}. Evidence: ${directory}/report.json`);

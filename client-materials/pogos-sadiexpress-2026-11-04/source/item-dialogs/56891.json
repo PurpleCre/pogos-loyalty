@@ -1,0 +1,26 @@
+{
+  "product_id": 56891,
+  "name": "Mexican Salad",
+  "category": "SALADS",
+  "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56891",
+  "captured_at": "2026-11-03T22:41:23.847Z",
+  "dialog_opened": true,
+  "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56891",
+  "title": "Mexican Salad",
+  "text": "Not available\nMexican Salad\nUS$5.60\nAdd a comment...\nMexican Salad\nUS$5.60\n1\nAdd",
+  "images": [
+    {
+      "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/237fb80f2101483387bdd3968a70fa5a_w600h400",
+      "alt": "",
+      "width": 600,
+      "height": 400
+    },
+    {
+      "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/237fb80f2101483387bdd3968a70fa5a_w600h400",
+      "alt": "",
+      "width": 600,
+      "height": 400
+    }
+  ],
+  "heading": "SadieXpress: Pogo's"
+}

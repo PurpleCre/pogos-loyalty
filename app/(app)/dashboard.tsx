@@ -3,13 +3,14 @@ import { Redirect, router } from 'expo-router';
 import { useAuth } from '@/hooks/useAuth';
 import { useRewards } from '@/hooks/useRewards';
 import { ReadStatus } from '@/components/ReadStatus';
+import { BrandLogo } from '@/components/BrandLogo';
 export default function Dashboard() {
   const { user, loading: authLoading } = useAuth();
   const { userPoints, transactions, loading, fresh, refreshedAt, error, refetch } = useRewards();
   if (!user && !authLoading) return <Redirect href="/(auth)/login" />;
   return <ScrollView className="flex-1 bg-slate-50" contentContainerStyle={{ padding: 20, paddingTop: 64 }}
     refreshControl={<RefreshControl refreshing={loading} onRefresh={() => { void refetch(); }} />}>
-    <Text className="text-red-600 font-bold text-2xl">Pogo’s loyalty</Text>
+    <View className="flex-row items-center mb-3"><BrandLogo size={64} /><Text className="text-red-600 font-bold text-2xl ml-3">Pogo’s loyalty</Text></View>
     <ReadStatus label="Points and recent activity" fresh={fresh} at={refreshedAt} error={error} loading={loading} onRefresh={() => { void refetch(); }} />
     <View className="bg-white border border-slate-200 rounded-xl p-5 my-3">
       <Text className="font-bold">{fresh ? 'Available points' : 'Last known available points'}</Text>

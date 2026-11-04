@@ -2,6 +2,8 @@
 
 Updated: 31 October 2026. Local implementation and validation record; hosted setup and device acceptance are separate gates.
 
+Follow-on, 3 November: [supported security patches and scaled performance](security-performance-sprint.md) updates Expo to 58.0.23 / CLI 58.1.19 and aligns its native/router compatibility map. The current audit has zero high/critical and 17 moderate package findings; this supersedes the historical security counts below. All 484 default tests, SDK/peers, fresh Android/iOS exports and native-project generation pass. Matching native binaries, signed/device/hosted acceptance, moderate review and independent security remain required. No OTA/build publication occurred.
+
 ## Ownership and environment decision
 
 Pogo’s ownership of Expo/EAS and Supabase staging/production accounts is **unconfirmed**. The user authorised the current connected accounts for development work. Accordingly, `config/environments.json` preserves the existing configured Expo project and Supabase URL’s project reference **for development only**. This is not evidence of Pogo’s production ownership.
@@ -41,7 +43,7 @@ SDK 56 moves external React Navigation imports to Expo Router entry points. SDK 
 
 Runtime fingerprinting protects native/update compatibility; it does not approve environment ownership or application behavior. Platform-restricted Maps keys also require a binary rebuild. [Runtime versions](https://docs.expo.dev/eas-update/runtime-versions/), [EAS environments](https://docs.expo.dev/eas/environment-variables/), [Maps native setup](https://docs.expo.dev/versions/latest/sdk/map-view/)
 
-## Security findings and incomplete gates
+## Earlier security findings and incomplete gates
 
 The final online `npm audit --json` reports **26 affected package entries: 2 low, 21 moderate, 3 high, zero critical**. Audit propagation counts packages in dependency chains, not independent vulnerabilities. This replaces the original 48-entry baseline; it is not a clean security audit. The unused module-resolver Babel plugin and its older glob/minimatch dependencies were removed. No major-version overrides, advisory suppression or automatic force fixes were applied.
 

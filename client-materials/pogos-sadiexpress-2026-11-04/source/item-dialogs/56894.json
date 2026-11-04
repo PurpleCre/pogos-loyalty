@@ -1,0 +1,26 @@
+{
+  "product_id": 56894,
+  "name": "Hawaiian Burger",
+  "category": "BURGERLICIOUS BURGERS",
+  "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56894",
+  "captured_at": "2026-11-03T22:41:25.528Z",
+  "dialog_opened": true,
+  "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56894",
+  "title": "Hawaiian Burger",
+  "text": "Hawaiian Burger\n1x Grilled Chicken Breast, Pineapple, Lettuce, Tomato, Mayonnaise on a freshly Baked Portuguese Roll.\nUS$6.16\nAdd a comment...\nHawaiian Burger\nUS$6.16\n1\nAdd",
+  "images": [
+    {
+      "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/1062f01a00794dd788dda2555cbcf5bc_w600h400",
+      "alt": "",
+      "width": 600,
+      "height": 400
+    },
+    {
+      "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/1062f01a00794dd788dda2555cbcf5bc_w600h400",
+      "alt": "",
+      "width": 600,
+      "height": 400
+    }
+  ],
+  "heading": "SadieXpress: Pogo's"
+}

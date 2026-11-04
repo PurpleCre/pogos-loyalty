@@ -4,6 +4,8 @@ Verified 3 November 2026. **The locally executable worker monitoring, collector/
 
 Follow-on: the [loyalty/notification integrity work package](loyalty-notification-integrity-sprint.md) is now locally complete, with 479 regression tests and eight PostgreSQL resilience/integrity cases. It adds the previously missing ledger and unmaterialised-pair observations plus a dedicated synthetic report. Counts and measurements below record the earlier checkpoint.
 
+Latest follow-on: [supported security patches and scaled performance](security-performance-sprint.md) pass 484 regressions, 28 Deno cases, 13 PostgreSQL concurrency, eight recovery and four scaled-performance cases, with new native exports/preflight. Expo 58.0.23 removes the affected CLI Zod path; the final high/critical dependency gate passes with 17 moderate package findings remaining. A 2,000-customer workload reproduced an integrity timeout and verifies its forward SQL correction. The security result and small-load measurements below are historical; independent security, representative hosted/device/long-soak acceptance and production monitoring remain open.
+
 ## Worker observations and missed-run detection
 
 `20261103040000_worker_observations.sql` adds three fixed service-only operational rows, one each for push, cash expiry and reward expiry. They contain only a technical run UUID, outcome and timestamps; no account link, recipient, provider payload or credential. Direct table access is revoked for customers and service-role clients; narrow recording/read RPCs provide the boundary. The privacy inventory is now **71 public tables**, with **29 account-export sections**. Review field/retention coverage before any approved erasure policy is activated.
@@ -50,7 +52,7 @@ The measured run recorded workflow p50 **195 ms**, p95 **507 ms**, maximum **528
 
 The restored database shares global roles with its own disposable PostgreSQL cluster; global-role/managed-service recovery is not exercised. Local alert files and external provider records are outside this database backup and need their own approved recovery procedure.
 
-## Security review result — blocked
+## Earlier security review result — superseded by the supported patch
 
 ```sh
 npm run security:audit
@@ -78,10 +80,10 @@ Ignored evidence directories are `dist/edge-runtime`, `dist/postgres-acceptance`
 
 ## Remaining to close milestone 5
 
-1. Resolve dependency release blockers and obtain independent security review of the actual deployed surface. Verify hosted CI, protected publication and failure behavior.
+1. Review the remaining moderate dependency findings and obtain independent security review of the actual deployed surface. Repeat the passing high/critical gate for the candidate. Verify hosted CI, protected publication and failure behavior.
 2. Confirm owned monitoring/storage/projects, regions/privacy/retention, responders/deputies, approved cadence/thresholds/performance/recovery targets and budgets. Connect the collector, durable production store, protected dashboard and chosen alert transport. Implement/rehearse authenticated acknowledgement, timed escalation and controlled archive/replay against that infrastructure; prove actual recipient receipt.
 3. Deploy reviewed migrations before the instrumented functions. An old database without `record_worker_observation` makes the new workers fail closed before work. Configure only accepted server secrets/flags and job schedules; verify wrong-key/JWT/RLS, actual runtime, overlapping runs, missed schedules and recovery in the authorised environment. Observe new successful runs after a restore; do not use restored old heartbeat rows as evidence of live execution.
 4. Deploy and measure the implemented internal-ledger and unmaterialised-pair observations; complete actual cash/GAAP reconciliation and add capacity/managed-backup freshness collectors. Install an independent external watchdog for a stopped collector or unavailable database. A collector cannot reliably announce its own total outage through that same unavailable service.
-5. Complete representative hosted/native performance/load/soak/accessibility, actual alert/incident and managed backup/restore/cutover exercises. Reconcile real app-linked GAAP/cash/loyalty records and apply approved privacy restore suppression before reopening service. Local synthetic timings and tombstone fixtures cannot approve these decisions.
+5. Complete representative hosted/native performance/load/soak/accessibility, actual alert/incident and managed backup/restore/cutover exercises. The scaled local workload and query correction are complete; real volumes/targets and a long soak still need acceptance. Reconcile real app-linked GAAP/cash/loyalty records and apply approved privacy restore suppression before reopening service. Local synthetic timings and tombstone fixtures cannot approve these decisions.
 
 See the [readiness checkpoint](production-readiness-status.md) and [operator runbook](operations-monitoring-runbook.md). Six overall delivery groups remain; this work does not close earlier client/privacy/GAAP/device gates.

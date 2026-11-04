@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Eye, EyeOff } from 'lucide-react-native';
 import { safeAuthDestination } from '@/lib/identity';
+import { BrandLogo } from '@/components/BrandLogo';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -75,9 +76,7 @@ export default function Login() {
           {/* Header */}
           <View className="items-center pt-8 pb-4 px-6">
             {/* Logo */}
-            <View className="w-16 h-16 bg-red-100 rounded-2xl items-center justify-center mb-4 shadow-sm">
-              <Text className="text-3xl">🍔</Text>
-            </View>
+            <View className="items-center justify-center mb-4"><BrandLogo size={100} /></View>
             <Text className="text-2xl font-bold text-slate-900 mb-1">
               {isSignUp ? 'Create account' : 'Welcome back'}
             </Text>

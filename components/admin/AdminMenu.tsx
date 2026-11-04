@@ -1,7 +1,8 @@
-import { View, Text, TouchableOpacity, Image, Modal, TextInput, ScrollView, Switch, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, TextInput, ScrollView, Switch, Alert, ActivityIndicator } from 'react-native';
 import { useState } from 'react';
 import { useMenu, MenuItem, MenuCategory } from '@/hooks/useMenu';
 import { Plus, Edit2, Trash2, X, Store, Globe } from 'lucide-react-native';
+import { CatalogueImage } from '@/components/CatalogueImage';
 
 interface AdminMenuProps {
   stores: { id: string; name: string }[];
@@ -311,7 +312,7 @@ export function AdminMenu({ stores }: AdminMenuProps) {
             {filteredItems.filter(i => i.category_id === category.id).map(item => (
               <View key={item.id} className={`bg-white p-3 rounded-xl border border-gray-100 flex-row items-center ${!item.is_available ? 'opacity-60' : ''}`}>
                 {item.image_url ? (
-                  <Image source={{ uri: item.image_url }} className="w-12 h-12 rounded-lg bg-gray-100 mr-3" />
+                  <CatalogueImage uri={item.image_url} label={item.name} className="w-12 h-12 rounded-lg mr-3" />
                 ) : (
                   <View className="w-12 h-12 rounded-lg bg-gray-100 mr-3 items-center justify-center">
                     <Text className="text-gray-400 text-xs">No img</Text>

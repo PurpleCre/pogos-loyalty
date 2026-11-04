@@ -1,12 +1,12 @@
 # Client ownership, production data and business approval milestone
 
-Updated: 3 November 2026. **Engineering preparation implemented; milestone 2 remains open awaiting client evidence.** The user reconfirmed that no new approvals or production data have been supplied. The six remaining delivery groups are unchanged.
+Updated: 4 November 2026. **Milestone 2 remains open awaiting remaining client evidence.** The user has now confirmed a shared menu at Msasa/Kamfinsa/Westgate and selected the displayed SadieXpress USD prices. The authorised development import is applied and verified; [its report](shared-menu-import.md) records the exact scope, backup, preservation and outstanding decisions. The six remaining delivery groups are unchanged. The original intake-tooling checkpoint below is historical; the committed intake template remains an unapproved draft and does not fabricate formal production sign-off.
 
 ## Confirmed facts and present boundary
 
-Pogo’s operates Msasa, Kamfinsa and Westgate in Zimbabwe. Release 1 is loyalty plus ordering with cash on collection/delivery; GAAP is the POS vendor, digital payments follow later and launch priority is ASAP. Current connected accounts are authorised for development only. Production/staging ownership, legal entity, account administrators, pilot/platform choices, real branch/menu/pricing/delivery/loyalty rules, role/finance authority, support details and privacy/retention approval remain unconfirmed. The temporary privacy contact remains pgonese6@gmail.com.
+Pogo’s operates Msasa, Kamfinsa and Westgate in Zimbabwe. Release 1 is loyalty plus ordering with cash on collection/delivery; GAAP is the POS vendor, digital payments follow later and launch priority is ASAP. Current connected accounts are authorised for development only. The shared menu and displayed USD prices are confirmed for this development import. Production/staging ownership, legal entity, account administrators, pilot/platform choices, complete branch setup, tax/fees, delivery/loyalty rules, role/finance authority, support details and privacy/retention approval remain unconfirmed. The temporary privacy contact remains pgonese6@gmail.com.
 
-No real trading data, account transfer, migration, role assignment, balance import, branch flag or publication was performed. This milestone cannot be closed merely because intake tooling passes tests. Read the [client questionnaire](client-information-request.md) alongside the [engineering field guide](../config/client-intake/README.md).
+At the original intake-tooling checkpoint no real trading data, account transfer, migration, role assignment, balance import, branch flag or publication was performed. The subsequent development menu operation is documented separately above. This milestone cannot be closed merely because intake tooling passes tests. Read the [client questionnaire](client-information-request.md) alongside the [engineering field guide](../config/client-intake/README.md).
 
 ## Engineering work delivered
 

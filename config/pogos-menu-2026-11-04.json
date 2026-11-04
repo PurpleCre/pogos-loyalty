@@ -1,0 +1,1272 @@
+{
+  "version": "2026-11-04",
+  "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067",
+  "currency": "USD",
+  "confirmed_branches": [
+    "Msasa",
+    "Kamfinsa",
+    "Westgate"
+  ],
+  "confirmation": "User confirmed a shared menu for all three branches and selected the captured displayed SadieXpress prices on 4 November 2026.",
+  "categories": [
+    {
+      "source_id": 6448,
+      "name": "PIZZAS",
+      "sort_order": 0
+    },
+    {
+      "source_id": 6449,
+      "name": "AWESOME CHICKEN",
+      "sort_order": 1
+    },
+    {
+      "source_id": 6450,
+      "name": "WICKED WRAPS",
+      "sort_order": 2
+    },
+    {
+      "source_id": 6451,
+      "name": "SALADS",
+      "sort_order": 3
+    },
+    {
+      "source_id": 6452,
+      "name": "BURGERLICIOUS BURGERS",
+      "sort_order": 4
+    },
+    {
+      "source_id": 6453,
+      "name": "COMBOS",
+      "sort_order": 5
+    },
+    {
+      "source_id": 6454,
+      "name": "VEG BOWLS",
+      "sort_order": 6
+    },
+    {
+      "source_id": 6455,
+      "name": "DESSERTS",
+      "sort_order": 7
+    },
+    {
+      "source_id": 6734,
+      "name": "CHIPS",
+      "sort_order": 8
+    }
+  ],
+  "items": [
+    {
+      "source_id": 56863,
+      "category_source_id": 6448,
+      "name": "Hawaiian Pizza",
+      "description": "Grilled Bacon, Pineapple Chunks & Mozzarella Cheese",
+      "price_minor": 896,
+      "available": true,
+      "sort_order": 0,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/pizzas/56863-hawaiian-pizza.webp",
+      "image_sha256": "76226dc99abd511f6d40d79c815d9b8da43913b6618360f1c2125874a9eb9b82",
+      "options": [
+        {
+          "source_id": 5716,
+          "name": "Pizza Size",
+          "required": true,
+          "max_choices": 1,
+          "sort_order": 0,
+          "choices": [
+            {
+              "source_id": 18722,
+              "name": "Medium",
+              "price_minor": 0,
+              "is_default": true,
+              "sort_order": 0
+            },
+            {
+              "source_id": 18723,
+              "name": "Large",
+              "price_minor": 336,
+              "is_default": false,
+              "sort_order": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": 56864,
+      "category_source_id": 6448,
+      "name": "BBQ Chicken & Mushroom Pizza",
+      "description": "",
+      "price_minor": 1120,
+      "available": true,
+      "sort_order": 1,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/pizzas/56864-bbq-chicken-mushroom-pizza.webp",
+      "image_sha256": "942a5c2e7e4759ea4bac0e87fee8b08a39eb24ff9065c91b6ebf81a7c97dc262",
+      "options": [
+        {
+          "source_id": 5716,
+          "name": "Pizza Size",
+          "required": true,
+          "max_choices": 1,
+          "sort_order": 0,
+          "choices": [
+            {
+              "source_id": 18722,
+              "name": "Medium",
+              "price_minor": 0,
+              "is_default": true,
+              "sort_order": 0
+            },
+            {
+              "source_id": 18723,
+              "name": "Large",
+              "price_minor": 336,
+              "is_default": false,
+              "sort_order": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": 56865,
+      "category_source_id": 6448,
+      "name": "Portuguese Chicken Pizza",
+      "description": "Marinated Chicken, Spring Onions, Our Own Portuguese Sauce & Mozzarella Cheese.",
+      "price_minor": 896,
+      "available": true,
+      "sort_order": 2,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/pizzas/56865-portuguese-chicken-pizza.webp",
+      "image_sha256": "c8b22cba8ca28e4b39a73d93ee1018b04cf596ef81f1526a76e457953af87d5e",
+      "options": [
+        {
+          "source_id": 5716,
+          "name": "Pizza Size",
+          "required": true,
+          "max_choices": 1,
+          "sort_order": 0,
+          "choices": [
+            {
+              "source_id": 18722,
+              "name": "Medium",
+              "price_minor": 0,
+              "is_default": true,
+              "sort_order": 0
+            },
+            {
+              "source_id": 18723,
+              "name": "Large",
+              "price_minor": 336,
+              "is_default": false,
+              "sort_order": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": 56866,
+      "category_source_id": 6448,
+      "name": "Alfredo Pizza",
+      "description": "Grilled Chicken Pieces, Alfredo Sauce, Cherry Peppers, Parmesan & Mozzarella Cheese.",
+      "price_minor": 1120,
+      "available": true,
+      "sort_order": 3,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/pizzas/56866-alfredo-pizza.webp",
+      "image_sha256": "1628a0ef61450e903e1800b54e802feca633155204c9992f7842902ba012b8cf",
+      "options": [
+        {
+          "source_id": 5716,
+          "name": "Pizza Size",
+          "required": true,
+          "max_choices": 1,
+          "sort_order": 0,
+          "choices": [
+            {
+              "source_id": 18722,
+              "name": "Medium",
+              "price_minor": 0,
+              "is_default": true,
+              "sort_order": 0
+            },
+            {
+              "source_id": 18723,
+              "name": "Large",
+              "price_minor": 336,
+              "is_default": false,
+              "sort_order": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": 56867,
+      "category_source_id": 6448,
+      "name": "Braai Feast Pizza",
+      "description": "Achar Boerewors, Salami & Mozzarella Cheese.",
+      "price_minor": 1120,
+      "available": true,
+      "sort_order": 4,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/pizzas/56867-braai-feast-pizza.webp",
+      "image_sha256": "470368ea18b26c9fb5f8d01da4e2adf250884e70d23d8600a3975d7ae398b635",
+      "options": [
+        {
+          "source_id": 5716,
+          "name": "Pizza Size",
+          "required": true,
+          "max_choices": 1,
+          "sort_order": 0,
+          "choices": [
+            {
+              "source_id": 18722,
+              "name": "Medium",
+              "price_minor": 0,
+              "is_default": true,
+              "sort_order": 0
+            },
+            {
+              "source_id": 18723,
+              "name": "Large",
+              "price_minor": 336,
+              "is_default": false,
+              "sort_order": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": 56868,
+      "category_source_id": 6448,
+      "name": "Margherita Pizza",
+      "description": "Diced Tomatoes & Mozzarella Cheese",
+      "price_minor": 784,
+      "available": true,
+      "sort_order": 5,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/pizzas/56868-margherita-pizza.webp",
+      "image_sha256": "18396fb387cf03805bdec65e6b5b96047fcf713dc8bcc1fde84863f4d25c4c80",
+      "options": [
+        {
+          "source_id": 5716,
+          "name": "Pizza Size",
+          "required": true,
+          "max_choices": 1,
+          "sort_order": 0,
+          "choices": [
+            {
+              "source_id": 18722,
+              "name": "Medium",
+              "price_minor": 0,
+              "is_default": true,
+              "sort_order": 0
+            },
+            {
+              "source_id": 18723,
+              "name": "Large",
+              "price_minor": 336,
+              "is_default": false,
+              "sort_order": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": 56869,
+      "category_source_id": 6448,
+      "name": "Carbonara Pizza",
+      "description": "Grilled Bacon, Grilled Mushroom, Onion, Green Olives, Carbonara Sauce & Mozzarella Cheese",
+      "price_minor": 1120,
+      "available": true,
+      "sort_order": 6,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/pizzas/56869-carbonara-pizza.webp",
+      "image_sha256": "5747644163a99674c462b33c6bf1d0ba211db9ff779ddf5c785c77c93ba9ae53",
+      "options": [
+        {
+          "source_id": 5716,
+          "name": "Pizza Size",
+          "required": true,
+          "max_choices": 1,
+          "sort_order": 0,
+          "choices": [
+            {
+              "source_id": 18722,
+              "name": "Medium",
+              "price_minor": 0,
+              "is_default": true,
+              "sort_order": 0
+            },
+            {
+              "source_id": 18723,
+              "name": "Large",
+              "price_minor": 336,
+              "is_default": false,
+              "sort_order": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": 56870,
+      "category_source_id": 6448,
+      "name": "Mexican Pizza",
+      "description": "Mexican Mince, Red & Yellow Pepper, Cheddar & Mozzarella Cheese",
+      "price_minor": 1008,
+      "available": true,
+      "sort_order": 7,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/pizzas/56870-mexican-pizza.webp",
+      "image_sha256": "4ae6326e4f5b12ed11aec6c065d5233d39953b2770a57b987a97ff32fe0a2f57",
+      "options": [
+        {
+          "source_id": 5716,
+          "name": "Pizza Size",
+          "required": true,
+          "max_choices": 1,
+          "sort_order": 0,
+          "choices": [
+            {
+              "source_id": 18722,
+              "name": "Medium",
+              "price_minor": 0,
+              "is_default": true,
+              "sort_order": 0
+            },
+            {
+              "source_id": 18723,
+              "name": "Large",
+              "price_minor": 336,
+              "is_default": false,
+              "sort_order": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": 56873,
+      "category_source_id": 6448,
+      "name": "Tandoori Chicken Pizza",
+      "description": "Marinated Chicken, Diced Tomato, Red & Green Peppers, Tandoori Sauce & Mozzarella Cheese",
+      "price_minor": 896,
+      "available": true,
+      "sort_order": 8,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/pizzas/56873-tandoori-chicken-pizza.webp",
+      "image_sha256": "f38ef05da55bab68c660de5ee0d4c3e664b5e9f2c8483b74153efd954ca538d3",
+      "options": [
+        {
+          "source_id": 5716,
+          "name": "Pizza Size",
+          "required": true,
+          "max_choices": 1,
+          "sort_order": 0,
+          "choices": [
+            {
+              "source_id": 18722,
+              "name": "Medium",
+              "price_minor": 0,
+              "is_default": true,
+              "sort_order": 0
+            },
+            {
+              "source_id": 18723,
+              "name": "Large",
+              "price_minor": 336,
+              "is_default": false,
+              "sort_order": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": 56871,
+      "category_source_id": 6448,
+      "name": "Mediterranean Pizza",
+      "description": "Roasted Veg, Mixed with Green Olives, Feta & Mozzarella Cheese",
+      "price_minor": 1008,
+      "available": true,
+      "sort_order": 9,
+      "image_file": null,
+      "image_sha256": null,
+      "options": [
+        {
+          "source_id": 5716,
+          "name": "Pizza Size",
+          "required": true,
+          "max_choices": 1,
+          "sort_order": 0,
+          "choices": [
+            {
+              "source_id": 18722,
+              "name": "Medium",
+              "price_minor": 0,
+              "is_default": true,
+              "sort_order": 0
+            },
+            {
+              "source_id": 18723,
+              "name": "Large",
+              "price_minor": 336,
+              "is_default": false,
+              "sort_order": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": 56872,
+      "category_source_id": 6448,
+      "name": "Pogo Dew Pizza (Tweaked)",
+      "description": "Pineapple, Mushroom, Spicy Cherry Peppers, Parmesan & Garlic Sauce",
+      "price_minor": 1008,
+      "available": true,
+      "sort_order": 10,
+      "image_file": null,
+      "image_sha256": null,
+      "options": [
+        {
+          "source_id": 5716,
+          "name": "Pizza Size",
+          "required": true,
+          "max_choices": 1,
+          "sort_order": 0,
+          "choices": [
+            {
+              "source_id": 18722,
+              "name": "Medium",
+              "price_minor": 0,
+              "is_default": true,
+              "sort_order": 0
+            },
+            {
+              "source_id": 18723,
+              "name": "Large",
+              "price_minor": 336,
+              "is_default": false,
+              "sort_order": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": 56874,
+      "category_source_id": 6449,
+      "name": "1/4 Chicken",
+      "description": "Fire Grilled Chicken. Choose your flavour of choice!",
+      "price_minor": 448,
+      "available": true,
+      "sort_order": 0,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/awesome-chicken/56874-1-4-chicken.webp",
+      "image_sha256": "762f0e9ba728c8081462236d80fa6a6fab2c78db67978992e6fa1ade74e0d67d",
+      "options": [
+        {
+          "source_id": 5718,
+          "name": "Chicken Flavour Options",
+          "required": true,
+          "max_choices": 1,
+          "sort_order": 0,
+          "choices": [
+            {
+              "source_id": 18725,
+              "name": "Lemon & Herb",
+              "price_minor": 0,
+              "is_default": true,
+              "sort_order": 0
+            },
+            {
+              "source_id": 18730,
+              "name": "BBQ",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 1
+            },
+            {
+              "source_id": 18726,
+              "name": "Mild",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 2
+            },
+            {
+              "source_id": 18727,
+              "name": "Hot",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 3
+            },
+            {
+              "source_id": 18729,
+              "name": "Tandoori",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 4
+            },
+            {
+              "source_id": 18728,
+              "name": "Garlic",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": 56875,
+      "category_source_id": 6449,
+      "name": "1/2 Chicken",
+      "description": "Fire Grilled Chicken. Choose your flavour of choice!",
+      "price_minor": 896,
+      "available": true,
+      "sort_order": 1,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/awesome-chicken/56875-1-2-chicken.webp",
+      "image_sha256": "c8733b63b04e97312030c495b4e9262620a0cafcf118ddec145ebf894d811f28",
+      "options": [
+        {
+          "source_id": 5718,
+          "name": "Chicken Flavour Options",
+          "required": true,
+          "max_choices": 1,
+          "sort_order": 0,
+          "choices": [
+            {
+              "source_id": 18725,
+              "name": "Lemon & Herb",
+              "price_minor": 0,
+              "is_default": true,
+              "sort_order": 0
+            },
+            {
+              "source_id": 18730,
+              "name": "BBQ",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 1
+            },
+            {
+              "source_id": 18726,
+              "name": "Mild",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 2
+            },
+            {
+              "source_id": 18727,
+              "name": "Hot",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 3
+            },
+            {
+              "source_id": 18729,
+              "name": "Tandoori",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 4
+            },
+            {
+              "source_id": 18728,
+              "name": "Garlic",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": 56876,
+      "category_source_id": 6449,
+      "name": "Full Chicken",
+      "description": "Fire Grilled Chicken. Choose your flavour of choice!",
+      "price_minor": 1680,
+      "available": true,
+      "sort_order": 2,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/awesome-chicken/56876-full-chicken.webp",
+      "image_sha256": "6222f6a67314550a41f12bad3f0ed721e4c3e5e2672581fa8c527f4ea8536821",
+      "options": [
+        {
+          "source_id": 5718,
+          "name": "Chicken Flavour Options",
+          "required": true,
+          "max_choices": 1,
+          "sort_order": 0,
+          "choices": [
+            {
+              "source_id": 18725,
+              "name": "Lemon & Herb",
+              "price_minor": 0,
+              "is_default": true,
+              "sort_order": 0
+            },
+            {
+              "source_id": 18730,
+              "name": "BBQ",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 1
+            },
+            {
+              "source_id": 18726,
+              "name": "Mild",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 2
+            },
+            {
+              "source_id": 18727,
+              "name": "Hot",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 3
+            },
+            {
+              "source_id": 18729,
+              "name": "Tandoori",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 4
+            },
+            {
+              "source_id": 18728,
+              "name": "Garlic",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": 56878,
+      "category_source_id": 6449,
+      "name": "Sticky BBQ Wings",
+      "description": "",
+      "price_minor": 560,
+      "available": true,
+      "sort_order": 3,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/awesome-chicken/56878-sticky-bbq-wings.webp",
+      "image_sha256": "06a37ca9ea2de52a6448c108a47d444d0100a7840f427181a8a6e33f91345624",
+      "options": []
+    },
+    {
+      "source_id": 56879,
+      "category_source_id": 6449,
+      "name": "Tandoori Wings",
+      "description": "",
+      "price_minor": 560,
+      "available": true,
+      "sort_order": 4,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/awesome-chicken/56879-tandoori-wings.webp",
+      "image_sha256": "c6cc08d907c886cf9fe42334ce567f5124c2ad0f5b0c09d478c347f042620c10",
+      "options": []
+    },
+    {
+      "source_id": 56877,
+      "category_source_id": 6449,
+      "name": "Chicken Bites",
+      "description": "",
+      "price_minor": 560,
+      "available": true,
+      "sort_order": 5,
+      "image_file": null,
+      "image_sha256": null,
+      "options": [
+        {
+          "source_id": 5719,
+          "name": "Chicken Bites Option:",
+          "required": true,
+          "max_choices": 1,
+          "sort_order": 0,
+          "choices": [
+            {
+              "source_id": 18731,
+              "name": "Fried",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 0
+            },
+            {
+              "source_id": 18732,
+              "name": "Grilled",
+              "price_minor": 0,
+              "is_default": true,
+              "sort_order": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": 56880,
+      "category_source_id": 6450,
+      "name": "Peri Peri Wrapper",
+      "description": "Peri Peri Chicken, Cucumber with a splash of Tomato",
+      "price_minor": 560,
+      "available": true,
+      "sort_order": 0,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/wicked-wraps/56880-peri-peri-wrapper.webp",
+      "image_sha256": "0d6fa689f48c529f9ef003e7d6c84e4f71e9250f89bb6ef589eef8598a276f90",
+      "options": []
+    },
+    {
+      "source_id": 56881,
+      "category_source_id": 6450,
+      "name": "Portuguese Wrapper",
+      "description": "Marinated Chicken Strips, Spring Onion & Cucumber with a splash of Pogos dressing.",
+      "price_minor": 560,
+      "available": true,
+      "sort_order": 1,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/wicked-wraps/56881-portuguese-wrapper.webp",
+      "image_sha256": "9e51b487e23ce876c7dec7b18ebe27005bc8bcefdde3cb0fd65bff055c30ea35",
+      "options": []
+    },
+    {
+      "source_id": 56882,
+      "category_source_id": 6450,
+      "name": "Sweet Chilli Wrapper",
+      "description": "Deep Fried Chicken Strips with a Splash of Sweet Chilli Sauce",
+      "price_minor": 560,
+      "available": true,
+      "sort_order": 2,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/wicked-wraps/56882-sweet-chilli-wrapper.webp",
+      "image_sha256": "b30d4f09bbd4324b591b4274ffac733407bdc21b75f2ac084c3a35f2c9f6d2bc",
+      "options": []
+    },
+    {
+      "source_id": 56883,
+      "category_source_id": 6450,
+      "name": "Tandoori Wrapper",
+      "description": "Marinated Chicken, Diced Tomato, Red & Green Peppers, Tandoori Sauce & Mozzarella",
+      "price_minor": 560,
+      "available": true,
+      "sort_order": 3,
+      "image_file": null,
+      "image_sha256": null,
+      "options": []
+    },
+    {
+      "source_id": 56884,
+      "category_source_id": 6450,
+      "name": "Hawaiian Wrapper",
+      "description": "Grilled Chicken Strips, Pineapple Chunks with a Splash of Pogo Dressing",
+      "price_minor": 616,
+      "available": true,
+      "sort_order": 4,
+      "image_file": null,
+      "image_sha256": null,
+      "options": []
+    },
+    {
+      "source_id": 56885,
+      "category_source_id": 6451,
+      "name": "Portuguese Salad",
+      "description": "",
+      "price_minor": 336,
+      "available": true,
+      "sort_order": 0,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/salads/56885-portuguese-salad.webp",
+      "image_sha256": "04b5afa6f4a7a4d9dd5416604c87b362a4de005b9deed44ff30a9bf6a435842c",
+      "options": []
+    },
+    {
+      "source_id": 56886,
+      "category_source_id": 6451,
+      "name": "Greek Salad",
+      "description": "",
+      "price_minor": 448,
+      "available": true,
+      "sort_order": 1,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/salads/56886-greek-salad.webp",
+      "image_sha256": "ad2238af2a8f0d6db825366c181b2984dc53f44dab3cac2e121c0a4af2fe4625",
+      "options": []
+    },
+    {
+      "source_id": 56887,
+      "category_source_id": 6451,
+      "name": "Grilled Chicken Salad",
+      "description": "",
+      "price_minor": 672,
+      "available": true,
+      "sort_order": 2,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/salads/56887-grilled-chicken-salad.webp",
+      "image_sha256": "d836c8144fa09fc45c7aee203ec0dfe2c98cd645fb5c853ea2e5fe7f1243f23f",
+      "options": []
+    },
+    {
+      "source_id": 56888,
+      "category_source_id": 6451,
+      "name": "Bean Salad",
+      "description": "",
+      "price_minor": 336,
+      "available": true,
+      "sort_order": 3,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/salads/56888-bean-salad.webp",
+      "image_sha256": "8689839896fa3abade88b7b3967e4dced75d701e3e747742d7ffd58acd712fd5",
+      "options": []
+    },
+    {
+      "source_id": 56889,
+      "category_source_id": 6451,
+      "name": "Regular Coleslaw",
+      "description": "",
+      "price_minor": 224,
+      "available": false,
+      "sort_order": 4,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/salads/56889-regular-coleslaw.webp",
+      "image_sha256": "f7159fb15ce7f7f52a05895e57c1cff470004bb1861dbacc00da7e78456c3388",
+      "options": []
+    },
+    {
+      "source_id": 56890,
+      "category_source_id": 6451,
+      "name": "Large Coleslaw",
+      "description": "",
+      "price_minor": 336,
+      "available": false,
+      "sort_order": 5,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/salads/56890-large-coleslaw.webp",
+      "image_sha256": "1d60772911fa9297dd17645ed3122e877cf19f4f870cc7d852492ecd0a995a73",
+      "options": []
+    },
+    {
+      "source_id": 56891,
+      "category_source_id": 6451,
+      "name": "Mexican Salad",
+      "description": "",
+      "price_minor": 560,
+      "available": false,
+      "sort_order": 6,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/salads/56891-mexican-salad.webp",
+      "image_sha256": "31b69dc11dd0ee90814ba74dc134d3c18fe035a917c91941a56c06c9994628d7",
+      "options": []
+    },
+    {
+      "source_id": 56892,
+      "category_source_id": 6452,
+      "name": "Grilled Chicken Burger",
+      "description": "Grilled Chicken Breast, Lettuce, Tomato, Mayonnaise on a freshly Baked Portuguese Roll.",
+      "price_minor": 560,
+      "available": true,
+      "sort_order": 0,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/burgerlicious-burgers/56892-grilled-chicken-burger.webp",
+      "image_sha256": "a56378cc9bd6ba7efd6f00d23705df3bdad87a8c8ba23b41efb48dcecb00030c",
+      "options": []
+    },
+    {
+      "source_id": 56893,
+      "category_source_id": 6452,
+      "name": "Double Chicken Burger",
+      "description": "2x Grilled Chicken Breast, Lettuce, Tomato, Mayonnaise on a freshly Baked Portuguese Roll.",
+      "price_minor": 784,
+      "available": true,
+      "sort_order": 1,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/burgerlicious-burgers/56893-double-chicken-burger.webp",
+      "image_sha256": "4b9bc237630d4878893e94ed1b2c263e2ee93bcde66199382619f362559381c4",
+      "options": []
+    },
+    {
+      "source_id": 56894,
+      "category_source_id": 6452,
+      "name": "Hawaiian Burger",
+      "description": "1x Grilled Chicken Breast, Pineapple, Lettuce, Tomato, Mayonnaise on a freshly Baked Portuguese Roll.",
+      "price_minor": 616,
+      "available": true,
+      "sort_order": 2,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/burgerlicious-burgers/56894-hawaiian-burger.webp",
+      "image_sha256": "4e91cbd80652768ce8c64e05f412b468352718621391bb574a836ceac19ed127",
+      "options": []
+    },
+    {
+      "source_id": 56895,
+      "category_source_id": 6452,
+      "name": "Crumbed Chicken Burger",
+      "description": "Fried Chicken Breast, Lettuce, Tomato, Sweet Chilli Sauce.",
+      "price_minor": 616,
+      "available": true,
+      "sort_order": 3,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/burgerlicious-burgers/56895-crumbed-chicken-burger.webp",
+      "image_sha256": "cad59db7e2f6c6e400836783ef49426ffcd518f4edf140943de9b72bf8917671",
+      "options": []
+    },
+    {
+      "source_id": 56896,
+      "category_source_id": 6452,
+      "name": "Chicken Cheese Burger",
+      "description": "Grilled Chicken Breast, Lettuce, Tomato, Cheese Slice, Mayonnaise on a freshly Baked Portuguese Roll.",
+      "price_minor": 616,
+      "available": true,
+      "sort_order": 4,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/burgerlicious-burgers/56896-chicken-cheese-burger.webp",
+      "image_sha256": "6ff14a60e74268cffd0e88a51ff86c7fe3f7ea4bf9f5acf1d95c1159c02fc49a",
+      "options": []
+    },
+    {
+      "source_id": 56897,
+      "category_source_id": 6453,
+      "name": "1/4 Meal Deal",
+      "description": "1/4 Chicken & Chips.",
+      "price_minor": 560,
+      "available": true,
+      "sort_order": 0,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/combos/56897-1-4-meal-deal.webp",
+      "image_sha256": "8088d3b0cb297a633e12f7be4ccecad481a1750a8b4056e519da9c7a2b99b7f1",
+      "options": []
+    },
+    {
+      "source_id": 56898,
+      "category_source_id": 6453,
+      "name": "Chicken Burger Meal Deal",
+      "description": "Chicken Burger & Chips.",
+      "price_minor": 672,
+      "available": true,
+      "sort_order": 1,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/combos/56898-chicken-burger-meal-deal.webp",
+      "image_sha256": "02b49fcb8c9078a0e7e2a719d74230c4781034480457ebdc38bb9b6d4bfa4e89",
+      "options": []
+    },
+    {
+      "source_id": 56899,
+      "category_source_id": 6453,
+      "name": "Chicken Wings Meal Deal",
+      "description": "Chicken Wings & Chips.",
+      "price_minor": 672,
+      "available": true,
+      "sort_order": 2,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/combos/56899-chicken-wings-meal-deal.webp",
+      "image_sha256": "7d0f6527e131cd889561359e9437d453cb7569fd2854c00e5ab47e5994304416",
+      "options": []
+    },
+    {
+      "source_id": 56900,
+      "category_source_id": 6453,
+      "name": "Chicken Wrapper Meal Deal",
+      "description": "Chicken Wrapper & Small Chips.",
+      "price_minor": 672,
+      "available": true,
+      "sort_order": 3,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/combos/56900-chicken-wrapper-meal-deal.webp",
+      "image_sha256": "a6cdc7877a75640cc6bd75b6a776dfe56ef20d07ee7107b1645cc0bc7c46910f",
+      "options": []
+    },
+    {
+      "source_id": 56903,
+      "category_source_id": 6453,
+      "name": "Full Chicken Meal Deal",
+      "description": "Full Chicken & Large Chips.",
+      "price_minor": 2240,
+      "available": true,
+      "sort_order": 4,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/combos/56903-full-chicken-meal-deal.webp",
+      "image_sha256": "c8e0f091608d9d438ccb362f7cd62e5a21af27ce30f554af2d6e2d307155a0ab",
+      "options": []
+    },
+    {
+      "source_id": 56901,
+      "category_source_id": 6453,
+      "name": "Chicken Bites Meal Deal",
+      "description": "Chicken Bites & Small Chips.",
+      "price_minor": 672,
+      "available": true,
+      "sort_order": 5,
+      "image_file": null,
+      "image_sha256": null,
+      "options": []
+    },
+    {
+      "source_id": 56904,
+      "category_source_id": 6454,
+      "name": "Grilled Chicken Rice & Veg Bowl",
+      "description": "Your choice of flavour of Pogo's Chicken with mixed roasted veg & flavourful turmeric rice with peppers. ",
+      "price_minor": 672,
+      "available": true,
+      "sort_order": 0,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/veg-bowls/56904-grilled-chicken-rice-veg-bowl.webp",
+      "image_sha256": "56a42c67bf284a2a3e790ddbb7321c9d1d1c8b789bfcb0f30082dbbbf34e3cd1",
+      "options": [
+        {
+          "source_id": 5718,
+          "name": "Chicken Flavour Options",
+          "required": true,
+          "max_choices": 1,
+          "sort_order": 0,
+          "choices": [
+            {
+              "source_id": 18725,
+              "name": "Lemon & Herb",
+              "price_minor": 0,
+              "is_default": true,
+              "sort_order": 0
+            },
+            {
+              "source_id": 18730,
+              "name": "BBQ",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 1
+            },
+            {
+              "source_id": 18726,
+              "name": "Mild",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 2
+            },
+            {
+              "source_id": 18727,
+              "name": "Hot",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 3
+            },
+            {
+              "source_id": 18729,
+              "name": "Tandoori",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 4
+            },
+            {
+              "source_id": 18728,
+              "name": "Garlic",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": 56906,
+      "category_source_id": 6454,
+      "name": "Greek Bowl",
+      "description": "Your choice of flavour of Pogo's Chicken with Greek Salad, feta, olives, cucumber, tomato, a drizzle of olive oil, gyros bread & tzatziki.",
+      "price_minor": 672,
+      "available": true,
+      "sort_order": 1,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/veg-bowls/56906-greek-bowl.webp",
+      "image_sha256": "53e320be6a2d0a288e36c0e1c9ed038f0516162bc585cd900dfba82fc3daf77e",
+      "options": [
+        {
+          "source_id": 5718,
+          "name": "Chicken Flavour Options",
+          "required": true,
+          "max_choices": 1,
+          "sort_order": 0,
+          "choices": [
+            {
+              "source_id": 18725,
+              "name": "Lemon & Herb",
+              "price_minor": 0,
+              "is_default": true,
+              "sort_order": 0
+            },
+            {
+              "source_id": 18730,
+              "name": "BBQ",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 1
+            },
+            {
+              "source_id": 18726,
+              "name": "Mild",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 2
+            },
+            {
+              "source_id": 18727,
+              "name": "Hot",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 3
+            },
+            {
+              "source_id": 18729,
+              "name": "Tandoori",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 4
+            },
+            {
+              "source_id": 18728,
+              "name": "Garlic",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": 56907,
+      "category_source_id": 6454,
+      "name": "Cauliflower Rice Bowl",
+      "description": "Your choice of flavour of Pogo's Chicken with mushrooms, cauliflower rice & parsley with a side of fresh avocado.",
+      "price_minor": 672,
+      "available": true,
+      "sort_order": 2,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/veg-bowls/56907-cauliflower-rice-bowl.webp",
+      "image_sha256": "69192ae67599ca9748564a5400023509cdff6dab8cd5d194e446d35f9ad9418c",
+      "options": [
+        {
+          "source_id": 5718,
+          "name": "Chicken Flavour Options",
+          "required": true,
+          "max_choices": 1,
+          "sort_order": 0,
+          "choices": [
+            {
+              "source_id": 18725,
+              "name": "Lemon & Herb",
+              "price_minor": 0,
+              "is_default": true,
+              "sort_order": 0
+            },
+            {
+              "source_id": 18730,
+              "name": "BBQ",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 1
+            },
+            {
+              "source_id": 18726,
+              "name": "Mild",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 2
+            },
+            {
+              "source_id": 18727,
+              "name": "Hot",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 3
+            },
+            {
+              "source_id": 18729,
+              "name": "Tandoori",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 4
+            },
+            {
+              "source_id": 18728,
+              "name": "Garlic",
+              "price_minor": 0,
+              "is_default": false,
+              "sort_order": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": 56909,
+      "category_source_id": 6455,
+      "name": "Hot Fudged Brownie",
+      "description": "",
+      "price_minor": 448,
+      "available": true,
+      "sort_order": 0,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/desserts/56909-hot-fudged-brownie.webp",
+      "image_sha256": "10179c660ba628ee3d2e2c3b69ee8d6715662b8bc3c25184b3fa0030a1d2bb86",
+      "options": []
+    },
+    {
+      "source_id": 56910,
+      "category_source_id": 6455,
+      "name": "Rich Chocolate Cake Slice",
+      "description": "",
+      "price_minor": 448,
+      "available": true,
+      "sort_order": 1,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/desserts/56910-rich-chocolate-cake-slice.webp",
+      "image_sha256": "7d94e213b3110144ea3870431ae77a71302037e7cfca2d00724acece19c4da2e",
+      "options": []
+    },
+    {
+      "source_id": 56911,
+      "category_source_id": 6455,
+      "name": "Red Velvet Cake Slice",
+      "description": "",
+      "price_minor": 448,
+      "available": true,
+      "sort_order": 2,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/desserts/56911-red-velvet-cake-slice.webp",
+      "image_sha256": "a3ca2de782ffb78e4c15e5b43e956e740489f2840295ddd5c187847d4095d7d7",
+      "options": []
+    },
+    {
+      "source_id": 56912,
+      "category_source_id": 6455,
+      "name": "Carrot Cake Slice",
+      "description": "",
+      "price_minor": 448,
+      "available": true,
+      "sort_order": 3,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/desserts/56912-carrot-cake-slice.webp",
+      "image_sha256": "0ab8f581152d56e5e2aeabbbcaaa46f0433206394d8c8f411a0d8baf642d7a19",
+      "options": []
+    },
+    {
+      "source_id": 56913,
+      "category_source_id": 6455,
+      "name": "Malva Pudding",
+      "description": "",
+      "price_minor": 448,
+      "available": true,
+      "sort_order": 4,
+      "image_file": null,
+      "image_sha256": null,
+      "options": []
+    },
+    {
+      "source_id": 56908,
+      "category_source_id": 6455,
+      "name": "Strawberry Cheesecake",
+      "description": "",
+      "price_minor": 448,
+      "available": false,
+      "sort_order": 5,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/desserts/56908-strawberry-cheesecake.webp",
+      "image_sha256": "9bf79b6dbdf12c896618ccccaa8adb97053feff419d630bcf411e66f1f78ab3a",
+      "options": []
+    },
+    {
+      "source_id": 59811,
+      "category_source_id": 6734,
+      "name": "Small Chips",
+      "description": "",
+      "price_minor": 168,
+      "available": true,
+      "sort_order": 0,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/chips/59811-small-chips.webp",
+      "image_sha256": "188ab45d4c8c689dc26cfa83d312e5d4459ddc0e63e2c426c46741ff7d33e7f6",
+      "options": []
+    },
+    {
+      "source_id": 59812,
+      "category_source_id": 6734,
+      "name": "Large Chips",
+      "description": "",
+      "price_minor": 560,
+      "available": true,
+      "sort_order": 1,
+      "image_file": "client-materials/pogos-sadiexpress-2026-11-04/images/menu/chips/59812-large-chips.webp",
+      "image_sha256": "188ab45d4c8c689dc26cfa83d312e5d4459ddc0e63e2c426c46741ff7d33e7f6",
+      "options": []
+    }
+  ]
+}

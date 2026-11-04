@@ -1,7 +1,8 @@
-import { View, Text, Switch, TextInput, ActivityIndicator, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, Switch, TextInput, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
 import { StaffMenuItem } from '@/hooks/useStaff';
 import { Search, UtensilsCrossed, AlertTriangle } from 'lucide-react-native';
 import { useState, useMemo } from 'react';
+import { CatalogueImage } from '@/components/CatalogueImage';
 
 interface StaffMenuAvailabilityProps {
   items: StaffMenuItem[];
@@ -107,7 +108,7 @@ export function StaffMenuAvailability({ items, isLoading, onToggleAvailability }
           }`}
         >
           {item.image_url ? (
-            <Image source={{ uri: item.image_url }} className="w-16 h-16 bg-gray-100" resizeMode="cover" />
+            <CatalogueImage uri={item.image_url} label={item.name} className="w-16 h-16" />
           ) : (
             <View className="w-16 h-16 bg-gray-100 items-center justify-center">
               <UtensilsCrossed size={20} color="#d1d5db" />

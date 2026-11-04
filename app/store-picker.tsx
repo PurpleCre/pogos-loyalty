@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, MapPin, ChevronDown } from 'lucide-react-native';
@@ -7,6 +7,7 @@ import { useStores, Store } from '@/hooks/useStores';
 import { useOrder } from '@/contexts/OrderContext';
 import { ReadStatus } from '@/components/ReadStatus';
 import { LocationPickerModal } from '@/components/LocationPickerModal';
+import { CatalogueImage } from '@/components/CatalogueImage';
 
 export default function StorePickerScreen() {
   const { stores, loading, error, fresh, refreshedAt, refetch } = useStores();
@@ -95,10 +96,7 @@ export default function StorePickerScreen() {
           sortedStores.map((store: any, index) => (
             <View key={store.id} className="bg-white rounded-2xl mb-4 border border-gray-100 shadow-sm overflow-hidden">
               {store.image_url && (
-                <Image 
-                  source={{ uri: store.image_url }} 
-                  className="w-full h-32 object-cover bg-gray-200"
-                />
+                <CatalogueImage uri={store.image_url} label={store.name} className="w-full h-32" contentFit="cover" />
               )}
               <View className="p-5">
                 <View className="flex-row justify-between items-start mb-4">

@@ -38,6 +38,7 @@ jobs:
       - run: npm run test:postgres:pull
       - run: npm run test:postgres
       - run: npm run test:resilience
+      - run: npm run test:performance
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -45,6 +46,7 @@ jobs:
           path: |
             dist/postgres-acceptance/report.json
             dist/resilience-acceptance/report.json
+            dist/performance-acceptance/
           retention-days: 7
   checks:
     runs-on: ubuntu-latest
@@ -61,12 +63,14 @@ jobs:
       - run: npm run privacy:pages
       - run: npm run native:preflight
       - run: npm run build:check
+      - run: npm run build:web:check
       - uses: actions/upload-artifact@v4
         with:
           name: offline-native-bundles
           path: |
             dist/android/
             dist/ios/
+            dist/web/
           retention-days: 7
       - uses: actions/upload-artifact@v4
         if: always()

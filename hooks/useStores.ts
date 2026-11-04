@@ -9,7 +9,7 @@ export type Store = Tables<'stores'>;
 export function useStores() {
   const cache = useMemo(() => createBrowsingCache(AsyncStorage, runtimeEnvironment.name, 'stores', storeBrowseSchema), []);
   const load = useCallback(async (signal: AbortSignal) => {
-    const { data, error } = await supabase.from('stores').select('*').order('name').abortSignal(signal);
+    const { data, error } = await supabase.from('stores').select('*').neq('name', "Pogo's Closed Branch").order('name').abortSignal(signal);
     if (error) throw error; return storeBrowseSchema.parse(data);
   }, []);
   const resource = useReadResource('public-stores', load, { cache, interval: 30000 });

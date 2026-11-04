@@ -2,6 +2,8 @@
 
 Verified locally: **3 November 2026**. The ledger-integrity and notification-materialisation work package is implemented and tested. **Milestone 5 remains in progress.** No hosted migration, real alert, schedule, provider send, financial repair or GAAP integration was activated. The app’s own loyalty ledger remains authoritative.
 
+Follow-on: [security remediation and scaled performance](security-performance-sprint.md) measures this observer at 2,000 synthetic customers and corrects nested per-pair query cost in `20261103060000_integrity_query_cost.sql`. It adds eligibility parity cases, passes 484 regressions and four scaled PostgreSQL cases, and supersedes the earlier blocked dependency result. The counts and function/index description below record this package's original checkpoint; production activation/representative measurement remain open.
+
 ## Aggregate observations
 
 `20261103050000_integrity_monitoring.sql` adds a stable, read-only, service-only `operational_integrity_snapshot()` RPC and two supporting indexes. It is separate from the existing eight fast queue gauges because checking ledger integrity can require a full ledger scan. The schema remains **71 public tables**, and account exports remain **29 sections**.

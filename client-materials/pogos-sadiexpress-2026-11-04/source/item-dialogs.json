@@ -1,0 +1,1248 @@
+{
+  "captured_at": "2026-11-03T22:41:37.957Z",
+  "records": [
+    {
+      "product_id": 56863,
+      "name": "Hawaiian Pizza",
+      "category": "PIZZAS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56863",
+      "captured_at": "2026-11-03T22:41:03.666Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56863",
+      "title": "Hawaiian Pizza",
+      "text": "Hawaiian Pizza\nGrilled Bacon, Pineapple Chunks & Mozzarella Cheese\nfrom US$8.96\nPizza Size\nRequired\n\nMedium\n\n +US$0.00\n\nLarge\n\n +US$3.36\nAdd a comment...\nHawaiian Pizza\nUS$8.96\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/4c1ca9128a094de499473dbb9fd941ab_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/4c1ca9128a094de499473dbb9fd941ab_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56864,
+      "name": "BBQ Chicken & Mushroom Pizza",
+      "category": "PIZZAS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56864",
+      "captured_at": "2026-11-03T22:41:04.274Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56864",
+      "title": "BBQ Chicken & Mushroom Pizza",
+      "text": "BBQ Chicken & Mushroom Pizza\nfrom US$11.20\nPizza Size\nRequired\n\nMedium\n\n +US$0.00\n\nLarge\n\n +US$3.36\nAdd a comment...\nBBQ Chicken & Mushroom Pizza\nUS$11.20\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/306d6942240f45dc895838894698ba63_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/306d6942240f45dc895838894698ba63_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56865,
+      "name": "Portuguese Chicken Pizza",
+      "category": "PIZZAS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56865",
+      "captured_at": "2026-11-03T22:41:04.801Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56865",
+      "title": "Portuguese Chicken Pizza",
+      "text": "Portuguese Chicken Pizza\nMarinated Chicken, Spring Onions, Our Own Portuguese Sauce & Mozzarella Cheese.\nfrom US$8.96\nPizza Size\nRequired\n\nMedium\n\n +US$0.00\n\nLarge\n\n +US$3.36\nAdd a comment...\nPortuguese Chicken Pizza\nUS$8.96\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/d52f22e149d449caac0e5aa392082f3f_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/d52f22e149d449caac0e5aa392082f3f_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56866,
+      "name": "Alfredo Pizza",
+      "category": "PIZZAS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56866",
+      "captured_at": "2026-11-03T22:41:05.335Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56866",
+      "title": "Alfredo Pizza",
+      "text": "Alfredo Pizza\nGrilled Chicken Pieces, Alfredo Sauce, Cherry Peppers, Parmesan & Mozzarella Cheese.\nfrom US$11.20\nPizza Size\nRequired\n\nMedium\n\n +US$0.00\n\nLarge\n\n +US$3.36\nAdd a comment...\nAlfredo Pizza\nUS$11.20\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/f5f93f05e67441f58523af333b83c982_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/f5f93f05e67441f58523af333b83c982_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56867,
+      "name": "Braai Feast Pizza",
+      "category": "PIZZAS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56867",
+      "captured_at": "2026-11-03T22:41:05.866Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56867",
+      "title": "Braai Feast Pizza",
+      "text": "Braai Feast Pizza\nAchar Boerewors, Salami & Mozzarella Cheese.\nfrom US$11.20\nPizza Size\nRequired\n\nMedium\n\n +US$0.00\n\nLarge\n\n +US$3.36\nAdd a comment...\nBraai Feast Pizza\nUS$11.20\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/dde0bba2752f47a69ce40eee0e274532_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/dde0bba2752f47a69ce40eee0e274532_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56868,
+      "name": "Margherita Pizza",
+      "category": "PIZZAS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56868",
+      "captured_at": "2026-11-03T22:41:06.400Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56868",
+      "title": "Margherita Pizza",
+      "text": "Margherita Pizza\nDiced Tomatoes & Mozzarella Cheese\nfrom US$7.84\nPizza Size\nRequired\n\nMedium\n\n +US$0.00\n\nLarge\n\n +US$3.36\nAdd a comment...\nMargherita Pizza\nUS$7.84\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/f1f367e7af8a4766b3e0fc872e082ff3_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/f1f367e7af8a4766b3e0fc872e082ff3_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56869,
+      "name": "Carbonara Pizza",
+      "category": "PIZZAS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56869",
+      "captured_at": "2026-11-03T22:41:06.931Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56869",
+      "title": "Carbonara Pizza",
+      "text": "Carbonara Pizza\nGrilled Bacon, Grilled Mushroom, Onion, Green Olives, Carbonara Sauce & Mozzarella Cheese\nfrom US$11.20\nPizza Size\nRequired\n\nMedium\n\n +US$0.00\n\nLarge\n\n +US$3.36\nAdd a comment...\nCarbonara Pizza\nUS$11.20\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/f4228928f9c04cbf936623765a7117a1_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/f4228928f9c04cbf936623765a7117a1_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56870,
+      "name": "Mexican Pizza",
+      "category": "PIZZAS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56870",
+      "captured_at": "2026-11-03T22:41:07.472Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56870",
+      "title": "Mexican Pizza",
+      "text": "Mexican Pizza\nMexican Mince, Red & Yellow Pepper, Cheddar & Mozzarella Cheese\nfrom US$10.08\nPizza Size\nRequired\n\nMedium\n\n +US$0.00\n\nLarge\n\n +US$3.36\nAdd a comment...\nMexican Pizza\nUS$10.08\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/a4d44c38d55a46a297a79fea8630b05d_w900",
+          "alt": "",
+          "width": 0,
+          "height": 0
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/a4d44c38d55a46a297a79fea8630b05d_w900",
+          "alt": "",
+          "width": 0,
+          "height": 0
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56873,
+      "name": "Tandoori Chicken Pizza",
+      "category": "PIZZAS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56873",
+      "captured_at": "2026-11-03T22:41:08.011Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56873",
+      "title": "Tandoori Chicken Pizza",
+      "text": "Tandoori Chicken Pizza\nMarinated Chicken, Diced Tomato, Red & Green Peppers, Tandoori Sauce & Mozzarella Cheese\nfrom US$8.96\nPizza Size\nRequired\n\nMedium\n\n +US$0.00\n\nLarge\n\n +US$3.36\nAdd a comment...\nTandoori Chicken Pizza\nUS$8.96\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/561bc10b634e46ff80714e5a4f8d2340_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/561bc10b634e46ff80714e5a4f8d2340_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56871,
+      "name": "Mediterranean Pizza",
+      "category": "PIZZAS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56871",
+      "captured_at": "2026-11-03T22:41:08.545Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56871",
+      "title": "Mediterranean Pizza",
+      "text": "Mediterranean Pizza\nRoasted Veg, Mixed with Green Olives, Feta & Mozzarella Cheese\nfrom US$10.08\nPizza Size\nRequired\n\nMedium\n\n +US$0.00\n\nLarge\n\n +US$3.36\nAdd a comment...\nMediterranean Pizza\nUS$10.08\n1\nAdd",
+      "images": [
+        {
+          "src": "https://delivery.sadiexpress.com/static-images/dishPathDefault.svg",
+          "alt": "",
+          "width": 512,
+          "height": 512
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56872,
+      "name": "Pogo Dew Pizza (Tweaked)",
+      "category": "PIZZAS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56872",
+      "captured_at": "2026-11-03T22:41:09.079Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56872",
+      "title": "Pogo Dew Pizza (Tweaked)",
+      "text": "Pogo Dew Pizza (Tweaked)\nPineapple, Mushroom, Spicy Cherry Peppers, Parmesan & Garlic Sauce\nfrom US$10.08\nPizza Size\nRequired\n\nMedium\n\n +US$0.00\n\nLarge\n\n +US$3.36\nAdd a comment...\nPogo Dew Pizza (Tweaked)\nUS$10.08\n1\nAdd",
+      "images": [
+        {
+          "src": "https://delivery.sadiexpress.com/static-images/dishPathDefault.svg",
+          "alt": "",
+          "width": 512,
+          "height": 512
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56874,
+      "name": "1/4 Chicken",
+      "category": "AWESOME CHICKEN",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56874",
+      "captured_at": "2026-11-03T22:41:09.619Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56874",
+      "title": "1/4 Chicken",
+      "text": "1/4 Chicken\nFire Grilled Chicken. Choose your flavour of choice!\nfrom US$4.48\nChicken Flavour Options\nRequired\n\nLemon & Herb\n\n +US$0.00\n\nBBQ\n\n +US$0.00\n\nMild\n\n +US$0.00\n\nHot\n\n +US$0.00\n\nTandoori\n\n +US$0.00\n\nGarlic\n\n +US$0.00\nAdd a comment...\n1/4 Chicken\nUS$4.48\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/b488779865e045009da1c507618bed65_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/b488779865e045009da1c507618bed65_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56875,
+      "name": "1/2 Chicken",
+      "category": "AWESOME CHICKEN",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56875",
+      "captured_at": "2026-11-03T22:41:10.161Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56875",
+      "title": "1/2 Chicken",
+      "text": "1/2 Chicken\nFire Grilled Chicken. Choose your flavour of choice!\nfrom US$8.96\nChicken Flavour Options\nRequired\n\nLemon & Herb\n\n +US$0.00\n\nBBQ\n\n +US$0.00\n\nMild\n\n +US$0.00\n\nHot\n\n +US$0.00\n\nTandoori\n\n +US$0.00\n\nGarlic\n\n +US$0.00\nAdd a comment...\n1/2 Chicken\nUS$8.96\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/3ede3005238f483989285af2198bb2d4_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/3ede3005238f483989285af2198bb2d4_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56876,
+      "name": "Full Chicken",
+      "category": "AWESOME CHICKEN",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56876",
+      "captured_at": "2026-11-03T22:41:10.704Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56876",
+      "title": "Full Chicken",
+      "text": "Full Chicken\nFire Grilled Chicken. Choose your flavour of choice!\nfrom US$16.80\nChicken Flavour Options\nRequired\n\nLemon & Herb\n\n +US$0.00\n\nBBQ\n\n +US$0.00\n\nMild\n\n +US$0.00\n\nHot\n\n +US$0.00\n\nTandoori\n\n +US$0.00\n\nGarlic\n\n +US$0.00\nAdd a comment...\nFull Chicken\nUS$16.80\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/bf28d1d33fe3427293aa56bf9fc752e3_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/bf28d1d33fe3427293aa56bf9fc752e3_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56878,
+      "name": "Sticky BBQ Wings",
+      "category": "AWESOME CHICKEN",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56878",
+      "captured_at": "2026-11-03T22:41:11.233Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56878",
+      "title": "Sticky BBQ Wings",
+      "text": "Sticky BBQ Wings\nUS$5.60\nAdd a comment...\nSticky BBQ Wings\nUS$5.60\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/7aa228767232483e9e862ace115ef5b4_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/7aa228767232483e9e862ace115ef5b4_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56879,
+      "name": "Tandoori Wings",
+      "category": "AWESOME CHICKEN",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56879",
+      "captured_at": "2026-11-03T22:41:11.764Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56879",
+      "title": "Tandoori Wings",
+      "text": "Tandoori Wings\nUS$5.60\nAdd a comment...\nTandoori Wings\nUS$5.60\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/a84b1c0374d04970b02a9c7462dbf1ee_w900",
+          "alt": "",
+          "width": 900,
+          "height": 1601
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/a84b1c0374d04970b02a9c7462dbf1ee_w900",
+          "alt": "",
+          "width": 900,
+          "height": 1601
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56877,
+      "name": "Chicken Bites",
+      "category": "AWESOME CHICKEN",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56877",
+      "captured_at": "2026-11-03T22:41:12.192Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56877",
+      "title": "Chicken Bites",
+      "text": "Chicken Bites\nfrom US$5.60\nChicken Bites Option:\nRequired\n\nFried\n\n +US$0.00\n\nGrilled\n\n +US$0.00\nAdd a comment...\nChicken Bites\nUS$5.60\n1\nAdd",
+      "images": [
+        {
+          "src": "https://delivery.sadiexpress.com/static-images/dishPathDefault.svg",
+          "alt": "",
+          "width": 512,
+          "height": 512
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56880,
+      "name": "Peri Peri Wrapper",
+      "category": "WICKED WRAPS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56880",
+      "captured_at": "2026-11-03T22:41:12.726Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56880",
+      "title": "Peri Peri Wrapper",
+      "text": "Peri Peri Wrapper\nPeri Peri Chicken, Cucumber with a splash of Tomato\nUS$5.60\nAdd a comment...\nPeri Peri Wrapper\nUS$5.60\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/1a781797091a41778e352186c59ba645_w900",
+          "alt": "",
+          "width": 900,
+          "height": 1350
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/1a781797091a41778e352186c59ba645_w900",
+          "alt": "",
+          "width": 900,
+          "height": 1350
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56881,
+      "name": "Portuguese Wrapper",
+      "category": "WICKED WRAPS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56881",
+      "captured_at": "2026-11-03T22:41:13.255Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56881",
+      "title": "Portuguese Wrapper",
+      "text": "Portuguese Wrapper\nMarinated Chicken Strips, Spring Onion & Cucumber with a splash of Pogos dressing.\nUS$5.60\nAdd a comment...\nPortuguese Wrapper\nUS$5.60\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/f8c71ac28e694f9f84653b94ceebe929_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/f8c71ac28e694f9f84653b94ceebe929_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56882,
+      "name": "Sweet Chilli Wrapper",
+      "category": "WICKED WRAPS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56882",
+      "captured_at": "2026-11-03T22:41:13.786Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56882",
+      "title": "Sweet Chilli Wrapper",
+      "text": "Sweet Chilli Wrapper\nDeep Fried Chicken Strips with a Splash of Sweet Chilli Sauce\nUS$5.60\nAdd a comment...\nSweet Chilli Wrapper\nUS$5.60\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/e85a14c05b174ec6857ac93953cdd425_w900",
+          "alt": "",
+          "width": 900,
+          "height": 1350
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/e85a14c05b174ec6857ac93953cdd425_w900",
+          "alt": "",
+          "width": 900,
+          "height": 1350
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56883,
+      "name": "Tandoori Wrapper",
+      "category": "WICKED WRAPS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56883",
+      "captured_at": "2026-11-03T22:41:14.308Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56883",
+      "title": "Tandoori Wrapper",
+      "text": "Tandoori Wrapper\nMarinated Chicken, Diced Tomato, Red & Green Peppers, Tandoori Sauce & Mozzarella\nUS$5.60\nAdd a comment...\nTandoori Wrapper\nUS$5.60\n1\nAdd",
+      "images": [
+        {
+          "src": "https://delivery.sadiexpress.com/static-images/dishPathDefault.svg",
+          "alt": "",
+          "width": 512,
+          "height": 512
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56884,
+      "name": "Hawaiian Wrapper",
+      "category": "WICKED WRAPS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56884",
+      "captured_at": "2026-11-03T22:41:14.843Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56884",
+      "title": "Hawaiian Wrapper",
+      "text": "Hawaiian Wrapper\nGrilled Chicken Strips, Pineapple Chunks with a Splash of Pogo Dressing\nUS$6.16\nAdd a comment...\nHawaiian Wrapper\nUS$6.16\n1\nAdd",
+      "images": [
+        {
+          "src": "https://delivery.sadiexpress.com/static-images/dishPathDefault.svg",
+          "alt": "",
+          "width": 512,
+          "height": 512
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56885,
+      "name": "Portuguese Salad",
+      "category": "SALADS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56885",
+      "captured_at": "2026-11-03T22:41:15.369Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56885",
+      "title": "Portuguese Salad",
+      "text": "Portuguese Salad\nUS$3.36\nAdd a comment...\nPortuguese Salad\nUS$3.36\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/361b16f43c2b4a6f9375de2d8748894f_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/361b16f43c2b4a6f9375de2d8748894f_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56886,
+      "name": "Greek Salad",
+      "category": "SALADS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56886",
+      "captured_at": "2026-11-03T22:41:15.985Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56886",
+      "title": "Greek Salad",
+      "text": "Greek Salad\nUS$4.48\nAdd a comment...\nGreek Salad\nUS$4.48\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/42cd832ecff54afca4c490584e8abcff_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/42cd832ecff54afca4c490584e8abcff_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56887,
+      "name": "Grilled Chicken Salad",
+      "category": "SALADS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56887",
+      "captured_at": "2026-11-03T22:41:16.503Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56887",
+      "title": "Grilled Chicken Salad",
+      "text": "Grilled Chicken Salad\nUS$6.72\nAdd a comment...\nGrilled Chicken Salad\nUS$6.72\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/23fdae1a465440368d823b1df68593bc_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/23fdae1a465440368d823b1df68593bc_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56888,
+      "name": "Bean Salad",
+      "category": "SALADS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56888",
+      "captured_at": "2026-11-03T22:41:17.130Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56888",
+      "title": "Bean Salad",
+      "text": "Bean Salad\nUS$3.36\nAdd a comment...\nBean Salad\nUS$3.36\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/6265d42fbbe744dd9a2e1451d727f0da_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/6265d42fbbe744dd9a2e1451d727f0da_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56889,
+      "name": "Regular Coleslaw",
+      "category": "SALADS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56889",
+      "captured_at": "2026-11-03T22:41:19.339Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56889",
+      "title": "Regular Coleslaw",
+      "text": "Not available\nRegular Coleslaw\nUS$2.24\nAdd a comment...\nRegular Coleslaw\nUS$2.24\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/dcc94e99d21c4338a1d60a153c4164ce_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/dcc94e99d21c4338a1d60a153c4164ce_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56890,
+      "name": "Large Coleslaw",
+      "category": "SALADS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56890",
+      "captured_at": "2026-11-03T22:41:21.651Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56890",
+      "title": "Large Coleslaw",
+      "text": "Not available\nLarge Coleslaw\nUS$3.36\nAdd a comment...\nLarge Coleslaw\nUS$3.36\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/10df6358d2ef445e8177f6af279e7679_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/10df6358d2ef445e8177f6af279e7679_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56891,
+      "name": "Mexican Salad",
+      "category": "SALADS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56891",
+      "captured_at": "2026-11-03T22:41:23.847Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56891",
+      "title": "Mexican Salad",
+      "text": "Not available\nMexican Salad\nUS$5.60\nAdd a comment...\nMexican Salad\nUS$5.60\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/237fb80f2101483387bdd3968a70fa5a_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/237fb80f2101483387bdd3968a70fa5a_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56892,
+      "name": "Grilled Chicken Burger",
+      "category": "BURGERLICIOUS BURGERS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56892",
+      "captured_at": "2026-11-03T22:41:24.478Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56892",
+      "title": "Grilled Chicken Burger",
+      "text": "Grilled Chicken Burger\nGrilled Chicken Breast, Lettuce, Tomato, Mayonnaise on a freshly Baked Portuguese Roll.\nUS$5.60\nAdd a comment...\nGrilled Chicken Burger\nUS$5.60\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/0d4298bc623140639639ee1f356151e4_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/0d4298bc623140639639ee1f356151e4_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56893,
+      "name": "Double Chicken Burger",
+      "category": "BURGERLICIOUS BURGERS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56893",
+      "captured_at": "2026-11-03T22:41:25.005Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56893",
+      "title": "Double Chicken Burger",
+      "text": "Double Chicken Burger\n2x Grilled Chicken Breast, Lettuce, Tomato, Mayonnaise on a freshly Baked Portuguese Roll.\nUS$7.84\nAdd a comment...\nDouble Chicken Burger\nUS$7.84\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/189145863ab64f2ba2398a6b459d8346_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/189145863ab64f2ba2398a6b459d8346_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56894,
+      "name": "Hawaiian Burger",
+      "category": "BURGERLICIOUS BURGERS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56894",
+      "captured_at": "2026-11-03T22:41:25.528Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56894",
+      "title": "Hawaiian Burger",
+      "text": "Hawaiian Burger\n1x Grilled Chicken Breast, Pineapple, Lettuce, Tomato, Mayonnaise on a freshly Baked Portuguese Roll.\nUS$6.16\nAdd a comment...\nHawaiian Burger\nUS$6.16\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/1062f01a00794dd788dda2555cbcf5bc_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/1062f01a00794dd788dda2555cbcf5bc_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56895,
+      "name": "Crumbed Chicken Burger",
+      "category": "BURGERLICIOUS BURGERS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56895",
+      "captured_at": "2026-11-03T22:41:26.145Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56895",
+      "title": "Crumbed Chicken Burger",
+      "text": "Crumbed Chicken Burger\nFried Chicken Breast, Lettuce, Tomato, Sweet Chilli Sauce.\nUS$6.16\nAdd a comment...\nCrumbed Chicken Burger\nUS$6.16\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/900b7e4dc8014e678d82820959456890_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/900b7e4dc8014e678d82820959456890_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56896,
+      "name": "Chicken Cheese Burger",
+      "category": "BURGERLICIOUS BURGERS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56896",
+      "captured_at": "2026-11-03T22:41:26.676Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56896",
+      "title": "Chicken Cheese Burger",
+      "text": "Chicken Cheese Burger\nGrilled Chicken Breast, Lettuce, Tomato, Cheese Slice, Mayonnaise on a freshly Baked Portuguese Roll.\nUS$6.16\nAdd a comment...\nChicken Cheese Burger\nUS$6.16\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/22ef7a0e064b4976afb69711394b7653_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/22ef7a0e064b4976afb69711394b7653_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56897,
+      "name": "1/4 Meal Deal",
+      "category": "COMBOS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56897",
+      "captured_at": "2026-11-03T22:41:27.197Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56897",
+      "title": "1/4 Meal Deal",
+      "text": "1/4 Meal Deal\n1/4 Chicken & Chips.\nUS$5.60\nAdd a comment...\n1/4 Meal Deal\nUS$5.60\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/14f8f287a65c4f08aa013dfb8ef12416_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56898,
+      "name": "Chicken Burger Meal Deal",
+      "category": "COMBOS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56898",
+      "captured_at": "2026-11-03T22:41:27.749Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56898",
+      "title": "Chicken Burger Meal Deal",
+      "text": "Chicken Burger Meal Deal\nChicken Burger & Chips.\nUS$6.72\nAdd a comment...\nChicken Burger Meal Deal\nUS$6.72\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/632133ce4d2f4977b182e7ca2e4cec81_w600h400",
+          "alt": "",
+          "width": 0,
+          "height": 0
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56899,
+      "name": "Chicken Wings Meal Deal",
+      "category": "COMBOS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56899",
+      "captured_at": "2026-11-03T22:41:28.274Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56899",
+      "title": "Chicken Wings Meal Deal",
+      "text": "Chicken Wings Meal Deal\nChicken Wings & Chips.\nUS$6.72\nAdd a comment...\nChicken Wings Meal Deal\nUS$6.72\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/3c642e95b4044188aac2674d9874e259_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56900,
+      "name": "Chicken Wrapper Meal Deal",
+      "category": "COMBOS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56900",
+      "captured_at": "2026-11-03T22:41:28.797Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56900",
+      "title": "Chicken Wrapper Meal Deal",
+      "text": "Chicken Wrapper Meal Deal\nChicken Wrapper & Small Chips.\nUS$6.72\nAdd a comment...\nChicken Wrapper Meal Deal\nUS$6.72\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/47dc43cf7b314924b7b14dbfd7aa56c5_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56903,
+      "name": "Full Chicken Meal Deal",
+      "category": "COMBOS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56903",
+      "captured_at": "2026-11-03T22:41:29.330Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56903",
+      "title": "Full Chicken Meal Deal",
+      "text": "Full Chicken Meal Deal\nFull Chicken & Large Chips.\nUS$22.40\nAdd a comment...\nFull Chicken Meal Deal\nUS$22.40\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/578251ea477042a7ae9b3af70136bef0_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56901,
+      "name": "Chicken Bites Meal Deal",
+      "category": "COMBOS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56901",
+      "captured_at": "2026-11-03T22:41:29.967Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56901",
+      "title": "Chicken Bites Meal Deal",
+      "text": "Chicken Bites Meal Deal\nChicken Bites & Small Chips.\nUS$6.72\nAdd a comment...\nChicken Bites Meal Deal\nUS$6.72\n1\nAdd",
+      "images": [
+        {
+          "src": "https://delivery.sadiexpress.com/static-images/dishPathDefault.svg",
+          "alt": "",
+          "width": 512,
+          "height": 512
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56904,
+      "name": "Grilled Chicken Rice & Veg Bowl",
+      "category": "VEG BOWLS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56904",
+      "captured_at": "2026-11-03T22:41:30.495Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56904",
+      "title": "Grilled Chicken Rice & Veg Bowl",
+      "text": "Grilled Chicken Rice & Veg Bowl\nYour choice of flavour of Pogo's Chicken with mixed roasted veg & flavourful turmeric rice with peppers.\nfrom US$6.72\nChicken Flavour Options\nRequired\n\nLemon & Herb\n\n +US$0.00\n\nBBQ\n\n +US$0.00\n\nMild\n\n +US$0.00\n\nHot\n\n +US$0.00\n\nTandoori\n\n +US$0.00\n\nGarlic\n\n +US$0.00\nAdd a comment...\nGrilled Chicken Rice & Veg Bowl\nUS$6.72\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/b1b1de2ff52c403bbd57741ceecac8e5_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/b1b1de2ff52c403bbd57741ceecac8e5_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56906,
+      "name": "Greek Bowl",
+      "category": "VEG BOWLS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56906",
+      "captured_at": "2026-11-03T22:41:31.055Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56906",
+      "title": "Greek Bowl",
+      "text": "Greek Bowl\nYour choice of flavour of Pogo's Chicken with Greek Salad, feta, olives, cucumber, tomato, a drizzle of olive oil, gyros bread & tzatziki.\nfrom US$6.72\nChicken Flavour Options\nRequired\n\nLemon & Herb\n\n +US$0.00\n\nBBQ\n\n +US$0.00\n\nMild\n\n +US$0.00\n\nHot\n\n +US$0.00\n\nTandoori\n\n +US$0.00\n\nGarlic\n\n +US$0.00\nAdd a comment...\nGreek Bowl\nUS$6.72\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/41b4b9b6f2e642ca85b4c15e4ddbc3bf_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/41b4b9b6f2e642ca85b4c15e4ddbc3bf_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56907,
+      "name": "Cauliflower Rice Bowl",
+      "category": "VEG BOWLS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56907",
+      "captured_at": "2026-11-03T22:41:31.689Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56907",
+      "title": "Cauliflower Rice Bowl",
+      "text": "Cauliflower Rice Bowl\nYour choice of flavour of Pogo's Chicken with mushrooms, cauliflower rice & parsley with a side of fresh avocado.\nfrom US$6.72\nChicken Flavour Options\nRequired\n\nLemon & Herb\n\n +US$0.00\n\nBBQ\n\n +US$0.00\n\nMild\n\n +US$0.00\n\nHot\n\n +US$0.00\n\nTandoori\n\n +US$0.00\n\nGarlic\n\n +US$0.00\nAdd a comment...\nCauliflower Rice Bowl\nUS$6.72\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/d73a4039c6914e588fe38d923286dfc7_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/d73a4039c6914e588fe38d923286dfc7_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56909,
+      "name": "Hot Fudged Brownie",
+      "category": "DESSERTS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56909",
+      "captured_at": "2026-11-03T22:41:32.209Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56909",
+      "title": "Hot Fudged Brownie",
+      "text": "Hot Fudged Brownie\nUS$4.48\nAdd a comment...\nHot Fudged Brownie\nUS$4.48\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/f02d6aac77f24d6b9ea9f0a578c102d8_w900",
+          "alt": "",
+          "width": 900,
+          "height": 950
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/f02d6aac77f24d6b9ea9f0a578c102d8_w900",
+          "alt": "",
+          "width": 900,
+          "height": 950
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56910,
+      "name": "Rich Chocolate Cake Slice",
+      "category": "DESSERTS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56910",
+      "captured_at": "2026-11-03T22:41:32.731Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56910",
+      "title": "Rich Chocolate Cake Slice",
+      "text": "Rich Chocolate Cake Slice\nUS$4.48\nAdd a comment...\nRich Chocolate Cake Slice\nUS$4.48\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/a01523799f844088bacfa764284ef1b4_w900",
+          "alt": "",
+          "width": 0,
+          "height": 0
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/a01523799f844088bacfa764284ef1b4_w900",
+          "alt": "",
+          "width": 0,
+          "height": 0
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56911,
+      "name": "Red Velvet Cake Slice",
+      "category": "DESSERTS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56911",
+      "captured_at": "2026-11-03T22:41:33.264Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56911",
+      "title": "Red Velvet Cake Slice",
+      "text": "Red Velvet Cake Slice\nUS$4.48\nAdd a comment...\nRed Velvet Cake Slice\nUS$4.48\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/7c27b83aa6754caea59a0207d1e9678a_w900",
+          "alt": "",
+          "width": 900,
+          "height": 1599
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/7c27b83aa6754caea59a0207d1e9678a_w900",
+          "alt": "",
+          "width": 900,
+          "height": 1599
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56912,
+      "name": "Carrot Cake Slice",
+      "category": "DESSERTS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56912",
+      "captured_at": "2026-11-03T22:41:33.895Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56912",
+      "title": "Carrot Cake Slice",
+      "text": "Carrot Cake Slice\nUS$4.48\nAdd a comment...\nCarrot Cake Slice\nUS$4.48\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/7e00365907c446079cc522eabcc9d875_w900",
+          "alt": "",
+          "width": 900,
+          "height": 1599
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/7e00365907c446079cc522eabcc9d875_w900",
+          "alt": "",
+          "width": 900,
+          "height": 1599
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56913,
+      "name": "Malva Pudding",
+      "category": "DESSERTS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56913",
+      "captured_at": "2026-11-03T22:41:34.502Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56913",
+      "title": "Malva Pudding",
+      "text": "Malva Pudding\nUS$4.48\nAdd a comment...\nMalva Pudding\nUS$4.48\n1\nAdd",
+      "images": [
+        {
+          "src": "https://delivery.sadiexpress.com/static-images/dishPathDefault.svg",
+          "alt": "",
+          "width": 512,
+          "height": 512
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 56908,
+      "name": "Strawberry Cheesecake",
+      "category": "DESSERTS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56908",
+      "captured_at": "2026-11-03T22:41:36.710Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=56908",
+      "title": "Strawberry Cheesecake",
+      "text": "Not available\nStrawberry Cheesecake\nUS$4.48\nAdd a comment...\nStrawberry Cheesecake\nUS$4.48\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/009f1a3eb45442f794fb5b130327c2bb_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        },
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/009f1a3eb45442f794fb5b130327c2bb_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 59811,
+      "name": "Small Chips",
+      "category": "CHIPS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=59811",
+      "captured_at": "2026-11-03T22:41:37.336Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=59811",
+      "title": "Small Chips",
+      "text": "Small Chips\nUS$1.68\nAdd a comment...\nSmall Chips\nUS$1.68\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/6242281647de4961b3085e475f3697d8_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    },
+    {
+      "product_id": 59812,
+      "name": "Large Chips",
+      "category": "CHIPS",
+      "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=59812",
+      "captured_at": "2026-11-03T22:41:37.956Z",
+      "dialog_opened": true,
+      "url": "https://delivery.sadiexpress.com/en/harare/vendor/1067?productId=59812",
+      "title": "Large Chips",
+      "text": "Large Chips\nUS$5.60\nAdd a comment...\nLarge Chips\nUS$5.60\n1\nAdd",
+      "images": [
+        {
+          "src": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/7173e40989e54f2cab0ce21c3f04c72e_w600h400",
+          "alt": "",
+          "width": 600,
+          "height": 400
+        }
+      ],
+      "heading": "SadieXpress: Pogo's"
+    }
+  ],
+  "public_api_requests": []
+}

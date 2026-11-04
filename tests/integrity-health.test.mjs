@@ -67,6 +67,41 @@ test('privileged recipient MFA expiry and wrong ownership do not create eligible
   });
   const other=randomUUID();await db.query('INSERT INTO auth.users(id,email) VALUES($1,$2)',[other,'other@integrity.invalid']);await db.query('UPDATE public.orders SET user_id=$1 WHERE id=$2',[other,f.orderId]);assert.equal((await snapshot()).metrics.push_materialisation_due.count,0);
 });
+async function assertRecipientParity(expectedCount){
+  const expected=(await db.query(`SELECT count(*)::int AS n FROM public.notification_events e
+    JOIN public.push_devices d ON d.user_id=e.recipient_id JOIN public.push_settings s ON s.singleton
+    WHERE s.enabled AND d.project_id=s.expo_project_id AND d.active AND d.expo_token IS NOT NULL
+      AND d.expires_at>statement_timestamp() AND d.bound_at<=e.created_at
+      AND e.created_at>=s.enabled_since AND e.expires_at>statement_timestamp()
+      AND public.push_event_allowed(e.id,d.user_id)
+      AND (NOT EXISTS(SELECT 1 FROM public.user_roles r WHERE r.user_id=d.user_id AND r.role IN ('staff','manager','finance','admin'))
+        OR (d.aal2 AND d.verified_at>statement_timestamp()-interval '24 hours'))
+      AND NOT EXISTS(SELECT 1 FROM public.push_deliveries j WHERE j.event_id=e.id AND j.device_id=d.id)`)).rows[0].n;
+  assert.equal(expected,expectedCount);assert.equal((await snapshot()).metrics.push_materialisation_due.count,expected);
+}
+test('scaled recipient predicates match the authoritative helper for branch role and membership changes',async()=>{
+  const f=await seedIntegrityFixture(db);await db.query("UPDATE public.notification_events SET kind='branch',order_id=NULL WHERE id=$1",[f.event]);
+  await assertRecipientParity(0);
+  for(const role of ['staff','manager','finance','admin'])await savepoint(async()=>{
+    await db.query('INSERT INTO public.user_roles(user_id,role) VALUES($1,$2)',[f.user,role]);
+    await assertRecipientParity(role==='admin'?1:0);
+    await db.query('INSERT INTO public.staff_memberships(user_id,store_id,active) VALUES($1,$2,true)',[f.user,f.branch]);
+    await assertRecipientParity(role==='finance'?0:1);
+    await db.query('UPDATE public.staff_memberships SET active=false WHERE user_id=$1',[f.user]);await assertRecipientParity(role==='admin'?1:0);
+    await db.query("UPDATE public.push_devices SET verified_at=now()-interval '25 hours' WHERE id=$1",[f.device]);await assertRecipientParity(0);
+  });
+});
+test('scaled recipient predicates match reward ownership, deletion states and current account availability',async()=>{
+  const f=await seedIntegrityFixture(db),reservation=await f.reservation();
+  await db.query("UPDATE public.notification_events SET kind='reward',order_id=NULL,reservation_id=$1 WHERE id=$2",[reservation,f.event]);await assertRecipientParity(1);
+  await savepoint(async()=>{await db.query('UPDATE public.notification_events SET reservation_id=NULL WHERE id=$1',[f.event]);await assertRecipientParity(0);});
+  const other=randomUUID();await db.query('INSERT INTO auth.users(id,email) VALUES($1,$2)',[other,'other-reward@integrity.invalid']);
+  await savepoint(async()=>{await db.query('UPDATE public.reward_reservations SET user_id=$1 WHERE id=$2',[other,reservation]);await assertRecipientParity(0);});
+  for(const [status,count]of [['submitted',1],['processing',0],['completed',0]])await savepoint(async()=>{
+    await db.query("INSERT INTO public.privacy_requests(id,user_id,kind,status) VALUES($1,$2,'deletion',$3)",[randomUUID(),f.user,status]);await assertRecipientParity(count);
+  });
+  await db.query('UPDATE auth.users SET deleted_at=now() WHERE id=$1',[f.user]);await assertRecipientParity(0);
+});
 test('service claim materialises a pair while the observation itself never creates, leases or sends it',async()=>{
   const f=await seedIntegrityFixture(db);const first=await snapshot();assert.equal(first.metrics.push_materialisation_due.count,1);
   assert.equal((await db.query('SELECT count(*)::int AS n FROM public.push_deliveries')).rows[0].n,0);

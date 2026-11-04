@@ -54,6 +54,8 @@ The [separate integrity snapshot and evaluator](loyalty-notification-integrity-s
 
 Apply `20261103050000_integrity_monitoring.sql` before the updated collector. Verify real server access and all customer/staff/admin denials. Review both index builds and whole-ledger/pair-query cost, cancellation and cadence on representative data; the clipped result does not bound every scan. This endpoint is separate from fast queue gauges so its workload can receive its own collection cadence/budget.
 
+Also include `20261103060000_integrity_query_cost.sql`: the scaled local workload reproduced a timeout from nested per-pair eligibility checks, and this forward correction preserves those fences with relational predicates. The [performance report](security-performance-sprint.md) records the measured improvement and remaining hosted/cadence limits. It supplies no approved production polling rate. Apply all reviewed migrations in order and reverify actual service/role access.
+
 The combined cycle accepts `integrityPolicy`, emits two fixed integrity signal codes and a collector status, and rechecks sample freshness at state commit. Preserve existing alert history when updating the collector; older versions cannot safely interpret the new signal codes. Disabled push and missing/stale/failed collection must remain unknown. A zero missing-pair count after SQL materialisation does not establish provider delivery. Investigate discrepancies with authorised finance/operations tools; never repair balances, recreate delivery pairs or dispatch messages merely to clear an alarm.
 
 ## Queue-health collection acceptance

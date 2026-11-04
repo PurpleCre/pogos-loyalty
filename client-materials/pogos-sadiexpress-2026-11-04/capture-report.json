@@ -1,0 +1,74 @@
+{
+  "verified_at": "2026-11-03T22:51:21.596232+00:00",
+  "status": "passed",
+  "source_url": "https://delivery.sadiexpress.com/en/harare/vendor/1067",
+  "summary": {
+    "categories": 9,
+    "menu_items": 51,
+    "items_with_photo": 44,
+    "items_without_photo": 7,
+    "distinct_menu_photo_contents": 43,
+    "published_image_variants": 184,
+    "advertised_variants_unavailable": 0,
+    "logo_variants": 3,
+    "header_variants": 5,
+    "option_groups": 3,
+    "unique_option_choices": 10,
+    "item_option_rows": 60,
+    "item_dialogs_verified": 51,
+    "listed_unavailable_items": 4,
+    "most_ordered_references": 9,
+    "downloaded_variant_bytes": 4557282
+  },
+  "checks": [
+    "51 unique menu items match public catalogue and rendered item dialogs",
+    "51 menu CSV rows and 60 item-option rows",
+    "184 advertised image variants saved, decoded and hash-verified",
+    "all gallery and Markdown local links resolve",
+    "all expected photo and branding files exist",
+    "public directory returns the same Pogo's listing",
+    "offline desktop/mobile gallery interaction checks pass"
+  ],
+  "limitations": {
+    "items_without_supplied_image": [
+      {
+        "id": 56871,
+        "name": "Mediterranean Pizza",
+        "category": "PIZZAS"
+      },
+      {
+        "id": 56872,
+        "name": "Pogo Dew Pizza (Tweaked)",
+        "category": "PIZZAS"
+      },
+      {
+        "id": 56877,
+        "name": "Chicken Bites",
+        "category": "AWESOME CHICKEN"
+      },
+      {
+        "id": 56883,
+        "name": "Tandoori Wrapper",
+        "category": "WICKED WRAPS"
+      },
+      {
+        "id": 56884,
+        "name": "Hawaiian Wrapper",
+        "category": "WICKED WRAPS"
+      },
+      {
+        "id": 56901,
+        "name": "Chicken Bites Meal Deal",
+        "category": "COMBOS"
+      },
+      {
+        "id": 56913,
+        "name": "Malva Pudding",
+        "category": "DESSERTS"
+      }
+    ],
+    "raw_original_image_urls": "All 46 unmodified base URLs returned HTTP 403; published derivatives are included.",
+    "shared_photograph": "Small Chips and Large Chips share one photo content.",
+    "branch_scope": "Kamfinsa listing only; other branch catalogues not established by this source."
+  }
+}

@@ -1,6 +1,20 @@
 # Implementation progress
 
-Updated: 3 November 2026. Scope: local implementation increments for the cash-first release at Msasa, Kamfinsa and Westgate. GAAP is the confirmed POS vendor. Digital payments remain Release 2.
+Updated: 4 November 2026. Scope: engineering increments and the authorised development menu import for the cash-first release at Msasa, Kamfinsa and Westgate. GAAP is the confirmed POS vendor. Digital payments remain Release 2.
+
+## Shared menu and captured branding — development import
+
+**The requested development reset/import is complete.** The user confirmed one menu for all three branches and selected the displayed SadieXpress USD prices. Nine legacy orders and 11 order lines were cleared; 15 prior products were replaced by 51 products, nine categories, 18 modifier groups and 60 choices. The app uses the captured logo/header and 44 product photo assignments from our own storage. Four captured unavailable products remain hidden from customers. All 62 unrelated public tables, including points and ledger history, are unchanged.
+
+Both pending reviewed migrations were applied to the development binding. Public PostgREST acceptance confirms the same 47 available products/prices/options at each branch and all 46 hosted image hashes. The full local gate passes **492 tests**, Android/iOS exports and native generation pass, and the fresh audit has zero high/critical/low findings with 17 moderate. Docker is stopped, so the current concurrency rerun could not start; earlier PostgreSQL results below remain historical. Westgate was absent and is added for browsing with unconfirmed address/maps and a closed flag until setup is approved. No checkout/dispatch, production configuration or app publication was activated. See [source, exact evidence, private backup and remaining approvals](shared-menu-import.md). **Six delivery groups remain.**
+
+## Security patch and scaled-performance checkpoint
+
+**Milestone 5 remains in progress; the local security-remediation and larger workload package is complete.** Supported Expo 58.0.23 / CLI 58.1.19 and aligned native dependencies remove the affected CLI Zod path. The final dependency high/critical gate passes with **0 high, 0 critical and 17 moderate** package findings. Moderate review and independent security acceptance remain open; the older blocked audit results below are historical.
+
+A new fixed local PostgreSQL profile scales to **2,000 synthetic customers, 20,018 ledger rows and 8,000 eligible notification/device pairs**, then exercises 96 burst cash workflows and 30 seconds of mixed ordering/observation. It reproduced a ten-second observer timeout. A forward SQL correction preserves eligibility/ledger fences and lowers the largest-tier median read from **3,250.97 ms to 99.23 ms** in separate local runs. The corrected mixed phase completes **174 workflows and 58 integrity reads** with exact cash/point reconciliation and no dispatch. These timings are observations, not approved hosted targets or long-soak evidence.
+
+Verification passes **484 default tests, 28 Deno cases, 13 PostgreSQL concurrency, eight recovery/integrity and four scaled-performance cases**, plus fresh Android/iOS Hermes exports and native-project generation. The native fingerprint changes and matching binaries/device acceptance are required; no OTA, signed build, cloud migration or live monitoring was published/activated. See [the report and remaining release gates](security-performance-sprint.md). **Six delivery groups remain.**
 
 ## Loyalty and notification integrity monitoring
 

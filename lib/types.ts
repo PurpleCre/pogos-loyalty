@@ -1232,6 +1232,7 @@ export type Database = {
         "created_at": string
         "updated_at": string
         "store_id": string | null
+        "sort_order": number
       }
       Insert: {
         "id"?: string
@@ -1244,6 +1245,7 @@ export type Database = {
         "created_at"?: string
         "updated_at"?: string
         "store_id"?: string | null
+        "sort_order"?: number
       }
       Update: {
         "id"?: string
@@ -1256,6 +1258,7 @@ export type Database = {
         "created_at"?: string
         "updated_at"?: string
         "store_id"?: string | null
+        "sort_order"?: number
       }
       Relationships: [
         {

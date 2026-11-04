@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator, Modal, Pressable, Alert } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Modal, Pressable, Alert } from 'react-native';
 import { useMenu, MenuItemOption, MenuItemOptionChoice } from '@/hooks/useMenu';
 import { useCart } from '@/contexts/CartContext';
 import { ShoppingCart, Plus, Minus, ChevronLeft, Utensils, CupSoda, Flame, Gift, Pizza, CheckCircle2, Clock, ShoppingBag, X, Circle, CheckCircle, CheckSquare, Square, Menu as MenuIcon, ChevronDown } from 'lucide-react-native';
@@ -12,6 +12,8 @@ import { CartStorageStatus } from '@/components/CartStorageStatus';
 import { useStores } from '@/hooks/useStores';
 import { formatMoney } from '@/lib/cash-orders';
 import { useOrder } from '@/contexts/OrderContext';
+import { BrandLogo } from '@/components/BrandLogo';
+import { CatalogueImage } from '@/components/CatalogueImage';
 
 export default function MenuScreen() {
   const { selectedStore } = useOrder();
@@ -172,7 +174,7 @@ export default function MenuScreen() {
           <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())} className="w-10 h-10 items-center justify-center -ml-2">
             <MenuIcon size={28} color="#fff" />
           </TouchableOpacity>
-          <Text className="text-white text-xl font-bold">Pogo's</Text>
+          <View className="flex-row items-center"><BrandLogo size={44} /><Text className="text-white text-xl font-bold ml-2">Pogo's</Text></View>
           <TouchableOpacity onPress={() => router.push('/(app)/cart')} className="w-10 h-10 items-center justify-center">
             <ShoppingCart size={24} color="#fff" />
             {itemCount > 0 && (
@@ -272,17 +274,7 @@ export default function MenuScreen() {
               
               return (
                 <View key={item.id} className="w-[48%] bg-white rounded-2xl mb-4 border border-gray-100 shadow-sm overflow-hidden flex-col">
-                  {item.image_url ? (
-                    <Image 
-                      source={{ uri: item.image_url }} 
-                      className="w-full h-32 bg-gray-200"
-                      resizeMode="cover"
-                    />
-                  ) : (
-                    <View className="w-full h-32 bg-red-50 items-center justify-center">
-                      <ShoppingBag color="#fca5a5" size={40} />
-                    </View>
-                  )}
+                  <CatalogueImage uri={item.image_url} label={item.name} className="w-full h-32" />
                   
                   <View className="p-3 flex-1 flex-col">
                     <Text className="font-bold text-gray-900 text-sm mb-1 leading-tight">{item.name}</Text>
@@ -291,7 +283,7 @@ export default function MenuScreen() {
                     </Text>
                     
                     <View className="flex-row justify-between items-center mt-auto">
-                      <Text className="font-extrabold text-gray-900">{item.price.toFixed(2)} · est.</Text>
+                      <Text className="font-extrabold text-gray-900">{formatMoney(Math.round(item.price * 100), 'USD')} · est.</Text>
                       
                       {qty === 0 ? (
                         <TouchableOpacity 
@@ -364,6 +356,7 @@ export default function MenuScreen() {
             </View>
             
             <View className="px-5 pb-4">
+              {customizationItem?.image_url ? <CatalogueImage uri={customizationItem.image_url} label={customizationItem.name} className="w-full h-36 mb-4" /> : null}
               <View className="flex-row justify-between items-start mb-6">
                 <View className="flex-1 pr-4">
                   <Text className="text-gray-500 text-sm font-semibold mb-1">Customize Your</Text>

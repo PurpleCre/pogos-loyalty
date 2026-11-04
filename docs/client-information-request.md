@@ -1,7 +1,8 @@
 # Pogo’s Zimbabwe — Client Information and Approval Pack
 
 **Project:** Ordering and loyalty application — cash-first launch  
-**Prepared:** 31 October 2026 | **Version:** 1.0  
+**Prepared:** 31 October 2026 | **Updated:** 4 November 2026 | **Version:** 1.1
+
 **Client coordinator:** ____________________ | **Date returned:** ____________________
 
 ## How to complete this pack
@@ -29,6 +30,7 @@ These answers are carried forward from the project discussions. Please correct t
 | --- | --- |
 | Customer | Pogo’s restaurant chain in Zimbabwe; contracting legal entity still to be supplied. |
 | Active branches | Msasa, Kamfinsa and Westgate. |
+| Shared menu and displayed prices | Confirmed by the user on 4 November: all three branches share the captured 51-item SadieXpress menu and its displayed USD prices. Imported into development; tax/fees, current stock, allergens, media rights and GAAP mappings still need review. |
 | First release | Loyalty and ordering, with cash on collection/delivery. |
 | POS vendor | GAAP; installed versions, capabilities and access remain to be verified. |
 | Digital payments | Follow in a later release. |
@@ -91,10 +93,12 @@ Supply one branch sheet for **Msasa**, one for **Kamfinsa** and one for **Westga
 
 **Priority: Start now. Suggested respondent: menu/brand owner, operations and finance.**
 
+We have already captured the menu, options, logo and available product photos and applied the [shared development menu](shared-menu-import.md). Please review that material and provide corrections or remaining details rather than recreating it. Confirm the four source-unavailable products, supply the seven missing photos if available, and identify the effective date, responsible menu owner, tax treatment, GAAP codes, allergens and publication rights. The user’s shared-menu/displayed-price decision does not settle those remaining inputs.
+
 | Ref | Information or decision needed |
 | --- | --- |
-| M01 | Current approved menu for each branch, effective date, categories, stable item/SKU codes, names, descriptions, portions and branch differences. Identify discontinued/demo items. |
-| M02 | Price and currency for each item/variant; whether displayed prices include all applicable taxes; packaging/service charges; promotion/combo pricing; who approves and publishes changes. |
+| M01 | Shared menu is confirmed and the captured list is imported in development. Review its names/descriptions/portions, effective date and responsible owner; provide stable GAAP/SKU mappings and any corrections. |
+| M02 | Displayed captured USD prices are selected for the app. Confirm tax inclusivity, packaging/service charges, promotion/combo treatment, effective date and who approves/publishes subsequent changes. |
 | M03 | Sizes, variants and modifiers: required/optional choices, minimum/maximum selections, quantities, extra prices, unavailable combinations and special-instruction limits. |
 | M04 | Item availability by branch, day/time and stock; stockout/substitution policy; whether a sold-out item may be substituted only after customer approval. |
 | M05 | Ingredients, allergens, dietary claims, preparation/cross-contact notices and the person responsible for accuracy and updates. Supply approved wording. |

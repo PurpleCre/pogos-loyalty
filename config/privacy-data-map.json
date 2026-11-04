@@ -508,7 +508,8 @@
         "is_available",
         "created_at",
         "updated_at",
-        "store_id"
+        "store_id",
+        "sort_order"
       ],
       "classification": "public_catalogue",
       "exportSection": null,

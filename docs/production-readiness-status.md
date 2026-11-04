@@ -1,8 +1,22 @@
 # Production readiness checkpoint
 
-Verified: 3 November 2026. Release 1 is loyalty and cash ordering/collection/delivery for Msasa, Kamfinsa and Westgate. Digital payments remain Release 2.
+Verified: 4 November 2026. Release 1 is loyalty and cash ordering/collection/delivery for Msasa, Kamfinsa and Westgate. Digital payments remain Release 2.
 
-## Current milestone verdict
+## Shared menu development checkpoint
+
+**The authorised menu/order replacement is complete in development; production readiness remains open.** The user confirmed one shared menu and displayed SadieXpress USD prices. The database now has zero orders, 51 products, nine categories, 18 modifier groups and 60 choices; 62 unrelated public tables, including loyalty history, are unchanged. Public API checks confirm 47 source-available products at each of the three branches and all 46 hosted image hashes. The app incorporates the captured branding and photos, requiring a matching native build for `expo-image`.
+
+The local gate passes **492 tests**, both mobile exports and native generation; the fresh dependency gate has zero high/critical/low and 17 moderate findings. The current PostgreSQL concurrency rerun could not start because Docker is stopped. Westgate is added for browsing but stays closed pending its unconfirmed operating details. Menu stock, allergens/media rights, tax/GAAP mapping and other release approvals remain outstanding. No production binding, checkout/dispatch activation, signed build or OTA publication occurred. See [the import report](shared-menu-import.md). **Six delivery groups remain.** Earlier checkpoints below retain their original scope and evidence dates.
+
+## Security patch and scaled-performance checkpoint
+
+**Milestone 5 remains in progress; the local security-remediation and larger workload package is complete.** Supported Expo 58.0.23 / CLI 58.1.19 and aligned native dependencies remove the affected CLI Zod path. The final dependency high/critical gate passes with **0 high, 0 critical and 17 moderate** package findings. Moderate review and independent security acceptance remain open; the older blocked audit results below are historical.
+
+A new fixed local PostgreSQL profile scales to **2,000 synthetic customers, 20,018 ledger rows and 8,000 eligible notification/device pairs**, then exercises 96 burst cash workflows and 30 seconds of mixed ordering/observation. It reproduced a ten-second observer timeout. A forward SQL correction preserves eligibility/ledger fences and lowers the largest-tier median read from **3,250.97 ms to 99.23 ms** in separate local runs. The corrected mixed phase completes **174 workflows and 58 integrity reads** with exact cash/point reconciliation and no dispatch. These timings are observations, not approved hosted targets or long-soak evidence.
+
+Verification passes **484 default tests, 28 Deno cases, 13 PostgreSQL concurrency, eight recovery/integrity and four scaled-performance cases**, plus fresh Android/iOS Hermes exports and native-project generation. The native fingerprint changes and matching binaries/device acceptance are required; no OTA, signed build, cloud migration or live monitoring was published/activated. See [the report and remaining release gates](security-performance-sprint.md). **Six delivery groups remain.**
+
+## Earlier client-intake milestone checkpoint — 3 November
 
 **Milestone 2 — client ownership, production data and business approval: in progress, awaiting client evidence.** The user reconfirmed on 3 November that no new approvals have been supplied. Engineering preparation now includes a private intake template/schema, redacted checks, approval/content hashes, disabled configuration proposals and a read-only inventory procedure. At the client-data checkpoint the full suite passed **353 tests**, including 31 intake/CLI/database cases; type/lint/schema/SDK/peer/template checks pass. No account, real data, role or branch configuration was changed. See the [milestone report and exact outstanding inputs](client-data-milestone.md).
 

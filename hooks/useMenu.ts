@@ -44,6 +44,7 @@ export interface MenuItem {
   image_url: string;
   is_available: boolean;
   store_id?: string | null;
+  sort_order?: number;
   menu_item_options?: MenuItemOption[];
 }
 
@@ -77,7 +78,7 @@ export function useMenu(isAdmin = false, storeId?: string) {
   const scope = `${owner ?? 'guest'}:${isAdmin}:${storeId ?? 'all'}`;
   const cache = useMemo(() => isAdmin ? undefined : createBrowsingCache(AsyncStorage, runtimeEnvironment.name, `menu:${storeId ?? 'all'}`, menuBrowseSchema), [isAdmin, storeId]);
   const load = useCallback(async (signal: AbortSignal): Promise<{ categories: MenuCategory[]; items: MenuItem[] }> => {
-    let itemsQuery = supabase.from('menu_items').select('*, menu_item_options(*, menu_item_option_choices(*))').abortSignal(signal);
+    let itemsQuery = supabase.from('menu_items').select('*, menu_item_options(*, menu_item_option_choices(*))').order('sort_order').order('name').abortSignal(signal);
     if (!isAdmin) itemsQuery = itemsQuery.eq('is_available', true);
     if (storeId) itemsQuery = itemsQuery.or(`store_id.eq.${storeId},store_id.is.null`);
     let categoriesQuery = supabase.from('menu_categories').select('*').order('sort_order').abortSignal(signal);

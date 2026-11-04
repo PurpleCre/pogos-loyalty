@@ -1,0 +1,5465 @@
+{
+  "uiFlow": "DEFAULT",
+  "featureFlags": [],
+  "uiComponents": [
+    {
+      "id": "0",
+      "type": "BANNER_GROUP"
+    },
+    {
+      "id": "popular-products",
+      "type": "COMPUTED_SECTION"
+    },
+    {
+      "id": "0",
+      "type": "CATALOG_SECTIONS_LIST"
+    }
+  ],
+  "vendor": {
+    "id": 1067,
+    "name": "Pogo's",
+    "street": "Kamfinsa Shopping Centre Harare",
+    "city": "Harare",
+    "country": "Zimbabwe",
+    "houseNumber": "Greendale",
+    "latitude": -17.8056838,
+    "longitude": 31.1256332,
+    "rating": 4.83,
+    "categories": [
+      {
+        "id": 264,
+        "name": "Pizza",
+        "nameI18n": {
+          "values": {
+            "en_ZW": "Pizza"
+          }
+        }
+      },
+      {
+        "id": 694,
+        "name": "Chicken",
+        "nameI18n": {
+          "values": {
+            "en_ZW": "Chicken"
+          }
+        }
+      },
+      {
+        "id": 873,
+        "name": "NEW",
+        "nameI18n": {
+          "values": {
+            "en": "NEW"
+          }
+        }
+      }
+    ],
+    "working": true,
+    "workingHours": {
+      "intervals": {
+        "FRIDAY": {
+          "from": "09:30:00",
+          "until": "19:00:00",
+          "isTurnIntoAnotherDay": false
+        },
+        "MONDAY": {
+          "from": "09:30:00",
+          "until": "19:00:00",
+          "isTurnIntoAnotherDay": false
+        },
+        "SUNDAY": {
+          "from": "09:30:00",
+          "until": "19:00:00",
+          "isTurnIntoAnotherDay": false
+        },
+        "TUESDAY": {
+          "from": "09:30:00",
+          "until": "19:00:00",
+          "isTurnIntoAnotherDay": false
+        },
+        "SATURDAY": {
+          "from": "09:30:00",
+          "until": "19:00:00",
+          "isTurnIntoAnotherDay": false
+        },
+        "THURSDAY": {
+          "from": "09:30:00",
+          "until": "19:00:00",
+          "isTurnIntoAnotherDay": false
+        },
+        "WEDNESDAY": {
+          "from": "09:30:00",
+          "until": "19:00:00",
+          "isTurnIntoAnotherDay": false
+        }
+      }
+    },
+    "popularProducts": [],
+    "timeAvailability": {
+      "available": false,
+      "closestPreorderDateTime": "2026-11-04T10:30:00",
+      "closestOpeningDateTime": "2026-11-04T09:30:00",
+      "preorderOutdated": false,
+      "radiusAvailable": true,
+      "timeAvailable": false
+    },
+    "avatar": {
+      "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/logo/2bc72a391bbf47949d6b7173e6c34c1d",
+      "variants": [
+        {
+          "n": "_w234h234",
+          "w": 234,
+          "h": 234
+        },
+        {
+          "n": "_w162h162",
+          "w": 162,
+          "h": 162
+        },
+        {
+          "n": "_w80h80",
+          "w": 80,
+          "h": 80
+        }
+      ]
+    },
+    "image": {
+      "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/vendor/2e86ef28cdc447ccbf469e9d24cb3d16",
+      "variants": [
+        {
+          "n": "_w1920h500",
+          "w": 1920,
+          "h": 500
+        },
+        {
+          "n": "_w1200h630",
+          "w": 1200,
+          "h": 630
+        },
+        {
+          "n": "_w768h275",
+          "w": 768,
+          "h": 275
+        },
+        {
+          "n": "_w400h150",
+          "w": 400,
+          "h": 150
+        },
+        {
+          "n": "_w120h120",
+          "w": 120,
+          "h": 120
+        }
+      ]
+    },
+    "vendorType": "FOOD_ESTABLISHMENT",
+    "receiptTypes": [
+      "DELIVERY"
+    ]
+  },
+  "banners": [
+    {
+      "id": 391,
+      "imagePath": "/pr/sadiexpress/img/locality/10/banner/b091bca0d70643a0ae860880a5e7b908_w1920h500",
+      "position": 0,
+      "createdAt": "2026-11-01T07:29:43.194756Z",
+      "createdAtLocal": "2026-11-01T09:29:43.194756",
+      "image": {
+        "basePath": "https://static.playfood.com/pr/sadiexpress/img/locality/10/banner/b091bca0d70643a0ae860880a5e7b908",
+        "variants": [
+          {
+            "n": "_w1920h500",
+            "w": 1920,
+            "h": 500
+          },
+          {
+            "n": "_w425h768",
+            "w": 425,
+            "h": 768
+          },
+          {
+            "n": "_w768h342",
+            "w": 768,
+            "h": 342
+          }
+        ]
+      },
+      "spot": "TOP",
+      "targetScreenSizes": [
+        "SM",
+        "MD",
+        "LG",
+        "XS"
+      ],
+      "targetLang": "en"
+    },
+    {
+      "id": 392,
+      "imagePath": "/pr/sadiexpress/img/locality/10/banner/076d1d3eab544b458f44652a0c32babc_w1920h500",
+      "vendorId": 1072,
+      "position": 1,
+      "createdAt": "2026-11-01T07:30:06.504666Z",
+      "createdAtLocal": "2026-11-01T09:30:06.504666",
+      "image": {
+        "basePath": "https://static.playfood.com/pr/sadiexpress/img/locality/10/banner/076d1d3eab544b458f44652a0c32babc",
+        "variants": [
+          {
+            "n": "_w1920h500",
+            "w": 1920,
+            "h": 500
+          },
+          {
+            "n": "_w425h768",
+            "w": 425,
+            "h": 768
+          },
+          {
+            "n": "_w768h342",
+            "w": 768,
+            "h": 342
+          }
+        ]
+      },
+      "spot": "TOP",
+      "targetScreenSizes": [
+        "SM",
+        "MD",
+        "LG",
+        "XS"
+      ],
+      "targetLang": "en"
+    }
+  ],
+  "catalog": [
+    {
+      "id": 6448,
+      "name": "PIZZAS",
+      "nameI18n": {
+        "values": {
+          "en": "PIZZAS"
+        }
+      },
+      "order": 0,
+      "visible": true,
+      "imageOrientation": "VERTICAL",
+      "cookingTime": 30,
+      "products": [
+        {
+          "id": 56863,
+          "name": "Hawaiian Pizza",
+          "description": "Grilled Bacon, Pineapple Chunks & Mozzarella Cheese",
+          "weight": 0,
+          "price": 8.96,
+          "originalPrice": 8,
+          "visible": true,
+          "available": true,
+          "componentGroups": [
+            {
+              "componentGroupID": 5716,
+              "name": "Pizza Size",
+              "nameI18n": {
+                "values": {
+                  "en": "Pizza Size"
+                }
+              },
+              "displayMode": "LIST",
+              "required": true,
+              "multiSelection": false,
+              "maxCount": 0,
+              "components": [
+                {
+                  "id": 18722,
+                  "name": "Medium ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Medium "
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": true,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18723,
+                  "name": "Large ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Large "
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 3.36,
+                  "originalPrice": 3,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 3.36
+                  }
+                }
+              ],
+              "defaultComponentId": 18722,
+              "maxComponentsCount": 1,
+              "order": 33397
+            }
+          ],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/4c1ca9128a094de499473dbb9fd941ab",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 899
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Hawaiian Pizza"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Grilled Bacon, Pineapple Chunks & Mozzarella Cheese"
+            }
+          },
+          "order": 1,
+          "prices": {
+            "price": 8.96,
+            "priceWithoutDefaults": 8.96
+          }
+        },
+        {
+          "id": 56864,
+          "name": "BBQ Chicken & Mushroom Pizza",
+          "description": "",
+          "weight": 0,
+          "price": 11.2,
+          "originalPrice": 10,
+          "visible": true,
+          "available": true,
+          "componentGroups": [
+            {
+              "componentGroupID": 5716,
+              "name": "Pizza Size",
+              "nameI18n": {
+                "values": {
+                  "en": "Pizza Size"
+                }
+              },
+              "displayMode": "LIST",
+              "required": true,
+              "multiSelection": false,
+              "maxCount": 0,
+              "components": [
+                {
+                  "id": 18722,
+                  "name": "Medium ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Medium "
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": true,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18723,
+                  "name": "Large ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Large "
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 3.36,
+                  "originalPrice": 3,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 3.36
+                  }
+                }
+              ],
+              "defaultComponentId": 18722,
+              "maxComponentsCount": 1,
+              "order": 33399
+            }
+          ],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/306d6942240f45dc895838894698ba63",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "BBQ Chicken & Mushroom Pizza"
+            }
+          },
+          "descriptionI18n": {
+            "values": {}
+          },
+          "order": 2,
+          "prices": {
+            "price": 11.2,
+            "priceWithoutDefaults": 11.2
+          }
+        },
+        {
+          "id": 56865,
+          "name": "Portuguese Chicken Pizza",
+          "description": "Marinated Chicken, Spring Onions, Our Own Portuguese Sauce & Mozzarella Cheese.",
+          "weight": 0,
+          "price": 8.96,
+          "originalPrice": 8,
+          "visible": true,
+          "available": true,
+          "componentGroups": [
+            {
+              "componentGroupID": 5716,
+              "name": "Pizza Size",
+              "nameI18n": {
+                "values": {
+                  "en": "Pizza Size"
+                }
+              },
+              "displayMode": "LIST",
+              "required": true,
+              "multiSelection": false,
+              "maxCount": 0,
+              "components": [
+                {
+                  "id": 18722,
+                  "name": "Medium ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Medium "
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": true,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18723,
+                  "name": "Large ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Large "
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 3.36,
+                  "originalPrice": 3,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 3.36
+                  }
+                }
+              ],
+              "defaultComponentId": 18722,
+              "maxComponentsCount": 1,
+              "order": 33400
+            }
+          ],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/d52f22e149d449caac0e5aa392082f3f",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Portuguese Chicken Pizza"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Marinated Chicken, Spring Onions, Our Own Portuguese Sauce & Mozzarella Cheese."
+            }
+          },
+          "order": 3,
+          "prices": {
+            "price": 8.96,
+            "priceWithoutDefaults": 8.96
+          }
+        },
+        {
+          "id": 56866,
+          "name": "Alfredo Pizza",
+          "description": "Grilled Chicken Pieces, Alfredo Sauce, Cherry Peppers, Parmesan & Mozzarella Cheese.",
+          "weight": 0,
+          "price": 11.2,
+          "originalPrice": 10,
+          "visible": true,
+          "available": true,
+          "componentGroups": [
+            {
+              "componentGroupID": 5716,
+              "name": "Pizza Size",
+              "nameI18n": {
+                "values": {
+                  "en": "Pizza Size"
+                }
+              },
+              "displayMode": "LIST",
+              "required": true,
+              "multiSelection": false,
+              "maxCount": 0,
+              "components": [
+                {
+                  "id": 18722,
+                  "name": "Medium ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Medium "
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": true,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18723,
+                  "name": "Large ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Large "
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 3.36,
+                  "originalPrice": 3,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 3.36
+                  }
+                }
+              ],
+              "defaultComponentId": 18722,
+              "maxComponentsCount": 1,
+              "order": 33401
+            }
+          ],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/f5f93f05e67441f58523af333b83c982",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Alfredo Pizza"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Grilled Chicken Pieces, Alfredo Sauce, Cherry Peppers, Parmesan & Mozzarella Cheese."
+            }
+          },
+          "order": 4,
+          "prices": {
+            "price": 11.2,
+            "priceWithoutDefaults": 11.2
+          }
+        },
+        {
+          "id": 56867,
+          "name": "Braai Feast Pizza",
+          "description": "Achar Boerewors, Salami & Mozzarella Cheese.",
+          "weight": 0,
+          "price": 11.2,
+          "originalPrice": 10,
+          "visible": true,
+          "available": true,
+          "componentGroups": [
+            {
+              "componentGroupID": 5716,
+              "name": "Pizza Size",
+              "nameI18n": {
+                "values": {
+                  "en": "Pizza Size"
+                }
+              },
+              "displayMode": "LIST",
+              "required": true,
+              "multiSelection": false,
+              "maxCount": 0,
+              "components": [
+                {
+                  "id": 18722,
+                  "name": "Medium ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Medium "
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": true,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18723,
+                  "name": "Large ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Large "
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 3.36,
+                  "originalPrice": 3,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 3.36
+                  }
+                }
+              ],
+              "defaultComponentId": 18722,
+              "maxComponentsCount": 1,
+              "order": 33402
+            }
+          ],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/dde0bba2752f47a69ce40eee0e274532",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Braai Feast Pizza"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Achar Boerewors, Salami & Mozzarella Cheese."
+            }
+          },
+          "order": 5,
+          "prices": {
+            "price": 11.2,
+            "priceWithoutDefaults": 11.2
+          }
+        },
+        {
+          "id": 56868,
+          "name": "Margherita Pizza",
+          "description": "Diced Tomatoes & Mozzarella Cheese",
+          "weight": 0,
+          "price": 7.84,
+          "originalPrice": 7,
+          "visible": true,
+          "available": true,
+          "componentGroups": [
+            {
+              "componentGroupID": 5716,
+              "name": "Pizza Size",
+              "nameI18n": {
+                "values": {
+                  "en": "Pizza Size"
+                }
+              },
+              "displayMode": "LIST",
+              "required": true,
+              "multiSelection": false,
+              "maxCount": 0,
+              "components": [
+                {
+                  "id": 18722,
+                  "name": "Medium ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Medium "
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": true,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18723,
+                  "name": "Large ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Large "
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 3.36,
+                  "originalPrice": 3,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 3.36
+                  }
+                }
+              ],
+              "defaultComponentId": 18722,
+              "maxComponentsCount": 1,
+              "order": 33403
+            }
+          ],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/f1f367e7af8a4766b3e0fc872e082ff3",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 600
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Margherita Pizza"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Diced Tomatoes & Mozzarella Cheese"
+            }
+          },
+          "order": 6,
+          "prices": {
+            "price": 7.84,
+            "priceWithoutDefaults": 7.84
+          }
+        },
+        {
+          "id": 56869,
+          "name": "Carbonara Pizza",
+          "description": "Grilled Bacon, Grilled Mushroom, Onion, Green Olives, Carbonara Sauce & Mozzarella Cheese",
+          "weight": 0,
+          "price": 11.2,
+          "originalPrice": 10,
+          "visible": true,
+          "available": true,
+          "componentGroups": [
+            {
+              "componentGroupID": 5716,
+              "name": "Pizza Size",
+              "nameI18n": {
+                "values": {
+                  "en": "Pizza Size"
+                }
+              },
+              "displayMode": "LIST",
+              "required": true,
+              "multiSelection": false,
+              "maxCount": 0,
+              "components": [
+                {
+                  "id": 18722,
+                  "name": "Medium ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Medium "
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": true,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18723,
+                  "name": "Large ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Large "
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 3.36,
+                  "originalPrice": 3,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 3.36
+                  }
+                }
+              ],
+              "defaultComponentId": 18722,
+              "maxComponentsCount": 1,
+              "order": 33404
+            }
+          ],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/f4228928f9c04cbf936623765a7117a1",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Carbonara Pizza"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Grilled Bacon, Grilled Mushroom, Onion, Green Olives, Carbonara Sauce & Mozzarella Cheese"
+            }
+          },
+          "order": 7,
+          "prices": {
+            "price": 11.2,
+            "priceWithoutDefaults": 11.2
+          }
+        },
+        {
+          "id": 56870,
+          "name": "Mexican Pizza",
+          "description": "Mexican Mince, Red & Yellow Pepper, Cheddar & Mozzarella Cheese",
+          "weight": 0,
+          "price": 10.08,
+          "originalPrice": 9,
+          "visible": true,
+          "available": true,
+          "componentGroups": [
+            {
+              "componentGroupID": 5716,
+              "name": "Pizza Size",
+              "nameI18n": {
+                "values": {
+                  "en": "Pizza Size"
+                }
+              },
+              "displayMode": "LIST",
+              "required": true,
+              "multiSelection": false,
+              "maxCount": 0,
+              "components": [
+                {
+                  "id": 18722,
+                  "name": "Medium ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Medium "
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": true,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18723,
+                  "name": "Large ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Large "
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 3.36,
+                  "originalPrice": 3,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 3.36
+                  }
+                }
+              ],
+              "defaultComponentId": 18722,
+              "maxComponentsCount": 1,
+              "order": 33405
+            }
+          ],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/a4d44c38d55a46a297a79fea8630b05d",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 1199
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Mexican Pizza"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Mexican Mince, Red & Yellow Pepper, Cheddar & Mozzarella Cheese"
+            }
+          },
+          "order": 8,
+          "prices": {
+            "price": 10.08,
+            "priceWithoutDefaults": 10.08
+          }
+        },
+        {
+          "id": 56873,
+          "name": "Tandoori Chicken Pizza",
+          "description": "Marinated Chicken, Diced Tomato, Red & Green Peppers, Tandoori Sauce & Mozzarella Cheese",
+          "weight": 0,
+          "price": 8.96,
+          "originalPrice": 8,
+          "visible": true,
+          "available": true,
+          "componentGroups": [
+            {
+              "componentGroupID": 5716,
+              "name": "Pizza Size",
+              "nameI18n": {
+                "values": {
+                  "en": "Pizza Size"
+                }
+              },
+              "displayMode": "LIST",
+              "required": true,
+              "multiSelection": false,
+              "maxCount": 0,
+              "components": [
+                {
+                  "id": 18722,
+                  "name": "Medium ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Medium "
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": true,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18723,
+                  "name": "Large ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Large "
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 3.36,
+                  "originalPrice": 3,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 3.36
+                  }
+                }
+              ],
+              "defaultComponentId": 18722,
+              "maxComponentsCount": 1,
+              "order": 33408
+            }
+          ],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/561bc10b634e46ff80714e5a4f8d2340",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Tandoori Chicken Pizza"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Marinated Chicken, Diced Tomato, Red & Green Peppers, Tandoori Sauce & Mozzarella Cheese"
+            }
+          },
+          "order": 11,
+          "prices": {
+            "price": 8.96,
+            "priceWithoutDefaults": 8.96
+          }
+        },
+        {
+          "id": 56871,
+          "name": "Mediterranean Pizza",
+          "description": "Roasted Veg, Mixed with Green Olives, Feta & Mozzarella Cheese",
+          "weight": 0,
+          "price": 10.08,
+          "originalPrice": 9,
+          "visible": true,
+          "available": true,
+          "componentGroups": [
+            {
+              "componentGroupID": 5716,
+              "name": "Pizza Size",
+              "nameI18n": {
+                "values": {
+                  "en": "Pizza Size"
+                }
+              },
+              "displayMode": "LIST",
+              "required": true,
+              "multiSelection": false,
+              "maxCount": 0,
+              "components": [
+                {
+                  "id": 18722,
+                  "name": "Medium ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Medium "
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": true,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18723,
+                  "name": "Large ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Large "
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 3.36,
+                  "originalPrice": 3,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 3.36
+                  }
+                }
+              ],
+              "defaultComponentId": 18722,
+              "maxComponentsCount": 1,
+              "order": 33406
+            }
+          ],
+          "tags": [],
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Mediterranean Pizza"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Roasted Veg, Mixed with Green Olives, Feta & Mozzarella Cheese"
+            }
+          },
+          "order": 9,
+          "prices": {
+            "price": 10.08,
+            "priceWithoutDefaults": 10.08
+          }
+        },
+        {
+          "id": 56872,
+          "name": "Pogo Dew Pizza (Tweaked)",
+          "description": "Pineapple, Mushroom, Spicy Cherry Peppers, Parmesan & Garlic Sauce",
+          "weight": 0,
+          "price": 10.08,
+          "originalPrice": 9,
+          "visible": true,
+          "available": true,
+          "componentGroups": [
+            {
+              "componentGroupID": 5716,
+              "name": "Pizza Size",
+              "nameI18n": {
+                "values": {
+                  "en": "Pizza Size"
+                }
+              },
+              "displayMode": "LIST",
+              "required": true,
+              "multiSelection": false,
+              "maxCount": 0,
+              "components": [
+                {
+                  "id": 18722,
+                  "name": "Medium ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Medium "
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": true,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18723,
+                  "name": "Large ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Large "
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 3.36,
+                  "originalPrice": 3,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 3.36
+                  }
+                }
+              ],
+              "defaultComponentId": 18722,
+              "maxComponentsCount": 1,
+              "order": 33407
+            }
+          ],
+          "tags": [],
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Pogo Dew Pizza (Tweaked)"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Pineapple, Mushroom, Spicy Cherry Peppers, Parmesan & Garlic Sauce"
+            }
+          },
+          "order": 10,
+          "prices": {
+            "price": 10.08,
+            "priceWithoutDefaults": 10.08
+          }
+        }
+      ],
+      "timeAvailability": {
+        "available": false,
+        "closestPreorderDateTime": "2026-11-04T10:30:00",
+        "preorderOutdated": false
+      }
+    },
+    {
+      "id": 6449,
+      "name": "AWESOME CHICKEN",
+      "nameI18n": {
+        "values": {
+          "en": "AWESOME CHICKEN"
+        }
+      },
+      "order": 1,
+      "visible": true,
+      "imageOrientation": "VERTICAL",
+      "cookingTime": 30,
+      "products": [
+        {
+          "id": 56874,
+          "name": "1/4 Chicken",
+          "description": "Fire Grilled Chicken. Choose your flavour of choice!",
+          "weight": 0,
+          "price": 4.48,
+          "originalPrice": 4,
+          "visible": true,
+          "available": true,
+          "componentGroups": [
+            {
+              "componentGroupID": 5718,
+              "name": "Chicken Flavour Options",
+              "nameI18n": {
+                "values": {
+                  "en": "Chicken Flavour Options"
+                }
+              },
+              "displayMode": "LIST",
+              "required": true,
+              "multiSelection": false,
+              "maxCount": 0,
+              "components": [
+                {
+                  "id": 18725,
+                  "name": "Lemon & Herb",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Lemon & Herb"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": true,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18730,
+                  "name": "BBQ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "BBQ"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18726,
+                  "name": "Mild",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Mild"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18727,
+                  "name": "Hot",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Hot"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18729,
+                  "name": "Tandoori",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Tandoori"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18728,
+                  "name": "Garlic",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Garlic"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                }
+              ],
+              "defaultComponentId": 18725,
+              "maxComponentsCount": 1,
+              "order": 33412
+            }
+          ],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/b488779865e045009da1c507618bed65",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "1/4 Chicken"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Fire Grilled Chicken. Choose your flavour of choice!"
+            }
+          },
+          "order": 1,
+          "prices": {
+            "price": 4.48,
+            "priceWithoutDefaults": 4.48
+          }
+        },
+        {
+          "id": 56875,
+          "name": "1/2 Chicken",
+          "description": "Fire Grilled Chicken. Choose your flavour of choice!",
+          "weight": 0,
+          "price": 8.96,
+          "originalPrice": 8,
+          "visible": true,
+          "available": true,
+          "componentGroups": [
+            {
+              "componentGroupID": 5718,
+              "name": "Chicken Flavour Options",
+              "nameI18n": {
+                "values": {
+                  "en": "Chicken Flavour Options"
+                }
+              },
+              "displayMode": "LIST",
+              "required": true,
+              "multiSelection": false,
+              "maxCount": 0,
+              "components": [
+                {
+                  "id": 18725,
+                  "name": "Lemon & Herb",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Lemon & Herb"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": true,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18730,
+                  "name": "BBQ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "BBQ"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18726,
+                  "name": "Mild",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Mild"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18727,
+                  "name": "Hot",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Hot"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18729,
+                  "name": "Tandoori",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Tandoori"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18728,
+                  "name": "Garlic",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Garlic"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                }
+              ],
+              "defaultComponentId": 18725,
+              "maxComponentsCount": 1,
+              "order": 33411
+            }
+          ],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/3ede3005238f483989285af2198bb2d4",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "1/2 Chicken"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Fire Grilled Chicken. Choose your flavour of choice!"
+            }
+          },
+          "order": 2,
+          "prices": {
+            "price": 8.96,
+            "priceWithoutDefaults": 8.96
+          }
+        },
+        {
+          "id": 56876,
+          "name": "Full Chicken",
+          "description": "Fire Grilled Chicken. Choose your flavour of choice!",
+          "weight": 0,
+          "price": 16.8,
+          "originalPrice": 15,
+          "visible": true,
+          "available": true,
+          "componentGroups": [
+            {
+              "componentGroupID": 5718,
+              "name": "Chicken Flavour Options",
+              "nameI18n": {
+                "values": {
+                  "en": "Chicken Flavour Options"
+                }
+              },
+              "displayMode": "LIST",
+              "required": true,
+              "multiSelection": false,
+              "maxCount": 0,
+              "components": [
+                {
+                  "id": 18725,
+                  "name": "Lemon & Herb",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Lemon & Herb"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": true,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18730,
+                  "name": "BBQ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "BBQ"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18726,
+                  "name": "Mild",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Mild"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18727,
+                  "name": "Hot",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Hot"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18729,
+                  "name": "Tandoori",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Tandoori"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18728,
+                  "name": "Garlic",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Garlic"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                }
+              ],
+              "defaultComponentId": 18725,
+              "maxComponentsCount": 1,
+              "order": 33413
+            }
+          ],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/bf28d1d33fe3427293aa56bf9fc752e3",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Full Chicken"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Fire Grilled Chicken. Choose your flavour of choice!"
+            }
+          },
+          "order": 3,
+          "prices": {
+            "price": 16.8,
+            "priceWithoutDefaults": 16.8
+          }
+        },
+        {
+          "id": 56878,
+          "name": "Sticky BBQ Wings",
+          "description": "",
+          "weight": 0,
+          "price": 5.6,
+          "originalPrice": 5,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/7aa228767232483e9e862ace115ef5b4",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Sticky BBQ Wings"
+            }
+          },
+          "descriptionI18n": {
+            "values": {}
+          },
+          "order": 5,
+          "prices": {
+            "price": 5.6,
+            "priceWithoutDefaults": 5.6
+          }
+        },
+        {
+          "id": 56879,
+          "name": "Tandoori Wings",
+          "description": "",
+          "weight": 0,
+          "price": 5.6,
+          "originalPrice": 5,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/a84b1c0374d04970b02a9c7462dbf1ee",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 1601
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Tandoori Wings"
+            }
+          },
+          "descriptionI18n": {
+            "values": {}
+          },
+          "order": 6,
+          "prices": {
+            "price": 5.6,
+            "priceWithoutDefaults": 5.6
+          }
+        },
+        {
+          "id": 56877,
+          "name": "Chicken Bites",
+          "description": "",
+          "weight": 0,
+          "price": 5.6,
+          "originalPrice": 5,
+          "visible": true,
+          "available": true,
+          "componentGroups": [
+            {
+              "componentGroupID": 5719,
+              "name": "Chicken Bites Option:",
+              "nameI18n": {
+                "values": {
+                  "en": "Chicken Bites Option:"
+                }
+              },
+              "displayMode": "LIST",
+              "required": true,
+              "multiSelection": false,
+              "maxCount": 0,
+              "components": [
+                {
+                  "id": 18731,
+                  "name": "Fried",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Fried"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18732,
+                  "name": "Grilled",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Grilled"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": true,
+                  "prices": {
+                    "price": 0
+                  }
+                }
+              ],
+              "defaultComponentId": 18732,
+              "maxComponentsCount": 1,
+              "order": 33414
+            }
+          ],
+          "tags": [],
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Chicken Bites"
+            }
+          },
+          "descriptionI18n": {
+            "values": {}
+          },
+          "order": 4,
+          "prices": {
+            "price": 5.6,
+            "priceWithoutDefaults": 5.6
+          }
+        }
+      ],
+      "timeAvailability": {
+        "available": false,
+        "closestPreorderDateTime": "2026-11-04T10:30:00",
+        "preorderOutdated": false
+      }
+    },
+    {
+      "id": 6450,
+      "name": "WICKED WRAPS",
+      "nameI18n": {
+        "values": {
+          "en": "WICKED WRAPS"
+        }
+      },
+      "order": 2,
+      "visible": true,
+      "imageOrientation": "VERTICAL",
+      "cookingTime": 30,
+      "products": [
+        {
+          "id": 56880,
+          "name": "Peri Peri Wrapper",
+          "description": "Peri Peri Chicken, Cucumber with a splash of Tomato",
+          "weight": 0,
+          "price": 5.6,
+          "originalPrice": 5,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/1a781797091a41778e352186c59ba645",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 1350
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Peri Peri Wrapper"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Peri Peri Chicken, Cucumber with a splash of Tomato"
+            }
+          },
+          "order": 1,
+          "prices": {
+            "price": 5.6,
+            "priceWithoutDefaults": 5.6
+          }
+        },
+        {
+          "id": 56881,
+          "name": "Portuguese Wrapper",
+          "description": "Marinated Chicken Strips, Spring Onion & Cucumber with a splash of Pogos dressing.",
+          "weight": 0,
+          "price": 5.6,
+          "originalPrice": 5,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/f8c71ac28e694f9f84653b94ceebe929",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Portuguese Wrapper"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Marinated Chicken Strips, Spring Onion & Cucumber with a splash of Pogos dressing."
+            }
+          },
+          "order": 2,
+          "prices": {
+            "price": 5.6,
+            "priceWithoutDefaults": 5.6
+          }
+        },
+        {
+          "id": 56882,
+          "name": "Sweet Chilli Wrapper",
+          "description": "Deep Fried Chicken Strips with a Splash of Sweet Chilli Sauce",
+          "weight": 0,
+          "price": 5.6,
+          "originalPrice": 5,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/e85a14c05b174ec6857ac93953cdd425",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 1350
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Sweet Chilli Wrapper"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Deep Fried Chicken Strips with a Splash of Sweet Chilli Sauce"
+            }
+          },
+          "order": 3,
+          "prices": {
+            "price": 5.6,
+            "priceWithoutDefaults": 5.6
+          }
+        },
+        {
+          "id": 56883,
+          "name": "Tandoori Wrapper",
+          "description": "Marinated Chicken, Diced Tomato, Red & Green Peppers, Tandoori Sauce & Mozzarella",
+          "weight": 0,
+          "price": 5.6,
+          "originalPrice": 5,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Tandoori Wrapper"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Marinated Chicken, Diced Tomato, Red & Green Peppers, Tandoori Sauce & Mozzarella"
+            }
+          },
+          "order": 4,
+          "prices": {
+            "price": 5.6,
+            "priceWithoutDefaults": 5.6
+          }
+        },
+        {
+          "id": 56884,
+          "name": "Hawaiian Wrapper",
+          "description": "Grilled Chicken Strips, Pineapple Chunks with a Splash of Pogo Dressing",
+          "weight": 0,
+          "price": 6.16,
+          "originalPrice": 5.5,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Hawaiian Wrapper"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Grilled Chicken Strips, Pineapple Chunks with a Splash of Pogo Dressing"
+            }
+          },
+          "order": 5,
+          "prices": {
+            "price": 6.16,
+            "priceWithoutDefaults": 6.16
+          }
+        }
+      ],
+      "timeAvailability": {
+        "available": false,
+        "closestPreorderDateTime": "2026-11-04T10:30:00",
+        "preorderOutdated": false
+      }
+    },
+    {
+      "id": 6451,
+      "name": "SALADS",
+      "nameI18n": {
+        "values": {
+          "en": "SALADS"
+        }
+      },
+      "order": 3,
+      "visible": true,
+      "imageOrientation": "VERTICAL",
+      "cookingTime": 20,
+      "products": [
+        {
+          "id": 56885,
+          "name": "Portuguese Salad",
+          "description": "",
+          "weight": 0,
+          "price": 3.36,
+          "originalPrice": 3,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/361b16f43c2b4a6f9375de2d8748894f",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Portuguese Salad"
+            }
+          },
+          "descriptionI18n": {
+            "values": {}
+          },
+          "order": 1,
+          "prices": {
+            "price": 3.36,
+            "priceWithoutDefaults": 3.36
+          }
+        },
+        {
+          "id": 56886,
+          "name": "Greek Salad",
+          "description": "",
+          "weight": 0,
+          "price": 4.48,
+          "originalPrice": 4,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/42cd832ecff54afca4c490584e8abcff",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Greek Salad"
+            }
+          },
+          "descriptionI18n": {
+            "values": {}
+          },
+          "order": 2,
+          "prices": {
+            "price": 4.48,
+            "priceWithoutDefaults": 4.48
+          }
+        },
+        {
+          "id": 56887,
+          "name": "Grilled Chicken Salad",
+          "description": "",
+          "weight": 0,
+          "price": 6.72,
+          "originalPrice": 6,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/23fdae1a465440368d823b1df68593bc",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Grilled Chicken Salad"
+            }
+          },
+          "descriptionI18n": {
+            "values": {}
+          },
+          "order": 3,
+          "prices": {
+            "price": 6.72,
+            "priceWithoutDefaults": 6.72
+          }
+        },
+        {
+          "id": 56888,
+          "name": "Bean Salad",
+          "description": "",
+          "weight": 0,
+          "price": 3.36,
+          "originalPrice": 3,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/6265d42fbbe744dd9a2e1451d727f0da",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Bean Salad"
+            }
+          },
+          "descriptionI18n": {
+            "values": {}
+          },
+          "order": 4,
+          "prices": {
+            "price": 3.36,
+            "priceWithoutDefaults": 3.36
+          }
+        },
+        {
+          "id": 56889,
+          "name": "Regular Coleslaw",
+          "description": "",
+          "weight": 0,
+          "price": 2.24,
+          "originalPrice": 2,
+          "visible": true,
+          "available": false,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/dcc94e99d21c4338a1d60a153c4164ce",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Regular Coleslaw"
+            }
+          },
+          "descriptionI18n": {
+            "values": {}
+          },
+          "order": 5,
+          "prices": {
+            "price": 2.24,
+            "priceWithoutDefaults": 2.24
+          }
+        },
+        {
+          "id": 56890,
+          "name": "Large Coleslaw",
+          "description": "",
+          "weight": 0,
+          "price": 3.36,
+          "originalPrice": 3,
+          "visible": true,
+          "available": false,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/10df6358d2ef445e8177f6af279e7679",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 600
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Large Coleslaw"
+            }
+          },
+          "descriptionI18n": {
+            "values": {}
+          },
+          "order": 6,
+          "prices": {
+            "price": 3.36,
+            "priceWithoutDefaults": 3.36
+          }
+        },
+        {
+          "id": 56891,
+          "name": "Mexican Salad",
+          "description": "",
+          "weight": 0,
+          "price": 5.6,
+          "originalPrice": 5,
+          "visible": true,
+          "available": false,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/237fb80f2101483387bdd3968a70fa5a",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Mexican Salad"
+            }
+          },
+          "descriptionI18n": {
+            "values": {}
+          },
+          "order": 7,
+          "prices": {
+            "price": 5.6,
+            "priceWithoutDefaults": 5.6
+          }
+        }
+      ],
+      "timeAvailability": {
+        "available": false,
+        "closestPreorderDateTime": "2026-11-04T10:30:00",
+        "preorderOutdated": false
+      }
+    },
+    {
+      "id": 6452,
+      "name": "BURGERLICIOUS BURGERS",
+      "nameI18n": {
+        "values": {
+          "en": "BURGERLICIOUS BURGERS"
+        }
+      },
+      "order": 4,
+      "visible": true,
+      "imageOrientation": "VERTICAL",
+      "cookingTime": 30,
+      "products": [
+        {
+          "id": 56892,
+          "name": "Grilled Chicken Burger",
+          "description": "Grilled Chicken Breast, Lettuce, Tomato, Mayonnaise on a freshly Baked Portuguese Roll.",
+          "weight": 0,
+          "price": 5.6,
+          "originalPrice": 5,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/0d4298bc623140639639ee1f356151e4",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Grilled Chicken Burger"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Grilled Chicken Breast, Lettuce, Tomato, Mayonnaise on a freshly Baked Portuguese Roll."
+            }
+          },
+          "order": 1,
+          "prices": {
+            "price": 5.6,
+            "priceWithoutDefaults": 5.6
+          }
+        },
+        {
+          "id": 56893,
+          "name": "Double Chicken Burger",
+          "description": "2x Grilled Chicken Breast, Lettuce, Tomato, Mayonnaise on a freshly Baked Portuguese Roll.",
+          "weight": 0,
+          "price": 7.84,
+          "originalPrice": 7,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/189145863ab64f2ba2398a6b459d8346",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 600
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Double Chicken Burger"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "2x Grilled Chicken Breast, Lettuce, Tomato, Mayonnaise on a freshly Baked Portuguese Roll."
+            }
+          },
+          "order": 2,
+          "prices": {
+            "price": 7.84,
+            "priceWithoutDefaults": 7.84
+          }
+        },
+        {
+          "id": 56894,
+          "name": "Hawaiian Burger",
+          "description": "1x Grilled Chicken Breast, Pineapple, Lettuce, Tomato, Mayonnaise on a freshly Baked Portuguese Roll.",
+          "weight": 0,
+          "price": 6.16,
+          "originalPrice": 5.5,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/1062f01a00794dd788dda2555cbcf5bc",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Hawaiian Burger"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "1x Grilled Chicken Breast, Pineapple, Lettuce, Tomato, Mayonnaise on a freshly Baked Portuguese Roll."
+            }
+          },
+          "order": 3,
+          "prices": {
+            "price": 6.16,
+            "priceWithoutDefaults": 6.16
+          }
+        },
+        {
+          "id": 56895,
+          "name": "Crumbed Chicken Burger",
+          "description": "Fried Chicken Breast, Lettuce, Tomato, Sweet Chilli Sauce.",
+          "weight": 0,
+          "price": 6.16,
+          "originalPrice": 5.5,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/900b7e4dc8014e678d82820959456890",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 600
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Crumbed Chicken Burger"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Fried Chicken Breast, Lettuce, Tomato, Sweet Chilli Sauce."
+            }
+          },
+          "order": 4,
+          "prices": {
+            "price": 6.16,
+            "priceWithoutDefaults": 6.16
+          }
+        },
+        {
+          "id": 56896,
+          "name": "Chicken Cheese Burger",
+          "description": "Grilled Chicken Breast, Lettuce, Tomato, Cheese Slice, Mayonnaise on a freshly Baked Portuguese Roll.",
+          "weight": 0,
+          "price": 6.16,
+          "originalPrice": 5.5,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/22ef7a0e064b4976afb69711394b7653",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Chicken Cheese Burger"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Grilled Chicken Breast, Lettuce, Tomato, Cheese Slice, Mayonnaise on a freshly Baked Portuguese Roll."
+            }
+          },
+          "order": 5,
+          "prices": {
+            "price": 6.16,
+            "priceWithoutDefaults": 6.16
+          }
+        }
+      ],
+      "timeAvailability": {
+        "available": false,
+        "closestPreorderDateTime": "2026-11-04T10:30:00",
+        "preorderOutdated": false
+      }
+    },
+    {
+      "id": 6453,
+      "name": "COMBOS",
+      "nameI18n": {
+        "values": {
+          "en": "COMBOS"
+        }
+      },
+      "order": 5,
+      "visible": true,
+      "imageOrientation": "HORIZONTAL",
+      "cookingTime": 30,
+      "products": [
+        {
+          "id": 56897,
+          "name": "1/4 Meal Deal",
+          "description": "1/4 Chicken & Chips.",
+          "weight": 0,
+          "price": 5.6,
+          "originalPrice": 5,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/14f8f287a65c4f08aa013dfb8ef12416",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "1/4 Meal Deal"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "1/4 Chicken & Chips."
+            }
+          },
+          "order": 1,
+          "prices": {
+            "price": 5.6,
+            "priceWithoutDefaults": 5.6
+          }
+        },
+        {
+          "id": 56898,
+          "name": "Chicken Burger Meal Deal",
+          "description": "Chicken Burger & Chips.",
+          "weight": 0,
+          "price": 6.72,
+          "originalPrice": 6,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/632133ce4d2f4977b182e7ca2e4cec81",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 600
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Chicken Burger Meal Deal"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Chicken Burger & Chips."
+            }
+          },
+          "order": 2,
+          "prices": {
+            "price": 6.72,
+            "priceWithoutDefaults": 6.72
+          }
+        },
+        {
+          "id": 56899,
+          "name": "Chicken Wings Meal Deal",
+          "description": "Chicken Wings & Chips.",
+          "weight": 0,
+          "price": 6.72,
+          "originalPrice": 6,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/3c642e95b4044188aac2674d9874e259",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Chicken Wings Meal Deal"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Chicken Wings & Chips."
+            }
+          },
+          "order": 3,
+          "prices": {
+            "price": 6.72,
+            "priceWithoutDefaults": 6.72
+          }
+        },
+        {
+          "id": 56900,
+          "name": "Chicken Wrapper Meal Deal",
+          "description": "Chicken Wrapper & Small Chips.",
+          "weight": 0,
+          "price": 6.72,
+          "originalPrice": 6,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/47dc43cf7b314924b7b14dbfd7aa56c5",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Chicken Wrapper Meal Deal"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Chicken Wrapper & Small Chips."
+            }
+          },
+          "order": 4,
+          "prices": {
+            "price": 6.72,
+            "priceWithoutDefaults": 6.72
+          }
+        },
+        {
+          "id": 56903,
+          "name": "Full Chicken Meal Deal",
+          "description": "Full Chicken & Large Chips.",
+          "weight": 0,
+          "price": 22.4,
+          "originalPrice": 20,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/578251ea477042a7ae9b3af70136bef0",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 600
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Full Chicken Meal Deal"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Full Chicken & Large Chips."
+            }
+          },
+          "order": 7,
+          "prices": {
+            "price": 22.4,
+            "priceWithoutDefaults": 22.4
+          }
+        },
+        {
+          "id": 56901,
+          "name": "Chicken Bites Meal Deal",
+          "description": "Chicken Bites & Small Chips.",
+          "weight": 0,
+          "price": 6.72,
+          "originalPrice": 6,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Chicken Bites Meal Deal"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Chicken Bites & Small Chips."
+            }
+          },
+          "order": 5,
+          "prices": {
+            "price": 6.72,
+            "priceWithoutDefaults": 6.72
+          }
+        }
+      ],
+      "timeAvailability": {
+        "available": false,
+        "closestPreorderDateTime": "2026-11-04T10:30:00",
+        "preorderOutdated": false
+      }
+    },
+    {
+      "id": 6454,
+      "name": "VEG BOWLS",
+      "nameI18n": {
+        "values": {
+          "en": "VEG BOWLS"
+        }
+      },
+      "order": 6,
+      "visible": true,
+      "imageOrientation": "VERTICAL",
+      "cookingTime": 30,
+      "products": [
+        {
+          "id": 56904,
+          "name": "Grilled Chicken Rice & Veg Bowl",
+          "description": "Your choice of flavour of Pogo's Chicken with mixed roasted veg & flavourful turmeric rice with peppers. ",
+          "weight": 0,
+          "price": 6.72,
+          "originalPrice": 6,
+          "visible": true,
+          "available": true,
+          "componentGroups": [
+            {
+              "componentGroupID": 5718,
+              "name": "Chicken Flavour Options",
+              "nameI18n": {
+                "values": {
+                  "en": "Chicken Flavour Options"
+                }
+              },
+              "displayMode": "LIST",
+              "required": true,
+              "multiSelection": false,
+              "maxCount": 0,
+              "components": [
+                {
+                  "id": 18725,
+                  "name": "Lemon & Herb",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Lemon & Herb"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": true,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18730,
+                  "name": "BBQ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "BBQ"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18726,
+                  "name": "Mild",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Mild"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18727,
+                  "name": "Hot",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Hot"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18729,
+                  "name": "Tandoori",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Tandoori"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18728,
+                  "name": "Garlic",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Garlic"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                }
+              ],
+              "defaultComponentId": 18725,
+              "maxComponentsCount": 1,
+              "order": 33415
+            }
+          ],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/b1b1de2ff52c403bbd57741ceecac8e5",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Grilled Chicken Rice & Veg Bowl"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Your choice of flavour of Pogo's Chicken with mixed roasted veg & flavourful turmeric rice with peppers. "
+            }
+          },
+          "order": 1,
+          "prices": {
+            "price": 6.72,
+            "priceWithoutDefaults": 6.72
+          }
+        },
+        {
+          "id": 56906,
+          "name": "Greek Bowl",
+          "description": "Your choice of flavour of Pogo's Chicken with Greek Salad, feta, olives, cucumber, tomato, a drizzle of olive oil, gyros bread & tzatziki.",
+          "weight": 0,
+          "price": 6.72,
+          "originalPrice": 6,
+          "visible": true,
+          "available": true,
+          "componentGroups": [
+            {
+              "componentGroupID": 5718,
+              "name": "Chicken Flavour Options",
+              "nameI18n": {
+                "values": {
+                  "en": "Chicken Flavour Options"
+                }
+              },
+              "displayMode": "LIST",
+              "required": true,
+              "multiSelection": false,
+              "maxCount": 0,
+              "components": [
+                {
+                  "id": 18725,
+                  "name": "Lemon & Herb",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Lemon & Herb"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": true,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18730,
+                  "name": "BBQ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "BBQ"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18726,
+                  "name": "Mild",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Mild"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18727,
+                  "name": "Hot",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Hot"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18729,
+                  "name": "Tandoori",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Tandoori"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18728,
+                  "name": "Garlic",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Garlic"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                }
+              ],
+              "defaultComponentId": 18725,
+              "maxComponentsCount": 1,
+              "order": 33416
+            }
+          ],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/41b4b9b6f2e642ca85b4c15e4ddbc3bf",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Greek Bowl"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Your choice of flavour of Pogo's Chicken with Greek Salad, feta, olives, cucumber, tomato, a drizzle of olive oil, gyros bread & tzatziki."
+            }
+          },
+          "order": 2,
+          "prices": {
+            "price": 6.72,
+            "priceWithoutDefaults": 6.72
+          }
+        },
+        {
+          "id": 56907,
+          "name": "Cauliflower Rice Bowl",
+          "description": "Your choice of flavour of Pogo's Chicken with mushrooms, cauliflower rice & parsley with a side of fresh avocado.",
+          "weight": 0,
+          "price": 6.72,
+          "originalPrice": 6,
+          "visible": true,
+          "available": true,
+          "componentGroups": [
+            {
+              "componentGroupID": 5718,
+              "name": "Chicken Flavour Options",
+              "nameI18n": {
+                "values": {
+                  "en": "Chicken Flavour Options"
+                }
+              },
+              "displayMode": "LIST",
+              "required": true,
+              "multiSelection": false,
+              "maxCount": 0,
+              "components": [
+                {
+                  "id": 18725,
+                  "name": "Lemon & Herb",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Lemon & Herb"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": true,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18730,
+                  "name": "BBQ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "BBQ"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18726,
+                  "name": "Mild",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Mild"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18727,
+                  "name": "Hot",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Hot"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18729,
+                  "name": "Tandoori",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Tandoori"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18728,
+                  "name": "Garlic",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Garlic"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                }
+              ],
+              "defaultComponentId": 18725,
+              "maxComponentsCount": 1,
+              "order": 33417
+            }
+          ],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/d73a4039c6914e588fe38d923286dfc7",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Cauliflower Rice Bowl"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Your choice of flavour of Pogo's Chicken with mushrooms, cauliflower rice & parsley with a side of fresh avocado."
+            }
+          },
+          "order": 3,
+          "prices": {
+            "price": 6.72,
+            "priceWithoutDefaults": 6.72
+          }
+        }
+      ],
+      "timeAvailability": {
+        "available": false,
+        "closestPreorderDateTime": "2026-11-04T10:30:00",
+        "preorderOutdated": false
+      }
+    },
+    {
+      "id": 6455,
+      "name": "DESSERTS",
+      "nameI18n": {
+        "values": {
+          "en": "DESSERTS"
+        }
+      },
+      "order": 7,
+      "visible": true,
+      "imageOrientation": "VERTICAL",
+      "cookingTime": 30,
+      "products": [
+        {
+          "id": 56909,
+          "name": "Hot Fudged Brownie",
+          "description": "",
+          "weight": 0,
+          "price": 4.48,
+          "originalPrice": 4,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/f02d6aac77f24d6b9ea9f0a578c102d8",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 950
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Hot Fudged Brownie"
+            }
+          },
+          "descriptionI18n": {
+            "values": {}
+          },
+          "order": 2,
+          "prices": {
+            "price": 4.48,
+            "priceWithoutDefaults": 4.48
+          }
+        },
+        {
+          "id": 56910,
+          "name": "Rich Chocolate Cake Slice",
+          "description": "",
+          "weight": 0,
+          "price": 4.48,
+          "originalPrice": 4,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/a01523799f844088bacfa764284ef1b4",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 1599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Rich Chocolate Cake Slice"
+            }
+          },
+          "descriptionI18n": {
+            "values": {}
+          },
+          "order": 3,
+          "prices": {
+            "price": 4.48,
+            "priceWithoutDefaults": 4.48
+          }
+        },
+        {
+          "id": 56911,
+          "name": "Red Velvet Cake Slice",
+          "description": "",
+          "weight": 0,
+          "price": 4.48,
+          "originalPrice": 4,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/7c27b83aa6754caea59a0207d1e9678a",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 1599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Red Velvet Cake Slice"
+            }
+          },
+          "descriptionI18n": {
+            "values": {}
+          },
+          "order": 4,
+          "prices": {
+            "price": 4.48,
+            "priceWithoutDefaults": 4.48
+          }
+        },
+        {
+          "id": 56912,
+          "name": "Carrot Cake Slice",
+          "description": "",
+          "weight": 0,
+          "price": 4.48,
+          "originalPrice": 4,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/7e00365907c446079cc522eabcc9d875",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 1599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Carrot Cake Slice"
+            }
+          },
+          "descriptionI18n": {
+            "values": {}
+          },
+          "order": 5,
+          "prices": {
+            "price": 4.48,
+            "priceWithoutDefaults": 4.48
+          }
+        },
+        {
+          "id": 56913,
+          "name": "Malva Pudding",
+          "description": "",
+          "weight": 0,
+          "price": 4.48,
+          "originalPrice": 4,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Malva Pudding"
+            }
+          },
+          "descriptionI18n": {
+            "values": {}
+          },
+          "order": 6,
+          "prices": {
+            "price": 4.48,
+            "priceWithoutDefaults": 4.48
+          }
+        },
+        {
+          "id": 56908,
+          "name": "Strawberry Cheesecake",
+          "description": "",
+          "weight": 0,
+          "price": 4.48,
+          "originalPrice": 4,
+          "visible": true,
+          "available": false,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/009f1a3eb45442f794fb5b130327c2bb",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 600
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Strawberry Cheesecake"
+            }
+          },
+          "descriptionI18n": {
+            "values": {}
+          },
+          "order": 1,
+          "prices": {
+            "price": 4.48,
+            "priceWithoutDefaults": 4.48
+          }
+        }
+      ],
+      "timeAvailability": {
+        "available": false,
+        "closestPreorderDateTime": "2026-11-04T10:30:00",
+        "preorderOutdated": false
+      }
+    },
+    {
+      "id": 6734,
+      "name": "CHIPS",
+      "nameI18n": {
+        "values": {
+          "en": "CHIPS"
+        }
+      },
+      "order": 8,
+      "visible": true,
+      "imageOrientation": "HORIZONTAL",
+      "cookingTime": 20,
+      "products": [
+        {
+          "id": 59811,
+          "name": "Small Chips",
+          "description": "",
+          "weight": 0,
+          "price": 1.68,
+          "originalPrice": 1.5,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/6242281647de4961b3085e475f3697d8",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Small Chips"
+            }
+          },
+          "descriptionI18n": {
+            "values": {}
+          },
+          "order": 1,
+          "prices": {
+            "price": 1.68,
+            "priceWithoutDefaults": 1.68
+          }
+        },
+        {
+          "id": 59812,
+          "name": "Large Chips",
+          "description": "",
+          "weight": 0,
+          "price": 5.6,
+          "originalPrice": 5,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/7173e40989e54f2cab0ce21c3f04c72e",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Large Chips"
+            }
+          },
+          "descriptionI18n": {
+            "values": {}
+          },
+          "order": 2,
+          "prices": {
+            "price": 5.6,
+            "priceWithoutDefaults": 5.6
+          }
+        }
+      ],
+      "timeAvailability": {
+        "available": false,
+        "closestPreorderDateTime": "2026-11-04T10:30:00",
+        "preorderOutdated": false
+      }
+    }
+  ],
+  "catalogCategories": [],
+  "computedSections": {
+    "popular-products": {
+      "name": {
+        "values": {
+          "ar": "الأكثر طلباً",
+          "bg": "Най-поръчвано",
+          "es": "Más pedidos",
+          "fr": "Les plus commandés",
+          "id": "Paling banyak dipesan",
+          "it": "Most ordered",
+          "ku": "زۆرترین داواکراو",
+          "lv": "Most ordered",
+          "mg": "Be mpanafatra indrindra",
+          "nl": "Most ordered",
+          "pt": "Mais pedidos",
+          "ru": "Рекомендуем для Вас",
+          "uk": "Рекомендовано для вас",
+          "en": "Most ordered"
+        }
+      },
+      "products": [
+        {
+          "id": 56863,
+          "name": "Hawaiian Pizza",
+          "description": "Grilled Bacon, Pineapple Chunks & Mozzarella Cheese",
+          "weight": 0,
+          "price": 8.96,
+          "originalPrice": 8,
+          "visible": true,
+          "available": true,
+          "componentGroups": [
+            {
+              "componentGroupID": 5716,
+              "name": "Pizza Size",
+              "nameI18n": {
+                "values": {
+                  "en": "Pizza Size"
+                }
+              },
+              "displayMode": "LIST",
+              "required": true,
+              "multiSelection": false,
+              "maxCount": 0,
+              "components": [
+                {
+                  "id": 18722,
+                  "name": "Medium ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Medium "
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": true,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18723,
+                  "name": "Large ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Large "
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 3.36,
+                  "originalPrice": 3,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 3.36
+                  }
+                }
+              ],
+              "defaultComponentId": 18722,
+              "maxComponentsCount": 1,
+              "order": 33397
+            }
+          ],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/4c1ca9128a094de499473dbb9fd941ab",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 899
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Hawaiian Pizza"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Grilled Bacon, Pineapple Chunks & Mozzarella Cheese"
+            }
+          },
+          "order": 1,
+          "prices": {
+            "price": 8.96,
+            "priceWithoutDefaults": 8.96
+          },
+          "timeAvailabilityInfo": {
+            "available": false,
+            "closestPreorderDateTime": "2026-11-04T10:30:00",
+            "preorderOutdated": false
+          }
+        },
+        {
+          "id": 56897,
+          "name": "1/4 Meal Deal",
+          "description": "1/4 Chicken & Chips.",
+          "weight": 0,
+          "price": 5.6,
+          "originalPrice": 5,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/14f8f287a65c4f08aa013dfb8ef12416",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "1/4 Meal Deal"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "1/4 Chicken & Chips."
+            }
+          },
+          "order": 1,
+          "prices": {
+            "price": 5.6,
+            "priceWithoutDefaults": 5.6
+          },
+          "timeAvailabilityInfo": {
+            "available": false,
+            "closestPreorderDateTime": "2026-11-04T10:30:00",
+            "preorderOutdated": false
+          }
+        },
+        {
+          "id": 56904,
+          "name": "Grilled Chicken Rice & Veg Bowl",
+          "description": "Your choice of flavour of Pogo's Chicken with mixed roasted veg & flavourful turmeric rice with peppers. ",
+          "weight": 0,
+          "price": 6.72,
+          "originalPrice": 6,
+          "visible": true,
+          "available": true,
+          "componentGroups": [
+            {
+              "componentGroupID": 5718,
+              "name": "Chicken Flavour Options",
+              "nameI18n": {
+                "values": {
+                  "en": "Chicken Flavour Options"
+                }
+              },
+              "displayMode": "LIST",
+              "required": true,
+              "multiSelection": false,
+              "maxCount": 0,
+              "components": [
+                {
+                  "id": 18725,
+                  "name": "Lemon & Herb",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Lemon & Herb"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": true,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18730,
+                  "name": "BBQ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "BBQ"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18726,
+                  "name": "Mild",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Mild"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18727,
+                  "name": "Hot",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Hot"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18729,
+                  "name": "Tandoori",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Tandoori"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18728,
+                  "name": "Garlic",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Garlic"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                }
+              ],
+              "defaultComponentId": 18725,
+              "maxComponentsCount": 1,
+              "order": 33415
+            }
+          ],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/b1b1de2ff52c403bbd57741ceecac8e5",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Grilled Chicken Rice & Veg Bowl"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Your choice of flavour of Pogo's Chicken with mixed roasted veg & flavourful turmeric rice with peppers. "
+            }
+          },
+          "order": 1,
+          "prices": {
+            "price": 6.72,
+            "priceWithoutDefaults": 6.72
+          },
+          "timeAvailabilityInfo": {
+            "available": false,
+            "closestPreorderDateTime": "2026-11-04T10:30:00",
+            "preorderOutdated": false
+          }
+        },
+        {
+          "id": 59811,
+          "name": "Small Chips",
+          "description": "",
+          "weight": 0,
+          "price": 1.68,
+          "originalPrice": 1.5,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/6242281647de4961b3085e475f3697d8",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Small Chips"
+            }
+          },
+          "descriptionI18n": {
+            "values": {}
+          },
+          "order": 1,
+          "prices": {
+            "price": 1.68,
+            "priceWithoutDefaults": 1.68
+          },
+          "timeAvailabilityInfo": {
+            "available": false,
+            "closestPreorderDateTime": "2026-11-04T10:30:00",
+            "preorderOutdated": false
+          }
+        },
+        {
+          "id": 56881,
+          "name": "Portuguese Wrapper",
+          "description": "Marinated Chicken Strips, Spring Onion & Cucumber with a splash of Pogos dressing.",
+          "weight": 0,
+          "price": 5.6,
+          "originalPrice": 5,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/f8c71ac28e694f9f84653b94ceebe929",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Portuguese Wrapper"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Marinated Chicken Strips, Spring Onion & Cucumber with a splash of Pogos dressing."
+            }
+          },
+          "order": 2,
+          "prices": {
+            "price": 5.6,
+            "priceWithoutDefaults": 5.6
+          },
+          "timeAvailabilityInfo": {
+            "available": false,
+            "closestPreorderDateTime": "2026-11-04T10:30:00",
+            "preorderOutdated": false
+          }
+        },
+        {
+          "id": 56876,
+          "name": "Full Chicken",
+          "description": "Fire Grilled Chicken. Choose your flavour of choice!",
+          "weight": 0,
+          "price": 16.8,
+          "originalPrice": 15,
+          "visible": true,
+          "available": true,
+          "componentGroups": [
+            {
+              "componentGroupID": 5718,
+              "name": "Chicken Flavour Options",
+              "nameI18n": {
+                "values": {
+                  "en": "Chicken Flavour Options"
+                }
+              },
+              "displayMode": "LIST",
+              "required": true,
+              "multiSelection": false,
+              "maxCount": 0,
+              "components": [
+                {
+                  "id": 18725,
+                  "name": "Lemon & Herb",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Lemon & Herb"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": true,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18730,
+                  "name": "BBQ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "BBQ"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18726,
+                  "name": "Mild",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Mild"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18727,
+                  "name": "Hot",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Hot"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18729,
+                  "name": "Tandoori",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Tandoori"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18728,
+                  "name": "Garlic",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Garlic"
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 0
+                  }
+                }
+              ],
+              "defaultComponentId": 18725,
+              "maxComponentsCount": 1,
+              "order": 33413
+            }
+          ],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/bf28d1d33fe3427293aa56bf9fc752e3",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Full Chicken"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Fire Grilled Chicken. Choose your flavour of choice!"
+            }
+          },
+          "order": 3,
+          "prices": {
+            "price": 16.8,
+            "priceWithoutDefaults": 16.8
+          },
+          "timeAvailabilityInfo": {
+            "available": false,
+            "closestPreorderDateTime": "2026-11-04T10:30:00",
+            "preorderOutdated": false
+          }
+        },
+        {
+          "id": 56882,
+          "name": "Sweet Chilli Wrapper",
+          "description": "Deep Fried Chicken Strips with a Splash of Sweet Chilli Sauce",
+          "weight": 0,
+          "price": 5.6,
+          "originalPrice": 5,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/e85a14c05b174ec6857ac93953cdd425",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 1350
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Sweet Chilli Wrapper"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Deep Fried Chicken Strips with a Splash of Sweet Chilli Sauce"
+            }
+          },
+          "order": 3,
+          "prices": {
+            "price": 5.6,
+            "priceWithoutDefaults": 5.6
+          },
+          "timeAvailabilityInfo": {
+            "available": false,
+            "closestPreorderDateTime": "2026-11-04T10:30:00",
+            "preorderOutdated": false
+          }
+        },
+        {
+          "id": 56899,
+          "name": "Chicken Wings Meal Deal",
+          "description": "Chicken Wings & Chips.",
+          "weight": 0,
+          "price": 6.72,
+          "originalPrice": 6,
+          "visible": true,
+          "available": true,
+          "componentGroups": [],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/3c642e95b4044188aac2674d9874e259",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Chicken Wings Meal Deal"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Chicken Wings & Chips."
+            }
+          },
+          "order": 3,
+          "prices": {
+            "price": 6.72,
+            "priceWithoutDefaults": 6.72
+          },
+          "timeAvailabilityInfo": {
+            "available": false,
+            "closestPreorderDateTime": "2026-11-04T10:30:00",
+            "preorderOutdated": false
+          }
+        },
+        {
+          "id": 56866,
+          "name": "Alfredo Pizza",
+          "description": "Grilled Chicken Pieces, Alfredo Sauce, Cherry Peppers, Parmesan & Mozzarella Cheese.",
+          "weight": 0,
+          "price": 11.2,
+          "originalPrice": 10,
+          "visible": true,
+          "available": true,
+          "componentGroups": [
+            {
+              "componentGroupID": 5716,
+              "name": "Pizza Size",
+              "nameI18n": {
+                "values": {
+                  "en": "Pizza Size"
+                }
+              },
+              "displayMode": "LIST",
+              "required": true,
+              "multiSelection": false,
+              "maxCount": 0,
+              "components": [
+                {
+                  "id": 18722,
+                  "name": "Medium ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Medium "
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 0,
+                  "originalPrice": 0,
+                  "available": true,
+                  "default": true,
+                  "prices": {
+                    "price": 0
+                  }
+                },
+                {
+                  "id": 18723,
+                  "name": "Large ",
+                  "nameI18n": {
+                    "values": {
+                      "en": "Large "
+                    }
+                  },
+                  "description": "",
+                  "descriptionI18n": {
+                    "values": {}
+                  },
+                  "weight": 0,
+                  "price": 3.36,
+                  "originalPrice": 3,
+                  "available": true,
+                  "default": false,
+                  "prices": {
+                    "price": 3.36
+                  }
+                }
+              ],
+              "defaultComponentId": 18722,
+              "maxComponentsCount": 1,
+              "order": 33401
+            }
+          ],
+          "tags": [],
+          "image": {
+            "basePath": "https://static.playfood.com/pr/sadiexpress/img/vendor/1581/product/f5f93f05e67441f58523af333b83c982",
+            "variants": [
+              {
+                "n": "_w900",
+                "w": 900,
+                "h": 599
+              },
+              {
+                "n": "_w600h400",
+                "w": 600,
+                "h": 400
+              },
+              {
+                "n": "_w300h200",
+                "w": 300,
+                "h": 200
+              },
+              {
+                "n": "_w120h120",
+                "w": 120,
+                "h": 120
+              }
+            ]
+          },
+          "attributes": [],
+          "nameI18n": {
+            "values": {
+              "en": "Alfredo Pizza"
+            }
+          },
+          "descriptionI18n": {
+            "values": {
+              "en": "Grilled Chicken Pieces, Alfredo Sauce, Cherry Peppers, Parmesan & Mozzarella Cheese."
+            }
+          },
+          "order": 4,
+          "prices": {
+            "price": 11.2,
+            "priceWithoutDefaults": 11.2
+          },
+          "timeAvailabilityInfo": {
+            "available": false,
+            "closestPreorderDateTime": "2026-11-04T10:30:00",
+            "preorderOutdated": false
+          }
+        }
+      ]
+    }
+  }
+}

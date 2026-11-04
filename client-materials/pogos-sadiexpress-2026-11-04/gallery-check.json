@@ -1,0 +1,31 @@
+{
+  "verified_at": "2026-11-03T22:50:50.885Z",
+  "status": "passed",
+  "source_capture": true,
+  "application_integration": false,
+  "initial": {
+    "title": "Pogo’s · Menu & image library",
+    "cards": 51,
+    "sections": 9,
+    "images": 46,
+    "broken": [],
+    "horizontal_overflow": false
+  },
+  "mobile": {
+    "width": 390,
+    "content_width": 390,
+    "cards": 51
+  },
+  "checks": [
+    "all 51 cards and nine sections",
+    "all local gallery images load",
+    "search returns three Hawaiian items",
+    "missing-photo filter returns seven items",
+    "unavailable filter returns four items",
+    "pizza filter returns 11 items",
+    "reset restores all 51",
+    "no-result state is visible",
+    "no horizontal overflow at desktop/mobile widths",
+    "no uncaught browser exceptions"
+  ]
+}
