@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-03",
+  "updated": "2026-11-04",
   "scope": "Local migration inventory only; live systems, buckets, logs, backups and vendors must be reconciled before activation.",
   "controllerLegalIdentity": null,
   "privacyOwner": null,
@@ -250,6 +250,57 @@
       "retentionApproval": "unconfirmed",
       "legalBasisApproval": "unconfirmed",
       "erasureHandling": "Requires the approved dataset-specific runbook; never infer cascade deletion"
+    },
+    {
+      "table": "development_mfa_events",
+      "fields": [
+        "id",
+        "created_at",
+        "kind",
+        "user_id",
+        "session_id",
+        "email",
+        "details"
+      ],
+      "classification": "developer_security_audit",
+      "exportSection": null,
+      "exportScope": "Named developer identity and temporary session records; privacy reviewer assessment before export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Development-only exception expires on 11 November 2026; revoke grants/end sessions before account handling. Immutable security events require approved retention/minimisation review; expiry does not erase audit records."
+    },
+    {
+      "table": "development_mfa_grants",
+      "fields": [
+        "email",
+        "enabled",
+        "expires_at",
+        "reason",
+        "updated_at"
+      ],
+      "classification": "developer_access_control",
+      "exportSection": null,
+      "exportScope": "Named developer identity and temporary session records; privacy reviewer assessment before export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Development-only exception expires on 11 November 2026; revoke grants/end sessions before account handling. Immutable security events require approved retention/minimisation review; expiry does not erase audit records."
+    },
+    {
+      "table": "development_mfa_sessions",
+      "fields": [
+        "session_id",
+        "user_id",
+        "email",
+        "expires_at",
+        "started_at",
+        "ended_at"
+      ],
+      "classification": "developer_access_control",
+      "exportSection": null,
+      "exportScope": "Named developer identity and temporary session records; privacy reviewer assessment before export",
+      "retentionApproval": "unconfirmed",
+      "legalBasisApproval": "unconfirmed",
+      "erasureHandling": "Development-only exception expires on 11 November 2026; revoke grants/end sessions before account handling. Immutable security events require approved retention/minimisation review; expiry does not erase audit records."
     },
     {
       "table": "finance_commands",

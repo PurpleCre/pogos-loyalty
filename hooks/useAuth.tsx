@@ -18,12 +18,15 @@ import { createAuthCallback } from '@/lib/auth-callback';
 import { runtimeEnvironment } from '@/lib/environment';
 import { disablePushForLogout } from '@/lib/device-push';
 import { setPushRecipient } from '@/lib/notification-handler';
+import { developerAccessStatus, developerAccessActive, developerAccessEnvironment } from '@/lib/developer-access';
 
 export type AppRole = 'user' | 'staff' | 'manager' | 'finance' | 'admin';
 interface AuthContextType {
   user: User | null; session: Session | null; loading: boolean;
   userRole: AppRole; staffStoreId: string | null; staffStoreIds: string[];
   requiresMfa: boolean; recoveryRequired: boolean;
+  developerAccess: boolean; developerAccessAvailable: boolean; developerAccessExpiresAt: string | null;
+  startDeveloperAccess(): Promise<void>; stopDeveloperAccess(): Promise<void>;
   signUp(email: string, password: string, fullName?: string): Promise<{ error: Error | null; session?: Session | null }>;
   signIn(email: string, password: string): Promise<{ error: Error | null }>;
   signOut(): Promise<{ error: Error | null }>;
@@ -49,6 +52,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [access, setAccess] = useState(emptyAccess);
   const [recoveryRequired, setRecoveryRequired] = useState(false);
+  const [developerState, setDeveloperState] = useState<ReturnType<typeof developerAccessStatus> | null>(null);
+  const [developerClock, setDeveloperClock] = useState(Date.now());
   const callback = useRef<ReturnType<typeof createAuthCallback> | null>(null);
   const callbackRecoveryOwner = useRef<string | null>(null);
   const signingOut = useRef(false);
@@ -58,11 +63,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const redirectTo = Platform.OS === 'web' ? Linking.createURL('/auth/callback') : scheme ? `${scheme}://auth/callback` : Linking.createURL('/auth/callback');
   const fetchAccess = useCallback(async (userId: string, version: number) => {
     try {
-      const [roles, memberships, assurance, privacy] = await Promise.all([
+      const [roles, memberships, assurance, privacy, developer] = await Promise.all([
         supabase.from('user_roles').select('role, staff_store_id').eq('user_id', userId),
         supabase.from('staff_memberships').select('store_id').eq('user_id', userId).eq('active', true),
         supabase.auth.mfa.getAuthenticatorAssuranceLevel(),
         supabase.rpc('account_privacy_state'),
+        supabase.rpc('development_mfa_status'),
       ]);
       if (version !== revision.current || currentSession.current?.user.id !== userId) return;
       if (roles.error || memberships.error || assurance.error || privacy.error) throw new Error('Unable to verify account access.');
@@ -75,14 +81,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         await supabase.auth.signOut({scope:'local'}); await authStorage.removeItem(authStorageKey); return;
       }
       const stores = memberships.data.map(row => row.store_id).sort();
-      const snapshot = roleSnapshot(roles.data, stores, assurance.data.currentLevel);
-      const boundary = JSON.stringify([userId, snapshot.role, stores]);
+      const development = developer.error ? null : developerAccessStatus(developer.data, userId);
+      setDeveloperState(development);
+      const developerActive = developerAccessEnvironment(runtimeEnvironment) && developerAccessActive(development, userId, Date.now(), performance.now());
+      const snapshot = roleSnapshot(roles.data, stores, assurance.data.currentLevel, developerActive);
+      const boundary = JSON.stringify([userId, snapshot.role, stores, developerActive]);
       if (accessBoundary.current && accessBoundary.current !== boundary) queryClient.clear();
       accessBoundary.current = boundary;
       setAccess({ userRole: snapshot.role as AppRole, staffStoreIds: stores,
-        requiresMfa: snapshot.requiresMfa || (assurance.data.nextLevel === 'aal2' && assurance.data.currentLevel !== 'aal2') });
+        requiresMfa: snapshot.requiresMfa || (!developerActive && assurance.data.nextLevel === 'aal2' && assurance.data.currentLevel !== 'aal2') });
     } catch {
-      if (version === revision.current) { setAccess(emptyAccess); queryClient.clear(); }
+      if (version === revision.current) { setAccess(emptyAccess); setDeveloperState(null); queryClient.clear(); }
     } finally { if (version === revision.current) setLoading(false); }
   }, [queryClient]);
   const refetchRole = useCallback(async () => {
@@ -100,6 +109,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const previousToken = currentSession.current?.access_token;
       const owner = next?.user.id;
       if (previous !== owner) {
+        setDeveloperState(null);
         queryClient.clear(); setAccess(emptyAccess); setRecoveryRequired(false);
         if (previous) {
           void clearLocalAccount(previous).catch(() => undefined);
@@ -137,16 +147,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     void supabase.auth.getSession().then(({ data, error }) => {
       if (!receivedEvent) applySession(error ? null : data.session);
     }).catch(() => { if (!receivedEvent) applySession(null); });
-    const foreground = AppState.addEventListener('change', state => { if (state === 'active') void refetchRole(); else { ++revision.current; setAccess(emptyAccess); } });
+    const foreground = AppState.addEventListener('change', state => { if (state === 'active') void refetchRole(); else { ++revision.current; setAccess(emptyAccess); setDeveloperState(null); } });
     const interval = setInterval(() => { if (AppState.currentState === 'active') void refetchRole(); }, 30000);
     return () => { active = false; ++revision.current; timers.forEach(clearTimeout); clearInterval(interval); foreground.remove(); subscription.unsubscribe(); };
   }, [queryClient, fetchAccess, refetchRole]);
+  useEffect(() => {
+    const tick = () => setDeveloperClock(Date.now());
+    const listener = AppState.addEventListener('change', tick);
+    const timer = developerState?.active ? setInterval(tick, 1000) : null;
+    return () => { listener.remove(); if (timer) clearInterval(timer); };
+  }, [developerState?.active]);
   const signOut = (): Promise<{ error: Error | null }> => {
     if (logoutInFlight.current) return logoutInFlight.current;
     // Hide private state immediately. Local sign-out works without network and
     // deletes stored refresh credentials; server-side role revocation is separate.
     signingOut.current = true;
+    setDeveloperState(null);
     const previousSession=currentSession.current;
+    const hadDeveloperAccess=!!developerState?.active;
     const previousOwner=previousSession?.user.id;
     setPushRecipient(null);
     ++revision.current; currentSession.current = null; setSession(null); setAccess(emptyAccess); setRecoveryRequired(false); setLoading(false); queryClient.clear();
@@ -155,6 +173,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         // Persist intent before any network request: a kill/offline logout may
         // not restore this session on restart, even if refresh revocation fails.
         await authStorage.setItem(logoutStorageKey, '1');
+        if(hadDeveloperAccess&&previousSession)await supabase.rpc('end_development_mfa_session').setHeader('Authorization',`Bearer ${previousSession.access_token}`).then(()=>undefined,()=>undefined);
         const pushError=previousSession?await disablePushForLogout(previousSession.user.id,previousSession.access_token).then(()=>null).catch(()=>new Error('Push removal needs checking. Retry on this account when online.')):null;
         const cleanupError=previousOwner?await clearLocalAccount(previousOwner).then(()=>null).catch(()=>new Error('Account cache cleanup could not be confirmed.')):null;
         const { error } = await supabase.auth.signOut({ scope: 'local' });
@@ -222,7 +241,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (local.error) throw local.error;
     return { otherSessionsRevoked: !revoked.error };
   };
+  const developerAllowed = developerAccessEnvironment(runtimeEnvironment) && !recoveryRequired;
+  const developerActive = developerAllowed && developerAccessActive(developerState, session?.user.id, Math.max(developerClock, Date.now()), performance.now());
+  const effectiveAccess = developerState?.active && !developerActive ? { ...emptyAccess, requiresMfa: true } : access;
+  const startDeveloperAccess = async () => {
+    const owner = currentSession.current?.user.id;
+    if (!owner || !developerAllowed || loading) throw new Error('Development access is unavailable.');
+    const token = currentSession.current!.access_token;
+    const result = await supabase.rpc('begin_development_mfa_session').setHeader('Authorization', `Bearer ${token}`);
+    if (result.error) throw new Error('Development access was not granted. Check the allowlist, account role and expiry.');
+    if (currentSession.current?.user.id !== owner) return;
+    queryClient.clear(); await refetchRole();
+  };
+  const stopDeveloperAccess = async () => {
+    const token = currentSession.current?.access_token;
+    setDeveloperState(null); setAccess(emptyAccess); queryClient.clear();
+    if (!token) return;
+    const result = await supabase.rpc('end_development_mfa_session').setHeader('Authorization', `Bearer ${token}`);
+    if (result.error) { await signOut(); throw new Error('Development session cleanup could not be confirmed. Sign in again.'); }
+    await refetchRole();
+  };
   return <AuthContext.Provider value={{ user: session?.user ?? null, session, loading,
-    ...access, staffStoreId: access.staffStoreIds[0] ?? null, recoveryRequired,
+    ...effectiveAccess, staffStoreId: effectiveAccess.staffStoreIds[0] ?? null, recoveryRequired,
+    developerAccess: developerActive, developerAccessAvailable: developerAllowed && developerState?.owner === session?.user.id && !!developerState?.available,
+    developerAccessExpiresAt: developerState?.expiresAt ?? null, startDeveloperAccess, stopDeveloperAccess,
     signUp, signIn, signOut, requestPasswordReset, resendConfirmation, reauthenticate, completeCallback, updatePassword, refetchRole }}>{children}</AuthContext.Provider>;
 };

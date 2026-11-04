@@ -6,6 +6,7 @@ import { router } from 'expo-router';
 import { BrandLogo } from '@/components/BrandLogo';
 import { colors, layout } from '@/lib/theme';
 import { Button } from './button';
+import { DeveloperAccessNotice } from '@/components/DeveloperAccessNotice';
 
 export function ScreenHeader({ title, back = true, onBack, action, menu = false }: {
   title: string; back?: boolean; onBack?(): void; action?: ReactNode; menu?: boolean;
@@ -31,6 +32,7 @@ export function Screen({ title, children, wide = false, scroll = true, centered 
   const content = [styles.content, { maxWidth: wide ? layout.wideWidth : layout.maxWidth }, centered && styles.centered, contentStyle];
   return <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
     <ScreenHeader title={title} back={back} onBack={onBack} action={action} menu={menu} />
+    <DeveloperAccessNotice />
     {scroll ? <ScrollView ref={scrollRef} style={styles.scroll} contentContainerStyle={content} keyboardShouldPersistTaps="handled"
       automaticallyAdjustKeyboardInsets refreshControl={refreshControl}>{children}</ScrollView>
       : <View style={[...content, styles.scroll]}>{children}</View>}

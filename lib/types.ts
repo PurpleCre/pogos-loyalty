@@ -627,6 +627,99 @@ export type Database = {
         }
       ]
     }
+    "development_mfa_events": {
+      Row: {
+        "id": string
+        "created_at": string
+        "kind": string
+        "user_id": string | null
+        "session_id": string | null
+        "email": string
+        "details": Json
+      }
+      Insert: {
+        "id"?: string
+        "created_at"?: string
+        "kind": string
+        "user_id"?: string | null
+        "session_id"?: string | null
+        "email": string
+        "details": Json
+      }
+      Update: {
+        "id"?: string
+        "created_at"?: string
+        "kind"?: string
+        "user_id"?: string | null
+        "session_id"?: string | null
+        "email"?: string
+        "details"?: Json
+      }
+      Relationships: [
+
+      ]
+    }
+    "development_mfa_grants": {
+      Row: {
+        "email": string
+        "enabled": boolean
+        "expires_at": string
+        "reason": string
+        "updated_at": string
+      }
+      Insert: {
+        "email": string
+        "enabled"?: boolean
+        "expires_at": string
+        "reason": string
+        "updated_at"?: string
+      }
+      Update: {
+        "email"?: string
+        "enabled"?: boolean
+        "expires_at"?: string
+        "reason"?: string
+        "updated_at"?: string
+      }
+      Relationships: [
+
+      ]
+    }
+    "development_mfa_sessions": {
+      Row: {
+        "session_id": string
+        "user_id": string
+        "email": string
+        "expires_at": string
+        "started_at": string
+        "ended_at": string | null
+      }
+      Insert: {
+        "session_id": string
+        "user_id": string
+        "email": string
+        "expires_at": string
+        "started_at"?: string
+        "ended_at"?: string | null
+      }
+      Update: {
+        "session_id"?: string
+        "user_id"?: string
+        "email"?: string
+        "expires_at"?: string
+        "started_at"?: string
+        "ended_at"?: string | null
+      }
+      Relationships: [
+        {
+          foreignKeyName: "development_mfa_sessions_email_fkey"
+          columns: ["email"]
+          isOneToOne: false
+          referencedRelation: "development_mfa_grants"
+          referencedColumns: ["email"]
+        }
+      ]
+    }
     "finance_commands": {
       Row: {
         "id": string
@@ -3238,6 +3331,10 @@ export type Database = {
       }
       Returns: undefined
     }
+    "begin_development_mfa_session": {
+      Args: Record<PropertyKey, never>
+      Returns: Json
+    }
     "branch_operations_history": {
       Args: {
         "p_store_id": string
@@ -3291,6 +3388,34 @@ export type Database = {
         "p_expected_version": number
         "p_completion_reference": string
       }
+      Returns: undefined
+    }
+    "configure_development_mfa_bypass": {
+      Args: {
+        "p_email": string
+        "p_enabled": boolean
+        "p_reason": string
+      }
+      Returns: undefined
+    }
+    "development_mfa_active": {
+      Args: Record<PropertyKey, never>
+      Returns: boolean
+    }
+    "development_mfa_allowed": {
+      Args: Record<PropertyKey, never>
+      Returns: boolean
+    }
+    "development_mfa_session_id": {
+      Args: Record<PropertyKey, never>
+      Returns: string
+    }
+    "development_mfa_status": {
+      Args: Record<PropertyKey, never>
+      Returns: Json
+    }
+    "end_development_mfa_session": {
+      Args: Record<PropertyKey, never>
       Returns: undefined
     }
     "expire_pending_cash_orders": {
@@ -3394,6 +3519,10 @@ export type Database = {
       Returns: boolean
     }
     "identity_aal2": {
+      Args: Record<PropertyKey, never>
+      Returns: boolean
+    }
+    "identity_access_assured": {
       Args: Record<PropertyKey, never>
       Returns: boolean
     }

@@ -61,6 +61,7 @@ credentials.json
 *.keystore
 /key
 /check-schema.js
+/scripts/development-mfa-bypass.mjs
 /create-trigger.js
 /migrate-*.js
 /query_db.js

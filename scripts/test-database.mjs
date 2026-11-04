@@ -16,6 +16,7 @@ export const testDatabaseBootstrap = `
         created_at TIMESTAMPTZ NOT NULL DEFAULT now()
       );
       CREATE TABLE auth.mfa_factors (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), user_id UUID NOT NULL REFERENCES auth.users(id), status TEXT NOT NULL, factor_type TEXT NOT NULL DEFAULT 'totp');
+      CREATE TABLE auth.sessions (id UUID PRIMARY KEY, user_id UUID NOT NULL REFERENCES auth.users(id));
       CREATE FUNCTION auth.uid() RETURNS UUID LANGUAGE SQL STABLE AS
         $$ SELECT nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
       CREATE FUNCTION auth.jwt() RETURNS JSONB LANGUAGE SQL STABLE AS
