@@ -26,7 +26,7 @@ export default function MenuScreen() {
   const [search, setSearch] = useState('');
   const [optionMessage, setOptionMessage] = useState('');
   const { selectedStore } = useOrder();
-  const { items: cartItems, storeId: cartStoreId, addToCart, removeFromCart, updateQuantity, itemCount, cartTotal, hydrated } = useCart();
+  const { items: cartItems, storeId: cartStoreId, addToCart, updateQuantity, itemCount, hydrated, notice, dismissNotice } = useCart();
   const { stores } = useStores();
   const branch = selectedStore ?? stores.find(row => row.id === cartStoreId);
   const { categories, items, isLoading, refetch, error: menuError, fresh, refreshedAt } = useMenu(false, branch?.id);
@@ -62,11 +62,14 @@ export default function MenuScreen() {
   }
 
   const getQuantity = (menuItemId: string) => {
+    if (cartStoreId !== branch?.id) return 0;
     return cartItems.filter(i => i.menu_item_id === menuItemId).reduce((sum, item) => sum + item.quantity, 0);
   };
 
   const handleIncrement = (item: any) => {
-    openCustomization(item);
+    if (item.menu_item_options?.length) { openCustomization(item); return; }
+    if (!branch) { router.push('/store-picker'); return; }
+    addToCart({ menu_item_id: item.id, name: item.name, price: item.price, quantity: 1, choice_ids: [], choice_labels: [] }, branch.id);
   };
 
   const openCustomization = (item: any) => {
@@ -90,13 +93,14 @@ export default function MenuScreen() {
     setCustomizationItem(null);
   };
 
-  const toggleOptionChoice = (optionId: string, choiceId: string, maxChoices: number) => {
+  const toggleOptionChoice = (optionId: string, choiceId: string, maxChoices: number, required: boolean) => {
+    setOptionMessage('');
     setSelectedOptions(prev => {
       const currentSelected = prev[optionId] || [];
       
       // If it's a radio button behavior (max_choices === 1)
       if (maxChoices === 1) {
-        return { ...prev, [optionId]: [choiceId] };
+        return { ...prev, [optionId]: !required && currentSelected.includes(choiceId) ? [] : [choiceId] };
       }
       
       // Checkbox behavior
@@ -146,7 +150,7 @@ export default function MenuScreen() {
     }
     const selectedChoices = options.flatMap(option => (option.menu_item_option_choices ?? [])
       .filter(choice => (selectedOptions[option.id] ?? []).includes(choice.id)));
-    addToCart({
+    const added = addToCart({
       menu_item_id: customizationItem.id,
       name: customizationItem.name,
       price: getCustomizedPrice(),
@@ -154,7 +158,8 @@ export default function MenuScreen() {
       choice_ids: selectedChoices.map(choice => choice.id),
       choice_labels: selectedChoices.map(choice => choice.name),
     }, branch.id);
-    closeCustomization();
+    if (added) closeCustomization();
+    else setOptionMessage('This meal could not be added. Check the cart quantity and try again.');
   };
 
   const handleDecrement = (item: any) => {
@@ -191,6 +196,11 @@ export default function MenuScreen() {
       </TouchableOpacity>)}
     </ScrollView>
     <CartStorageStatus />
+    {notice ? <View className={`rounded-2xl p-4 my-3 border ${notice.error ? 'bg-red-50 border-red-200' : 'bg-brand-50 border-brand-200'}`}>
+      <Text accessibilityLiveRegion="polite" accessibilityRole={notice.error ? 'alert' : undefined} className={notice.error ? 'text-red-700' : 'text-brand-900'}>{notice.text}</Text>
+      <View className="flex-row flex-wrap gap-2 mt-2"><Button size="sm" variant="ghost" onPress={() => router.push('/(app)/cart')}>Review cart</Button><Button size="sm" variant="ghost" onPress={dismissNotice}>Dismiss</Button></View>
+    </View> : null}
+    {itemCount > 0 && branch && cartStoreId !== branch.id ? <Card><Text className="font-semibold text-ink mb-2">Your cart is from another branch</Text><Text className="text-subtle leading-6 mb-3">You’re browsing {branch.name}. Your existing cart stays intact unless you choose to replace it when adding a meal here.</Text><Button variant="outline" onPress={() => router.push('/(app)/cart')}>Return to my cart</Button></Card> : null}
     <ReadStatus label="Menu" fresh={fresh} at={refreshedAt} error={menuError} loading={isLoading} onRefresh={() => { void refetch(); }} />
     <Text className="text-subtle text-xs leading-5 mb-5">Menu prices are estimates. A fresh online quote confirms currency, availability, delivery fees and the amount to pay.</Text>
     {activeOrders.length > 0 ? <Card><Text className="font-bold text-ink mb-3">Your active orders{ordersFresh ? '' : ' · last known status'}</Text>
@@ -210,7 +220,7 @@ export default function MenuScreen() {
             <View className="mt-auto"><Text className="font-extrabold text-ink text-lg">{formatMoney(Math.round(item.price * 100), 'USD')}</Text><Text className="text-subtle text-[11px] mt-1 mb-3">Menu estimate</Text>
               {quantity === 0 ? <Button size="sm" accessibilityLabel={`Add ${item.name}`} disabled={!hydrated} onPress={() => handleIncrement(item)}>Add to cart</Button>
                 : <View className="flex-row items-center justify-between bg-brand-50 rounded-2xl border border-brand-100">
-                  <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Reduce ${item.name} quantity`} disabled={!hydrated} onPress={() => handleDecrement(item)} className="w-11 h-11 items-center justify-center"><Minus size={18} color={colors.primary} /></TouchableOpacity>
+                  {item.menu_item_options?.length || cartItems.some(line => line.menu_item_id === item.id && line.choice_ids.length > 0) ? <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Edit ${item.name} choices in cart`} onPress={() => router.push('/(app)/cart')} className="min-w-[44px] h-11 px-2 items-center justify-center"><Text className="text-brand-800 font-bold text-xs">Edit</Text></TouchableOpacity> : <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Reduce ${item.name} quantity`} disabled={!hydrated} onPress={() => handleDecrement(item)} className="w-11 h-11 items-center justify-center"><Minus size={18} color={colors.primary} /></TouchableOpacity>}
                   <Text className="font-bold text-brand-900">{quantity}</Text>
                   <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Add ${item.name}`} disabled={!hydrated} onPress={() => handleIncrement(item)} className="w-11 h-11 items-center justify-center"><Plus size={18} color={colors.primary} /></TouchableOpacity>
                 </View>}
@@ -230,7 +240,7 @@ export default function MenuScreen() {
               <Text className="text-lg font-bold text-ink">{option.name}</Text><Text className="text-subtle text-xs mt-1 mb-3">{option.is_required ? 'Required' : 'Optional'} · Choose up to {option.max_choices}</Text>
               {option.menu_item_option_choices?.toSorted((a: MenuItemOptionChoice, b: MenuItemOptionChoice) => a.sort_order - b.sort_order).map(choice => {
                 const selected = (selectedOptions[option.id] ?? []).includes(choice.id);
-                return <TouchableOpacity key={choice.id} accessibilityRole={option.max_choices === 1 ? 'radio' : 'checkbox'} accessibilityState={{ checked: selected }} onPress={() => toggleOptionChoice(option.id, choice.id, option.max_choices)} className={`min-h-[56px] flex-row items-center justify-between gap-3 border rounded-2xl p-4 mb-2 ${selected ? 'border-brand-600 bg-brand-50' : 'border-line bg-white'}`}>
+                return <TouchableOpacity key={choice.id} accessibilityRole={option.max_choices === 1 && option.is_required ? 'radio' : 'checkbox'} accessibilityState={{ checked: selected }} onPress={() => toggleOptionChoice(option.id, choice.id, option.max_choices, option.is_required)} className={`min-h-[56px] flex-row items-center justify-between gap-3 border rounded-2xl p-4 mb-2 ${selected ? 'border-brand-600 bg-brand-50' : 'border-line bg-white'}`}>
                   <View className="flex-1"><Text className="font-semibold text-ink">{choice.name}</Text>{choice.price_adjustment > 0 ? <Text className="text-subtle text-xs mt-1">+{formatMoney(Math.round(choice.price_adjustment * 100), 'USD')} · estimate</Text> : null}</View>
                   {selected ? <CheckCircle size={22} color={colors.primary} /> : <Circle size={22} color={colors.border} />}
                 </TouchableOpacity>;

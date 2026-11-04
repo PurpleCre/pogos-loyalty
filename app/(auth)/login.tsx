@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { View, Text, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { TouchTarget as TouchableOpacity } from '@/components/ui/touch-target';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
@@ -18,9 +18,11 @@ export default function Login() {
   const [formMessage, setFormMessage] = useState('');
   const { signIn, signUp, resendConfirmation, loading } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const submitting = useRef(false);
   const { redirect } = useLocalSearchParams<{ redirect: string }>();
 
   const handleSubmit = async () => {
+    if (submitting.current) return;
     setFormMessage('');
     if (!email || !password) {
       setFormMessage('Enter your email and password to continue.');
@@ -34,12 +36,12 @@ export default function Login() {
       return;
     }
 
-    setIsSubmitting(true);
+    submitting.current = true; setIsSubmitting(true);
     try {
       if (isSignUp) {
         const { error, session } = await signUp(email, password, fullName);
         if (error) throw error;
-        if (session) { router.replace('/(app)/dashboard'); return; }
+        if (session) { router.replace(safeAuthDestination(redirect) as '/(app)/dashboard'); return; }
         setFormMessage('Your account was created. Check your email to verify it before signing in.');
         Alert.alert('Account created!', 'Please check your email to verify your account.');
         setIsSignUp(false);
@@ -55,21 +57,21 @@ export default function Login() {
         isSignUp ? 'Use a valid email and a password of 12–128 characters. Check your connection and try again.' : 'Unable to sign in. Check your email, password, confirmation email and connection.'
       );
     } finally {
-      setIsSubmitting(false);
+      submitting.current = false; setIsSubmitting(false);
     }
   };
 
   const toggleMode = () => {
     setFormMessage('');
     setIsSignUp(!isSignUp);
-    setFullName('');
-    setEmail('');
     setPassword('');
+    setShowPassword(false);
   };
 
   return <AuthScreen title={isSignUp ? 'Your next chapter starts here.' : 'Welcome back.'}
     subtitle={isSignUp ? 'Create your Pogo’s account to keep your orders and loyalty in one place.' : 'Sign in for your orders, points and branch rewards.'}>
     <Stack.Screen options={{ headerShown: false }} />
+    {safeAuthDestination(redirect) === '/(app)/cart' ? <Text className="text-brand-900 bg-brand-50 rounded-2xl p-4 leading-6">Sign in or create an account to return to checkout. Your account’s saved cart takes priority if it already has one.</Text> : null}
     {isSignUp ? <View><Text className="text-ink text-sm font-semibold mb-2">Full name</Text><Input accessibilityLabel="Full name" placeholder="Your name" autoCapitalize="words" value={fullName} onChangeText={setFullName} editable={!isSubmitting} /></View> : null}
     <View><Text className="text-ink text-sm font-semibold mb-2">Email address</Text><Input accessibilityLabel="Email address" placeholder="you@example.com" autoCapitalize="none" autoComplete="email" keyboardType="email-address" value={email} onChangeText={setEmail} editable={!isSubmitting} /></View>
     <View><Text className="text-ink text-sm font-semibold mb-2">Password</Text><View className="relative justify-center">
@@ -83,9 +85,10 @@ export default function Login() {
     {!isSignUp ? <>
       <Button variant="ghost" disabled={isSubmitting} onPress={() => router.push('/auth/forgot-password')}>Forgot your password?</Button>
       <Button variant="ghost" disabled={isSubmitting || !email.trim()} onPress={() => {
-        setIsSubmitting(true);
+        if (submitting.current) return;
+        submitting.current = true; setIsSubmitting(true);
         void resendConfirmation(email).then(() => { setFormMessage('If confirmation is needed, an email is on its way. Open it on this device.'); Alert.alert('Check your inbox', 'If confirmation is needed, an email is on its way. Open it on this device.'); })
-          .catch(() => { setFormMessage('Check the email and connection, or wait before trying again.'); Alert.alert('Unable to resend', 'Check the email and connection, or wait before trying again.'); }).finally(() => setIsSubmitting(false));
+          .catch(() => { setFormMessage('Check the email and connection, or wait before trying again.'); Alert.alert('Unable to resend', 'Check the email and connection, or wait before trying again.'); }).finally(() => { submitting.current = false; setIsSubmitting(false); });
       }}>Resend confirmation email</Button>
     </> : null}
     <View className="border-t border-line pt-4"><Text className="text-subtle text-center leading-6">{isSignUp ? 'Already part of Pogo’s?' : 'New around here?'}</Text>

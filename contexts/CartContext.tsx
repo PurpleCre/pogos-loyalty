@@ -1,13 +1,15 @@
 import React, { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
-import { Alert } from 'react-native';
+import { Text } from 'react-native';
 import { useAuth } from '@/hooks/useAuth';
-import { mergeCartItem, cartSelectionFingerprint, type CartItem, type CartState } from '@/lib/cart';
+import { mergeCartItem, cartSelectionFingerprint, replaceBranchCart, type CartItem, type CartState } from '@/lib/cart';
+import { Confirmation } from '@/components/ui/confirmation';
 import { cartRepository } from '@/lib/cart-persistence';
 import { restoreCartSession } from '@/lib/cart-storage';
 export type { CartItem } from '@/lib/cart';
 interface CartContextType {
   items: CartItem[]; storeId: string | null;
-  addToCart(item: Omit<CartItem, 'id' | 'subtotal'>, storeId: string): void;
+  addToCart(item: Omit<CartItem, 'id' | 'subtotal'>, storeId: string): boolean;
+  notice: { text: string; error: boolean } | null; dismissNotice(): void;
   removeFromCart(id: string): void; updateQuantity(id: string, quantity: number): void; clearCart(): void;
   cartTotal: number; itemCount: number; hydrated: boolean; saving: boolean; storageError: string;
   retrySave(): void; discardSavedCart(): void;
@@ -24,6 +26,8 @@ function AccountCart({ owner, guestDraft, children }: { owner: string | null; gu
   const latest = useRef(cart); const revision = useRef(0);
   const session = useRef<ReturnType<typeof cartRepository.open> | null>(null);
   const [hydrated, setHydrated] = useState(false); const [saving, setSaving] = useState(false); const [storageError, setError] = useState('');
+  const [notice, setNotice] = useState<CartContextType['notice']>(null);
+  const [replacement, setReplacement] = useState<{ expected: string; storeId: string; item: Omit<CartItem, 'id' | 'subtotal'> } | null>(null);
   const load = useCallback(async (lease: ReturnType<typeof cartRepository.open>) => {
     const version = ++revision.current; const guest = guestDraft.current;
     setSaving(true); setError('');
@@ -49,22 +53,26 @@ function AccountCart({ owner, guestDraft, children }: { owner: string | null; gu
     finally { if (lease.isCurrent() && version === revision.current) setSaving(false); }
   };
   const change = (update: (previous: CartState) => CartState) => {
-    if (!hydrated || !session.current?.isCurrent()) return;
+    if (!hydrated || !session.current?.isCurrent()) return false;
     try {
       const next = update(latest.current); latest.current = next; setCart(next);
       if (owner === null) guestDraft.current = next;
       void persist(next);
-    } catch { setError('These selections could not be saved. Check the quantities and retry.'); }
+      return true;
+    } catch (cause) {
+      setNotice({ text: cause instanceof Error ? cause.message : 'Check your selections and try again.', error: true });
+      return false;
+    }
   };
   const addToCart: CartContextType['addToCart'] = (item, storeId) => {
-    if (!hydrated || !session.current?.isCurrent()) return;
-    const add = (replace: boolean) => change(previous => ({ owner, storeId, items: mergeCartItem(replace ? [] : previous.items, item) }));
+    if (!hydrated || !session.current?.isCurrent()) return false;
     if (latest.current.storeId && latest.current.storeId !== storeId && latest.current.items.length) {
-      const expected = cartSelectionFingerprint(latest.current);
-      Alert.alert('Start a new branch cart?', 'Replace your current selections with this branch’s menu?', [
-        { text: 'Keep current cart', style: 'cancel' }, { text: 'Replace selections', style: 'destructive', onPress: () => { if (cartSelectionFingerprint(latest.current) === expected) add(true); } },
-      ]);
-    } else add(false);
+      setReplacement({ expected: cartSelectionFingerprint(latest.current), storeId, item: { ...item, choice_ids: [...item.choice_ids], choice_labels: [...item.choice_labels] } });
+      return true;
+    }
+    const added = change(previous => ({ owner, storeId, items: mergeCartItem(previous.items, item) }));
+    if (added) setNotice({ text: `${item.name} added to your cart.`, error: false });
+    return added;
   };
   const clearCart = () => change(() => ({ owner, items: [], storeId: null }));
   const removeFromCart = (id: string) => change(previous => { const items = previous.items.filter(row => row.id !== id); return { ...previous, items, storeId: items.length ? previous.storeId : null }; });
@@ -77,9 +85,18 @@ function AccountCart({ owner, guestDraft, children }: { owner: string | null; gu
     if (owner === null) guestDraft.current = next;
     void persist(next);
   };
-  return <CartContext.Provider value={{ ...cart, hydrated, saving, storageError, addToCart, removeFromCart, updateQuantity, clearCart,
+  return <CartContext.Provider value={{ ...cart, hydrated, saving, storageError, addToCart, notice, dismissNotice: () => setNotice(null), removeFromCart, updateQuantity, clearCart,
     cartTotal: cart.items.reduce((sum, row) => sum + row.subtotal, 0), itemCount: cart.items.reduce((sum, row) => sum + row.quantity, 0),
     retrySave: () => { if (hydrated) void persist(latest.current); else if (session.current) void load(session.current); }, discardSavedCart,
-    retireSubmittedSelections: fingerprint => { if (cartSelectionFingerprint(latest.current) === fingerprint) clearCart(); } }}>{children}</CartContext.Provider>;
+    retireSubmittedSelections: fingerprint => { if (cartSelectionFingerprint(latest.current) === fingerprint) clearCart(); } }}>{children}
+    <Confirmation visible={!!replacement} title="Replace your branch cart?" confirmLabel="Replace selections" cancelLabel="Keep current cart" destructive onClose={() => setReplacement(null)} onConfirm={() => {
+      if (!replacement) return;
+      const changed = change(previous => replaceBranchCart(previous, replacement.expected, replacement.storeId, replacement.item));
+      setReplacement(null);
+      if (changed) setNotice({ text: `Started a new branch cart with ${replacement.item.name}.`, error: false });
+    }}>
+      <Text className="text-subtle leading-6">Your current selections belong to another branch. Replacing them starts a new cart with {replacement?.item.name}. Your existing orders are kept.</Text>
+    </Confirmation>
+  </CartContext.Provider>;
 }
 export function useCart() { const value = useContext(CartContext); if (!value) throw new Error('CartProvider required'); return value; }

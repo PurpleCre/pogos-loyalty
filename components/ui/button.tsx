@@ -43,6 +43,8 @@ export function Button({
     <TouchableOpacity
       accessibilityRole="button"
       accessibilityState={{ disabled: !!disabled || !!isLoading, busy: !!isLoading }}
+      aria-disabled={!!disabled || !!isLoading}
+      aria-busy={!!isLoading}
       activeOpacity={0.75}
       className={twMerge(
         baseStyles,

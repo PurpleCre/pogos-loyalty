@@ -9,18 +9,23 @@ import { useAuth } from '@/hooks/useAuth';
 import { useOrder, LocationData } from '@/contexts/OrderContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Location from 'expo-location';
+import { Button } from '@/components/ui/button';
 interface LocationPickerModalProps {
   visible: boolean;
   onClose: () => void;
+  initialAddress?: string;
 }
 
-export function LocationPickerModal({ visible, onClose }: LocationPickerModalProps) {
-  const { savedLocations, saveLocation, setDeliveryLocation } = useOrder();
+export function LocationPickerModal({ visible, onClose, initialAddress }: LocationPickerModalProps) {
+  const { savedLocations, saveLocation, deliveryLocation, setDeliveryLocation } = useOrder();
   const [locationError, setLocationError] = useState('');
   const [saving, setSaving] = useState(false);
+  const [locating, setLocating] = useState(false);
+  const [locationAllowed, setLocationAllowed] = useState(false);
   const generation = React.useRef(0);
   const { user } = useAuth();
   const owner = React.useRef(user?.id); owner.current = user?.id;
+  const currentLocation = React.useRef({ location: deliveryLocation, initialAddress }); currentLocation.current = { location: deliveryLocation, initialAddress };
   
   // Harare is a map viewport, not a delivery address or coverage promise.
   const [region, setRegion] = useState({
@@ -35,44 +40,44 @@ export function LocationPickerModal({ visible, onClose }: LocationPickerModalPro
   const [tagInput, setTagInput] = useState('');
 
   useEffect(() => {
-    const version = ++generation.current;
+    ++generation.current;
     if (visible) {
-      setSelectedCoordinate(null); setAddressInput(''); setTagInput(''); setLocationError(''); setSaving(false);
-      (async () => {
-        try {
-          const { status } = await Location.requestForegroundPermissionsAsync();
-          if (status !== 'granted') {
-            if (generation.current === version) setLocationError('Location permission is off. You can choose a map pin and enter your address manually.');
-            return;
-          }
-
-          let location = await Location.getLastKnownPositionAsync({});
-          
-          if (!location) {
-             location = await Location.getCurrentPositionAsync({
-               accuracy: Location.Accuracy.Balanced
-             });
-          }
-          
-          if (location && generation.current === version) {
-            setRegion({
-              latitude: location.coords.latitude,
-              longitude: location.coords.longitude,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
-            });
-          }
-        } catch (error) {
-          logPrivateError('Error fetching location:', error);
-        }
-      })();
+      const { location: existing, initialAddress: draftAddress } = currentLocation.current;
+      setSelectedCoordinate(existing ? { latitude: existing.latitude, longitude: existing.longitude } : null);
+      setAddressInput(draftAddress ?? existing?.address ?? ''); setTagInput(''); setLocationError(''); setSaving(false); setLocating(false); setLocationAllowed(false);
+      if (existing) setRegion(previous => ({ ...previous, latitude: existing.latitude, longitude: existing.longitude }));
     }
     return () => { ++generation.current; };
   }, [visible, user?.id]);
 
+  const handleCurrentLocation = async () => {
+    if (locating) return;
+    const version = generation.current;
+    setLocating(true); setLocationError('');
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        if (generation.current === version) setLocationError('Location permission is off. You can choose a map pin and enter your address manually.');
+        return;
+      }
+      if (generation.current !== version) return;
+      setLocationAllowed(true);
+      const location = await Location.getLastKnownPositionAsync({}) ?? await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+      if (location && generation.current === version) {
+        setSelectedCoordinate({ latitude: location.coords.latitude, longitude: location.coords.longitude });
+        setRegion({ latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.0922, longitudeDelta: 0.0421 });
+      }
+    } catch (error) {
+      logPrivateError('Error fetching location:', error);
+      if (generation.current === version) setLocationError('We couldn’t find your location. Choose a pin manually and enter your address.');
+    } finally {
+      if (generation.current === version) setLocating(false);
+    }
+  };
+
   const handleMapPress = (e: any) => {
     setSelectedCoordinate(e.nativeEvent.coordinate);
-    setAddressInput('');
+    setLocationError('');
   };
 
   const handleSelectSavedLocation = (location: LocationData) => {
@@ -82,7 +87,7 @@ export function LocationPickerModal({ visible, onClose }: LocationPickerModalPro
 
   const handleConfirmNewLocation = async () => {
     if (!selectedCoordinate || saving) return;
-    if (addressInput.trim().length < 5) { setLocationError('Enter a written delivery address and landmarks for this map pin.'); return; }
+    if (addressInput.trim().length < 5 || ['selected from map', 'unknown address'].includes(addressInput.trim().toLowerCase())) { setLocationError('Enter a written delivery address and landmarks for this map pin.'); return; }
     const version = generation.current; const account = user?.id;
     setSaving(true); setLocationError('');
     try {
@@ -100,12 +105,12 @@ export function LocationPickerModal({ visible, onClose }: LocationPickerModalPro
         {/* Header */}
         <View className="flex-row items-center justify-between px-5 py-4 border-b border-line">
           <Text className="text-xl font-bold text-ink">Set Delivery Location</Text>
-          <TouchableOpacity onPress={onClose} className="p-2 -mr-2 bg-gray-100 rounded-full">
+          <TouchableOpacity accessibilityLabel="Close delivery location" onPress={onClose} className="p-2 -mr-2 bg-gray-100 rounded-full">
             <X size={20} color="#475569" />
           </TouchableOpacity>
         </View>
 
-        <ScrollView className="flex-1" bounces={false}>
+        <ScrollView className="flex-1" bounces={false} keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
           {locationError ? <Text accessibilityRole="alert" className="p-4 text-amber-800">{locationError}</Text> : null}
           <Text className="p-4 text-subtle">Choose a pin and a written address. The branch confirms delivery coverage in your online quote.</Text>
           {/* Saved Locations */}
@@ -141,14 +146,15 @@ export function LocationPickerModal({ visible, onClose }: LocationPickerModalPro
           {/* Map Section */}
           <View className="px-5 py-2">
             <Text className="text-sm font-bold text-subtle uppercase tracking-wider mb-3">{Platform.OS === 'web' ? 'Set your location pin' : 'Pick on map'}</Text>
+            {Platform.OS !== 'web' ? <Button variant="outline" isLoading={locating} onPress={() => { void handleCurrentLocation(); }} className="mb-3">Use my current location</Button> : null}
             <View className="h-[250px] rounded-2xl overflow-hidden border border-line shadow-sm relative">
               <MapView 
                 style={StyleSheet.absoluteFill}
                 region={region}
                 onRegionChangeComplete={setRegion}
                 onPress={handleMapPress}
-                showsUserLocation={true}
-                showsMyLocationButton={true}
+                showsUserLocation={locationAllowed}
+                showsMyLocationButton={locationAllowed}
               >
                 {selectedCoordinate && (
                   <Marker coordinate={selectedCoordinate} pinColor="#dc2626" />
@@ -189,6 +195,7 @@ export function LocationPickerModal({ visible, onClose }: LocationPickerModalPro
                     <Star size={16} color="#eab308" className="mr-2" />
                     <TextInput 
                       value={tagInput}
+                      accessibilityLabel="Optional saved location label" maxLength={50}
                       onChangeText={setTagInput}
                       placeholder="e.g. Home, Work, Gym"
                       className="flex-1 text-ink font-medium"

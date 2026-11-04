@@ -6,6 +6,7 @@ import { runtimeEnvironment } from '@/lib/environment';
 import { Slot } from "expo-router";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CartProvider } from '@/contexts/CartContext';
+import { CheckoutDraftProvider } from '@/contexts/CheckoutDraftContext';
 import { AuthProvider } from '@/hooks/useAuth';
 import { OrderProvider } from '@/contexts/OrderContext';
 import { LegacyOfflineNotice } from '@/components/LegacyOfflineNotice';
@@ -37,8 +38,10 @@ function RootLayout() {
         <PrivacyExportCleanup />
         <OrderProvider>
           <CartProvider>
+            <CheckoutDraftProvider>
             <LegacyOfflineNotice />
             <Slot />
+            </CheckoutDraftProvider>
           </CartProvider>
         </OrderProvider>
         </PushNotificationsProvider>

@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode, Ref, ComponentRef } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View, type ScrollViewProps, type StyleProp, type ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ArrowLeft, ChevronRight, ShoppingBag, Menu, type LucideIcon } from 'lucide-react-native';
@@ -22,15 +22,16 @@ export function ScreenHeader({ title, back = true, onBack, action, menu = false 
   </View>;
 }
 
-export function Screen({ title, children, wide = false, scroll = true, centered = false, back = true, onBack, action, refreshControl, contentStyle, menu, footer }: {
+export function Screen({ title, children, wide = false, scroll = true, centered = false, back = true, onBack, action, refreshControl, contentStyle, menu, footer, scrollRef }: {
   title: string; children: ReactNode; wide?: boolean; scroll?: boolean; centered?: boolean; back?: boolean;
   onBack?(): void; action?: ReactNode; refreshControl?: ScrollViewProps['refreshControl']; contentStyle?: StyleProp<ViewStyle>;
   menu?: boolean; footer?: ReactNode;
+  scrollRef?: Ref<ComponentRef<typeof ScrollView>>;
 }) {
   const content = [styles.content, { maxWidth: wide ? layout.wideWidth : layout.maxWidth }, centered && styles.centered, contentStyle];
   return <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
     <ScreenHeader title={title} back={back} onBack={onBack} action={action} menu={menu} />
-    {scroll ? <ScrollView style={styles.scroll} contentContainerStyle={content} keyboardShouldPersistTaps="handled"
+    {scroll ? <ScrollView ref={scrollRef} style={styles.scroll} contentContainerStyle={content} keyboardShouldPersistTaps="handled"
       automaticallyAdjustKeyboardInsets refreshControl={refreshControl}>{children}</ScrollView>
       : <View style={[...content, styles.scroll]}>{children}</View>}
     {footer ? <View style={{ backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: colors.border }}><View style={{ width: '100%', maxWidth: layout.maxWidth, alignSelf: 'center', padding: 16 }}>{footer}</View></View> : null}

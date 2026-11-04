@@ -43,3 +43,8 @@ export function cartFingerprint(items: CartItem[]) {
 export function cartSelectionFingerprint(cart: Pick<CartState, 'storeId' | 'items'>) {
   return JSON.stringify([cart.storeId, cartFingerprint(cart.items)]);
 }
+
+export function replaceBranchCart(cart: CartState, expected: string, storeId: string, item: Omit<CartItem, 'id' | 'subtotal'>): CartState {
+  if (cartSelectionFingerprint(cart) !== expected) throw new Error('Your cart changed. Review it before replacing selections.');
+  return { owner: cart.owner, storeId, items: mergeCartItem([], item) };
+}
