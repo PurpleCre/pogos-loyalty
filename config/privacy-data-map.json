@@ -267,7 +267,7 @@
       "exportScope": "Named developer identity and temporary session records; privacy reviewer assessment before export",
       "retentionApproval": "unconfirmed",
       "legalBasisApproval": "unconfirmed",
-      "erasureHandling": "Development-only exception expires on 11 November 2026; revoke grants/end sessions before account handling. Immutable security events require approved retention/minimisation review; expiry does not erase audit records."
+      "erasureHandling": "Development-only exception remains enabled until manually disabled; revoke grants/end sessions before account handling. Immutable security events require approved retention/minimisation review; disabling access does not erase audit records."
     },
     {
       "table": "development_mfa_grants",
@@ -283,7 +283,7 @@
       "exportScope": "Named developer identity and temporary session records; privacy reviewer assessment before export",
       "retentionApproval": "unconfirmed",
       "legalBasisApproval": "unconfirmed",
-      "erasureHandling": "Development-only exception expires on 11 November 2026; revoke grants/end sessions before account handling. Immutable security events require approved retention/minimisation review; expiry does not erase audit records."
+      "erasureHandling": "Development-only exception remains enabled until manually disabled; revoke grants/end sessions before account handling. Immutable security events require approved retention/minimisation review; disabling access does not erase audit records."
     },
     {
       "table": "development_mfa_sessions",
@@ -300,7 +300,7 @@
       "exportScope": "Named developer identity and temporary session records; privacy reviewer assessment before export",
       "retentionApproval": "unconfirmed",
       "legalBasisApproval": "unconfirmed",
-      "erasureHandling": "Development-only exception expires on 11 November 2026; revoke grants/end sessions before account handling. Immutable security events require approved retention/minimisation review; expiry does not erase audit records."
+      "erasureHandling": "Development-only exception remains enabled until manually disabled; revoke grants/end sessions before account handling. Immutable security events require approved retention/minimisation review; disabling access does not erase audit records."
     },
     {
       "table": "finance_commands",

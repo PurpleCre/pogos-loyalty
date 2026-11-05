@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         supabase.from('staff_memberships').select('store_id').eq('user_id', userId).eq('active', true),
         supabase.auth.mfa.getAuthenticatorAssuranceLevel(),
         supabase.rpc('account_privacy_state'),
-        supabase.rpc('development_mfa_status'),
+        supabase.rpc('development_mfa_status_v2'),
       ]);
       if (version !== revision.current || currentSession.current?.user.id !== userId) return;
       if (roles.error || memberships.error || assurance.error || privacy.error) throw new Error('Unable to verify account access.');
@@ -154,9 +154,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const tick = () => setDeveloperClock(Date.now());
     const listener = AppState.addEventListener('change', tick);
-    const timer = developerState?.active ? setInterval(tick, 1000) : null;
+    const timer = developerState?.active && developerState.remainingMs !== null ? setInterval(tick, 1000) : null;
     return () => { listener.remove(); if (timer) clearInterval(timer); };
-  }, [developerState?.active]);
+  }, [developerState?.active, developerState?.remainingMs]);
   const signOut = (): Promise<{ error: Error | null }> => {
     if (logoutInFlight.current) return logoutInFlight.current;
     // Hide private state immediately. Local sign-out works without network and

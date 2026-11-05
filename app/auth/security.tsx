@@ -119,8 +119,8 @@ function SecurityContent({ owner, destination }: { owner: string; destination: '
     {!ready && pendingId && !setup ? <View className="gap-2"><Text className="text-subtle">If you did not add the key to your authenticator, start again. This replaces the unfinished key; use only the new key afterwards.</Text><Button variant="outline" disabled={busy || !loaded} onPress={() => { void run(enrol, 'enroll'); }}>Start setup again</Button></View> : null}
     {message ? <Text accessibilityRole="alert">{message}</Text> : null}
     {developerAccessAvailable && !ready ? <View className="bg-amber-50 border border-amber-200 rounded-2xl p-4 gap-3">
-      <Text className="font-bold text-amber-900">Temporary developer access</Text>
-      <Text className="text-amber-900">For the named development accounts and their existing roles. This does not verify an authenticator. Sessions last up to eight hours and all exceptions end on 11 November.</Text>
+      <Text className="font-bold text-amber-900">Developer access</Text>
+      <Text className="text-amber-900">For the named development accounts and their existing roles. This does not verify an authenticator. The bypass stays available until we disable it. Signing out or ending the bypass ends access for this sign-in session.</Text>
       {developerAccessExpiresAt ? <Text className="text-amber-900">Expires: {new Date(developerAccessExpiresAt).toLocaleString()}</Text> : null}
       <Button variant="outline" disabled={busy} onPress={() => { void run(async () => {
         if (developerAccess) await stopDeveloperAccess();

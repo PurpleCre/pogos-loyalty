@@ -30,7 +30,7 @@ try{
   const claims=JSON.parse(Buffer.from(key.split('.')[1],'base64url').toString());
   if(claims.role!=='service_role'||claims.ref!==project)throw Error('A development-only service credential is required.');
   const client=createClient(local.EXPO_PUBLIC_SUPABASE_URL,key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false},global:{fetch:(url,options)=>fetch(url,{...options,redirect:'error',signal:AbortSignal.timeout(20000)})}});
-  for(const email of emails){const {error}=await client.rpc('configure_development_mfa_bypass',{p_email:email,p_enabled:mode==='--enable',p_reason:'User authorised temporary developer access for these two emails on 4 November 2026; preserve existing roles'});if(error)throw Error('Named configuration was not confirmed.');}
+  for(const email of emails){const {error}=await client.rpc('configure_development_mfa_bypass',{p_email:email,p_enabled:mode==='--enable',p_reason:'User authorised named developer access until manually disabled on 4 November 2026; preserve existing roles'});if(error)throw Error('Named configuration was not confirmed.');}
  }
  const grants=rows.every(r=>r.schema_ready)?await query("SELECT email,enabled,expires_at FROM public.development_mfa_grants ORDER BY email"):[];
  const report={checked_at:new Date().toISOString(),project,operation:mode,accounts:rows,grants};

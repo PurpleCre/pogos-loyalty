@@ -19,7 +19,8 @@ test('developer exceptions are absent by default and normal administrators canno
 });
 test('a named developer explicitly starts a session, retains existing roles and never obtains a fake AAL2 claim',async()=>{
  assert.equal((await rpc(admin,'development_mfa_status')).available,true);assert.equal(await rpc(admin,'has_role',[admin,'admin']),false);
- const status=await rpc(admin,'begin_development_mfa_session');assert.equal(status.active,true);
+ const status=await rpc(admin,'begin_development_mfa_session');assert.equal(status.active,true);assert.equal(status.non_expiring,true);assert.equal(status.expires_at,null);
+ assert.equal((await db.query('SELECT expires_at FROM public.development_mfa_sessions WHERE session_id=$1',[sid])).rows[0].expires_at,null);
  assert.equal(await rpc(admin,'has_role',[admin,'admin']),true);assert.equal(await rpc(admin,'identity_aal2'),false);
  await rpc(admin,'begin_development_mfa_session');assert.equal((await db.query("SELECT count(*)::int AS n FROM public.development_mfa_events WHERE kind='begin'")).rows[0].n,1);
 });
@@ -56,7 +57,6 @@ test('allowlist, session and audit tables reject client writes; audit evidence i
  for(const table of ['development_mfa_grants','development_mfa_sessions','development_mfa_events'])await assert.rejects(asRole(db,'authenticated',admin,()=>db.query(`DELETE FROM public.${table}`)),{code:'42501'});
  await assert.rejects(db.query('DELETE FROM public.development_mfa_events'),{code:'42501'});
  await assert.rejects(configure('unapproved@developer.test',true),{code:'22023'});
- await assert.rejects(db.query("UPDATE public.development_mfa_grants SET expires_at='2027-01-01'"),{code:'23514'});
 });
 test('a real AAL2 session retains ordinary access independently of the development exception',async()=>{
  assert.equal(await rpc(other,'has_role',[other,'admin'],claims(otherSid,{aal:'aal2',iss:'https://production.supabase.co/auth/v1'})),true);
@@ -75,4 +75,54 @@ test('client assurance rejects malformed state, account switching, expiry and ba
 });
 test('client development assurance preserves role and branch scope without granting an unassigned role',()=>{
  assert.equal(roleSnapshot([{role:'admin'}],[],'aal1',true).role,'admin');assert.equal(roleSnapshot([{role:'staff'}],[],'aal1',true).role,'user');assert.equal(roleSnapshot([{role:'user'}],[],'aal1',true).role,'user');assert.equal(roleSnapshot([{role:'admin'}],[],'aal1').role,'user');
+});
+test('explicit non-expiring server status remains active beyond the old date and eight-hour client cap',()=>{
+ const state=developerAccessStatus({available:true,active:true,expires_at:null,non_expiring:true,server_time:'2026-11-04T12:00:00Z'},admin,1000,500);
+ assert.equal(state.remainingMs,null);
+ assert.equal(developerAccessActive(state,admin,1000+30*86400000,500+30*86400000),true);
+ assert.equal(developerAccessActive(state,other,1001,501),false);
+ assert.equal(developerAccessStatus({available:true,active:true,expires_at:null,server_time:'2026-11-04T12:00:00Z'},admin,1000,500).available,false);
+ assert.equal(developerAccessStatus({available:true,active:true,expires_at:null,non_expiring:true,server_time:'invalid'},admin),null);
+});
+test('legacy finite server status still expires at its declared deadline without an invented eight-hour cap',()=>{
+ const state=developerAccessStatus({available:true,active:true,expires_at:'2026-11-06T12:00:00Z',server_time:'2026-11-04T12:00:00Z'},admin,1000,500);
+ assert.equal(developerAccessActive(state,admin,1000+86400000,500+86400000),true);
+ assert.equal(developerAccessActive(state,admin,1000+2*86400000,500+2*86400000),false);
+});
+test('non-expiring grants and sessions still lose access when disabled, without changing existing roles',async()=>{
+ await configure('pgonese6@gmail.com',true);const status=await rpc(admin,'begin_development_mfa_session');
+ assert.equal(status.expires_at,null);assert.equal(status.non_expiring,true);assert.equal(await rpc(admin,'has_role',[admin,'admin']),true);
+ await configure('pgonese6@gmail.com',false);assert.equal(await rpc(admin,'has_role',[admin,'admin']),false);
+ assert.equal((await db.query("SELECT count(*)::int AS n FROM public.user_roles WHERE user_id=$1 AND role='admin'",[admin])).rows[0].n,1);
+});
+test('installed clients receive a usable refresh window without reinstating a server session deadline',async()=>{
+ await configure('pgonese6@gmail.com',true);await rpc(admin,'begin_development_mfa_session');
+ const current=await rpc(admin,'development_mfa_status_v2'),legacy=await rpc(admin,'development_mfa_status');
+ assert.equal(current.expires_at,null);assert.equal(current.non_expiring,true);
+ assert.equal(legacy.active,true);assert.ok(Date.parse(legacy.expires_at)>Date.parse(legacy.server_time));
+ assert.equal((await db.query('SELECT expires_at FROM public.development_mfa_sessions WHERE session_id=$1',[sid])).rows[0].expires_at,null);
+});
+test('migration removes timers without restoring ended/expired sessions or enabling disabled grants',async()=>{
+ const actor=randomUUID(),live=randomUUID(),expired=randomUUID(),ended=randomUUID();
+ const upgraded=await createTestDatabase({beforeMigration:async(database,filename)=>{
+  if(filename!=='20261104020000_development_mfa_manual_expiry.sql')return;
+  await database.query('INSERT INTO auth.users(id,email) VALUES($1,$2)',[actor,'pgonese6@gmail.com']);
+  await database.query("INSERT INTO public.user_roles(user_id,role) VALUES($1,'admin')",[actor]);
+  await database.query("INSERT INTO public.development_mfa_grants(email,enabled,expires_at,reason) VALUES('pgonese6@gmail.com',true,'2026-11-10T22:00:00Z','Historical enabled entry'),('rathvelem@gmail.com',false,'2026-11-10T22:00:00Z','Historical disabled entry')");
+  await database.query("INSERT INTO public.development_mfa_events(kind,email,details) SELECT 'configure',email,jsonb_build_object('enabled',enabled,'reason',reason) FROM public.development_mfa_grants");
+  for(const [id,offset,isEnded]of[[live,3600,false],[expired,-3600,false],[ended,3600,true]]){
+   await database.query('INSERT INTO auth.sessions(id,user_id) VALUES($1,$2)',[id,actor]);
+   await database.query("INSERT INTO public.development_mfa_sessions(session_id,user_id,email,expires_at,ended_at) VALUES($1,$2,'pgonese6@gmail.com',now()+$3*interval '1 second',CASE WHEN $4 THEN now() END)",[id,actor,offset,isEnded]);
+  }
+ }});
+ try{
+  const grants=(await upgraded.query('SELECT email,enabled,expires_at FROM public.development_mfa_grants ORDER BY email')).rows;
+  assert.deepEqual(grants.map(g=>[g.enabled,g.expires_at]),[[true,null],[false,null]]);
+  for(const [id,expected]of[[live,true],[expired,false],[ended,false]]){
+   const status=await asRole(upgraded,'authenticated',actor,async()=> (await upgraded.query('SELECT public.development_mfa_status_v2() AS value')).rows[0].value,claims(id));
+   assert.equal(status.active,expected);
+  }
+  assert.equal((await upgraded.query("SELECT count(*)::int AS n FROM public.development_mfa_events WHERE details->>'non_expiring'='true'")).rows[0].n,2);
+  assert.equal((await upgraded.query("SELECT count(*)::int AS n FROM public.development_mfa_events WHERE NOT details ? 'non_expiring'")).rows[0].n,2);
+ }finally{await upgraded.close();}
 });

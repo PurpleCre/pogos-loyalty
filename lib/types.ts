@@ -663,21 +663,21 @@ export type Database = {
       Row: {
         "email": string
         "enabled": boolean
-        "expires_at": string
+        "expires_at": string | null
         "reason": string
         "updated_at": string
       }
       Insert: {
         "email": string
         "enabled"?: boolean
-        "expires_at": string
+        "expires_at"?: string | null
         "reason": string
         "updated_at"?: string
       }
       Update: {
         "email"?: string
         "enabled"?: boolean
-        "expires_at"?: string
+        "expires_at"?: string | null
         "reason"?: string
         "updated_at"?: string
       }
@@ -690,7 +690,7 @@ export type Database = {
         "session_id": string
         "user_id": string
         "email": string
-        "expires_at": string
+        "expires_at": string | null
         "started_at": string
         "ended_at": string | null
       }
@@ -698,7 +698,7 @@ export type Database = {
         "session_id": string
         "user_id": string
         "email": string
-        "expires_at": string
+        "expires_at"?: string | null
         "started_at"?: string
         "ended_at"?: string | null
       }
@@ -706,7 +706,7 @@ export type Database = {
         "session_id"?: string
         "user_id"?: string
         "email"?: string
-        "expires_at"?: string
+        "expires_at"?: string | null
         "started_at"?: string
         "ended_at"?: string | null
       }
@@ -3411,6 +3411,10 @@ export type Database = {
       Returns: string
     }
     "development_mfa_status": {
+      Args: Record<PropertyKey, never>
+      Returns: Json
+    }
+    "development_mfa_status_v2": {
       Args: Record<PropertyKey, never>
       Returns: Json
     }
