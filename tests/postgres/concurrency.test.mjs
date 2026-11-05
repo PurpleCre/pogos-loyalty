@@ -7,7 +7,13 @@ let db;
 before(async()=>{db=await connect();await initialise(db);});
 after(async()=>{await db?.end();});
 test('transactional migration replay reaches the expected inventory with all activations off',async()=>{
-  assert.equal((await db.query(`SELECT count(*)::int AS n FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE'`)).rows[0].n,71);
+  assert.equal((await db.query(`SELECT count(*)::int AS n FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE'`)).rows[0].n,74);
+  assert.deepEqual((await db.query(`SELECT relname,relrowsecurity FROM pg_class WHERE relnamespace='public'::regnamespace AND relname IN ('development_mfa_grants','development_mfa_sessions','development_mfa_events') ORDER BY relname`)).rows,[
+    {relname:'development_mfa_events',relrowsecurity:true},
+    {relname:'development_mfa_grants',relrowsecurity:true},
+    {relname:'development_mfa_sessions',relrowsecurity:true},
+  ]);
+  assert.deepEqual((await db.query(`SELECT (SELECT count(*)::int FROM public.development_mfa_grants) AS grants,(SELECT count(*)::int FROM public.development_mfa_sessions) AS sessions,(SELECT count(*)::int FROM public.development_mfa_events) AS events`)).rows[0],{grants:0,sessions:0,events:0});
   assert.deepEqual((await db.query(`SELECT deletion_processing_enabled,application_erasure_enabled FROM public.privacy_settings`)).rows[0],{deletion_processing_enabled:false,application_erasure_enabled:false});
   assert.equal((await db.query(`SELECT enabled FROM public.push_settings`)).rows[0].enabled,false);
 });

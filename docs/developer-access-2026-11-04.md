@@ -54,3 +54,15 @@ node scripts/development-mfa-bypass.mjs --disable
 - On 5 November 2026, `20261104020000_development_mfa_manual_expiry.sql` was applied to that same pinned development project. A subsequent live operator check confirmed both entries remain enabled and both have `expires_at: null`. The first account remains verified with its existing admin role; the second account remains absent. Private current evidence: `.local/developer-access/status.json`.
 
 No real developer session was started by the agent and no user credentials were requested. Actual device/session acceptance still requires the developer to sign in and explicitly opt in. The native exports and browser fixtures do not publish an OTA: the updated client wording and v2 status handling must go through the existing checked publishing workflow. The compatibility endpoint supports installed clients during that transition.
+
+## OTA publication diagnosis — 5 November 2026
+
+Live Expo and GitHub checks found that neither `21643a1` (authenticator fix and initial bypass) nor `33b2814` (manual expiry) reached publication. Both runs failed the separate PostgreSQL acceptance job and skipped the update job. The earlier 528-test local suite does not include that job. The latest failed run is [41990870851](https://github.com/PurpleCre/pogos-loyalty/actions/runs/41990870851).
+
+The database migrations replayed successfully. The inventory assertion still expected 71 public tables, while the three developer-access tables bring the total to 74. The corrected assertion checks 74 tables, names and row-level security on the three new tables, and empty grant/session/event tables after a fresh replay. The publishing gate stays in place.
+
+After the correction, all three local PostgreSQL CI commands passed against isolated Docker databases: 13 concurrency tests, eight resilience tests and four performance tests (25 total). Each runner confirmed cleanup. Reports are in `dist/postgres-acceptance/`, `dist/resilience-acceptance/` and `dist/performance-acceptance/`. No application source or migration changed in this correction.
+
+At diagnosis, the active, unpaused `development` channel points to the `development` branch. Its latest Android release is still source `df3b05d`, group `d9d87ece-d622-46e3-86cb-19fcc071f036`, runtime `0b8da87f9f04be4585d39184ce6c4861b9a6534e`. That runtime matches the APK built on 4 November, but this release predates the authenticator fix and bypass. This confirms missing publication; it does not identify the update currently running on the user's unattached phone.
+
+The correction must be pushed to `main` so the checked OTA workflow can publish the missing client changes. Rerunning an unchanged failed commit retains the stale assertion. Local diagnosis evidence is in `.local/ota-status/diagnosis.json`.
