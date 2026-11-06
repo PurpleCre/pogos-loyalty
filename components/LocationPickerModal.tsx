@@ -1,5 +1,5 @@
 import { logPrivateError } from '@/lib/privacy-logging';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, type ComponentRef } from 'react';
 import { View, Text, Modal, ScrollView, StyleSheet, Platform } from 'react-native';
 import { Input as TextInput } from '@/components/ui/input';
 import { TouchTarget as TouchableOpacity } from '@/components/ui/touch-target';
@@ -19,6 +19,11 @@ interface LocationPickerModalProps {
 export function LocationPickerModal({ visible, onClose, initialAddress }: LocationPickerModalProps) {
   const { savedLocations, saveLocation, deliveryLocation, setDeliveryLocation } = useOrder();
   const [locationError, setLocationError] = useState('');
+  const [addressError, setAddressError] = useState('');
+  const [confirmationError, setConfirmationError] = useState('');
+  const addressRef = useRef<ComponentRef<typeof TextInput>>(null);
+  const scrollRef = useRef<ComponentRef<typeof ScrollView>>(null);
+  const confirming = useRef(false);
   const [saving, setSaving] = useState(false);
   const [locating, setLocating] = useState(false);
   const [locationAllowed, setLocationAllowed] = useState(false);
@@ -44,14 +49,14 @@ export function LocationPickerModal({ visible, onClose, initialAddress }: Locati
     if (visible) {
       const { location: existing, initialAddress: draftAddress } = currentLocation.current;
       setSelectedCoordinate(existing ? { latitude: existing.latitude, longitude: existing.longitude } : null);
-      setAddressInput(draftAddress ?? existing?.address ?? ''); setTagInput(''); setLocationError(''); setSaving(false); setLocating(false); setLocationAllowed(false);
+      setAddressInput(draftAddress ?? existing?.address ?? ''); setTagInput(''); setLocationError(''); setAddressError(''); setConfirmationError(''); confirming.current = false; setSaving(false); setLocating(false); setLocationAllowed(false);
       if (existing) setRegion(previous => ({ ...previous, latitude: existing.latitude, longitude: existing.longitude }));
     }
     return () => { ++generation.current; };
   }, [visible, user?.id]);
 
   const handleCurrentLocation = async () => {
-    if (locating) return;
+    if (locating || confirming.current) return;
     const version = generation.current;
     setLocating(true); setLocationError('');
     try {
@@ -76,27 +81,38 @@ export function LocationPickerModal({ visible, onClose, initialAddress }: Locati
   };
 
   const handleMapPress = (e: any) => {
+    if (confirming.current) return;
     setSelectedCoordinate(e.nativeEvent.coordinate);
     setLocationError('');
   };
 
   const handleSelectSavedLocation = (location: LocationData) => {
+    if (confirming.current) return;
     setDeliveryLocation(location);
     onClose();
   };
 
-  const handleConfirmNewLocation = async () => {
-    if (!selectedCoordinate || saving) return;
-    if (addressInput.trim().length < 5 || ['selected from map', 'unknown address'].includes(addressInput.trim().toLowerCase())) { setLocationError('Enter a written delivery address and landmarks for this map pin.'); return; }
+  const handleConfirmNewLocation = async (withoutSaving = false) => {
+    if (confirming.current) return;
+    setConfirmationError('');
+    if (!selectedCoordinate) { setLocationError('Choose a map pin before confirming your delivery location.'); return; }
+    if (addressInput.trim().length < 5 || ['selected from map', 'unknown address'].includes(addressInput.trim().toLowerCase())) {
+      setAddressError('Enter a written delivery address and landmarks for this map pin.');
+      addressRef.current?.focus();
+      return;
+    }
     const version = generation.current; const account = user?.id;
-    setSaving(true); setLocationError('');
+    confirming.current = true; setSaving(true); setLocationError(''); setAddressError('');
     try {
       const next: LocationData = { id: Math.random().toString(36).slice(2), address: addressInput.trim(), ...selectedCoordinate, tag: tagInput.trim() || undefined };
-      const saved = tagInput.trim() ? await saveLocation(next) : next;
+      const saved = tagInput.trim() && !withoutSaving ? await saveLocation(next) : next;
       if (version !== generation.current || owner.current !== account) return;
-      if (!saved) { setLocationError('The location could not be saved. Retry, or use it without saving a label.'); return; }
+      if (!saved) { setConfirmationError('The location could not be saved. Retry, or use it for this order without saving it.'); return; }
       setDeliveryLocation(saved); onClose();
-    } finally { if (version === generation.current) setSaving(false); }
+    } catch (error) {
+      logPrivateError('Location confirmation failed', error);
+      if (version === generation.current && owner.current === account) setConfirmationError('The location could not be confirmed. Retry, or use it for this order without saving it.');
+    } finally { if (version === generation.current) { confirming.current = false; setSaving(false); } }
   };
 
   return (
@@ -110,7 +126,7 @@ export function LocationPickerModal({ visible, onClose, initialAddress }: Locati
           </TouchableOpacity>
         </View>
 
-        <ScrollView className="flex-1" bounces={false} keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
+        <ScrollView ref={scrollRef} className="flex-1" bounces={false} keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
           {locationError ? <Text accessibilityRole="alert" className="p-4 text-amber-800">{locationError}</Text> : null}
           <Text className="p-4 text-subtle">Choose a pin and a written address. The branch confirms delivery coverage in your online quote.</Text>
           {/* Saved Locations */}
@@ -126,7 +142,7 @@ export function LocationPickerModal({ visible, onClose, initialAddress }: Locati
                   return (
                     <TouchableOpacity
                       key={loc.id}
-                      onPress={() => handleSelectSavedLocation(loc)}
+                      disabled={saving} onPress={() => handleSelectSavedLocation(loc)}
                       className="bg-brand-50 border border-brand-100 rounded-xl px-4 py-3 mr-3 items-center flex-row shadow-sm"
                     >
                       <View className="bg-brand-100 p-2 rounded-full mr-3">
@@ -181,12 +197,14 @@ export function LocationPickerModal({ visible, onClose, initialAddress }: Locati
                   <View className="flex-row items-center bg-white border border-line rounded-lg px-3 py-2.5">
                     <MapPin size={16} color="#174d45" className="mr-2" />
                     <TextInput 
-                      value={addressInput}
-                      onChangeText={setAddressInput}
-                      accessibilityLabel="Written delivery address" maxLength={500} placeholder="Street, suburb and useful landmarks"
+                      ref={addressRef} value={addressInput} editable={!saving}
+                      onChangeText={value => { setAddressInput(value); setAddressError(''); setConfirmationError(''); }}
+                      accessibilityLabel="Written delivery address" accessibilityHint={addressError || 'Required: street, suburb and useful landmarks'} aria-invalid={!!addressError}
+                      maxLength={500} placeholder="Street, suburb and useful landmarks"
                       className="flex-1 text-ink font-medium"
                     />
                   </View>
+                  {addressError ? <Text accessibilityRole="alert" accessibilityLiveRegion="polite" className="text-red-700 text-sm mt-2">{addressError}</Text> : <Text className="text-subtle text-xs mt-2">Required: add the written address for your pin.</Text>}
                 </View>
 
                 <View>
@@ -194,9 +212,9 @@ export function LocationPickerModal({ visible, onClose, initialAddress }: Locati
                   <View className="flex-row items-center bg-white border border-line rounded-lg px-3 py-2.5">
                     <Star size={16} color="#eab308" className="mr-2" />
                     <TextInput 
-                      value={tagInput}
+                      value={tagInput} editable={!saving}
                       accessibilityLabel="Optional saved location label" maxLength={50}
-                      onChangeText={setTagInput}
+                      onChangeText={value => { setTagInput(value); setConfirmationError(''); }}
                       placeholder="e.g. Home, Work, Gym"
                       className="flex-1 text-ink font-medium"
                     />
@@ -204,12 +222,16 @@ export function LocationPickerModal({ visible, onClose, initialAddress }: Locati
                 </View>
 
                 <TouchableOpacity 
-                  accessibilityRole="button" disabled={saving}
-                  onPress={handleConfirmNewLocation}
+                  accessibilityRole="button" accessibilityState={{ busy: saving }} disabled={saving || locating}
+                  onPress={() => { void handleConfirmNewLocation(); }}
                   className="bg-brand-800 rounded-lg py-3.5 items-center shadow-sm mt-2"
                 >
                   <Text className="text-white font-bold text-lg">{saving ? 'Saving…' : 'Confirm Location'}</Text>
                 </TouchableOpacity>
+                {confirmationError ? <View onLayout={() => scrollRef.current?.scrollToEnd({ animated: true })} className="gap-2 mt-3">
+                  <Text accessibilityRole="alert" accessibilityLiveRegion="polite" className="text-amber-800">{confirmationError}</Text>
+                  <Button variant="outline" disabled={saving} onPress={() => { void handleConfirmNewLocation(true); }}>Use without saving</Button>
+                </View> : null}
               </View>
             </View>
           )}

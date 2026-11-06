@@ -3,7 +3,7 @@ import "../global.css";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { runtimeEnvironment } from '@/lib/environment';
-import { Slot } from "expo-router";
+import { Stack } from "expo-router";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CartProvider } from '@/contexts/CartContext';
 import { CheckoutDraftProvider } from '@/contexts/CheckoutDraftContext';
@@ -29,6 +29,9 @@ Sentry.init(errorReportingOptions({
 
 const queryClient = new QueryClient();
 
+// Cold links need a real screen below their destination for Android Back.
+export const unstable_settings = { anchor: 'index' };
+
 function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}><SafeAreaProvider><StatusBar style="dark" />
@@ -40,7 +43,7 @@ function RootLayout() {
           <CartProvider>
             <CheckoutDraftProvider>
             <LegacyOfflineNotice />
-            <Slot />
+            <Stack screenOptions={{ headerShown: false }} />
             </CheckoutDraftProvider>
           </CartProvider>
         </OrderProvider>

@@ -29,7 +29,7 @@ export default function AppLayout() {
         <View style={{ paddingHorizontal: 20, paddingBottom: 24, marginBottom: 16, borderBottomWidth: 1, borderBottomColor: colors.border }}><BrandLogo size={78} /><Text style={{ color: colors.ink, fontSize: 22, fontWeight: '800', marginTop: 12 }}>A little more Pogo’s.</Text><Text style={{ color: colors.muted, fontSize: 13, marginTop: 6 }}>Your food. Your branch. Your rewards.</Text></View>
         <DrawerItemList {...props} />
       </DrawerContentScrollView>}
-      backBehavior="history"
+      backBehavior="fullHistory"
       screenOptions={{
         headerShown: false,
         drawerActiveTintColor: colors.primary,
